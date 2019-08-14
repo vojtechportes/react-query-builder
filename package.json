@@ -1,0 +1,61 @@
+{
+  "name": "react-query-builder",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/react-query-builder.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "tsdx test --env=jsdom",
+    "test:watch": "npm run test -- --watchAll",
+    "start": "cross-env NODE_ENV=development tsdx watch",
+    "prebuild": "rimraf dist",
+    "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm,umd",
+    "prepublish": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@types/cosmiconfig": "^5.0.3",
+    "@types/jest": "^24.0.17",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.8.5",
+    "@types/styled-components": "^4.1.18",
+    "@types/uniqid": "^4.1.3",
+    "@types/yup": "^0.26.22",
+    "awesome-typescript-loader": "^5.2.1",
+    "cosmiconfig": "^5.2.1",
+    "enzyme": "^3.10.0",
+    "formik": "^1.5.8",
+    "husky": "^3.0.3",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "styled-components": "^4.3.2",
+    "tsdx": "^0.7.2",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.3",
+    "uniqid": "^5.0.3",
+    "webpack": "^4.31.0",
+    "yup": "^0.27.0"
+  },
+  "dependencies": {
+    "Builder": "^2.8.1"
+  }
+}
