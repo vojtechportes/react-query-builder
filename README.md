@@ -5,11 +5,11 @@
 ## Installation
 
 ```bash
-    npm install @vojtechportes/react-query-builder
+npm install @vojtechportes/react-query-builder
 ```
 or
 ```bash
-    yarn add @vojtechportes/react-query-builder
+yarn add @vojtechportes/react-query-builder
 ```
 
 ------------
