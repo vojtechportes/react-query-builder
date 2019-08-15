@@ -126,14 +126,13 @@ Data can be either empty array or array of rules and groups.
 ```Typescript
 [
     {
-        "type": "GROUP", // <- Type here is refering to field property in fields configuration
+        "type": "GROUP",
         "value": "AND",
         "isNegated": false,
         "children": [
             {
-                "field": "TEST_DATE",
-                "value": "2019-08-21",
-                "operator": "NOT_EQUAL"
+                "field": "IS_IN_EU", // <- Type here is refering to field property in fields configuration
+                "value": false
             }
         ]
     }
