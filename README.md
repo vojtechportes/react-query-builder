@@ -14,7 +14,6 @@ yarn add @vojtechportes/react-query-builder
 
 ------------
 
-
 ## Usage
 
 ```typescript
@@ -46,7 +45,6 @@ const MyBuilder:React.FC = () => (
 ```
 
 ------------
-
 
 ## Configuration
 Since React Query Builder is highly configurable, you can define look of the Query Builder, you can define and use your own components and of course, you will need to set up fields Query Builder will be using. 
@@ -138,8 +136,6 @@ Data can be either empty array or array of rules and groups.
     }
 ]
 ```
-
-------------
 
 ### Components
 Components is set of components you can use to customize React Query Builder. You can either just style them using [styled-components](https://www.styled-components.com/ "styled-components") or use your own components as long as they follow typings of original components.
