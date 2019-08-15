@@ -175,3 +175,7 @@ const components: BuilderComponentsProps = {
     GroupHeaderOption: MyCustomHeaderOption
 };
 ```
+
+### OnChange
+
+onChange property is allowing you to retrieve query tree after every change that occures in React Query Builder.
