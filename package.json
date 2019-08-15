@@ -1,10 +1,32 @@
 {
-  "name": "react-query-builder",
+  "name": "@vojtechportes/react-query-builder",
   "version": "0.1.0",
   "license": "MIT",
+  "keywords": [
+    "react",
+    "query",
+    "builder",
+    "query builder",
+    "typescript",
+    "configurable"
+  ],
+  "description": "Simple, highly configurable query builder for react",
+  "author": {
+    "email": "vojtech.v.portes@gmail.com",
+    "name": "Vojtech Portes",
+    "url": "https://www.github.com/vojtechportes"
+  },
+  "homepage": "https://github.com/vojtechportes/react-query-builder",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vojtechportes/react-query-builder.git"
+  },
   "main": "dist/index.js",
   "module": "dist/react-query-builder.esm.js",
   "typings": "dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "files": [
     "dist"
   ],
