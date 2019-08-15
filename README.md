@@ -12,6 +12,8 @@ or
 yarn add @vojtechportes/react-query-builder
 ```
 
+[## Demo](https://react-query-builder-demo.herokuapp.com/)
+
 ------------
 
 ## Usage
@@ -47,6 +49,7 @@ const MyBuilder:React.FC = () => (
 ------------
 
 ## Configuration
+
 Since React Query Builder is highly configurable, you can define look of the Query Builder, you can define and use your own components and of course, you will need to set up fields Query Builder will be using. 
 
 ### Lets start with fields...
