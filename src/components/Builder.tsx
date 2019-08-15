@@ -10,6 +10,7 @@ import { assignIds } from '../utils/assignIds';
 /* Configurable components */
 
 import { Button } from './Button';
+import { SecondaryButton} from './SecondaryButton';
 import { Input } from './Form/Input';
 import { Select } from './Form/Select';
 import { SelectMulti } from './Form/SelectMulti';
@@ -105,7 +106,7 @@ export const Builder: React.FC<BuilderProps> = ({
       SelectMulti,
       Switch,
     },
-    Remove: Button,
+    Remove: SecondaryButton,
     Add: Button,
     Component,
     Group,

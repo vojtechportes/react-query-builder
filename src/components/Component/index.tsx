@@ -13,7 +13,7 @@ import {
   isReactTextArray,
   isOptionList,
 } from '../../utils/types';
-import { Component as ComponentContainer } from './Component';
+import { clone } from '../../utils/clone';
 
 const BooleanContainer = styled.div`
   align-self: center;
@@ -32,12 +32,32 @@ export const Component: React.FC<ComponentProps> = ({
   operator,
   id,
 }) => {
-  const { fields } = useContext(BuilderContext);
+  const { fields, data, setData, onChange, components } = useContext(
+    BuilderContext
+  );
+  const { Component: ComponentContainer, Remove } = components;
+
+  const handleDelete = () => {
+    let clonedData = clone(data);
+    const index = clonedData.findIndex((item: any) => item.id === id);
+    const parentIndex = clonedData.findIndex(
+      (item: any) => item.id === clonedData[index].parent
+    );
+    const parent = clonedData[parentIndex];
+
+    parent.children = parent.children.filter((item: string) => item !== id);
+    clonedData = clonedData.filter((item: any) => item.id !== id);
+
+    setData(clonedData);
+    onChange(clonedData);
+  };
 
   if (fields) {
     if (fieldRef === '') {
       return (
-        <ComponentContainer>
+        <ComponentContainer
+          controls={<Remove label="Delete" onClick={handleDelete} />}
+        >
           <FieldSelect selectedValue={''} id={id} />
         </ComponentContainer>
       );
@@ -52,7 +72,7 @@ export const Component: React.FC<ComponentProps> = ({
           operators && operators.map(item => ({ value: item, label: item }));
 
         return (
-          <ComponentContainer>
+          <ComponentContainer controls={<Remove label="Delete" onClick={handleDelete} />}>
             <FieldSelect selectedValue={field} id={id} />
 
             {type === 'BOOLEAN' && isBoolean(selectedValue) && (

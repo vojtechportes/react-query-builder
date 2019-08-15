@@ -15,9 +15,16 @@ export { Select, SelectProps } from './components/Form/Select';
 export { SelectMulti, SelectMultiProps } from './components/Form/SelectMulti';
 export { Switch, SwitchProps } from './components/Form/Switch';
 
+export { Button, ButtonProps } from './components/Button';
+export { SecondaryButton } from './components/SecondaryButton';
+
 export { Component, ComponentProps } from './components/Component/Component';
 export { Group, GroupProps } from './components/Group/Group';
 export {
   Option as GroupHeaderOption,
   OptionProps as GroupHeaderOptionProps,
 } from './components/Group/Option';
+
+/* Color constants */
+
+export { colors } from './constants/colors';

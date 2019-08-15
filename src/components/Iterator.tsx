@@ -5,11 +5,13 @@ import { Group, GroupProps } from './Group/index';
 export interface IteratorProps {
   originalData: any;
   filteredData: any;
+  isRoot?: boolean;
 }
 
 export const Iterator: React.FC<IteratorProps> = ({
   originalData,
   filteredData,
+  isRoot = true,
 }) => (
   <>
     {filteredData.map((item: any) => {
@@ -25,8 +27,8 @@ export const Iterator: React.FC<IteratorProps> = ({
             const { id, value, isNegated } = item as GroupProps;
 
             return (
-              <Group key={id} value={value} isNegated={isNegated} id={id}>
-                <Iterator originalData={originalData} filteredData={items} />
+              <Group key={id} value={value} isNegated={isNegated} id={id} isRoot={isRoot}>
+                <Iterator originalData={originalData} filteredData={items} isRoot={false} />
               </Group>
             );
           }
@@ -42,7 +44,7 @@ export const Iterator: React.FC<IteratorProps> = ({
                   operator={operator}
                   id={id}
                 />
-                <Iterator originalData={originalData} filteredData={items} />
+                <Iterator originalData={originalData} filteredData={items} isRoot={false} />
               </div>
             );
           }

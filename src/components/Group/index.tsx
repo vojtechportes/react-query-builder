@@ -8,6 +8,7 @@ export interface GroupProps {
   isNegated?: boolean;
   children?: React.ReactNode | React.ReactNodeArray;
   id: string;
+  isRoot: boolean;
 }
 
 export const Group: React.FC<GroupProps> = ({
@@ -15,17 +16,22 @@ export const Group: React.FC<GroupProps> = ({
   isNegated,
   children,
   id,
+  isRoot,
 }) => {
   const { components, data, setData, onChange } = useContext(BuilderContext);
-
-  const { Add, Group: GroupContainer, GroupHeaderOption: Option } = components;
+  const {
+    Add,
+    Group: GroupContainer,
+    GroupHeaderOption: Option,
+    Remove,
+  } = components;
 
   const findIndex = () => {
     const clonedData = clone(data);
     const parentIndex = clonedData.findIndex((item: any) => item.id === id);
     let insertAfter = parentIndex;
 
-    if (data[parentIndex].children) {
+    if (data[parentIndex].children && data[parentIndex].children.length > 0) {
       const lastChildren = clonedData[parentIndex].children.slice(-1)[0];
       insertAfter = clonedData.findIndex(
         (item: any) => item.id === lastChildren
@@ -43,7 +49,7 @@ export const Group: React.FC<GroupProps> = ({
     }
 
     clonedData[parentIndex].children.push(payload.id);
-    clonedData.splice(insertAfter, 0, payload);
+    clonedData.splice(Number(insertAfter) + 1, 0, payload);
 
     setData(clonedData);
     onChange(clonedData);
@@ -88,6 +94,23 @@ export const Group: React.FC<GroupProps> = ({
     onChange(clonedData);
   };
 
+  const handleDeleteGroup = () => {
+    let clonedData = clone(data).filter((item: any) => item.id !== id);
+
+    clonedData = clonedData.map((item: any) => {
+      if (item.children && item.children.length > 0) {
+        item.children = item.children.filter(
+          (childId: string) => childId !== id
+        );
+      }
+
+      return item;
+    });
+
+    setData(clonedData);
+    onChange(clonedData);
+  };
+
   return (
     <GroupContainer
       controlsLeft={
@@ -119,6 +142,7 @@ export const Group: React.FC<GroupProps> = ({
         <>
           <Add onClick={handleAddRule} label="Add Rule" />
           <Add onClick={handleAddGroup} label="Add Group" />
+          {!isRoot && <Remove onClick={handleDeleteGroup} label="Delete" />}
         </>
       }
     >
