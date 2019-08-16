@@ -24,6 +24,9 @@ yarn add @vojtechportes/react-query-builder
 
 ## [Demo](https://react-query-builder-demo.herokuapp.com/)
 
+with examples of field definition and custom components...
+...or check source code on [GitHub](https://github.com/vojtechportes/react-query-builder-demo)
+
 ------------
 
 ## Usage
