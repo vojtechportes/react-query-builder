@@ -1,3 +1,4 @@
+<br>
 <p align="center">
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
 </p>
@@ -10,6 +11,7 @@
 <p align="center">
 <a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg" alt="npm version" /></a>	
 </p>
+<br />
 
 ## Installation
 
@@ -22,6 +24,9 @@ yarn add @vojtechportes/react-query-builder
 ```
 
 ## [Demo](https://react-query-builder-demo.herokuapp.com/)
+
+with examples of field definition and custom components...<br />
+...or check source code on [GitHub](https://github.com/vojtechportes/react-query-builder-demo)
 
 ------------
 
@@ -127,7 +132,7 @@ NOT_BETWEEN
 ```
 
 #### Value
-Value can be either string (STATEMENT) or array of objects with value and label keys (LIST, LIST_MULTI). Values for other types are empty by default.
+Value can be either string (STATEMENT) or array of objects with value and label keys (LIST, MULTI_LIST). Values for other types are empty by default.
 
 ### Data
 
