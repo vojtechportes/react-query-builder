@@ -64,7 +64,7 @@ export interface BuilderFieldProps {
 }
 
 export interface BuilderComponentsProps {
-  form: {
+  form?: {
     Select?: any;
     SelectMulti?: any;
     Switch?: any;
