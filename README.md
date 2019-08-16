@@ -1,6 +1,10 @@
-# React Query Builder
+<p align="center">
+  <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
+</p>
 
-*Simple, highly configurable query builder for React written in TypeSript*
+<h3 align="center" style="margin-top: 0;">
+  Simple, highly configurable query builder<br /> for React written in TypeSript
+</h3>
 
 [![npm version](https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg)](https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder)
 
