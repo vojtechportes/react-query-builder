@@ -11,6 +11,7 @@
 <p align="center">
 <a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg" alt="npm version" /></a>	
 </p>
+<br />
 
 ## Installation
 
