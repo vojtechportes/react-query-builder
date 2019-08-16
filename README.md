@@ -12,7 +12,7 @@ or
 yarn add @vojtechportes/react-query-builder
 ```
 
-[## Demo](https://react-query-builder-demo.herokuapp.com/)
+## [Demo](https://react-query-builder-demo.herokuapp.com/)
 
 ------------
 
