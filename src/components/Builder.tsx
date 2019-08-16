@@ -10,7 +10,7 @@ import { assignIds } from '../utils/assignIds';
 /* Configurable components */
 
 import { Button } from './Button';
-import { SecondaryButton} from './SecondaryButton';
+import { SecondaryButton } from './SecondaryButton';
 import { Input } from './Form/Input';
 import { Select } from './Form/Select';
 import { SelectMulti } from './Form/SelectMulti';
@@ -96,26 +96,33 @@ export const BuilderContext = createContext<BuilderContextProps>(
   {} as BuilderContextProps
 );
 
+export const defaultComponents: BuilderComponentsProps = {
+  form: {
+    Input,
+    Select,
+    SelectMulti,
+    Switch,
+  },
+  Remove: SecondaryButton,
+  Add: Button,
+  Component,
+  Group,
+  GroupHeaderOption,
+};
+
 export const Builder: React.FC<BuilderProps> = ({
   data: originalData,
   fields,
-  components = {
-    form: {
-      Input,
-      Select,
-      SelectMulti,
-      Switch,
-    },
-    Remove: SecondaryButton,
-    Add: Button,
-    Component,
-    Group,
-    GroupHeaderOption,
-  },
+  components = defaultComponents,
   onChange,
 }) => {
   let normalizedData: any;
   originalData = assignIds(originalData);
+  components = {
+    ...defaultComponents,
+    ...components,
+    form: { ...defaultComponents.form, ...components.form },
+  };
 
   if (originalData.length === 0) {
     originalData = [

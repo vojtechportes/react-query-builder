@@ -6,6 +6,7 @@ export {
   BuilderFieldType,
   BuilderGroupValues,
   BuilderFieldProps,
+  defaultComponents
 } from './components/Builder';
 
 /* Configurable components */
