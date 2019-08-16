@@ -1,3 +1,4 @@
+<br>
 <p align="center">
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
 </p>
@@ -127,7 +128,7 @@ NOT_BETWEEN
 ```
 
 #### Value
-Value can be either string (STATEMENT) or array of objects with value and label keys (LIST, LIST_MULTI). Values for other types are empty by default.
+Value can be either string (STATEMENT) or array of objects with value and label keys (LIST, MULTI_LIST). Values for other types are empty by default.
 
 ### Data
 
