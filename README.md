@@ -2,11 +2,14 @@
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
 </p>
 
-<h3 align="center" style="margin-top: 0;">
+<h3 align="center">
   Simple, highly configurable query builder<br /> for React written in TypeSript
-</h3>
+	
 
-[![npm version](https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg)](https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder)
+</h3>
+<p align="center">
+<a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg" alt="npm version" /></a>	
+</p>
 
 ## Installation
 
