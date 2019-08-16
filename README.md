@@ -2,6 +2,8 @@
 
 *Simple, highly configurable query builder for React written in TypeSript*
 
+[![npm version](https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg)](https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder)
+
 ## Installation
 
 ```bash
