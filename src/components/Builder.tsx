@@ -19,6 +19,10 @@ import { Component } from './Component/Component';
 import { Group } from './Group/Group';
 import { Option as GroupHeaderOption } from './Group/Option';
 
+/* Strings */
+
+import { strings as defaultStrings, Strings } from '../constants/strings';
+
 export const StyledBuilder = styled.div`
   padding: 1rem;
   border: 1px solid ${colors.light};
@@ -81,13 +85,15 @@ export interface BuilderProps {
   fields: BuilderFieldProps[];
   data: any;
   components?: BuilderComponentsProps;
+  strings?: Strings;
   onChange?: (data: any) => any;
 }
 
 export interface BuilderContextProps {
   fields: BuilderFieldProps[];
-  components: BuilderComponentsProps;
   data: any;
+  components: BuilderComponentsProps;
+  strings: Strings;
   setData: React.Dispatch<any>;
   onChange: (data: any) => void;
 }
@@ -114,14 +120,37 @@ export const Builder: React.FC<BuilderProps> = ({
   data: originalData,
   fields,
   components = defaultComponents,
+  strings = defaultStrings,
   onChange,
 }) => {
   let normalizedData: any;
   originalData = assignIds(originalData);
+
   components = {
     ...defaultComponents,
     ...components,
     form: { ...defaultComponents.form, ...components.form },
+  };
+
+  strings = {
+    ...defaultStrings,
+    ...strings,
+    component: {
+      ...defaultStrings.component,
+      ...strings.component,
+    },
+    form: {
+      ...defaultStrings.form,
+      ...strings.form,
+    },
+    group: {
+      ...defaultStrings.group,
+      ...strings.group,
+    },
+    operators: {
+      ...defaultStrings.operators,
+      ...strings.operators,
+    },
   };
 
   if (originalData.length === 0) {
@@ -161,7 +190,14 @@ export const Builder: React.FC<BuilderProps> = ({
 
   return (
     <BuilderContext.Provider
-      value={{ fields, components, data, setData, onChange: handleChange }}
+      value={{
+        fields,
+        components,
+        strings,
+        data,
+        setData,
+        onChange: handleChange,
+      }}
     >
       <StyledBuilder>
         <Iterator originalData={data} filteredData={filteredData} />

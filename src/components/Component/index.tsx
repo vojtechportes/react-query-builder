@@ -32,7 +32,7 @@ export const Component: React.FC<ComponentProps> = ({
   operator,
   id,
 }) => {
-  const { fields, data, setData, onChange, components } = useContext(
+  const { fields, data, setData, onChange, components, strings } = useContext(
     BuilderContext
   );
   const { Component: ComponentContainer, Remove } = components;
@@ -52,11 +52,13 @@ export const Component: React.FC<ComponentProps> = ({
     onChange(clonedData);
   };
 
-  if (fields) {
+  if (fields && strings.component) {
     if (fieldRef === '') {
       return (
         <ComponentContainer
-          controls={<Remove label="Delete" onClick={handleDelete} />}
+          controls={
+            <Remove label={strings.component.delete} onClick={handleDelete} />
+          }
         >
           <FieldSelect selectedValue={''} id={id} />
         </ComponentContainer>
@@ -69,10 +71,18 @@ export const Component: React.FC<ComponentProps> = ({
         ];
 
         const operatorsOptionList =
-          operators && operators.map(item => ({ value: item, label: item }));
+          operators &&
+          operators.map(item => ({
+            value: item,
+            label: strings.operators && strings.operators[item],
+          }));
 
         return (
-          <ComponentContainer controls={<Remove label="Delete" onClick={handleDelete} />}>
+          <ComponentContainer
+            controls={
+              <Remove label={strings.component.delete} onClick={handleDelete} />
+            }
+          >
             <FieldSelect selectedValue={field} id={id} />
 
             {type === 'BOOLEAN' && isBoolean(selectedValue) && (

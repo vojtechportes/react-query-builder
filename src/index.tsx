@@ -6,7 +6,7 @@ export {
   BuilderFieldType,
   BuilderGroupValues,
   BuilderFieldProps,
-  defaultComponents
+  defaultComponents,
 } from './components/Builder';
 
 /* Configurable components */
@@ -29,3 +29,7 @@ export {
 /* Color constants */
 
 export { colors } from './constants/colors';
+
+/* String constants */
+
+export { strings, Strings } from './constants/strings';

@@ -13,11 +13,11 @@ export const Select: React.FC<SelectProps> = ({
   values,
   id,
 }) => {
-  const { data, setData, onChange, components } = useContext(BuilderContext);
+  const { data, setData, onChange, components, strings } = useContext(
+    BuilderContext
+  );
 
-  const {
-    form: { Select: SelectBase },
-  } = components;
+  const { form } = components;
 
   const handleChange = (value: React.ReactText) => {
     const clonedData = clone(data);
@@ -29,11 +29,16 @@ export const Select: React.FC<SelectProps> = ({
     onChange(clonedData);
   };
 
-  return (
-    <SelectBase
-      onChange={handleChange}
-      selectedValue={selectedValue}
-      values={values}
-    />
-  );
+  if (form && strings.form) {
+    return (
+      <form.Select
+        onChange={handleChange}
+        selectedValue={selectedValue}
+        emptyValue={strings.form.selectYourValue}
+        values={values}
+      />
+    );
+  }
+
+  return null
 };

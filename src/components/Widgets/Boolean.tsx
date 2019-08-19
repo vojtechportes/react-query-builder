@@ -10,9 +10,7 @@ export interface BooleanProps {
 export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
   const { data, setData, onChange, components } = useContext(BuilderContext);
 
-  const {
-    form: { Switch },
-  } = components;
+  const { form } = components;
 
   const handleChange = (value: boolean) => {
     const clonedData = clone(data);
@@ -24,5 +22,9 @@ export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
     onChange(clonedData);
   };
 
-  return <Switch onChange={handleChange} switched={selectedValue} />;
+  if (form) {
+    return <form.Switch onChange={handleChange} switched={selectedValue} />;
+  }
+
+  return null;
 };

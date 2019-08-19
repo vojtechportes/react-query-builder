@@ -13,6 +13,26 @@
 </p>
 <br />
 
+---
+
+- [Instalation](#instalation)
+- [Demo](#demo)
+- [Usage](#usage)
+- [Configuration](#configuration)
+  - [Fields](#lets-start-with-fields)
+    - [Field](#field)
+    - [Label](#label)
+    - [Type](#type)
+    - [Operators](#operators)
+    - [Value](#value)
+  - [Data](#data)
+  - [Components](#components)
+  - [onChange](#onChange)
+- [Localization](#Localization)
+- [Future development](#future-development)
+
+---
+
 ## Installation
 
 ```bash
@@ -204,9 +224,80 @@ onChange property is allowing you to retrieve query tree after every change that
 
 ---
 
+## Localization
+
+To either use custom strings or localize ReactBuilder, you can use strings property on Builder component.
+
+You can work with object of following format:
+
+```typescript
+const strings: Strings = {
+  "group": {
+    "not": "Not",
+    "or": "Or",
+    "and": "And",
+    "addRule": "Add Rule",
+    "addGroup": "Add Group",
+    "delete": "Delete"
+  },
+  "components": {
+    "delete": "Delete"
+  },
+  "form": {
+    "selectYourValue": "Select your value"
+  },
+  "operators": {
+    "LARGER": "Larger",
+    "SMALLER": "Smaller",
+    "LARGER_EQUAL" "Larger or equal",
+    "SMALLER_EQUAL": "Smaller or equal",
+    "EQUAL": "Equal",
+    "NOT_EQUAL": "Not equal",
+    "ALL_IN": "All in",
+    "ANY_IN": "Any in",
+    "NOT_IN": "Not in",
+    "BETWEEN": "Between",
+    "NOT_BETWEEN": "Not between"
+  }
+};
+```
+
+It is not required to translate all the strings. Strings that are not specified by you will be loaded from default strings.
+
+To work with multiple locales, you can use for example amazing [i18next framework](https://www.i18next.com/ 'i18next framework').
+
+```typescript
+import React from 'react';
+import { Builder, Strings } from '@vojtechportes/react-query-builder';
+import { Trans, useTranslation } from 'react-i18next';
+
+export const QueryBuiler:React.FC = () => {
+  useTranslation('query-builder')
+
+  const strings: Strings = {
+    operators: {
+      LARGER: <Trans ns="query-builder" i18nkey="larger" />,
+      SMALLER: <Trans ns="query-builder" i18nkey="smaller" />
+      /* And so on */
+    }
+  };
+
+  return (
+    <Builder
+      strings={strings}
+      fields={fields}
+      data={[]}
+      onChange={(data: any) => console.log(data)} 
+      />
+  );
+};
+```
+
+---
+
 ## Future development
 
-* [ ] Support for localization (in version 0.1.9)
+* [x] Support for localization (in version 0.1.9)
 * [ ] Various output formats like SQL, MongoDB, human readeable format etc.
 * [ ] Themed form components (Material UI, Bootstrap, Ant Design)
 * [ ] Drag and Droppable user interface
