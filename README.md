@@ -86,12 +86,11 @@ const fields: BuilderFieldProps[] = [
             { value: 'SK', label: 'Slovakia' },
             { value: 'PL', label: 'Poland' },
         ],
-        },
-        {
-            field: 'IS_IN_EU',
-            label: 'Is in EU',
-            type: 'BOOLEAN'
-        }
+    },
+    {
+        field: 'IS_IN_EU',
+        label: 'Is in EU',
+        type: 'BOOLEAN'
     }
 ];
 ```
