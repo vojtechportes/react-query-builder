@@ -249,7 +249,7 @@ const strings: Strings = {
   "operators": {
     "LARGER": "Larger",
     "SMALLER": "Smaller",
-    "LARGER_EQUAL" "Larger or equal",
+    "LARGER_EQUAL": "Larger or equal",
     "SMALLER_EQUAL": "Smaller or equal",
     "EQUAL": "Equal",
     "NOT_EQUAL": "Not equal",
