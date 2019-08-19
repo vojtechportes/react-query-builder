@@ -13,11 +13,11 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
   selectedValue,
   id,
 }) => {
-  const { data, setData, onChange, components } = useContext(BuilderContext);
+  const { data, setData, onChange, components, strings } = useContext(
+    BuilderContext
+  );
 
-  const {
-    form: { SelectMulti: SelectMultiBase },
-  } = components;
+  const { form } = components;
 
   const handleChange = (value: React.ReactText) => {
     if (setData && onChange) {
@@ -46,12 +46,17 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
     onChange(clonedData);
   };
 
-  return (
-    <SelectMultiBase
-      onChange={handleChange}
-      onDelete={handleDelete}
-      selectedValue={selectedValue}
-      values={values}
-    />
-  );
+  if (form && strings.form) {
+    return (
+      <form.SelectMulti
+        onChange={handleChange}
+        onDelete={handleDelete}
+        selectedValue={selectedValue}
+        emptyValue={strings.form.selectYourValue}
+        values={values}
+      />
+    );
+  }
+
+  return null;
 };

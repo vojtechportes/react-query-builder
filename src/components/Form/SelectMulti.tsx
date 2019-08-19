@@ -37,17 +37,24 @@ export interface SelectMultiProps
   extends Pick<SelectProps, 'onChange' | 'values'> {
   onDelete: (value: React.ReactText) => void;
   selectedValue: React.ReactText[];
+  emptyValue?: string;
 }
 
 export const SelectMulti: React.FC<SelectMultiProps> = ({
   onChange,
   onDelete,
   selectedValue,
+  emptyValue,
   values,
 }) => {
   return (
     <Container>
-      <Select onChange={onChange} selectedValue="" values={values} />
+      <Select
+        onChange={onChange}
+        selectedValue=""
+        emptyValue={emptyValue}
+        values={values}
+      />
       <OptionContainer>
         {selectedValue.map(value => {
           const labelIndex = values.findIndex(item => item.value === value);

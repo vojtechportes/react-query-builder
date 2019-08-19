@@ -18,7 +18,9 @@ export const Group: React.FC<GroupProps> = ({
   id,
   isRoot,
 }) => {
-  const { components, data, setData, onChange } = useContext(BuilderContext);
+  const { components, data, setData, onChange, strings } = useContext(
+    BuilderContext
+  );
   const {
     Add,
     Group: GroupContainer,
@@ -111,42 +113,51 @@ export const Group: React.FC<GroupProps> = ({
     onChange(clonedData);
   };
 
-  return (
-    <GroupContainer
-      controlsLeft={
-        <>
-          <Option
-            isSelected={!!isNegated}
-            value={!isNegated}
-            onClick={handleToggleNegateGroup}
-          >
-            NOT
-          </Option>
-          <Option
-            isSelected={value === 'AND'}
-            value="AND"
-            onClick={handleChangeGroupType}
-          >
-            AND
-          </Option>
-          <Option
-            isSelected={value === 'OR'}
-            value="OR"
-            onClick={handleChangeGroupType}
-          >
-            OR
-          </Option>
-        </>
-      }
-      controlsRight={
-        <>
-          <Add onClick={handleAddRule} label="Add Rule" />
-          <Add onClick={handleAddGroup} label="Add Group" />
-          {!isRoot && <Remove onClick={handleDeleteGroup} label="Delete" />}
-        </>
-      }
-    >
-      {children}
-    </GroupContainer>
-  );
+  if (strings.group) {
+    return (
+      <GroupContainer
+        controlsLeft={
+          <>
+            <Option
+              isSelected={!!isNegated}
+              value={!isNegated}
+              onClick={handleToggleNegateGroup}
+            >
+              {strings.group.not}
+            </Option>
+            <Option
+              isSelected={value === 'AND'}
+              value="AND"
+              onClick={handleChangeGroupType}
+            >
+              {strings.group.and}
+            </Option>
+            <Option
+              isSelected={value === 'OR'}
+              value="OR"
+              onClick={handleChangeGroupType}
+            >
+              {strings.group.or}
+            </Option>
+          </>
+        }
+        controlsRight={
+          <>
+            <Add onClick={handleAddRule} label={strings.group.addRule} />
+            <Add onClick={handleAddGroup} label={strings.group.addGroup} />
+            {!isRoot && (
+              <Remove
+                onClick={handleDeleteGroup}
+                label={strings.group.delete}
+              />
+            )}
+          </>
+        }
+      >
+        {children}
+      </GroupContainer>
+    );
+  }
+
+  return null;
 };

@@ -4,7 +4,7 @@ import { clone } from '../../utils/clone';
 import { isReactTextArray } from '../../utils/types';
 
 interface OperatorSelectProps {
-  values: { value: BuilderFieldOperator; label: string }[];
+  values: { value: BuilderFieldOperator; label?: string }[];
   selectedValue?: BuilderFieldOperator;
   id: string;
 }
@@ -14,13 +14,11 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
   selectedValue,
   id,
 }) => {
-  const { fields, data, setData, onChange, components } = useContext(
+  const { fields, data, setData, onChange, components, strings } = useContext(
     BuilderContext
   );
 
-  const {
-    form: { Select },
-  } = components;
+  const { form } = components;
 
   const handleChange = (value: BuilderFieldOperator) => {
     const clonedData = clone(data);
@@ -49,11 +47,16 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
     onChange(clonedData);
   };
 
-  return (
-    <Select
-      values={values}
-      selectedValue={selectedValue}
-      onChange={handleChange}
-    />
-  );
+  if (form && strings.form) {
+    return (
+      <form.Select
+        values={values}
+        selectedValue={selectedValue}
+        emptyValue={strings.form.selectYourValue}
+        onChange={handleChange}
+      />
+    );
+  }
+
+  return null;
 };

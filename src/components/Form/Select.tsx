@@ -14,6 +14,7 @@ const StyledSelect = styled.select`
 export interface SelectProps {
   values: { value: React.ReactText; label: string }[];
   selectedValue?: React.ReactText;
+  emptyValue?: string;
   onChange: (value: any) => void;
   className?: string;
 }
@@ -21,6 +22,7 @@ export interface SelectProps {
 export const Select: React.FC<SelectProps> = ({
   values,
   selectedValue,
+  emptyValue,
   onChange,
   className,
 }) => {
@@ -35,7 +37,7 @@ export const Select: React.FC<SelectProps> = ({
       className={className}
     >
       <option value="" disabled>
-        Select your option
+        {emptyValue}
       </option>
       {values.map(({ value: optionValue, label: optionLabel }) => (
         <option value={optionValue} key={optionValue}>

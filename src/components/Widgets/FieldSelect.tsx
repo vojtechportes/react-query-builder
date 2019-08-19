@@ -12,13 +12,11 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
   selectedValue,
   id,
 }) => {
-  const { fields, data, setData, onChange, components } = useContext(
+  const { fields, data, setData, onChange, components, strings } = useContext(
     BuilderContext
   );
 
-  const {
-    form: { Select },
-  } = components;
+  const { form } = components;
 
   const handleChange = (value: React.ReactText) => {
     const clonedData = clone(data);
@@ -113,11 +111,16 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
     label: field.label,
   }));
 
-  return (
-    <Select
-      values={fieldNames}
-      selectedValue={selectedValue}
-      onChange={handleChange}
-    />
-  );
+  if (form && strings.form) {
+    return (
+      <form.Select
+        values={fieldNames}
+        selectedValue={selectedValue}
+        emptyValue={strings.form.selectYourValue}
+        onChange={handleChange}
+      />
+    );
+  }
+
+  return null;
 };
