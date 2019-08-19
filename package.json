@@ -7,6 +7,8 @@
     "query",
     "builder",
     "query builder",
+    "query-builder",
+    "react-query-builder",
     "typescript",
     "configurable"
   ],
