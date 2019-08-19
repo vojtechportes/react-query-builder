@@ -27,7 +27,7 @@
     - [Value](#value)
   - [Data](#data)
   - [Components](#components)
-  - [onChange](#onChange)
+  - [onChange](#onchange)
 - [Localization](#Localization)
 - [Future development](#future-development)
 
