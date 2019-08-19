@@ -15,7 +15,7 @@
 
 ---
 
-- [Instalation](#instalation)
+- [Installation](#installation)
 - [Demo](#demo)
 - [Usage](#usage)
 - [Configuration](#configuration)
