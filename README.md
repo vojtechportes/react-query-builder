@@ -206,8 +206,9 @@ onChange property is allowing you to retrieve query tree after every change that
 
 ## Future development
 
-- Support for localization
-- Various output formats like SQL, MongoDB, human readeable format etc.
-- Themed form components (Material UI, Bootstrap, Ant Design)
-- Drag and Droppable user interface
-- More examples and demos
+* [ ] Support for localization (in version 0.1.9)
+* [ ] Various output formats like SQL, MongoDB, human readeable format etc.
+* [ ] Themed form components (Material UI, Bootstrap, Ant Design)
+* [ ] Drag and Droppable user interface
+* [ ] More examples and demos
+* [ ] Tests (in version 0.2.0)
