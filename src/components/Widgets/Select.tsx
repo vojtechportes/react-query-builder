@@ -3,8 +3,8 @@ import { BuilderContext } from '../Builder';
 import { clone } from '../../utils/clone';
 
 export interface SelectProps {
-  selectedValue: React.ReactText;
-  values: { value: React.ReactText; label: string }[];
+  selectedValue: string;
+  values: { value: string; label: string }[];
   id: string;
 }
 
@@ -19,7 +19,7 @@ export const Select: React.FC<SelectProps> = ({
 
   const { form } = components;
 
-  const handleChange = (value: React.ReactText) => {
+  const handleChange = (value: string) => {
     const clonedData = clone(data);
     const parentIndex = clonedData.findIndex((item: any) => item.id === id);
 

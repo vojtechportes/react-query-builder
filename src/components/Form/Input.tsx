@@ -12,7 +12,7 @@ const StyledInput = styled.input`
 
 export interface InputProps {
   type: 'date' | 'number' | 'text';
-  value: React.ReactText;
+  value: string;
   onChange: (value: string) => void;
   className?: string;
 }

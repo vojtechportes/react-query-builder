@@ -16,18 +16,21 @@ export const isUndefined = (value: any): value is undefined => {
   return typeof value === 'undefined';
 };
 
-export const isReactText = (value: any): value is React.ReactText => {
-  return isString(value) || isNumber(value);
+export const isArray = (value: any): value is any[] => {
+  return Array.isArray(value);
 };
 
-export const isReactTextArray = (value: any): value is React.ReactText[] => {
-  return typeof value === 'object';
+export const isStringArray = (value: any): value is string[] => {
+  return isArray(value) && value.every((item: any) => isString(item));
 };
 
 export const isOptionList = (
   value: any
 ): value is Array<{ value: string; label: string }> => {
-  return typeof value === 'object';
+  return (
+    isArray(value) &&
+    value.every((item: any) => isString(item.value) && isString(item.label))
+  );
 };
 
 export const isOperator = (value: any): value is BuilderFieldOperator => {

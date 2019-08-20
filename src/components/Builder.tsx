@@ -58,8 +58,8 @@ export interface BuilderFieldProps {
   field: string;
   label: string;
   value?:
-    | React.ReactText
-    | React.ReactText[]
+    | string
+    | string[]
     | boolean
     | { value: React.ReactText; label: string }[];
   type: BuilderFieldType;

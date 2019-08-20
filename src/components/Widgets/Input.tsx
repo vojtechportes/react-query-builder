@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { isReactTextArray, isUndefined } from '../../utils/types';
+import { isStringArray, isUndefined } from '../../utils/types';
 import { BuilderContext } from '../Builder';
 import { clone } from '../../utils/clone';
 
 interface InputProps {
   type: 'date' | 'number' | 'text';
-  value: React.ReactText | React.ReactText[];
+  value: string | string[];
   id: string;
 }
 
@@ -29,7 +29,7 @@ export const Input: React.FC<InputProps> = ({ type, value, id }) => {
   };
 
   if (form) {
-    if (isReactTextArray(value)) {
+    if (isStringArray(value)) {
       return (
         <>
           <form.Input

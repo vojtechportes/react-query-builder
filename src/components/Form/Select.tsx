@@ -12,8 +12,8 @@ const StyledSelect = styled.select`
 `;
 
 export interface SelectProps {
-  values: { value: React.ReactText; label: string }[];
-  selectedValue?: React.ReactText;
+  values: { value: string; label: string }[];
+  selectedValue?: string;
   emptyValue?: string;
   onChange: (value: any) => void;
   className?: string;
