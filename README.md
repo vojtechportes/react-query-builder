@@ -276,8 +276,8 @@ export const QueryBuiler:React.FC = () => {
 
   const strings: Strings = {
     operators: {
-      LARGER: <Trans ns="query-builder" i18nkey="larger" />,
-      SMALLER: <Trans ns="query-builder" i18nkey="smaller" />
+      LARGER: <Trans ns="query-builder" i18nKey="larger" />,
+      SMALLER: <Trans ns="query-builder" i18nKey="smaller" />
       /* And so on */
     }
   };
@@ -302,4 +302,5 @@ export const QueryBuiler:React.FC = () => {
 * [ ] Themed form components (Material UI, Bootstrap, Ant Design)
 * [ ] Drag and Droppable user interface
 * [ ] More examples and demos
-* [ ] Tests (in version 0.2.0)
+* [ ] Tests (in version 0.2.1)
+* [ ] Separate functionality to standalone API (in version 0.3.0)
