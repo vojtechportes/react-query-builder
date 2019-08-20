@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { BuilderContext, BuilderFieldOperator } from '../Builder';
 import { clone } from '../../utils/clone';
-import { isReactTextArray } from '../../utils/types';
+import { isStringArray } from '../../utils/types';
 
 interface OperatorSelectProps {
   values: { value: BuilderFieldOperator; label?: string }[];
@@ -30,12 +30,12 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
     if (['DATE', 'TEXT', 'NUMBER'].includes(fields[fieldIndex].type)) {
       if (
         !['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
-        isReactTextArray(clonedData[parentIndex].value)
+        isStringArray(clonedData[parentIndex].value)
       ) {
         clonedData[parentIndex].value = '';
       } else if (
         ['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
-        !isReactTextArray(clonedData[parentIndex].value)
+        !isStringArray(clonedData[parentIndex].value)
       ) {
         clonedData[parentIndex].value = ['', ''];
       }

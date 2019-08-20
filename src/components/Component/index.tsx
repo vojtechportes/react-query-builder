@@ -9,9 +9,10 @@ import { OperatorSelect } from '../Widgets/OperatorSelect';
 import { Input } from '../Widgets/Input';
 import {
   isBoolean,
-  isReactText,
-  isReactTextArray,
+  isString,
+  isStringArray,
   isOptionList,
+  isUndefined,
 } from '../../utils/types';
 import { clone } from '../../utils/clone';
 
@@ -21,7 +22,7 @@ const BooleanContainer = styled.div`
 
 export interface ComponentProps {
   field: string;
-  value?: React.ReactText | React.ReactText[] | boolean;
+  value?: string | string[] | boolean;
   operator?: BuilderFieldOperator;
   id: string;
 }
@@ -92,7 +93,7 @@ export const Component: React.FC<ComponentProps> = ({
             )}
 
             {type === 'LIST' &&
-              isReactText(selectedValue) &&
+              isString(selectedValue) &&
               isOptionList(fieldValue) &&
               isOptionList(operatorsOptionList) && (
                 <>
@@ -101,71 +102,78 @@ export const Component: React.FC<ComponentProps> = ({
                     values={operatorsOptionList}
                     selectedValue={operator}
                   />
-                  <Select
-                    id={id}
-                    selectedValue={selectedValue}
-                    values={fieldValue}
-                  />
+                  {operator && (
+                    <Select
+                      id={id}
+                      selectedValue={selectedValue}
+                      values={fieldValue}
+                    />
+                  )}
                 </>
               )}
 
             {type === 'MULTI_LIST' &&
               isOptionList(fieldValue) &&
               isOptionList(operatorsOptionList) &&
-              isReactTextArray(selectedValue) && (
+              isStringArray(selectedValue) && (
                 <>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                   />
-                  <SelectMulti
-                    id={id}
-                    values={fieldValue}
-                    selectedValue={selectedValue}
-                  />
+                  {operator && (
+                    <SelectMulti
+                      id={id}
+                      values={fieldValue}
+                      selectedValue={selectedValue}
+                    />
+                  )}
                 </>
               )}
 
             {type === 'TEXT' &&
               isOptionList(operatorsOptionList) &&
-              (isReactText(selectedValue) ||
-                isReactTextArray(selectedValue)) && (
+              (isString(selectedValue) || isStringArray(selectedValue)) && (
                 <>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                   />
-                  <Input type="text" value={selectedValue} id={id} />
+                  {operator && (
+                    <Input type="text" value={selectedValue} id={id} />
+                  )}
                 </>
               )}
 
             {type === 'NUMBER' &&
               isOptionList(operatorsOptionList) &&
-              (isReactText(selectedValue) ||
-                isReactTextArray(selectedValue)) && (
+              (isString(selectedValue) || isStringArray(selectedValue)) && (
                 <>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                   />
-                  <Input type="number" value={selectedValue} id={id} />
+                  {operator && (
+                    <Input type="number" value={selectedValue} id={id} />
+                  )}
                 </>
               )}
 
             {type === 'DATE' &&
               isOptionList(operatorsOptionList) &&
-              (isReactText(selectedValue) ||
-                isReactTextArray(selectedValue)) && (
+              (isString(selectedValue) || isStringArray(selectedValue)) && (
                 <>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                   />
-                  <Input type="date" value={selectedValue} id={id} />
+                  {!isUndefined(operator) && (
+                    <Input type="date" value={selectedValue} id={id} />
+                  )}
                 </>
               )}
           </ComponentContainer>

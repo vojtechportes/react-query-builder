@@ -18,7 +18,7 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
 
   const { form } = components;
 
-  const handleChange = (value: React.ReactText) => {
+  const handleChange = (value: string) => {
     const clonedData = clone(data);
     const parentIndex = clonedData.findIndex((item: any) => item.id === id);
     const nextField = fields.filter(item => item.field === value)[0];

@@ -35,8 +35,8 @@ const Delete = styled.span`
 
 export interface SelectMultiProps
   extends Pick<SelectProps, 'onChange' | 'values'> {
-  onDelete: (value: React.ReactText) => void;
-  selectedValue: React.ReactText[];
+  onDelete: (value: string) => void;
+  selectedValue: string[];
   emptyValue?: string;
 }
 
