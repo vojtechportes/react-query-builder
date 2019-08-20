@@ -300,7 +300,7 @@ export const QueryBuiler:React.FC = () => {
 * [x] Support for localization (in version 0.1.9)
 * [ ] Various output formats like SQL, MongoDB, human readeable format etc.
 * [ ] Themed form components (Material UI, Bootstrap, Ant Design)
-* [ ] Drag and Droppable user interface
+* [ ] Drag and Drop user interface
 * [ ] More examples and demos
 * [ ] Tests (in version 0.2.1)
 * [ ] Separate functionality to standalone API (in version 0.3.0)
