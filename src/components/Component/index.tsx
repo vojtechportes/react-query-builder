@@ -67,6 +67,7 @@ export const Component: React.FC<ComponentProps> = ({
     } else {
       try {
         const fieldIndex = fields.findIndex(item => item.field === fieldRef);
+
         const { field, operators, type, value: fieldValue } = fields[
           fieldIndex
         ];

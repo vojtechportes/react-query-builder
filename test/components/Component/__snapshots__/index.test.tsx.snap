@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Component Tests snapshot 1`] = `
+<Component
+  field="MOCK_FIELD_1"
+  id="test-2"
+/>
+`;

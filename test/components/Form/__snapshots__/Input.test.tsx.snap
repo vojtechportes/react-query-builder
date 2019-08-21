@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Input Tests Snapshot 1`] = `
+<styled.input
+  onChange={[Function]}
+  type="text"
+  value="Test"
+/>
+`;

@@ -22,33 +22,27 @@ export const Iterator: React.FC<IteratorProps> = ({
           items.push(originalData.filter((fitem: any) => id === fitem.id)[0]);
         });
 
-        switch (item.type) {
-          case 'GROUP': {
-            const { id, value, isNegated } = item as GroupProps;
+        if (item.type === 'GROUP') {
+          const { id, value, isNegated } = item as GroupProps;
 
-            return (
-              <Group key={id} value={value} isNegated={isNegated} id={id} isRoot={isRoot}>
-                <Iterator originalData={originalData} filteredData={items} isRoot={false} />
-              </Group>
-            );
-          }
-          default: {
-            const { field, value, id, operator } = item as ComponentProps;
-
-            return (
-              <div key={item.id}>
-                <Component
-                  key={id}
-                  field={field}
-                  value={value}
-                  operator={operator}
-                  id={id}
-                />
-                <Iterator originalData={originalData} filteredData={items} isRoot={false} />
-              </div>
-            );
-          }
+          return (
+            <Group
+              key={id}
+              value={value}
+              isNegated={isNegated}
+              id={id}
+              isRoot={isRoot}
+            >
+              <Iterator
+                originalData={originalData}
+                filteredData={items}
+                isRoot={false}
+              />
+            </Group>
+          );
         }
+
+        return null
       } else {
         const { field, value, id, operator } = item as ComponentProps;
 

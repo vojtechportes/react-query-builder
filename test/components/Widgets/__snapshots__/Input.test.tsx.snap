@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Widgets/Input Tests Snapshot 1`] = `
+<Component
+  id="test"
+  type="text"
+  value=""
+/>
+`;
+
+exports[`#components/Widgets/Input Tests Snapshot 2`] = `
+<Component
+  id="test"
+  type="number"
+  value=""
+/>
+`;

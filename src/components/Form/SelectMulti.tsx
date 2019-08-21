@@ -62,7 +62,7 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
           return (
             <Option>
               {values[labelIndex].label}{' '}
-              <Delete onClick={() => onDelete(value)}>[x]</Delete>
+              <Delete onClick={() => onDelete(value)} data-test="Delete">[x]</Delete>
             </Option>
           );
         })}

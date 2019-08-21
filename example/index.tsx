@@ -13,7 +13,19 @@ const Code = styled.pre`
   font-size: 0.7rem;
 `;
 
-export const queryTree = [];
+export const queryTree = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'IS_IN_CZ',
+        value: false,
+      },
+    ],
+  },
+];
 
 export const fields: BuilderFieldProps[] = [
   {

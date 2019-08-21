@@ -122,6 +122,7 @@ export const Group: React.FC<GroupProps> = ({
               isSelected={!!isNegated}
               value={!isNegated}
               onClick={handleToggleNegateGroup}
+              data-test="Option[not]"
             >
               {strings.group.not}
             </Option>
@@ -129,6 +130,7 @@ export const Group: React.FC<GroupProps> = ({
               isSelected={value === 'AND'}
               value="AND"
               onClick={handleChangeGroupType}
+              data-test="Option[and]"
             >
               {strings.group.and}
             </Option>
@@ -136,6 +138,7 @@ export const Group: React.FC<GroupProps> = ({
               isSelected={value === 'OR'}
               value="OR"
               onClick={handleChangeGroupType}
+              data-test="Option[or]"
             >
               {strings.group.or}
             </Option>
@@ -143,12 +146,21 @@ export const Group: React.FC<GroupProps> = ({
         }
         controlsRight={
           <>
-            <Add onClick={handleAddRule} label={strings.group.addRule} />
-            <Add onClick={handleAddGroup} label={strings.group.addGroup} />
+            <Add
+              onClick={handleAddRule}
+              label={strings.group.addRule}
+              data-test="AddRule"
+            />
+            <Add
+              onClick={handleAddGroup}
+              label={strings.group.addGroup}
+              data-test="AddGroup"
+            />
             {!isRoot && (
               <Remove
                 onClick={handleDeleteGroup}
                 label={strings.group.delete}
+                data-test="Remove"
               />
             )}
           </>
