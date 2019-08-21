@@ -4,26 +4,29 @@ import { colors } from '../../constants/colors';
 
 const Knob = styled.div`
   position: absolute;
-  width: 1rem;
-  height: 1rem;
+  width: 1.3rem;
+  height: 1.3rem;
   background: white;
   border-radius: 50%;
-  border: 1px solid ${colors.medium};
+  border: 1px solid ${colors.dark};
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.4);
 `;
 
 const StyledSwitch = styled.div<{ switched: boolean }>`
-  width: 2.2rem;
-  height: 1rem;
+  width: 3rem;
+  height: 1.65rem;
   position: relative;
   border-radius: 1.4rem;
+  border: 1px solid ${colors.dark};
   background-color: ${({ switched }) =>
-    switched ? colors.enabled : colors.disabled};
+    switched ? colors.primary : colors.darker};
   transition: all 0.5s;
   cursor: pointer;
 
   ${Knob} {
     transition: all 0.5s;
-    left: ${({ switched }) => (switched ? '1.2rem' : '0rem')};
+    top: 0.1rem;
+    left: ${({ switched }) => (switched ? '1.3rem' : '0.1rem')};
   }
 `;
 

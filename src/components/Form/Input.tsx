@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { colors } from '../../constants/colors';
 
 const StyledInput = styled.input`
-  padding: 0.2rem 0.5rem;
-  height: 1.6rem;
-  line-height: 1.6rem;
+  min-width: 160px;
+  padding: 0.4rem 0.6rem;
   border: 1px solid ${colors.medium};
   border-radius: 3px;
 `;
