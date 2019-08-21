@@ -24,6 +24,23 @@ const Left = styled.div`
   grid-auto-flow: column;
   align-self: flex-end;
   justify-self: flex-start;
+
+  > div:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-right: 0;
+  }
+
+  > div:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-left: 0;
+  }
+
+  > div:nth-child(2) {
+    border-left: 0;
+    border-right: 0;
+  }
 `;
 
 const Right = styled.div`

@@ -7,13 +7,16 @@ interface StyledOptionProps {
 }
 
 const StyledOption = styled.div<StyledOptionProps>`
-  padding: 0.3rem 0.4rem;
+  padding: 0.5rem 0.6rem;
   font-weight: bold;
   font-size: 0.7rem;
   color: #fff;
+  text-transform: uppercase;
   background: ${({ isSelected }) =>
-    !!isSelected ? colors.enabled : colors.disabled};
+    !!isSelected ? colors.primary : colors.darker};
   cursor: pointer;
+  border: 1px solid ${colors.dark};
+  /* box-shadow: ${({ isSelected }) => !!isSelected && `0px 0px 5px 0px rgba(0,0,0,0.4)`}; */
 `;
 
 export interface OptionProps {

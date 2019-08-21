@@ -6,11 +6,12 @@ const StyledButton = styled.button`
   color: #fff;
   border: 0;
   background-color: ${colors.primary};
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   font-size: 0.7rem;
   white-space: nowrap;
   cursor: pointer;
   border-radius: 3px;
+  text-transform: uppercase;
   outline: none;
 `;
 
