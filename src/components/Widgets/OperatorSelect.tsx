@@ -32,12 +32,20 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
         !['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
         isStringArray(clonedData[parentIndex].value)
       ) {
-        clonedData[parentIndex].value = '';
+        if (fields[fieldIndex].type === 'NUMBER') {
+          clonedData[parentIndex].value = '0';
+        } else {
+          clonedData[parentIndex].value = '';
+        }
       } else if (
         ['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
         !isStringArray(clonedData[parentIndex].value)
       ) {
-        clonedData[parentIndex].value = ['', ''];
+        if (fields[fieldIndex].type === 'NUMBER') {
+          clonedData[parentIndex].value = ['0', '0'];
+        } else {
+          clonedData[parentIndex].value = ['', ''];
+        }
       }
     }
 

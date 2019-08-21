@@ -68,9 +68,9 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
           nextField.operators &&
           ['BETWEEN', 'NOT_BETWEEN'].includes(nextField.operators[0])
         ) {
-          clonedData[parentIndex].value = [0, 0];
+          clonedData[parentIndex].value = ['0', '0'];
         } else {
-          clonedData[parentIndex].value = 0;
+          clonedData[parentIndex].value = '0';
         }
 
         clonedData[parentIndex].operator =
