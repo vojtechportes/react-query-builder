@@ -3,8 +3,13 @@ import { BuilderContext, BuilderFieldOperator } from '../Builder';
 import { clone } from '../../utils/clone';
 import { isStringArray } from '../../utils/types';
 
-interface OperatorSelectProps {
-  values: { value: BuilderFieldOperator; label?: string }[];
+export interface OperatorSelectValuesProps {
+  value: BuilderFieldOperator;
+  label?: string;
+}
+
+export interface OperatorSelectProps {
+  values: OperatorSelectValuesProps[];
   selectedValue?: BuilderFieldOperator;
   id: string;
 }

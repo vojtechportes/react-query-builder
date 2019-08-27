@@ -175,7 +175,7 @@ export const Builder: React.FC<BuilderProps> = ({
   const filteredData = data.filter((item: any) => !item.parent);
 
   useEffect(() => {
-    handleChange(originalData);
+    handleChange(normalizedData);
   }, []);
 
   const handleChange = (nextData: any) => {

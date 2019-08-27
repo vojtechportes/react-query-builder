@@ -49,6 +49,7 @@ export const Switch: React.FC<SwitchProps> = ({
 
   return (
     <StyledSwitch
+      data-test="Switch"
       switched={switched}
       onClick={handleClick}
       className={className}

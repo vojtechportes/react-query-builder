@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Select Tests Snapshot 1`] = `
+<styled.select
+  onChange={[Function]}
+  value="Test"
+>
+  <option
+    disabled={true}
+    value=""
+  />
+  <option
+    key="test"
+    value="test"
+  >
+    test
+  </option>
+</styled.select>
+`;

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Switch Tests Snapshot 1`] = `
+<styled.div
+  data-test="Switch"
+  onClick={[Function]}
+  switched={false}
+>
+  <styled.div />
+</styled.div>
+`;

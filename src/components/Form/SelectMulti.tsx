@@ -56,13 +56,13 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
         values={values}
       />
       <OptionContainer>
-        {selectedValue.map(value => {
+        {selectedValue.map((value, key) => {
           const labelIndex = values.findIndex(item => item.value === value);
 
           return (
-            <Option>
+            <Option key={key}>
               {values[labelIndex].label}{' '}
-              <Delete onClick={() => onDelete(value)}>[x]</Delete>
+              <Delete onClick={() => onDelete(value)} data-test="Delete">[x]</Delete>
             </Option>
           );
         })}
