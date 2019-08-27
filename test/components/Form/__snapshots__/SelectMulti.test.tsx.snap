@@ -15,7 +15,9 @@ exports[`#components/SelectMulti Tests Snapshot 1`] = `
     }
   />
   <styled.div>
-    <styled.span>
+    <styled.span
+      key="0"
+    >
       test
        
       <styled.span

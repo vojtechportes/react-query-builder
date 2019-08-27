@@ -1,6 +1,6 @@
 import { Builder, BuilderFieldProps } from '../../src/components/Builder';
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 
 export const fields: BuilderFieldProps[] = [
   {
@@ -12,13 +12,7 @@ export const fields: BuilderFieldProps[] = [
 ];
 
 describe('#components/Builder', () => {
-  it('Tests snapshot', () => {
-    expect(
-      shallow(<Builder fields={fields} data={[]} onChange={jest.fn()} />)
-    ).toMatchSnapshot();
-  });
-
-  it('Mounts Builder component', () => {
+  it('Test full functionality', () => {
     mount(<Builder fields={fields} data={[]} onChange={jest.fn()} />);
   });
 });
