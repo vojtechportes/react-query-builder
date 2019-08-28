@@ -35,7 +35,7 @@
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "nmp run test -- --watchAll",
-    "test:coveralls": "tsdx test --coverage | coveralls",
+    "collect-coverage": "cat coverage/lcov.info | coveralls",
     "start": "cross-env NODE_ENV=development tsdx watch",
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm,umd",
@@ -75,7 +75,8 @@
     "typescript": "^3.5.3",
     "uniqid": "^5.0.3",
     "webpack": "^4.31.0",
-    "coveralls": "^3.0.6"
+    "coveralls": "^3.0.6",
+    "cat": "^0.2.0"
   },
   "peerDependencies": {
     "react": "^16.9.0",
@@ -87,6 +88,7 @@
     "styled-components": "^4.3.2"
   },
   "jest": {
+    "collectCoverage": true,
     "setupFilesAfterEnv": [
       "<rootDir>/src/setupTests.ts"
     ],

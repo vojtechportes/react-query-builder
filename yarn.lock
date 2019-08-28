@@ -1914,6 +1914,11 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
+cat@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/cat/-/cat-0.2.0.tgz#fd850cda7d4162e6904f33b7fcf743b1243fd434"
+  integrity sha1-/YUM2n1BYuaQTzO3/PdDsSQ/1DQ=
+
 chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.0, chalk@^2.4.1, chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
