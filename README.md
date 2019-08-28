@@ -10,7 +10,7 @@
 </h3>
 <p align="center">
 <a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg" alt="npm version" /></a> <a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a> <img src="https://travis-ci.org/vojtechportes/react-query-builder.svg?branch=master" alt="Travis CI Status" /> 
-<a href='https://coveralls.io/github/vojtechportes/react-query-builder?branch=master'><img src='https://coveralls.io/repos/github/vojtechportes/react-query-builder/badge.svg?branch=master' alt='Coverage Status' /></a>
+<a href="https://coveralls.io/github/vojtechportes/react-query-builder?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/vojtechportes/react-query-builder/badge.svg?branch=master" alt="Coverage Status" /></a>
 </p>
 <br />
 
@@ -303,5 +303,5 @@ export const QueryBuiler:React.FC = () => {
 * [ ] Themed form components (Material UI, Bootstrap, Ant Design)
 * [ ] Drag and Drop user interface
 * [ ] More examples and demos
-* [ ] Tests (in version 0.2.1)
+* [x] Tests (after version 0.2.5)
 * [ ] Separate functionality to standalone API (in version 0.3.0)
