@@ -34,7 +34,8 @@
   ],
   "scripts": {
     "test": "tsdx test --env=jsdom",
-    "test:watch": "npm run test -- --watchAll",
+    "test:watch": "nmp run test -- --watchAll",
+    "test:coveralls": "tsdx test --coverage | coveralls",
     "start": "cross-env NODE_ENV=development tsdx watch",
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm,umd",
@@ -73,7 +74,8 @@
     "tslib": "^1.10.0",
     "typescript": "^3.5.3",
     "uniqid": "^5.0.3",
-    "webpack": "^4.31.0"
+    "webpack": "^4.31.0",
+    "coveralls": "^3.0.6"
   },
   "peerDependencies": {
     "react": "^16.9.0",

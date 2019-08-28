@@ -6,4 +6,5 @@ cache:
   - node_modules
 script:
   - yarn test
+  - yarn test:coveralls
   - yarn build
