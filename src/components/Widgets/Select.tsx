@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
+import { BuilderContext } from '../Context';
 
 export interface SelectProps {
   selectedValue: string;
-  values: { value: string; label: string }[];
+  values: Array<{ value: string; label: string }>;
   id: string;
 }
 
@@ -40,5 +40,5 @@ export const Select: React.FC<SelectProps> = ({
     );
   }
 
-  return null
+  return null;
 };

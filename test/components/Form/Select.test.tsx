@@ -1,6 +1,6 @@
-import { Select } from '../../../src/components/Form/Select';
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { Select } from '../../../src/components/Form/Select';
 
 const mockValues = [{ value: 'test', label: 'test' }];
 

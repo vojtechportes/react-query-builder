@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
 import { isOptionList } from '../../utils/types';
+import { BuilderContext } from '../Context';
 
 interface FieldSelectProps {
   selectedValue: string;
@@ -34,14 +34,11 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
         break;
 
       case 'DATE':
-        if (
+        clonedData[parentIndex].value =
           nextField.operators &&
           ['BETWEEN', 'NOT_BETWEEN'].includes(nextField.operators[0])
-        ) {
-          clonedData[parentIndex].value = ['', ''];
-        } else {
-          clonedData[parentIndex].value = '';
-        }
+            ? ['', '']
+            : '';
 
         clonedData[parentIndex].operator =
           nextField.operators && nextField.operators[0];
@@ -49,14 +46,11 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
         break;
 
       case 'TEXT':
-        if (
+        clonedData[parentIndex].value =
           nextField.operators &&
           ['BETWEEN', 'NOT_BETWEEN'].includes(nextField.operators[0])
-        ) {
-          clonedData[parentIndex].value = ['', ''];
-        } else {
-          clonedData[parentIndex].value = '';
-        }
+            ? ['', '']
+            : '';
 
         clonedData[parentIndex].operator =
           nextField.operators && nextField.operators[0];
@@ -64,14 +58,11 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
         break;
 
       case 'NUMBER':
-        if (
+        clonedData[parentIndex].value =
           nextField.operators &&
           ['BETWEEN', 'NOT_BETWEEN'].includes(nextField.operators[0])
-        ) {
-          clonedData[parentIndex].value = ['0', '0'];
-        } else {
-          clonedData[parentIndex].value = '0';
-        }
+            ? ['0', '0']
+            : '0';
 
         clonedData[parentIndex].operator =
           nextField.operators && nextField.operators[0];

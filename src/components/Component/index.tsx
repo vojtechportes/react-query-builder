@@ -1,21 +1,21 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { BuilderFieldOperator } from '../Builder';
-import { BuilderContext } from '../Context';
-import { FieldSelect } from '../Widgets/FieldSelect';
-import { Boolean } from '../Widgets/Boolean';
-import { Select } from '../Widgets/Select';
-import { SelectMulti } from '../Widgets/SelectMulti';
-import { OperatorSelect } from '../Widgets/OperatorSelect';
-import { Input } from '../Widgets/Input';
+import { clone } from '../../utils/clone';
 import {
   isBoolean,
+  isOptionList,
   isString,
   isStringArray,
-  isOptionList,
   isUndefined,
 } from '../../utils/types';
-import { clone } from '../../utils/clone';
+import { BuilderFieldOperator } from '../Builder';
+import { BuilderContext } from '../Context';
+import { Boolean } from '../Widgets/Boolean';
+import { FieldSelect } from '../Widgets/FieldSelect';
+import { Input } from '../Widgets/Input';
+import { OperatorSelect } from '../Widgets/OperatorSelect';
+import { Select } from '../Widgets/Select';
+import { SelectMulti } from '../Widgets/SelectMulti';
 
 const BooleanContainer = styled.div`
   align-self: center;
@@ -181,6 +181,7 @@ export const Component: React.FC<ComponentProps> = ({
           </ComponentContainer>
         );
       } catch (e) {
+        // tslint:disable-next-line: no-console
         console.error(`Field "${fieldRef}" not found in fields definition.`);
       }
     }

@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import { colors } from '../../constants/colors';
 
 const StyledGroup = styled.div`
+  margin: 0.5rem 0;
+  padding: 0.7rem;
   background: #f4f4f4;
   border: 1px solid ${colors.medium};
-  padding: 0.7rem;
-  margin: 0.5rem 0;
   box-shadow: 0px 0px 5px -1px rgba(0, 0, 0, 0.15);
 `;
 
 const GroupHeader = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
+  grid-template-columns: 1fr 1fr;
   padding: 0 0 0.5rem;
   border-bottom: 1px solid ${colors.medium};
 `;
@@ -22,24 +22,24 @@ const Left = styled.div`
   display: grid;
   grid-auto-columns: min-content;
   grid-auto-flow: column;
-  align-self: flex-end;
-  justify-self: flex-start;
+  align-self: end;
+  justify-self: start;
 
   > div:first-child {
+    border-right: 0;
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
-    border-right: 0;
   }
 
   > div:last-child {
+    border-left: 0;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
-    border-left: 0;
   }
 
   > div:nth-child(2) {
-    border-left: 0;
     border-right: 0;
+    border-left: 0;
   }
 `;
 
@@ -48,7 +48,7 @@ const Right = styled.div`
   grid-auto-columns: min-content;
   grid-auto-flow: column;
   grid-gap: 0.5rem;
-  justify-self: flex-end;
+  justify-self: end;
 `;
 
 export interface GroupProps {

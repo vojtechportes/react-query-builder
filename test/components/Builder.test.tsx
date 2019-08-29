@@ -1,6 +1,6 @@
-import { Builder, BuilderFieldProps } from '../../src/components/Builder';
-import React from 'react';
 import { mount } from 'enzyme';
+import React from 'react';
+import { Builder, BuilderFieldProps } from '../../src/components/Builder';
 
 export const fields: BuilderFieldProps[] = [
   {

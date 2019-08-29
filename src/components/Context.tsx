@@ -1,10 +1,10 @@
 import React, { createContext } from 'react';
+import { Strings, strings as defaultStrings } from '../constants/strings';
 import {
-  BuilderFieldProps,
   BuilderComponentsProps,
+  BuilderFieldProps,
   defaultComponents,
 } from './Builder';
-import { strings as defaultStrings, Strings } from '../constants/strings';
 
 export interface BuilderContextProps {
   fields: BuilderFieldProps[];
@@ -16,6 +16,7 @@ export interface BuilderContextProps {
 }
 
 export const BuilderContext = createContext<BuilderContextProps>(
+  // tslint:disable-next-line: no-object-literal-type-assertion
   {} as BuilderContextProps
 );
 

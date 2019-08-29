@@ -1,7 +1,7 @@
 import React from 'react';
-import { Select, SelectProps } from './Select';
 import styled from 'styled-components';
 import { colors } from '../../constants/colors';
+import { Select, SelectProps } from './Select';
 
 const Container = styled.div`
   display: grid;
@@ -12,21 +12,20 @@ const Container = styled.div`
 
 const OptionContainer = styled.div`
   display: grid;
-  grid-auto-flow: column;
   grid-auto-columns: min-content;
-  grid-auto--rows: min-content;
-  align-self: center;
+  grid-auto-flow: column;
   grid-gap: 0.5rem;
+  align-self: center;
 `;
 
 const Option = styled.span`
-  color: ${colors.dark};
-  border: 1px solid ${colors.dark};
-  border-radius: 3rem;
   padding: 0.3rem 0.5rem;
+  color: ${colors.dark};
   font-size: 0.7rem;
   line-height: 0.7rem;
   white-space: nowrap;
+  border: 1px solid ${colors.dark};
+  border-radius: 3rem;
 `;
 
 const Delete = styled.span`
@@ -62,7 +61,9 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
           return (
             <Option key={key}>
               {values[labelIndex].label}{' '}
-              <Delete onClick={() => onDelete(value)} data-test="Delete">[x]</Delete>
+              <Delete onClick={() => onDelete(value)} data-test="Delete">
+                [x]
+              </Delete>
             </Option>
           );
         })}

@@ -5,6 +5,7 @@ cache:
   directories:
   - node_modules
 script:
+  - yarn checkAll
   - yarn build
   - yarn test --coverage
 after_script:

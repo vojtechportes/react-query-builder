@@ -1,33 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Iterator } from './Iterator';
-import { colors } from '../constants/colors';
-import { normalizeTree } from '../utils/normalizeTree';
-import { denormalizeTree } from '../utils/denormalizeTree';
 import uniqid from 'uniqid';
+import { colors } from '../constants/colors';
+import { Strings, strings as defaultStrings } from '../constants/strings';
 import { assignIds } from '../utils/assignIds';
-import { BuilderContextProvider } from './Context';
-
-/* Configurable components */
-
+import { denormalizeTree } from '../utils/denormalizeTree';
+import { normalizeTree } from '../utils/normalizeTree';
 import { Button } from './Button';
-import { SecondaryButton } from './SecondaryButton';
+import { Component } from './Component/Component';
+import { BuilderContextProvider } from './Context';
 import { Input } from './Form/Input';
 import { Select } from './Form/Select';
 import { SelectMulti } from './Form/SelectMulti';
 import { Switch } from './Form/Switch';
-import { Component } from './Component/Component';
 import { Group } from './Group/Group';
 import { Option as GroupHeaderOption } from './Group/Option';
-
-/* Strings */
-
-import { strings as defaultStrings, Strings } from '../constants/strings';
+import { Iterator } from './Iterator';
+import { SecondaryButton } from './SecondaryButton';
 
 export const StyledBuilder = styled.div`
   padding: 1rem;
-  border: 1px solid ${colors.light};
   background: #fff;
+  border: 1px solid ${colors.light};
 `;
 
 export type BuilderFieldType =
@@ -62,7 +56,7 @@ export interface BuilderFieldProps {
     | string
     | string[]
     | boolean
-    | { value: React.ReactText; label: string }[];
+    | Array<{ value: React.ReactText; label: string }>;
   type: BuilderFieldType;
   /* List of available operators */
   operators?: BuilderFieldOperator[];
