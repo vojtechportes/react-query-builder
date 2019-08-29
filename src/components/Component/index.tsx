@@ -181,7 +181,8 @@ export const Component: React.FC<ComponentProps> = ({
           </ComponentContainer>
         );
       } catch (e) {
-        throw new Error(`Field "${fieldRef}" not found in fields definition.`);
+        // tslint:disable-next-line: no-console
+        console.error(`Field "${fieldRef}" not found in fields definition.`);
       }
     }
   }
