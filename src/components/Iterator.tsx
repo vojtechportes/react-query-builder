@@ -42,7 +42,7 @@ export const Iterator: React.FC<IteratorProps> = ({
           );
         }
 
-        return null
+        return null;
       } else {
         const { field, value, id, operator } = item as ComponentProps;
 

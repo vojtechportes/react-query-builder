@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { isStringArray, isUndefined } from '../../utils/types';
-import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
+import { isStringArray, isUndefined } from '../../utils/types';
+import { BuilderContext } from '../Context';
 
 interface InputProps {
   type: 'date' | 'number' | 'text';
@@ -14,14 +14,14 @@ export const Input: React.FC<InputProps> = ({ type, value, id }) => {
 
   const { form } = components;
 
-  const handleChange = (value: any, index?: number) => {
+  const handleChange = (changedValue: any, index?: number) => {
     const clonedData = clone(data);
     const parentIndex = clonedData.findIndex((item: any) => item.id === id);
 
     if (!isUndefined(index)) {
-      clonedData[parentIndex].value[index] = value;
+      clonedData[parentIndex].value[index] = changedValue;
     } else {
-      clonedData[parentIndex].value = value;
+      clonedData[parentIndex].value = changedValue;
     }
 
     setData(clonedData);
@@ -35,12 +35,12 @@ export const Input: React.FC<InputProps> = ({ type, value, id }) => {
           <form.Input
             type={type}
             value={value[0]}
-            onChange={(value: any) => handleChange(value, 0)}
+            onChange={(changedValue: any) => handleChange(changedValue, 0)}
           />
           <form.Input
             type={type}
             value={value[1]}
-            onChange={(value: any) => handleChange(value, 1)}
+            onChange={(changedValue: any) => handleChange(changedValue, 1)}
           />
         </>
       );

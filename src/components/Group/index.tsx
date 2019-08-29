@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { BuilderGroupValues } from '../Builder';
-import { BuilderContext } from '../Context';
 import uniqid from 'uniqid';
 import { clone } from '../../utils/clone';
+import { BuilderGroupValues } from '../Builder';
+import { BuilderContext } from '../Context';
 
 export interface GroupProps {
   value?: BuilderGroupValues;

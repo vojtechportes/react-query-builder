@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
-import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
+import { BuilderContext } from '../Context';
 
 export interface BooleanProps {
   selectedValue: boolean;
   id: string;
 }
 
+// tslint:disable-next-line: variable-name
 export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
   const { data, setData, onChange, components } = useContext(BuilderContext);
 

@@ -5,10 +5,10 @@ import { colors } from '../../constants/colors';
 const StyledComponent = styled.div`
   display: grid;
   grid-auto-flow: column;
-  padding: 0.7rem;
   margin: 0.5rem 0;
-  border: 1px solid ${colors.medium};
+  padding: 0.7rem;
   background-color: #fff;
+  border: 1px solid ${colors.medium};
 `;
 
 const Content = styled.div`
@@ -20,8 +20,8 @@ const Content = styled.div`
 
 const Controls = styled.div`
   display: grid;
-  grid-auto-flow: column;
   grid-auto-columns: min-content;
+  grid-auto-flow: column;
   grid-gap: 0.5rem;
   justify-self: flex-end;
 `;

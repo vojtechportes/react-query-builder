@@ -1,6 +1,6 @@
-import { Switch } from '../../../src/components/Form/Switch';
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { Switch } from '../../../src/components/Form/Switch';
 
 describe('#components/Switch', () => {
   it('Tests Snapshot', () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import styled from 'styled-components';
 import { colors } from '../../constants/colors';
 
@@ -11,7 +10,7 @@ const StyledSelect = styled.select`
 `;
 
 export interface SelectProps {
-  values: { value: string; label: string }[];
+  values: Array<{ value: string; label: string }>;
   selectedValue?: string;
   emptyValue?: string;
   onChange: (value: any) => void;

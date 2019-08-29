@@ -1,5 +1,4 @@
 import { clone } from './clone';
-// import { BuilderFieldProps } from '../Builder'
 
 export const denormalizeTree = (data: any) => {
   const clonedData: any = clone(data);

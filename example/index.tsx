@@ -1,9 +1,10 @@
 import 'react-app-polyfill/ie11';
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import styled from 'styled-components';
 import { Builder, BuilderFieldProps } from '../src';
 import { colors } from '../src/constants/colors';
-import styled from 'styled-components';
 
 const Code = styled.pre`
   background: ${colors.light};

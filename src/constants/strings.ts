@@ -1,31 +1,31 @@
 export interface Strings {
   group?: {
-    not?: string,
-    or?: string,
-    and?: string,
-    addRule?: string,
-    addGroup?: string,
-    delete?: string
-  },
+    not?: string;
+    or?: string;
+    and?: string;
+    addRule?: string;
+    addGroup?: string;
+    delete?: string;
+  };
   component?: {
-    delete?: string
-  },
+    delete?: string;
+  };
   form?: {
-    selectYourValue?: string
-  },
+    selectYourValue?: string;
+  };
   operators?: {
-    LARGER?: string,
-    SMALLER?: string,
-    LARGER_EQUAL?: string,
-    SMALLER_EQUAL?: string,
-    EQUAL?: string,
-    NOT_EQUAL?: string,
-    ALL_IN?: string,
-    ANY_IN?: string,
-    NOT_IN?: string,
-    BETWEEN?: string,
-    NOT_BETWEEN?: string
-  }
+    LARGER?: string;
+    SMALLER?: string;
+    LARGER_EQUAL?: string;
+    SMALLER_EQUAL?: string;
+    EQUAL?: string;
+    NOT_EQUAL?: string;
+    ALL_IN?: string;
+    ANY_IN?: string;
+    NOT_IN?: string;
+    BETWEEN?: string;
+    NOT_BETWEEN?: string;
+  };
 }
 
 export const strings: Strings = {
@@ -41,7 +41,7 @@ export const strings: Strings = {
     delete: 'Delete',
   },
   form: {
-    selectYourValue: 'Select your value'
+    selectYourValue: 'Select your value',
   },
   operators: {
     LARGER: 'Larger',
@@ -54,6 +54,6 @@ export const strings: Strings = {
     ANY_IN: 'Any in',
     NOT_IN: 'Not in',
     BETWEEN: 'Between',
-    NOT_BETWEEN: 'Not between'
-  }
+    NOT_BETWEEN: 'Not between',
+  },
 };

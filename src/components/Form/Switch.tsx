@@ -7,26 +7,26 @@ const Knob = styled.div`
   width: 1.3rem;
   height: 1.3rem;
   background: white;
-  border-radius: 50%;
   border: 1px solid ${colors.dark};
-  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.4);
+  border-radius: 50%;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.4);
 `;
 
 const StyledSwitch = styled.div<{ switched: boolean }>`
+  position: relative;
   width: 3rem;
   height: 1.65rem;
-  position: relative;
-  border-radius: 1.4rem;
-  border: 1px solid ${colors.dark};
   background-color: ${({ switched }) =>
     switched ? colors.primary : colors.darker};
-  transition: all 0.5s;
+  border: 1px solid ${colors.dark};
+  border-radius: 1.4rem;
   cursor: pointer;
+  transition: all 0.5s;
 
   ${Knob} {
-    transition: all 0.5s;
     top: 0.1rem;
     left: ${({ switched }) => (switched ? '1.3rem' : '0.1rem')};
+    transition: all 0.5s;
   }
 `;
 

@@ -1,1 +1,1 @@
-export default () => 'mock-uuid'
+export default () => 'mock-uuid';

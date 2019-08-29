@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { BuilderFieldOperator } from '../Builder';
-import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
 import { isStringArray } from '../../utils/types';
+import { BuilderFieldOperator } from '../Builder';
+import { BuilderContext } from '../Context';
 
 export interface OperatorSelectValuesProps {
   value: BuilderFieldOperator;
@@ -38,20 +38,14 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
         !['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
         isStringArray(clonedData[parentIndex].value)
       ) {
-        if (fields[fieldIndex].type === 'NUMBER') {
-          clonedData[parentIndex].value = '0';
-        } else {
-          clonedData[parentIndex].value = '';
-        }
+        clonedData[parentIndex].value =
+          fields[fieldIndex].type === 'NUMBER' ? '0' : '';
       } else if (
         ['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
         !isStringArray(clonedData[parentIndex].value)
       ) {
-        if (fields[fieldIndex].type === 'NUMBER') {
-          clonedData[parentIndex].value = ['0', '0'];
-        } else {
-          clonedData[parentIndex].value = ['', ''];
-        }
+        clonedData[parentIndex].value =
+          fields[fieldIndex].type === 'NUMBER' ? ['0', '0'] : ['', ''];
       }
     }
 

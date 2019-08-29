@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
+import { BuilderContext } from '../Context';
 
 export interface SelectMultiProps {
-  values: { value: string; label: string }[];
+  values: Array<{ value: string; label: string }>;
   selectedValue: string[];
   id: string;
 }
