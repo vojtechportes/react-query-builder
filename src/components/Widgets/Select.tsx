@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BuilderContext } from '../Builder';
+import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
 
 export interface SelectProps {

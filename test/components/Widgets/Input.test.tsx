@@ -1,12 +1,12 @@
-import { Input } from '../../../src/components/Widgets/Input';
+import { mount, shallow } from 'enzyme';
+import React from 'react';
 import {
-  BuilderContext,
-  BuilderFieldProps,
   BuilderComponentsProps,
+  BuilderFieldProps,
   defaultComponents,
 } from '../../../src/components/Builder';
-import { shallow, mount } from 'enzyme';
-import React from 'react';
+import { BuilderContext } from '../../../src/components/Context';
+import { Input } from '../../../src/components/Widgets/Input';
 
 const components: BuilderComponentsProps = defaultComponents;
 const fields: BuilderFieldProps[] = [

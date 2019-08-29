@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { BuilderContext, BuilderFieldOperator } from '../Builder';
+import { BuilderFieldOperator } from '../Builder';
+import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
 import { isStringArray } from '../../utils/types';
 

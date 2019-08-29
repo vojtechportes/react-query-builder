@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Iterator } from './Iterator';
 import { colors } from '../constants/colors';
@@ -6,6 +6,7 @@ import { normalizeTree } from '../utils/normalizeTree';
 import { denormalizeTree } from '../utils/denormalizeTree';
 import uniqid from 'uniqid';
 import { assignIds } from '../utils/assignIds';
+import { BuilderContextProvider } from './Context';
 
 /* Configurable components */
 
@@ -89,19 +90,6 @@ export interface BuilderProps {
   onChange?: (data: any) => any;
 }
 
-export interface BuilderContextProps {
-  fields: BuilderFieldProps[];
-  data: any;
-  components: BuilderComponentsProps;
-  strings: Strings;
-  setData: React.Dispatch<any>;
-  onChange: (data: any) => void;
-}
-
-export const BuilderContext = createContext<BuilderContextProps>(
-  {} as BuilderContextProps
-);
-
 export const defaultComponents: BuilderComponentsProps = {
   form: {
     Input,
@@ -125,33 +113,6 @@ export const Builder: React.FC<BuilderProps> = ({
 }) => {
   let normalizedData: any;
   originalData = assignIds(originalData);
-
-  components = {
-    ...defaultComponents,
-    ...components,
-    form: { ...defaultComponents.form, ...components.form },
-  };
-
-  strings = {
-    ...defaultStrings,
-    ...strings,
-    component: {
-      ...defaultStrings.component,
-      ...strings.component,
-    },
-    form: {
-      ...defaultStrings.form,
-      ...strings.form,
-    },
-    group: {
-      ...defaultStrings.group,
-      ...strings.group,
-    },
-    operators: {
-      ...defaultStrings.operators,
-      ...strings.operators,
-    },
-  };
 
   if (originalData.length === 0) {
     originalData = [
@@ -189,19 +150,17 @@ export const Builder: React.FC<BuilderProps> = ({
   };
 
   return (
-    <BuilderContext.Provider
-      value={{
-        fields,
-        components,
-        strings,
-        data,
-        setData,
-        onChange: handleChange,
-      }}
+    <BuilderContextProvider
+      fields={fields}
+      components={components}
+      strings={strings}
+      data={data}
+      setData={setData}
+      onChange={handleChange}
     >
       <StyledBuilder>
         <Iterator originalData={data} filteredData={filteredData} />
       </StyledBuilder>
-    </BuilderContext.Provider>
+    </BuilderContextProvider>
   );
 };

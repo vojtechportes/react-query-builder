@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { BuilderFieldOperator, BuilderContext } from '../Builder';
+import { BuilderFieldOperator } from '../Builder';
+import { BuilderContext } from '../Context';
 import { FieldSelect } from '../Widgets/FieldSelect';
 import { Boolean } from '../Widgets/Boolean';
 import { Select } from '../Widgets/Select';

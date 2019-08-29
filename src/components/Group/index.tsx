@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { BuilderGroupValues, BuilderContext } from '../Builder';
+import { BuilderGroupValues } from '../Builder';
+import { BuilderContext } from '../Context';
 import uniqid from 'uniqid';
 import { clone } from '../../utils/clone';
 

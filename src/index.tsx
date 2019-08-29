@@ -9,6 +9,8 @@ export {
   defaultComponents,
 } from './components/Builder';
 
+export { BuilderContext, BuilderContextProps } from './components/Context';
+
 /* Configurable components */
 
 export { Input, InputProps } from './components/Form/Input';
