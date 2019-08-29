@@ -1,15 +1,15 @@
+import { mount, shallow } from 'enzyme';
+import React from 'react';
+import {
+  BuilderComponentsProps,
+  BuilderFieldProps,
+  defaultComponents,
+} from '../../../src/components/Builder';
+import { BuilderContext } from '../../../src/components/Context';
 import {
   OperatorSelect,
   OperatorSelectValuesProps,
 } from '../../../src/components/Widgets/OperatorSelect';
-import {
-  BuilderContext,
-  BuilderFieldProps,
-  BuilderComponentsProps,
-  defaultComponents,
-} from '../../../src/components/Builder';
-import { shallow, mount } from 'enzyme';
-import React from 'react';
 
 const components: BuilderComponentsProps = defaultComponents;
 const fields: BuilderFieldProps[] = [

@@ -1,12 +1,12 @@
-import { Boolean } from '../../../src/components/Widgets/Boolean';
+import { mount, shallow } from 'enzyme';
+import React from 'react';
 import {
-  BuilderContext,
-  BuilderFieldProps,
   BuilderComponentsProps,
+  BuilderFieldProps,
   defaultComponents,
 } from '../../../src/components/Builder';
-import { shallow, mount } from 'enzyme';
-import React from 'react';
+import { BuilderContext } from '../../../src/components/Context';
+import { Boolean } from '../../../src/components/Widgets/Boolean';
 
 const components: BuilderComponentsProps = defaultComponents;
 const fields: BuilderFieldProps[] = [

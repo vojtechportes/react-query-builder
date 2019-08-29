@@ -1,13 +1,13 @@
-import { Group } from '../../../src/components/Group/index';
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
+import React from 'react';
 import {
-  BuilderContext,
-  BuilderFieldProps,
   BuilderComponentsProps,
+  BuilderFieldProps,
   defaultComponents,
 } from '../../../src/components/Builder';
+import { BuilderContext } from '../../../src/components/Context';
+import { Group } from '../../../src/components/Group/index';
 import { strings } from '../../../src/constants/strings';
-import React from 'react';
 
 const components: BuilderComponentsProps = defaultComponents;
 const fields: BuilderFieldProps[] = [

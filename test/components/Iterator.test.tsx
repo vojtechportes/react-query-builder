@@ -2,10 +2,10 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
   BuilderComponentsProps,
-  BuilderContext,
   BuilderFieldProps,
   defaultComponents,
 } from '../../src/components/Builder';
+import { BuilderContext } from '../../src/components/Context';
 import { Iterator } from '../../src/components/Iterator';
 import { strings } from '../../src/constants/strings';
 

@@ -1,12 +1,12 @@
-import { Select } from '../../../src/components/Widgets/Select';
+import { mount, shallow } from 'enzyme';
+import React from 'react';
 import {
-  BuilderContext,
-  BuilderFieldProps,
   BuilderComponentsProps,
+  BuilderFieldProps,
   defaultComponents,
 } from '../../../src/components/Builder';
-import { shallow, mount } from 'enzyme';
-import React from 'react';
+import { BuilderContext } from '../../../src/components/Context';
+import { Select } from '../../../src/components/Widgets/Select';
 
 const components: BuilderComponentsProps = defaultComponents;
 const fields: BuilderFieldProps[] = [

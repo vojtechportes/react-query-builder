@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { isStringArray, isUndefined } from '../../utils/types';
-import { BuilderContext } from '../Builder';
+import { BuilderContext } from '../Context'
 import { clone } from '../../utils/clone';
 
 interface InputProps {
