@@ -51,6 +51,8 @@ yarn add @vojtechportes/react-query-builder
 with examples of field definition and custom components...<br />
 ...or check source code on [GitHub](https://github.com/vojtechportes/react-query-builder-demo)
 
+<img src="https://i.imgur.com/N3smtv6.png" alt="React Query Builder" />
+
 ---
 
 ## Usage
