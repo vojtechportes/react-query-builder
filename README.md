@@ -143,7 +143,7 @@ MULTI_LIST
 GROUP (*)
 ```
 
-* GROUP type is not intended to be used in field props definition but only in data object.
+\* GROUP type is not intended to be used in field props definition but only in data object.
 
 #### Operators
 
