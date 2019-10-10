@@ -140,8 +140,10 @@ NUMBER
 STATEMENT
 LIST
 MULTI_LIST
-GROUP
+GROUP (*)
 ```
+
+* GROUP type is not intended to be used in field props definition but only in data object.
 
 #### Operators
 
