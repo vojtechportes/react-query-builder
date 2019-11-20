@@ -1,7 +1,7 @@
 <br>
-<p align="center">
+<h1 align="center">
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
-</p>
+</h1>
 
 <h3 align="center">
   Simple, highly configurable query builder<br /> for React written in TypeSript
