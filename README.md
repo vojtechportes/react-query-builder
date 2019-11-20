@@ -1,4 +1,3 @@
-<br>
 <h1 align="center">
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
 </h1>
