@@ -2,6 +2,7 @@
 
 exports[`#components/Select Tests Snapshot 1`] = `
 <styled.select
+  disabled={false}
   onChange={[Function]}
   value="Test"
 >

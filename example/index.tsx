@@ -7,11 +7,11 @@ import { Builder, BuilderFieldProps } from '../src';
 import { colors } from '../src/constants/colors';
 
 const Code = styled.pre`
+  margin: 1rem 0;
+  padding: 1rem;
+  font-size: 0.7rem;
   background: ${colors.light};
   border: 1px solid ${colors.darker};
-  padding: 1rem;
-  margin: 1rem 0;
-  font-size: 0.7rem;
 `;
 
 export const queryTree = [
@@ -108,15 +108,19 @@ export const fields: BuilderFieldProps[] = [
 ];
 
 const App = () => {
-  // const data = assignIDs(queryTree);
   const [output, setOutput] = React.useState(queryTree);
+  const [readOnly, setReadOnly] = React.useState(false);
 
   return (
     <>
+      <a href="#" onClick={() => setReadOnly(!readOnly)}>
+        Read Only
+      </a>
       <Builder
         data={queryTree}
         fields={fields}
-        onChange={data => setOutput(data)}
+        readOnly={readOnly}
+        onChange={setOutput}
       />
 
       <h3>Output</h3>

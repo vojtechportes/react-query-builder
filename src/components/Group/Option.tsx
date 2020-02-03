@@ -1,9 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { colors } from '../../constants/colors';
 
 interface StyledOptionProps {
   isSelected: boolean;
+  disabled: boolean;
 }
 
 const StyledOption = styled.div<StyledOptionProps>`
@@ -16,12 +17,20 @@ const StyledOption = styled.div<StyledOptionProps>`
     !!isSelected ? colors.primary : colors.darker};
   border: 1px solid ${colors.dark};
   cursor: pointer;
+
+  ${({ disabled, isSelected }) =>
+    disabled &&
+    css`
+      background: ${!!isSelected ? colors.dark : colors.darker};
+      cursor: initial;
+    `}
 `;
 
 export interface OptionProps {
   children: React.ReactNode | React.ReactNodeArray;
   value: any;
   onClick: (value: any) => void;
+  disabled: boolean;
   isSelected: boolean;
   className?: string;
 }
@@ -29,18 +38,22 @@ export interface OptionProps {
 export const Option: React.FC<OptionProps> = ({
   children,
   onClick,
+  disabled,
   value,
   isSelected,
   className,
 }) => {
   const handleClick = () => {
-    onClick(value);
+    if (!disabled) {
+      onClick(value);
+    }
   };
 
   return (
     <StyledOption
       className={className}
       isSelected={isSelected}
+      disabled={disabled}
       onClick={handleClick}
     >
       {children}

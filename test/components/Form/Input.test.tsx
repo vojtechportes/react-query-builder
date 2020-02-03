@@ -5,16 +5,27 @@ import React from 'react';
 describe('#components/Input', () => {
   it('Tests Snapshot', () => {
     expect(
-      shallow(<Input type="text" onChange={jest.fn()} value={"Test"} />)
+      shallow(
+        <Input
+          disabled={false}
+          type="text"
+          onChange={jest.fn()}
+          value={'Test'}
+        />
+      )
     ).toMatchSnapshot();
   });
 
   it('Tests user interaction', () => {
-    const wrapper = mount(<Input type="text" onChange={jest.fn()} value={"Test"} />)
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Input disabled={false} type="text" onChange={onChange} value={'Test'} />
+    );
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('input');
 
-    input.simulate('focus')
-    input.simulate('change', { target: { value: 'test'} });
-  })
+    input.simulate('focus');
+    input.simulate('change', { target: { value: 'test' } });
+    expect(onChange).toBeCalled();
+  });
 });

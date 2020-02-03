@@ -22,6 +22,7 @@ const fields: BuilderFieldProps[] = [
     field: 'MOCK_FIELD_2',
     label: 'Mock Field',
     type: 'NUMBER',
+    operators: [],
   },
 ];
 const data: any[] = [
@@ -56,7 +57,33 @@ describe('#components/Widgets/OperatorSelect', () => {
     expect(
       shallow(
         <BuilderContext.Provider
-          value={{ components, fields, data, strings, setData, onChange }}
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: false,
+          }}
+        >
+          <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
+        </BuilderContext.Provider>
+      )
+    ).toMatchSnapshot();
+
+    expect(
+      shallow(
+        <BuilderContext.Provider
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: true,
+          }}
         >
           <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
         </BuilderContext.Provider>
@@ -67,7 +94,15 @@ describe('#components/Widgets/OperatorSelect', () => {
   it('Tests user interaction where BETWEEN is first in operator list and field is of STRING type', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
       </BuilderContext.Provider>
@@ -80,7 +115,15 @@ describe('#components/Widgets/OperatorSelect', () => {
   it('Tests user interaction where BETWEEN is NOT first in operator list and field is of STRING type', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <OperatorSelect id="test-1" values={operatorSelectValues[1]} />
       </BuilderContext.Provider>
@@ -93,7 +136,15 @@ describe('#components/Widgets/OperatorSelect', () => {
   it('Tests user interaction where BETWEEN is first in operator list and field is of NUMBER type', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <OperatorSelect id="test-2" values={operatorSelectValues[0]} />
       </BuilderContext.Provider>
@@ -106,7 +157,15 @@ describe('#components/Widgets/OperatorSelect', () => {
   it('Tests user interaction where BETWEEN is NOT first in operator list and field is of NUMBER type', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <OperatorSelect id="test-2" values={operatorSelectValues[1]} />
       </BuilderContext.Provider>
@@ -119,7 +178,15 @@ describe('#components/Widgets/OperatorSelect', () => {
   it('Tests no form components scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components: {}, fields, data, strings, setData, onChange }}
+        value={{
+          components: {},
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
       </BuilderContext.Provider>

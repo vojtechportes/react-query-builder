@@ -19,7 +19,7 @@ export const Group: React.FC<GroupProps> = ({
   id,
   isRoot,
 }) => {
-  const { components, data, setData, onChange, strings } = useContext(
+  const { components, data, setData, onChange, strings, readOnly } = useContext(
     BuilderContext
   );
   const {
@@ -122,6 +122,7 @@ export const Group: React.FC<GroupProps> = ({
             <Option
               isSelected={!!isNegated}
               value={!isNegated}
+              disabled={readOnly}
               onClick={handleToggleNegateGroup}
               data-test="Option[not]"
             >
@@ -130,6 +131,7 @@ export const Group: React.FC<GroupProps> = ({
             <Option
               isSelected={value === 'AND'}
               value="AND"
+              disabled={readOnly}
               onClick={handleChangeGroupType}
               data-test="Option[and]"
             >
@@ -138,6 +140,7 @@ export const Group: React.FC<GroupProps> = ({
             <Option
               isSelected={value === 'OR'}
               value="OR"
+              disabled={readOnly}
               onClick={handleChangeGroupType}
               data-test="Option[or]"
             >
@@ -146,25 +149,27 @@ export const Group: React.FC<GroupProps> = ({
           </>
         }
         controlsRight={
-          <>
-            <Add
-              onClick={handleAddRule}
-              label={strings.group.addRule}
-              data-test="AddRule"
-            />
-            <Add
-              onClick={handleAddGroup}
-              label={strings.group.addGroup}
-              data-test="AddGroup"
-            />
-            {!isRoot && (
-              <Remove
-                onClick={handleDeleteGroup}
-                label={strings.group.delete}
-                data-test="Remove"
+          !readOnly && (
+            <>
+              <Add
+                onClick={handleAddRule}
+                label={strings.group.addRule}
+                data-test="AddRule"
               />
-            )}
-          </>
+              <Add
+                onClick={handleAddGroup}
+                label={strings.group.addGroup}
+                data-test="AddGroup"
+              />
+              {!isRoot && (
+                <Remove
+                  onClick={handleDeleteGroup}
+                  label={strings.group.delete}
+                  data-test="Remove"
+                />
+              )}
+            </>
+          )
         }
       >
         {children}

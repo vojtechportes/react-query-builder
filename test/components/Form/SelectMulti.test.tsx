@@ -1,5 +1,5 @@
 import { SelectMulti } from '../../../src/components/Form/SelectMulti';
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 
 const mockValues = [{ value: 'test', label: 'test' }];
@@ -9,6 +9,7 @@ describe('#components/SelectMulti', () => {
     expect(
       shallow(
         <SelectMulti
+          disabled={false}
           onChange={jest.fn()}
           onDelete={jest.fn()}
           selectedValue={['test']}
@@ -19,9 +20,11 @@ describe('#components/SelectMulti', () => {
   });
 
   it('Tests user interaction', () => {
+    const onChange = jest.fn();
     const wrapper = mount(
       <SelectMulti
-        onChange={jest.fn()}
+        disabled={false}
+        onChange={onChange}
         onDelete={jest.fn()}
         selectedValue={['test']}
         values={mockValues}
@@ -33,5 +36,6 @@ describe('#components/SelectMulti', () => {
     select.simulate('focus');
     select.simulate('change', { target: { value: ['test'] } });
     select.simulate('change', { target: { value: [] } });
+    expect(onChange).toBeCalledTimes(2);
   });
 });

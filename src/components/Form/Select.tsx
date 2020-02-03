@@ -15,6 +15,7 @@ export interface SelectProps {
   emptyValue?: string;
   onChange: (value: any) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -23,9 +24,12 @@ export const Select: React.FC<SelectProps> = ({
   emptyValue,
   onChange,
   className,
+  disabled = false,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value);
+    if (!disabled) {
+      onChange(event.target.value);
+    }
   };
 
   return (
@@ -33,6 +37,7 @@ export const Select: React.FC<SelectProps> = ({
       onChange={handleChange}
       value={selectedValue}
       className={className}
+      disabled={!!disabled}
     >
       <option value="" disabled>
         {emptyValue}

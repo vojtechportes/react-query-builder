@@ -13,7 +13,7 @@ export const Select: React.FC<SelectProps> = ({
   values,
   id,
 }) => {
-  const { data, setData, onChange, components, strings } = useContext(
+  const { data, setData, onChange, components, strings, readOnly } = useContext(
     BuilderContext
   );
 
@@ -29,13 +29,14 @@ export const Select: React.FC<SelectProps> = ({
     onChange(clonedData);
   };
 
-  if (form && strings.form) {
+  if (form && strings.form && !readOnly) {
     return (
       <form.Select
         onChange={handleChange}
         selectedValue={selectedValue}
         emptyValue={strings.form.selectYourValue}
         values={values}
+        disabled={readOnly}
       />
     );
   }

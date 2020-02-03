@@ -3,6 +3,7 @@
 exports[`#components/SelectMulti Tests Snapshot 1`] = `
 <styled.div>
   <Component
+    disabled={false}
     onChange={[MockFunction]}
     selectedValue=""
     values={
@@ -22,6 +23,7 @@ exports[`#components/SelectMulti Tests Snapshot 1`] = `
        
       <styled.span
         data-test="Delete"
+        disabled={false}
         onClick={[Function]}
       >
         [x]

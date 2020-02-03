@@ -53,6 +53,7 @@ export const Iterator: React.FC<IteratorProps> = ({
             value={value}
             operator={operator}
             id={id}
+            data-test="IteratorComponent"
           />
         );
       }

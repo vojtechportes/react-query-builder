@@ -3,6 +3,7 @@
 exports[`#components/Switch Tests Snapshot 1`] = `
 <styled.div
   data-test="Switch"
+  disabled={false}
   onClick={[Function]}
   switched={false}
 >

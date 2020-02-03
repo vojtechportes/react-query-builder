@@ -28,8 +28,8 @@ const Option = styled.span`
   border-radius: 3rem;
 `;
 
-const Delete = styled.span`
-  cursor: pointer;
+const Delete = styled.span<{ disabled: boolean }>`
+  cursor: ${({ disabled }) => !disabled && `pointer`};
 `;
 
 export interface SelectMultiProps
@@ -37,6 +37,7 @@ export interface SelectMultiProps
   onDelete: (value: string) => void;
   selectedValue: string[];
   emptyValue?: string;
+  disabled?: boolean;
 }
 
 export const SelectMulti: React.FC<SelectMultiProps> = ({
@@ -45,6 +46,7 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
   selectedValue,
   emptyValue,
   values,
+  disabled = false,
 }) => {
   return (
     <Container>
@@ -53,6 +55,7 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
         selectedValue=""
         emptyValue={emptyValue}
         values={values}
+        disabled={disabled}
       />
       <OptionContainer>
         {selectedValue.map((value, key) => {
@@ -61,7 +64,11 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
           return (
             <Option key={key}>
               {values[labelIndex].label}{' '}
-              <Delete onClick={() => onDelete(value)} data-test="Delete">
+              <Delete
+                onClick={() => !disabled && onDelete(value)}
+                disabled={!!disabled}
+                data-test="Delete"
+              >
                 [x]
               </Delete>
             </Option>

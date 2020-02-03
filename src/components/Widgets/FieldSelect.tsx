@@ -12,9 +12,15 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
   selectedValue,
   id,
 }) => {
-  const { fields, data, setData, onChange, components, strings } = useContext(
-    BuilderContext
-  );
+  const {
+    fields,
+    data,
+    setData,
+    onChange,
+    components,
+    strings,
+    readOnly,
+  } = useContext(BuilderContext);
 
   const { form } = components;
 
@@ -109,6 +115,7 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
         selectedValue={selectedValue}
         emptyValue={strings.form.selectYourValue}
         onChange={handleChange}
+        disabled={readOnly}
       />
     );
   }

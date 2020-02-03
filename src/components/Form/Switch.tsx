@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { colors } from '../../constants/colors';
 
 const Knob = styled.div`
@@ -12,7 +12,7 @@ const Knob = styled.div`
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.4);
 `;
 
-const StyledSwitch = styled.div<{ switched: boolean }>`
+const StyledSwitch = styled.div<{ switched: boolean; disabled: boolean }>`
   position: relative;
   width: 3rem;
   height: 1.65rem;
@@ -22,6 +22,17 @@ const StyledSwitch = styled.div<{ switched: boolean }>`
   border-radius: 1.4rem;
   cursor: pointer;
   transition: all 0.5s;
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      background-color: ${colors.darker};
+      cursor: initial;
+
+      ${Knob} {
+        background: ${colors.disabled};
+      }
+    `}
 
   ${Knob} {
     top: 0.1rem;
@@ -33,16 +44,18 @@ const StyledSwitch = styled.div<{ switched: boolean }>`
 export interface SwitchProps {
   switched: boolean;
   onChange?: (value: boolean) => void;
+  disabled?: boolean;
   className?: string;
 }
 
 export const Switch: React.FC<SwitchProps> = ({
   switched,
   onChange,
+  disabled = false,
   className,
 }) => {
   const handleClick = () => {
-    if (onChange) {
+    if (onChange && !disabled) {
       onChange(!switched);
     }
   };
@@ -51,6 +64,7 @@ export const Switch: React.FC<SwitchProps> = ({
     <StyledSwitch
       data-test="Switch"
       switched={switched}
+      disabled={!!disabled}
       onClick={handleClick}
       className={className}
     >

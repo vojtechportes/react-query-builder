@@ -57,12 +57,14 @@ describe('#components/Iterator', () => {
   });
 
   it('Tests full behavior', () => {
-    mount(
+    const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{ components, fields, data, strings, setData, onChange, readOnly: false }}
       >
         <Iterator filteredData={filteredData} originalData={data} />
       </BuilderContext.Provider>
     );
+
+    expect(wrapper.find('[data-test="IteratorComponent"]').length).toEqual(1)
   });
 });

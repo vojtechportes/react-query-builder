@@ -78,6 +78,7 @@ const components: BuilderComponentsProps = {
 
 const MyBuilder: React.FC = () => (
   <Builder
+    readOnly={false}
     fields={fields}
     data={data}
     components={components}
@@ -90,7 +91,7 @@ const MyBuilder: React.FC = () => (
 
 ## Configuration
 
-Since React Query Builder is highly configurable, you can define look of the Query Builder, you can define and use your own components and of course, you will need to set up fields Query Builder will be using.
+Since React Query Builder is highly configurable, you can define look of the Query Builder, you can define and use your own components, set whether the Builder should be readOnly or not and of course, you will need to set up fields Query Builder will be using.
 
 ### Lets start with fields...
 
@@ -307,4 +308,5 @@ export const QueryBuiler:React.FC = () => {
 * [ ] Drag and Drop user interface
 * [ ] More examples and demos
 * [x] Tests (after version 0.2.5)
+* [x] Read only property on Buidler component
 * [ ] Separate functionality to standalone API (in version 0.3.0)

@@ -34,6 +34,7 @@
   ],
   "scripts": {
     "test": "tsdx test --env=jsdom",
+    "test:update": "tsdx test -u --env=jsdom",
     "test:watch": "nmp run test -- --watchAll",
     "start": "cross-env NODE_ENV=development tsdx watch",
     "prebuild": "rimraf dist",
@@ -43,7 +44,7 @@
     "prettier:check": "prettier --check src/**/*.{ts,tsx}",
     "lint:ts": "tslint --project tsconfig.json -c tslint.json",
     "lint:css": "stylelint \"./src/**/*.{ts,tsx}\"",
-    "checkAll": "yarn prettier:check & yarn lint:ts & yarn lint:css"
+    "checkAll": "npm run prettier:check & yarn lint:ts & yarn lint:css"
   },
   "prettier": {
     "printWidth": 80,

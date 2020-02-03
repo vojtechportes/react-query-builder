@@ -34,9 +34,15 @@ export const Component: React.FC<ComponentProps> = ({
   operator,
   id,
 }) => {
-  const { fields, data, setData, onChange, components, strings } = useContext(
-    BuilderContext
-  );
+  const {
+    fields,
+    data,
+    setData,
+    onChange,
+    components,
+    strings,
+    readOnly,
+  } = useContext(BuilderContext);
   const { Component: ComponentContainer, Remove } = components;
 
   const handleDelete = () => {
@@ -59,7 +65,9 @@ export const Component: React.FC<ComponentProps> = ({
       return (
         <ComponentContainer
           controls={
-            <Remove label={strings.component.delete} onClick={handleDelete} />
+            !readOnly && (
+              <Remove label={strings.component.delete} onClick={handleDelete} />
+            )
           }
         >
           <FieldSelect selectedValue={''} id={id} />
@@ -83,7 +91,12 @@ export const Component: React.FC<ComponentProps> = ({
         return (
           <ComponentContainer
             controls={
-              <Remove label={strings.component.delete} onClick={handleDelete} />
+              !readOnly && (
+                <Remove
+                  label={strings.component.delete}
+                  onClick={handleDelete}
+                />
+              )
             }
           >
             <FieldSelect selectedValue={field} id={id} />

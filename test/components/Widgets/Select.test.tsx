@@ -44,7 +44,17 @@ describe('#components/Widgets/Select', () => {
     expect(
       shallow(
         <BuilderContext.Provider
-          value={{ components, fields, data, strings, setData, onChange }}
+          value={{ components, fields, data, strings, setData, onChange, readOnly: false }}
+        >
+          <Select id="test" selectedValue={''} values={selectValues} />
+        </BuilderContext.Provider>
+      )
+    ).toMatchSnapshot();
+
+    expect(
+      shallow(
+        <BuilderContext.Provider
+          value={{ components, fields, data, strings, setData, onChange, readOnly: true }}
         >
           <Select id="test" selectedValue={''} values={selectValues} />
         </BuilderContext.Provider>
@@ -55,7 +65,7 @@ describe('#components/Widgets/Select', () => {
   it('Tests user interaction', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{ components, fields, data, strings, setData, onChange, readOnly: false }}
       >
         <Select id="test" selectedValue={''} values={selectValues} />
       </BuilderContext.Provider>
@@ -68,7 +78,7 @@ describe('#components/Widgets/Select', () => {
   it('Test no form components scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components: {}, fields, data, strings, setData, onChange }}
+        value={{ components: {}, fields, data, strings, setData, onChange, readOnly: false }}
       >
         <Select id="test" selectedValue={''} values={selectValues} />
       </BuilderContext.Provider>

@@ -6,3 +6,10 @@ exports[`#components/Widgets/FieldSelect Tests Snapshot 1`] = `
   selectedValue=""
 />
 `;
+
+exports[`#components/Widgets/FieldSelect Tests Snapshot 2`] = `
+<Component
+  id="test"
+  selectedValue=""
+/>
+`;

@@ -20,9 +20,15 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
   selectedValue,
   id,
 }) => {
-  const { fields, data, setData, onChange, components, strings } = useContext(
-    BuilderContext
-  );
+  const {
+    fields,
+    data,
+    setData,
+    onChange,
+    components,
+    strings,
+    readOnly,
+  } = useContext(BuilderContext);
 
   const { form } = components;
 
@@ -62,6 +68,7 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
         selectedValue={selectedValue}
         emptyValue={strings.form.selectYourValue}
         onChange={handleChange}
+        disabled={readOnly}
       />
     );
   }

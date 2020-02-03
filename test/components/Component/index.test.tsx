@@ -113,7 +113,33 @@ describe('#components/Component', () => {
     expect(
       shallow(
         <BuilderContext.Provider
-          value={{ components, fields, data, strings, setData, onChange }}
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: false,
+          }}
+        >
+          <Component id="test-2" field="MOCK_FIELD_1" />
+        </BuilderContext.Provider>
+      )
+    ).toMatchSnapshot();
+
+    expect(
+      shallow(
+        <BuilderContext.Provider
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: true,
+          }}
         >
           <Component id="test-2" field="MOCK_FIELD_1" />
         </BuilderContext.Provider>
@@ -124,7 +150,15 @@ describe('#components/Component', () => {
   it('Tests full behavior', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Component data-test="Component[0]" id="test-2" field="" />
         <Component data-test="Component[1]" id="test-2" field="MOCK_FIELD_1" />
@@ -134,29 +168,45 @@ describe('#components/Component', () => {
         <Component data-test="Component[5]" id="test-6" field="MOCK_FIELD_5" />
         <Component data-test="Component[6]" id="test-7" field="MOCK_FIELD_6" />
         <Component data-test="Component[7]" id="test-8" field="MOCK_FIELD_7" />
-        <Component data-test="Component[8]" id="test-9" field="SOME_FIELD_THAT_DOESNT_EXISTS" />
+        <Component
+          data-test="Component[8]"
+          id="test-9"
+          field="SOME_FIELD_THAT_DOESNT_EXISTS"
+        />
       </BuilderContext.Provider>
-    )
+    );
 
-    expect(wrapper.find('[data-test="Component[0]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[1]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[2]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[3]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[4]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[5]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[6]"]')).toBeDefined()
-    expect(wrapper.find('[data-test="Component[7]"]')).toBeDefined()
-    expect(Object.keys(wrapper.find('[data-test="Component[8]"]')).length).toBe(0)
+    expect(wrapper.find('[data-test="Component[0]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[1]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[2]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[3]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[4]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[5]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[6]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Component[7]"]')).toBeDefined();
+    expect(Object.keys(wrapper.find('[data-test="Component[8]"]')).length).toBe(
+      0
+    );
 
-    wrapper.find('[data-test="Component[1]"] button').simulate('click')
+    wrapper.find('[data-test="Component[1]"] button').simulate('click');
 
-    expect(Object.keys(wrapper.find('[data-test="Component[1]"]')).length).toBe(0)
-  })
+    expect(Object.keys(wrapper.find('[data-test="Component[1]"]')).length).toBe(
+      0
+    );
+  });
 
   it('Tests no srtrings scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings: {}, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings: {},
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Component id="test-9" field="" />
       </BuilderContext.Provider>

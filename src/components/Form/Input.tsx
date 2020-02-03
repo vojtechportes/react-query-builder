@@ -14,6 +14,7 @@ export interface InputProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -21,6 +22,7 @@ export const Input: React.FC<InputProps> = ({
   value,
   onChange,
   className,
+  disabled = false,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -32,6 +34,7 @@ export const Input: React.FC<InputProps> = ({
       value={value}
       onChange={handleChange}
       className={className}
+      disabled={disabled}
     />
   );
 };

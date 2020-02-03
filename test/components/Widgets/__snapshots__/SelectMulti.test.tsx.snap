@@ -14,3 +14,18 @@ exports[`#components/Widgets/SelectMulti Tests Snapshot 1`] = `
   }
 />
 `;
+
+exports[`#components/Widgets/SelectMulti Tests Snapshot 2`] = `
+<Component
+  id="test"
+  selectedValue={Array []}
+  values={
+    Array [
+      Object {
+        "label": "test",
+        "value": "test",
+      },
+    ]
+  }
+/>
+`;
