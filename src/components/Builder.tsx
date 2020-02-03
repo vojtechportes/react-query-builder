@@ -46,7 +46,9 @@ export type BuilderFieldOperator =
   | 'ANY_IN'
   | 'NOT_IN'
   | 'BETWEEN'
-  | 'NOT_BETWEEN';
+  | 'NOT_BETWEEN'
+  | 'LIKE'
+  | 'NOT_LIKE';
 
 export type BuilderGroupValues = 'AND' | 'OR';
 
