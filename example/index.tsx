@@ -97,7 +97,14 @@ export const fields: BuilderFieldProps[] = [
     field: 'BLAH',
     label: 'Blah',
     type: 'TEXT',
-    operators: ['NOT_BETWEEN', 'EQUAL', 'NOT_EQUAL', 'BETWEEN'],
+    operators: [
+      'NOT_BETWEEN',
+      'EQUAL',
+      'NOT_EQUAL',
+      'BETWEEN',
+      'LIKE',
+      'NOT_LIKE',
+    ],
   },
   {
     field: 'HAS_LOW_CREDIT',
