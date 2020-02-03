@@ -13,7 +13,7 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
   selectedValue,
   id,
 }) => {
-  const { data, setData, onChange, components, strings } = useContext(
+  const { data, setData, onChange, components, strings, readOnly } = useContext(
     BuilderContext
   );
 
@@ -54,6 +54,7 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
         selectedValue={selectedValue}
         emptyValue={strings.form.selectYourValue}
         values={values}
+        disabled={!!readOnly}
       />
     );
   }

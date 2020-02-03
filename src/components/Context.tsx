@@ -9,6 +9,7 @@ import {
 export interface BuilderContextProps {
   fields: BuilderFieldProps[];
   data: any;
+  readOnly: boolean;
   components: BuilderComponentsProps;
   strings: Strings;
   setData: React.Dispatch<any>;
@@ -29,6 +30,7 @@ export const BuilderContextProvider: React.FC<BuilderContextProviderProps> = ({
   components,
   strings,
   data,
+  readOnly,
   setData,
   onChange,
   children,
@@ -67,6 +69,7 @@ export const BuilderContextProvider: React.FC<BuilderContextProviderProps> = ({
         components,
         strings,
         data,
+        readOnly,
         setData,
         onChange,
       }}

@@ -10,7 +10,9 @@ interface InputProps {
 }
 
 export const Input: React.FC<InputProps> = ({ type, value, id }) => {
-  const { data, setData, onChange, components } = useContext(BuilderContext);
+  const { data, setData, onChange, components, readOnly } = useContext(
+    BuilderContext
+  );
 
   const { form } = components;
 
@@ -36,16 +38,25 @@ export const Input: React.FC<InputProps> = ({ type, value, id }) => {
             type={type}
             value={value[0]}
             onChange={(changedValue: any) => handleChange(changedValue, 0)}
+            disabled={readOnly}
           />
           <form.Input
             type={type}
             value={value[1]}
             onChange={(changedValue: any) => handleChange(changedValue, 1)}
+            disabled={readOnly}
           />
         </>
       );
     } else {
-      return <form.Input type={type} value={value} onChange={handleChange} />;
+      return (
+        <form.Input
+          type={type}
+          value={value}
+          onChange={handleChange}
+          disabled={readOnly}
+        />
+      );
     }
   }
 

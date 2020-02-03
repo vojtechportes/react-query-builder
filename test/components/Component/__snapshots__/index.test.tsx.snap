@@ -6,3 +6,10 @@ exports[`#components/Component Tests snapshot 1`] = `
   id="test-2"
 />
 `;
+
+exports[`#components/Component Tests snapshot 2`] = `
+<Component
+  field="MOCK_FIELD_1"
+  id="test-2"
+/>
+`;

@@ -31,16 +31,69 @@ describe('#components/Widgets/Input', () => {
     expect(
       shallow(
         <BuilderContext.Provider
-          value={{ components, fields, data, strings, setData, onChange }}
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: false,
+          }}
         >
           <Input id="test" value="" type="text" />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
+
     expect(
       shallow(
         <BuilderContext.Provider
-          value={{ components, fields, data, strings, setData, onChange }}
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: false,
+          }}
+        >
+          <Input id="test" value="" type="number" />
+        </BuilderContext.Provider>
+      )
+    ).toMatchSnapshot();
+
+    expect(
+      shallow(
+        <BuilderContext.Provider
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: true,
+          }}
+        >
+          <Input id="test" value="" type="text" />
+        </BuilderContext.Provider>
+      )
+    ).toMatchSnapshot();
+
+    expect(
+      shallow(
+        <BuilderContext.Provider
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: true,
+          }}
         >
           <Input id="test" value="" type="number" />
         </BuilderContext.Provider>
@@ -51,7 +104,15 @@ describe('#components/Widgets/Input', () => {
   it('Tests user interaction', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Input id="test" value="" type="text" />
       </BuilderContext.Provider>
@@ -64,7 +125,15 @@ describe('#components/Widgets/Input', () => {
   it('Tests no form components scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components: {}, fields, data, strings, setData, onChange }}
+        value={{
+          components: {},
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Input id="test" value="" type="text" />
       </BuilderContext.Provider>

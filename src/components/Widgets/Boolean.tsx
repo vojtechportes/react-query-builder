@@ -9,7 +9,9 @@ export interface BooleanProps {
 
 // tslint:disable-next-line: variable-name
 export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
-  const { data, setData, onChange, components } = useContext(BuilderContext);
+  const { data, setData, onChange, components, readOnly } = useContext(
+    BuilderContext
+  );
 
   const { form } = components;
 
@@ -24,7 +26,13 @@ export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
   };
 
   if (form) {
-    return <form.Switch onChange={handleChange} switched={selectedValue} />;
+    return (
+      <form.Switch
+        onChange={handleChange}
+        switched={selectedValue}
+        disabled={readOnly}
+      />
+    );
   }
 
   return null;

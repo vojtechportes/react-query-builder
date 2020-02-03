@@ -2,6 +2,7 @@
 
 exports[`#components/Input Tests Snapshot 1`] = `
 <styled.input
+  disabled={false}
   onChange={[Function]}
   type="text"
   value="Test"

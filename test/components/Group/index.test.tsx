@@ -41,7 +41,33 @@ describe('#components/Group', () => {
     expect(
       shallow(
         <BuilderContext.Provider
-          value={{ components, fields, data, strings, setData, onChange }}
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: false,
+          }}
+        >
+          <Group id="test" isRoot />
+        </BuilderContext.Provider>
+      )
+    ).toMatchSnapshot();
+
+    expect(
+      shallow(
+        <BuilderContext.Provider
+          value={{
+            components,
+            fields,
+            data,
+            strings,
+            setData,
+            onChange,
+            readOnly: true,
+          }}
         >
           <Group id="test" isRoot />
         </BuilderContext.Provider>
@@ -52,7 +78,15 @@ describe('#components/Group', () => {
   it('Tests user interaction', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Group id="test-2" isRoot={false} />
       </BuilderContext.Provider>
@@ -80,7 +114,15 @@ describe('#components/Group', () => {
   it('Tests user interaction on root element', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Group id="test-1" isRoot />
       </BuilderContext.Provider>
@@ -96,7 +138,15 @@ describe('#components/Group', () => {
   it('Tests no srtrings scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider
-        value={{ components, fields, data, strings: {}, setData, onChange }}
+        value={{
+          components,
+          fields,
+          data,
+          strings: {},
+          setData,
+          onChange,
+          readOnly: false,
+        }}
       >
         <Group id="test-1" isRoot />
       </BuilderContext.Provider>

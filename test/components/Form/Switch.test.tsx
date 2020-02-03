@@ -5,15 +5,20 @@ import { Switch } from '../../../src/components/Form/Switch';
 describe('#components/Switch', () => {
   it('Tests Snapshot', () => {
     expect(
-      shallow(<Switch onChange={jest.fn()} switched={false} />)
+      shallow(<Switch disabled={false} onChange={jest.fn()} switched={false} />)
     ).toMatchSnapshot();
   });
 
   it('Tests user interaction', () => {
-    const wrapper = mount(<Switch onChange={jest.fn()} switched={false} />);
+    const onChange = jest.fn();
 
-    const swtichEl = wrapper.find('[data-test="Switch"]').first();
+    const wrapper = mount(
+      <Switch disabled={false} onChange={onChange} switched={false} />
+    );
 
-    swtichEl.simulate('click');
+    const swtichElement = wrapper.find('[data-test="Switch"]').first();
+
+    swtichElement.simulate('click');
+    expect(onChange).toBeCalled();
   });
 });

@@ -21,3 +21,25 @@ exports[`#components/Widgets/OperatorSelect Tests Snapshot 1`] = `
   }
 />
 `;
+
+exports[`#components/Widgets/OperatorSelect Tests Snapshot 2`] = `
+<Component
+  id="test-1"
+  values={
+    Array [
+      Object {
+        "label": "Test",
+        "value": "BETWEEN",
+      },
+      Object {
+        "label": "Test",
+        "value": "ALL_IN",
+      },
+      Object {
+        "label": "Test",
+        "value": "ANY_IN",
+      },
+    ]
+  }
+/>
+`;

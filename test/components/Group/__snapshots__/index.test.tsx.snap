@@ -6,3 +6,10 @@ exports[`#components/Group Tests snapshot 1`] = `
   isRoot={true}
 />
 `;
+
+exports[`#components/Group Tests snapshot 2`] = `
+<Component
+  id="test"
+  isRoot={true}
+/>
+`;

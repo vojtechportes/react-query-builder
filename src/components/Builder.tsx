@@ -17,6 +17,7 @@ import { Group } from './Group/Group';
 import { Option as GroupHeaderOption } from './Group/Option';
 import { Iterator } from './Iterator';
 import { SecondaryButton } from './SecondaryButton';
+import { Text } from './Text';
 
 export const StyledBuilder = styled.div`
   padding: 1rem;
@@ -74,6 +75,7 @@ export interface BuilderComponentsProps {
   Component?: any;
   Group?: any;
   GroupHeaderOption?: any;
+  Text?: any;
 }
 
 export interface BuilderProps {
@@ -81,6 +83,7 @@ export interface BuilderProps {
   data: any;
   components?: BuilderComponentsProps;
   strings?: Strings;
+  readOnly?: boolean;
   onChange?: (data: any) => any;
 }
 
@@ -96,6 +99,7 @@ export const defaultComponents: BuilderComponentsProps = {
   Component,
   Group,
   GroupHeaderOption,
+  Text,
 };
 
 export const Builder: React.FC<BuilderProps> = ({
@@ -103,6 +107,7 @@ export const Builder: React.FC<BuilderProps> = ({
   fields,
   components = defaultComponents,
   strings = defaultStrings,
+  readOnly = false,
   onChange,
 }) => {
   let normalizedData: any;
@@ -148,6 +153,7 @@ export const Builder: React.FC<BuilderProps> = ({
       fields={fields}
       components={components}
       strings={strings}
+      readOnly={readOnly}
       data={data}
       setData={setData}
       onChange={handleChange}

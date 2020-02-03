@@ -6,3 +6,10 @@ exports[`#components/Widgets/Boolean Tests Snapshot 1`] = `
   selectedValue={false}
 />
 `;
+
+exports[`#components/Widgets/Boolean Tests Snapshot 2`] = `
+<Component
+  id="test"
+  selectedValue={false}
+/>
+`;
