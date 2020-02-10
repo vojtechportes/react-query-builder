@@ -10,7 +10,7 @@ const Container = styled.div`
   grid-gap: 0.5rem;
 `;
 
-const OptionContainer = styled.div`
+export const OptionContainer = styled.div`
   display: grid;
   grid-auto-columns: min-content;
   grid-auto-flow: column;
@@ -18,7 +18,7 @@ const OptionContainer = styled.div`
   align-self: center;
 `;
 
-const Option = styled.span`
+export const Option = styled.span`
   padding: 0.3rem 0.5rem;
   color: ${colors.dark};
   font-size: 0.7rem;
@@ -38,6 +38,7 @@ export interface SelectMultiProps
   selectedValue: string[];
   emptyValue?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export const SelectMulti: React.FC<SelectMultiProps> = ({
@@ -46,10 +47,11 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
   selectedValue,
   emptyValue,
   values,
+  className,
   disabled = false,
 }) => {
   return (
-    <Container>
+    <Container className={className}>
       <Select
         onChange={onChange}
         selectedValue=""
