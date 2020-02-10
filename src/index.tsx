@@ -15,7 +15,12 @@ export { BuilderContext, BuilderContextProps } from './components/Context';
 
 export { Input, InputProps } from './components/Form/Input';
 export { Select, SelectProps } from './components/Form/Select';
-export { SelectMulti, SelectMultiProps } from './components/Form/SelectMulti';
+export {
+  SelectMulti,
+  SelectMultiProps,
+  Option,
+  OptionContainer,
+} from './components/Form/SelectMulti';
 export { Switch, SwitchProps } from './components/Form/Switch';
 
 export { Button, ButtonProps } from './components/Button';
