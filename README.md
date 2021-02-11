@@ -1,5 +1,5 @@
 <h1>:information_source: RFC 1.x.x</h1>
-<p>Please not, right now I am planning to start working on version 1.x.x. It will involve lot of refactoring, new features and some breaking changes. I will try to introduce ways how to keep things backwards compatible though.</p>
+<p>Please note that right now I am planning to start working on version 1.x.x. It will involve lot of refactoring, new features and some breaking changes. I will try to introduce ways how to keep things backwards compatible though.</p>
 <p>If you are interested, check https://github.com/vojtechportes/react-query-builder/issues/37 for RFC and let me know what you think and what new features you would welcome.</p>
 <hr />
 
@@ -305,15 +305,6 @@ export const QueryBuiler:React.FC = () => {
 };
 ```
 
----
+#Feature development
 
-## Future development
-
-* [x] Support for localization (in version 0.1.9)
-* [ ] Various output formats like SQL, MongoDB, human readeable format etc.
-* [ ] Themed form components (Material UI, Bootstrap, Ant Design)
-* [ ] Drag and Drop user interface
-* [ ] More examples and demos
-* [x] Tests (after version 0.2.5)
-* [x] Read only property on Buidler component
-* [ ] Separate functionality to standalone API (in version 0.3.0)
+Please check https://github.com/vojtechportes/react-query-builder/issues/37
