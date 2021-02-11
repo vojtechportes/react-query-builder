@@ -1,5 +1,5 @@
 {
   "hooks": {
-    "pre-commit": "pretty-quick --staged && yarn lint:ts && yarn run lint:css && yarn compile"
+    "pre-commit": "pretty-quick --staged && yarn lint:ts && yarn run lint:css"
   }
 }
