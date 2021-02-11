@@ -1,7 +1,7 @@
-<h1>RFC 1.x.x</h1>
+<h1>:information_source: RFC 1.x.x</h1>
 <p>Please not, right now I am planning to start working on version 1.x.x. It will involve lot of refactoring, new features and some breaking changes. I will try to introduce ways how to keep things backwards compatible though.</p>
 <p>If you are interested, check https://github.com/vojtechportes/react-query-builder/issues/37 for RFC and let me know what you think and what new features you would welcome.</p>
----
+<hr />
 
 <h1 align="center">
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
