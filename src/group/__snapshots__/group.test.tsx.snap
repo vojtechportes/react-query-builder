@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Group Tests snapshot 1`] = `
+<Group
+  id="test"
+  isRoot={true}
+/>
+`;
+
+exports[`#components/Group Tests snapshot 2`] = `
+<Group
+  id="test"
+  isRoot={true}
+/>
+`;

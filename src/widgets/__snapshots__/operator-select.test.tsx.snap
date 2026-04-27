@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/Widgets/OperatorSelect Tests Snapshot 1`] = `
+<OperatorSelect
+  id="test-1"
+  values={
+    [
+      {
+        "label": "Test",
+        "value": "BETWEEN",
+      },
+      {
+        "label": "Test",
+        "value": "ALL_IN",
+      },
+      {
+        "label": "Test",
+        "value": "ANY_IN",
+      },
+    ]
+  }
+/>
+`;
+
+exports[`#components/Widgets/OperatorSelect Tests Snapshot 2`] = `
+<OperatorSelect
+  id="test-1"
+  values={
+    [
+      {
+        "label": "Test",
+        "value": "BETWEEN",
+      },
+      {
+        "label": "Test",
+        "value": "ALL_IN",
+      },
+      {
+        "label": "Test",
+        "value": "ANY_IN",
+      },
+    ]
+  }
+/>
+`;

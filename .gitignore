@@ -2,9 +2,12 @@
 .DS_Store
 node_modules
 .cache
+.vite
 .rts2_cache_cjs
 .rts2_cache_esm
 .rts2_cache_umd
+*.tsbuildinfo
 dist
 
 /coverage
+example/dist
