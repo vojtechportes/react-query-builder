@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#components/SelectMulti Tests Snapshot 1`] = `
+<styled.div>
+  <Select
+    disabled={false}
+    onChange={[MockFunction]}
+    selectedValue=""
+    values={
+      [
+        {
+          "label": "test",
+          "value": "test",
+        },
+      ]
+    }
+  />
+  <styled.div>
+    <styled.span
+      key="test"
+    >
+      test
+       
+      <styled.span
+        data-test="Delete"
+        disabled={false}
+        onClick={[Function]}
+      >
+        [x]
+      </styled.span>
+    </styled.span>
+  </styled.div>
+</styled.div>
+`;

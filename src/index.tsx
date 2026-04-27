@@ -1,42 +1,45 @@
-export {
-  Builder,
-  BuilderProps,
+export { Builder, defaultComponents } from './builder';
+export type {
   BuilderComponentsProps,
   BuilderFieldOperator,
-  BuilderFieldType,
-  BuilderGroupValues,
   BuilderFieldProps,
-  defaultComponents,
-} from './components/Builder';
+  BuilderFieldType,
+  BuilderFieldValue,
+  BuilderGroupValues,
+  BuilderProps,
+} from './builder';
 
-export { BuilderContext, BuilderContextProps } from './components/Context';
+export { BuilderContext } from './builder-context';
+export type { BuilderContextProps } from './builder-context';
 
-/* Configurable components */
+export { Input } from './form/input';
+export type { InputProps } from './form/input';
 
-export { Input, InputProps } from './components/Form/Input';
-export { Select, SelectProps } from './components/Form/Select';
-export {
-  SelectMulti,
-  SelectMultiProps,
-  Option,
-  OptionContainer,
-} from './components/Form/SelectMulti';
-export { Switch, SwitchProps } from './components/Form/Switch';
+export { Select } from './form/select';
+export type { SelectProps } from './form/select';
 
-export { Button, ButtonProps } from './components/Button';
-export { SecondaryButton } from './components/SecondaryButton';
+export { Option } from './form/option';
+export { OptionContainer } from './form/option-container';
+export { SelectMulti } from './form/select-multi';
+export type { SelectMultiProps } from './form/select-multi';
 
-export { Component, ComponentProps } from './components/Component/Component';
-export { Group, GroupProps } from './components/Group/Group';
-export {
-  Option as GroupHeaderOption,
-  OptionProps as GroupHeaderOptionProps,
-} from './components/Group/Option';
+export { Switch } from './form/switch';
+export type { SwitchProps } from './form/switch';
 
-/* Color constants */
+export { Button } from './button';
+export type { ButtonProps } from './button';
+
+export { SecondaryButton } from './secondary-button';
+
+export { Component } from './component/component-container';
+export type { ComponentProps } from './component/component-container';
+
+export { Group } from './group/group-container';
+export type { GroupProps } from './group/group-container';
+
+export { Option as GroupHeaderOption } from './group/option';
+export type { OptionProps as GroupHeaderOptionProps } from './group/option';
 
 export { colors } from './constants/colors';
-
-/* String constants */
-
-export { strings, Strings } from './constants/strings';
+export { strings } from './constants/strings';
+export type { Strings } from './constants/strings';
