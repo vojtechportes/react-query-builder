@@ -1,32 +1,50 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { colors } from './constants/colors';
+import { IThemeProps } from './theme-provider/theme-provider';
+import { useTheme } from './theme-provider/hooks/use-theme';
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ $theme: Required<IThemeProps> }>`
   padding: 0.6rem 1.2rem;
-  color: #fff;
+  color: ${({ $theme }) => $theme.colors.primary.contrastText};
   font-size: 0.7rem;
   white-space: nowrap;
   text-transform: uppercase;
-  background-color: ${colors.primary};
+  background-color: ${({ $theme }) => $theme.colors.primary.default};
   border: 0;
-  border-radius: 3px;
+  border-radius: 4px;
   outline: none;
   cursor: pointer;
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme.colors.primary.dark};
+  }
 `;
 
-export interface ButtonProps {
+export interface IButtonProps {
   onClick: () => void;
   className?: string;
-  label: string;
+  'data-test'?: string;
+  label?: string;
+  children?: React.ReactNode;
 }
 
-export const Button = ({
+export const Button: FC<IButtonProps> = ({
   onClick,
   className,
+  children,
   label,
-}: ButtonProps): JSX.Element => (
-  <StyledButton onClick={onClick} className={className}>
-    {label}
-  </StyledButton>
-);
+  'data-test': dataTest,
+}) => {
+  const theme = useTheme();
+
+  return (
+    <StyledButton
+      onClick={onClick}
+      className={className}
+      data-test={dataTest}
+      $theme={theme}
+    >
+      {children || label}
+    </StyledButton>
+  );
+};

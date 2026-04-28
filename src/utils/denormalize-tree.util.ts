@@ -4,9 +4,10 @@ import {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-  DenormalizedRuleNode,
+  IDenormalizedRuleNode,
   NormalizedNode,
   NormalizedQuery,
+  INormalizedGroupNodeWithModifiers,
 } from './query-tree';
 
 const toDenormalizedNode = (
@@ -14,27 +15,35 @@ const toDenormalizedNode = (
   originalData: NormalizedQuery
 ): DenormalizedNode => {
   if (isNormalizedGroupNode(item)) {
-    const denormalizedGroup: DenormalizedGroupNode = {
-      type: item.type,
-      value: item.value,
-      isNegated: item.isNegated,
-      children: item.children.map(childId => {
-        const childItem = originalData.find(
-          originalItem => originalItem.id === childId
-        );
+    const children = item.children.map(childId => {
+      const childItem = originalData.find(
+        originalItem => originalItem.id === childId
+      );
 
-        if (!childItem) {
-          throw new Error('Input data tree is in invalid format');
-        }
+      if (!childItem) {
+        throw new Error('Input data tree is in invalid format');
+      }
 
-        return toDenormalizedNode(childItem, originalData);
-      }),
-    };
+      return toDenormalizedNode(childItem, originalData);
+    });
+
+    const denormalizedGroup: DenormalizedGroupNode =
+      typeof item.value !== 'undefined'
+        ? {
+            type: item.type,
+            value: (item as INormalizedGroupNodeWithModifiers).value,
+            isNegated: item.isNegated,
+            children,
+          }
+        : {
+            type: item.type,
+            children,
+          };
 
     return denormalizedGroup;
   }
 
-  const denormalizedRule = clone(item) as DenormalizedRuleNode;
+  const denormalizedRule = clone(item) as IDenormalizedRuleNode;
 
   delete denormalizedRule.id;
   delete denormalizedRule.parent;

@@ -1,10 +1,11 @@
+import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import globals from 'globals';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ['coverage/**', 'dist/**', 'example/dist/**', 'node_modules/**'],
   },
@@ -49,7 +50,7 @@ export default tseslint.config(
     },
     settings: {
       react: {
-        version: '16.14',
+        version: 'detect',
       },
     },
   }

@@ -3,16 +3,16 @@ import { createId } from './create-id.util';
 import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
 import { DenormalizedNode, DenormalizedQuery } from './query-tree';
 
-interface TreeContainer {
+interface ITreeContainer {
   children: DenormalizedQuery;
 }
 
 export const assignIds = (data: DenormalizedQuery): DenormalizedQuery => {
-  const dataWithContainer: TreeContainer = { children: clone(data) };
+  const dataWithContainer: ITreeContainer = { children: clone(data) };
 
   const run = (
-    item: DenormalizedNode | TreeContainer
-  ): DenormalizedNode | TreeContainer => {
+    item: DenormalizedNode | ITreeContainer
+  ): DenormalizedNode | ITreeContainer => {
     if ('children' in item) {
       item.children = item.children.map(childItem => {
         if (!childItem.id) {
@@ -30,5 +30,5 @@ export const assignIds = (data: DenormalizedQuery): DenormalizedQuery => {
     return item;
   };
 
-  return (run(dataWithContainer) as TreeContainer).children;
+  return (run(dataWithContainer) as ITreeContainer).children;
 };

@@ -1,11 +1,21 @@
 import styled from 'styled-components';
-import { colors } from './constants/colors';
+import React, { FC, PropsWithChildren } from 'react';
+import { useTheme } from './theme-provider/hooks/use-theme';
+import { IThemeProps } from './theme-provider/theme-provider';
 
-export const Text = styled.span`
+export const StyledText = styled.span<{
+  $theme: Required<IThemeProps>;
+}>`
   min-width: 160px;
   padding: 0.4rem 0.6rem;
-  color: ${colors.dark};
+  color: ${({ $theme }) => $theme.colors.grey['800']};
   line-height: 1.3;
-  border: 1px solid ${colors.medium};
+  border: 1px solid ${({ $theme }) => $theme.colors.grey['500']};
   border-radius: 3px;
 `;
+
+export const Text: FC<PropsWithChildren> = ({ children }) => {
+  const theme = useTheme();
+
+  return <StyledText $theme={theme}>{children}</StyledText>;
+};

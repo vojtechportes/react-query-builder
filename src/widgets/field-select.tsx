@@ -1,16 +1,17 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
+import { Select as DefaultSelect } from '../form/select';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleStateForField } from '../utils/create-rule-state-for-field.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface FieldSelectProps {
+export interface IFieldSelectProps {
   selectedValue: string;
   id: string;
 }
 
-export const FieldSelect: React.FC<FieldSelectProps> = ({
+export const FieldSelect: FC<IFieldSelectProps> = ({
   selectedValue,
   id,
 }) => {
@@ -24,7 +25,7 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
     strings,
     readOnly,
   } = useContext(BuilderContext);
-  const { form } = components;
+  const Select = components.form?.Select || DefaultSelect;
 
   const handleChange = (value: string) => {
     const nextField = fields.find(item => item.field === value);
@@ -59,12 +60,12 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
     label: field.label,
   }));
 
-  if (!form || !strings.form) {
+  if (!strings.form) {
     return null;
   }
 
   return (
-    <form.Select
+    <Select
       values={fieldNames}
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}

@@ -1,18 +1,18 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
-  BuilderComponentsProps,
-  BuilderFieldProps,
+  IBuilderComponentsProps,
+  IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
 import {
   OperatorSelect,
-  OperatorSelectValuesProps,
+  IOperatorSelectValuesProps,
 } from './operator-select';
 
-const components: BuilderComponentsProps = defaultComponents;
-const fields: BuilderFieldProps[] = [
+const components: IBuilderComponentsProps = defaultComponents;
+const fields: IBuilderFieldProps[] = [
   {
     field: 'MOCK_FIELD_1',
     label: 'Mock Field',
@@ -41,7 +41,7 @@ const strings = { form: {} };
 const setData = jest.fn();
 const onChange = () => jest.fn();
 
-const operatorSelectValues: OperatorSelectValuesProps[][] = [
+const operatorSelectValues: IOperatorSelectValuesProps[][] = [
   // Testing scenario where BETWEEN is first in operator list
   [
     { value: 'BETWEEN', label: 'Test' },

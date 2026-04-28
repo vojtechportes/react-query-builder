@@ -1,17 +1,17 @@
-import { BuilderFieldProps } from '../builder';
+import { IBuilderFieldProps } from '../builder';
 import { isOptionList } from './is-option-list.util';
 
-const getDefaultValueForTextLikeField = (field: BuilderFieldProps) =>
+const getDefaultValueForTextLikeField = (field: IBuilderFieldProps) =>
   field.operators && ['BETWEEN', 'NOT_BETWEEN'].includes(field.operators[0])
     ? ['', '']
     : '';
 
-const getDefaultValueForNumberField = (field: BuilderFieldProps) =>
+const getDefaultValueForNumberField = (field: IBuilderFieldProps) =>
   field.operators && ['BETWEEN', 'NOT_BETWEEN'].includes(field.operators[0])
     ? ['0', '0']
     : '0';
 
-export const createRuleStateForField = (field: BuilderFieldProps) => {
+export const createRuleStateForField = (field: IBuilderFieldProps) => {
   const baseRuleState = {
     field: field.field,
     operator: field.operators && field.operators[0],

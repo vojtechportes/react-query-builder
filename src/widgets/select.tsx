@@ -1,22 +1,23 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
+import { Select as DefaultSelect } from '../form/select';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface SelectProps {
+export interface ISelectProps {
   values: Array<{ value: string; label: string }>;
   selectedValue: string;
   id: string;
 }
 
-export const Select: React.FC<SelectProps> = ({
+export const Select: FC<ISelectProps> = ({
   values,
   selectedValue,
   id,
 }) => {
   const { data, setData, onChange, updateData, components, strings, readOnly } =
     useContext(BuilderContext);
-  const { form } = components;
+  const SelectComponent = components.form?.Select || DefaultSelect;
 
   const handleChange = (value: string) => {
     applyDataUpdate(
@@ -31,12 +32,12 @@ export const Select: React.FC<SelectProps> = ({
     );
   };
 
-  if (!form || !strings.form) {
+  if (!strings.form) {
     return null;
   }
 
   return (
-    <form.Select
+    <SelectComponent
       onChange={handleChange}
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}

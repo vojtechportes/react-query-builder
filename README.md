@@ -1,40 +1,27 @@
-<h1>:information_source: RFC 1.x.x</h1>
-<p>Please note that right now I am planning to start working on version 1.x.x. It will involve lot of refactoring, new features and some breaking changes. I will try to introduce ways how to keep things backwards compatible though.</p>
-<p>If you are interested, check https://github.com/vojtechportes/react-query-builder/issues/37 for RFC and let me know what you think and what new features you would welcome.</p>
-<hr />
-
 <h1 align="center">
   <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
 </h1>
 
 <h3 align="center">
-  Simple, highly configurable query builder<br /> for React written in TypeSript
-
-
+  Simple, highly configurable query builder<br /> for React written in TypeScript
 </h3>
+
 <p align="center">
-<a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg" alt="npm version" /></a> <a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a> <a href="https://travis-ci.org/vojtechportes/react-query-builder" target="_blank"><img src="https://travis-ci.org/vojtechportes/react-query-builder.svg?branch=master" alt="Travis CI Status" /></a> 
-<a href="https://coveralls.io/github/vojtechportes/react-query-builder?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/vojtechportes/react-query-builder/badge.svg?branch=master" alt="Coverage Status" /></a> <a href="https://deepscan.io/dashboard#view=project&tid=5247&pid=7017&bid=64425" target="_blank"><img src="https://deepscan.io/api/teams/5247/projects/7017/branches/64425/badge/grade.svg" alt="DeepScan grade"></a>
+<a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://badge.fury.io/js/%40vojtechportes%2Freact-query-builder.svg" alt="npm version" /></a>
+<a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
 </p>
-<br />
 
 ---
 
 - [Installation](#installation)
-- [Demo](#demo)
 - [Usage](#usage)
 - [Configuration](#configuration)
-  - [Fields](#lets-start-with-fields)
-    - [Field](#field)
-    - [Label](#label)
-    - [Type](#type)
-    - [Operators](#operators)
-    - [Value](#value)
+  - [Fields](#fields)
   - [Data](#data)
+  - [Builder Props](#builder-props)
   - [Components](#components)
-  - [onChange](#onchange)
-- [Localization](#Localization)
-- [Future development](#future-development)
+- [Theming](#theming)
+- [Localization](#localization)
 
 ---
 
@@ -44,98 +31,122 @@
 npm install @vojtechportes/react-query-builder
 ```
 
-or
-
-```bash
-yarn add @vojtechportes/react-query-builder
-```
-
-## [Demo](https://react-query-builder-demo.herokuapp.com/)
-
-with examples of field definition and custom components...<br />
-...or check source code on [GitHub](https://github.com/vojtechportes/react-query-builder-demo)
-
-<img src="https://i.imgur.com/N3smtv6.png" alt="React Query Builder" />
+React Query Builder supports React `18+`.
 
 ---
 
 ## Usage
 
 ```typescript
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Builder,
-  BuilderFieldProps,
-  BuilderComponentsProps,
-} from 'react-query-builder';
+  IBuilderFieldProps,
+  IBuilderComponentsProps,
+  DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
 
-const fields: BuilderFieldProps[] = [
-  // Fields configuration
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'STATE',
+    label: 'State',
+    type: 'LIST',
+    operators: ['EQUAL', 'NOT_EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+  },
+  {
+    field: 'IS_IN_EU',
+    label: 'Is in EU',
+    type: 'BOOLEAN',
+  },
 ];
 
-const data: any = [
-  // Initial query tree
+const initialData: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'IS_IN_EU',
+        value: false,
+      },
+    ],
+  },
 ];
 
-const components: BuilderComponentsProps = {
-  // Custom components configuration
+const components: IBuilderComponentsProps = {
+  // Optional custom components
 };
 
-const MyBuilder: React.FC = () => (
-  <Builder
-    readOnly={false}
-    fields={fields}
-    data={data}
-    components={components}
-    onChange={data => console.log(data)}
-  />
-);
+export const MyBuilder: React.FC = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};
 ```
 
 ---
 
 ## Configuration
 
-Since React Query Builder is highly configurable, you can define look of the Query Builder, you can define and use your own components, set whether the Builder should be readOnly or not and of course, you will need to set up fields Query Builder will be using.
+React Query Builder is designed to be highly configurable. You can control:
 
-### Lets start with fields...
+- field definitions
+- initial and controlled query data
+- drag and drop support
+- read-only behavior
+- supported group types
+- theming
+- custom components
+- localization
+
+### Fields
 
 ```typescript
-import { BuilderFieldProps } from 'react-query-builder';
+import { IBuilderFieldProps } from '@vojtechportes/react-query-builder';
 
-const fields: BuilderFieldProps[] = [
-    {
-        field: 'STATE',
-        label: 'State',
-        type: 'LIST',
-        operators: ['EQUAL', 'NOT_EQUAL'],
-        value: [
-            { value: 'CZ', label: 'Czech Republic' },
-            { value: 'SK', label: 'Slovakia' },
-            { value: 'PL', label: 'Poland' },
-        ],
-    },
-    {
-        field: 'IS_IN_EU',
-        label: 'Is in EU',
-        type: 'BOOLEAN'
-    }
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'STATE',
+    label: 'State',
+    type: 'LIST',
+    operators: ['EQUAL', 'NOT_EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+      { value: 'PL', label: 'Poland' },
+    ],
+  },
+  {
+    field: 'IS_IN_EU',
+    label: 'Is in EU',
+    type: 'BOOLEAN',
+  },
 ];
 ```
 
-As you can see, there are few things you can define. `field`, `label`, `type`, `operators` and `value`.
+Each field can define:
 
-#### Field
-
-Field is a key and needs to be unique, since it is used to reference field in query tree as you will see further down in documentation.
-
-#### Label
-
-Label is pretty obvious, so lets skip to type.
+- `field`: unique field identifier
+- `label`: label shown in the UI
+- `type`: field type
+- `operators`: allowed operators for the field
+- `value`: source value for `LIST`, `MULTI_LIST`, or `STATEMENT`
 
 #### Type
 
-Type can be any of following constants:
+Type can be any of:
 
 ```
 BOOLEAN
@@ -148,11 +159,11 @@ MULTI_LIST
 GROUP (*)
 ```
 
-\* GROUP type is not intended to be used in field props definition but only in data object.
+`GROUP` is only used in the query data, not in field definitions.
 
 #### Operators
 
-Operator can be array of following constants
+Operator can be any of:
 
 ```
 LARGER
@@ -170,141 +181,195 @@ LIKE
 NOT_LIKE
 ```
 
-#### Value
-
-Value can be either string (STATEMENT) or array of objects with value and label keys (LIST, MULTI_LIST). Values for other types are empty by default.
-
 ### Data
 
-Data can be either empty array or array of rules and groups.
+`data` is a controlled prop. Pass an array of rules and groups, and update it through `onChange`.
 
-```Typescript
-[
-    {
-        "type": "GROUP",
-        "value": "AND",
-        "isNegated": false,
-        "children": [
-            {
-                "field": "IS_IN_EU", // <- Type here is refering to field property in fields configuration
-                "value": false
-            }
-        ]
-    }
-]
+#### Group with modifiers
+
+```typescript
+const data = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'IS_IN_EU',
+        value: false,
+      },
+    ],
+  },
+];
 ```
+
+#### Group without modifiers
+
+```typescript
+const data = [
+  {
+    type: 'GROUP',
+    children: [
+      {
+        field: 'IS_IN_EU',
+        value: false,
+      },
+    ],
+  },
+];
+```
+
+Groups without modifiers do not render `Not`, `And`, or `Or`, and they do not output `value` or `isNegated`.
+
+### Builder Props
+
+Important `Builder` props:
+
+- `fields: IBuilderFieldProps[]`
+- `data: DenormalizedQuery`
+- `onChange?: (data: DenormalizedQuery) => void`
+- `components?: IBuilderComponentsProps`
+- `strings?: IStrings`
+- `readOnly?: boolean`
+- `draggable?: boolean`
+- `groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both'`
+
+#### `readOnly`
+
+When `readOnly` is `true`, editing controls and drag-and-drop behavior are disabled.
+
+#### `draggable`
+
+When `draggable` is `true`, rules and groups render drag handles and can be:
+
+- reordered within the same group
+- moved between groups
+- moved between root and nested groups
+- reordered at the root level
+
+When `draggable` is `false`, no drag handles or drop zones are rendered.
+
+#### `groupTypes`
+
+Controls what kinds of groups users can add:
+
+- `'with-modifiers'` (default)
+- `'without-modifiers'`
+- `'both'`
+
+When set to `'both'`, the `Add Group` action becomes a popover that lets the user choose which group type to create.
 
 ### Components
 
-Components is set of components you can use to customize React Query Builder. You can either just style them using [styled-components](https://www.styled-components.com/ 'styled-components') or use your own components as long as they follow typings of original components.
+You can fully customize the rendered components through the `components` prop.
 
-You can customize following componetns
-
-```
-Select
-SelectMulti
-Switch
-Input
-Remove
-Add
-Component
-Group
-GroupHeaderOption
-```
-
-via config object
+Supported component overrides:
 
 ```typescript
-const components: BuilderComponentsProps = {
+const components: IBuilderComponentsProps = {
   form: {
     Select: MyCustomSelect,
     SelectMulti: MyCustomSelectMulti,
     Switch: MyCustomSwitch,
     Input: MyCustomInput,
   },
-  Remove: MyCustomRemove,
-  Add: MyCustomAdd,
-  Component: MyCustomComponent,
+  Remove: MyCustomRemoveButton,
+  Add: MyCustomAddButton,
+  Rule: MyCustomRule,
   Group: MyCustomGroup,
-  GroupHeaderOption: MyCustomHeaderOption,
+  GroupHeaderOption: MyCustomGroupHeaderOption,
+  Text: MyCustomText,
+  DropZone: MyCustomDropZone,
+  EmptyGroupDropZone: MyCustomEmptyGroupDropZone,
+  Popover: MyCustomPopover,
+  PopoverItem: MyCustomPopoverItem,
 };
 ```
 
-### onChange
+This lets you customize not only rules and groups, but also:
 
-onChange property is allowing you to retrieve query tree after every change that occures in React Query Builder.
+- drag-and-drop placeholders
+- the popover used for multi-group-type selection
+- form controls
+- add/remove buttons
+
+All custom components should follow the typings of the built-in components.
+
+---
+
+## Theming
+
+React Query Builder uses a `ThemeProvider` and exports default `colors`.
+
+```typescript
+import React from 'react';
+import {
+  Builder,
+  ThemeProvider,
+  colors,
+  IColors,
+} from '@vojtechportes/react-query-builder';
+
+const customColors: IColors = {
+  ...colors,
+  white: '#fafafa',
+  primary: {
+    ...colors.primary,
+    default: '#0057b8',
+  },
+};
+
+export const App: React.FC = () => (
+  <ThemeProvider colors={customColors}>
+    <Builder fields={fields} data={data} onChange={console.log} />
+  </ThemeProvider>
+);
+```
+
+The theme currently controls the built-in color system used by buttons, form fields, groups, rules, popovers, drag handles, and drop zones.
 
 ---
 
 ## Localization
 
-To either use custom strings or localize ReactBuilder, you can use strings property on Builder component.
-
-You can work with object of following format:
+To localize React Query Builder, pass a `strings` object to `Builder`.
 
 ```typescript
-const strings: Strings = {
-  "group": {
-    "not": "Not",
-    "or": "Or",
-    "and": "And",
-    "addRule": "Add Rule",
-    "addGroup": "Add Group",
-    "delete": "Delete"
+import { IStrings } from '@vojtechportes/react-query-builder';
+
+const strings: IStrings = {
+  group: {
+    not: 'Not',
+    or: 'Or',
+    and: 'And',
+    addRule: 'Add Rule',
+    addGroup: 'Add Group',
+    addGroupWithModifiers: 'With Modifiers',
+    addGroupWithoutModifiers: 'Without Modifiers',
+    delete: 'Delete',
   },
-  "components": {
-    "delete": "Delete"
+  rule: {
+    delete: 'Delete',
   },
-  "form": {
-    "selectYourValue": "Select your value"
+  form: {
+    selectYourValue: 'Select your value',
   },
-  "operators": {
-    "LARGER": "Larger",
-    "SMALLER": "Smaller",
-    "LARGER_EQUAL": "Larger or equal",
-    "SMALLER_EQUAL": "Smaller or equal",
-    "EQUAL": "Equal",
-    "NOT_EQUAL": "Not equal",
-    "ALL_IN": "All in",
-    "ANY_IN": "Any in",
-    "NOT_IN": "Not in",
-    "BETWEEN": "Between",
-    "NOT_BETWEEN": "Not between"
-  }
+  operators: {
+    LARGER: 'Larger',
+    SMALLER: 'Smaller',
+    LARGER_EQUAL: 'Larger or equal',
+    SMALLER_EQUAL: 'Smaller or equal',
+    EQUAL: 'Equal',
+    NOT_EQUAL: 'Not equal',
+    ALL_IN: 'All in',
+    ANY_IN: 'Any in',
+    NOT_IN: 'Not in',
+    BETWEEN: 'Between',
+    NOT_BETWEEN: 'Not between',
+    LIKE: 'Like',
+    NOT_LIKE: 'Not like',
+  },
 };
 ```
 
-It is not required to translate all the strings. Strings that are not specified by you will be loaded from default strings.
-
-To work with multiple locales, you can use for example amazing [i18next framework](https://www.i18next.com/ 'i18next framework').
-
-```typescript
-import React from 'react';
-import { Builder, Strings } from '@vojtechportes/react-query-builder';
-import { Trans, useTranslation } from 'react-i18next';
-
-export const QueryBuiler:React.FC = () => {
-  useTranslation('query-builder')
-
-  const strings: Strings = {
-    operators: {
-      LARGER: <Trans ns="query-builder" i18nKey="larger" />,
-      SMALLER: <Trans ns="query-builder" i18nKey="smaller" />
-      /* And so on */
-    }
-  };
-
-  return (
-    <Builder
-      strings={strings}
-      fields={fields}
-      data={[]}
-      onChange={(data: any) => console.log(data)} 
-      />
-  );
-};
-```
-
-#Feature development
-
-Please check https://github.com/vojtechportes/react-query-builder/issues/37
+It is not required to translate every string. Any string you omit falls back to the built-in defaults.

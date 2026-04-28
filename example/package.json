@@ -8,12 +8,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vojtechportes/react-query-builder": "file:..",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "styled-components": "^4.4.1"
   },
   "devDependencies": {
+    "@types/node": "^22.13.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/styled-components": "^5.1.34",
