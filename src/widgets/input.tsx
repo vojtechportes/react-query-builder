@@ -1,18 +1,19 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
+import { Input as DefaultInput } from '../form/input';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isStringArray } from '../utils/is-string-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface InputProps {
+export interface IInputProps {
   value: string | string[];
   type: 'text' | 'date' | 'number';
   id: string;
 }
 
-export const Input: React.FC<InputProps> = ({ value, type, id }) => {
+export const Input: FC<IInputProps> = ({ value, type, id }) => {
   const {
     data,
     setData,
@@ -21,7 +22,7 @@ export const Input: React.FC<InputProps> = ({ value, type, id }) => {
     components,
     readOnly,
   } = useContext(BuilderContext);
-  const { form } = components;
+  const InputComponent = components.form?.Input || DefaultInput;
 
   const handleChange = (selectedValue: string, index = 0) => {
     applyDataUpdate(
@@ -45,20 +46,16 @@ export const Input: React.FC<InputProps> = ({ value, type, id }) => {
     );
   };
 
-  if (!form) {
-    return null;
-  }
-
   if (isStringArray(value)) {
     return (
       <>
-        <form.Input
+        <InputComponent
           type={type}
           value={value[0]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 0)}
           disabled={readOnly}
         />
-        <form.Input
+        <InputComponent
           type={type}
           value={value[1]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
@@ -73,7 +70,7 @@ export const Input: React.FC<InputProps> = ({ value, type, id }) => {
   }
 
   return (
-    <form.Input
+    <InputComponent
       type={type}
       value={value}
       onChange={handleChange}

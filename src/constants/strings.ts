@@ -1,13 +1,15 @@
-export interface Strings {
+export interface IStrings {
   group?: {
     not?: string;
     or?: string;
     and?: string;
     addRule?: string;
     addGroup?: string;
+    addGroupWithModifiers?: string;
+    addGroupWithoutModifiers?: string;
     delete?: string;
   };
-  component?: {
+  rule?: {
     delete?: string;
   };
   form?: {
@@ -30,16 +32,18 @@ export interface Strings {
   };
 }
 
-export const strings: Strings = {
+export const strings: IStrings = {
   group: {
     not: 'Not',
     or: 'Or',
     and: 'And',
     addRule: 'Add Rule',
     addGroup: 'Add Group',
+    addGroupWithModifiers: 'With Modifiers',
+    addGroupWithoutModifiers: 'Without Modifiers',
     delete: 'Delete',
   },
-  component: {
+  rule: {
     delete: 'Delete',
   },
   form: {

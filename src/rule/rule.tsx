@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React, { FC, useCallback, useContext } from 'react';
 import styled from 'styled-components';
 import { BuilderFieldOperator } from '../builder';
 import { BuilderContext } from '../builder-context';
+import { Rule as DefaultRuleContainer } from './rule-container';
+import { SecondaryButton } from '../secondary-button';
 import { Boolean } from '../widgets/boolean';
 import { FieldSelect } from '../widgets/field-select';
 import { Input } from '../widgets/input';
@@ -21,18 +23,22 @@ const BooleanContainer = styled.div`
   align-self: center;
 `;
 
-export interface ComponentProps {
+export interface IRuleProps {
   field: string;
   value?: QueryRuleValue;
   operator?: BuilderFieldOperator;
   id: string;
+  dragHandle?: React.ReactNode;
+  'data-test'?: string;
 }
 
-export const Component: React.FC<ComponentProps> = ({
+export const Rule: FC<IRuleProps> = ({
   field: fieldRef,
   value: selectedValue,
   operator,
   id,
+  dragHandle,
+  'data-test': dataTest,
 }) => {
   const {
     fields,
@@ -44,9 +50,10 @@ export const Component: React.FC<ComponentProps> = ({
     strings,
     readOnly,
   } = useContext(BuilderContext);
-  const { Component: ComponentContainer, Remove } = components;
+  const RuleContainer = components.Rule || DefaultRuleContainer;
+  const Remove = components.Remove || SecondaryButton;
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     applyDataUpdate(
       data,
       setData,
@@ -54,23 +61,23 @@ export const Component: React.FC<ComponentProps> = ({
       currentData => removeItem(currentData, id),
       updateData
     );
-  };
+  }, [data, id, onChange, setData, updateData]);
 
-  if (!fields || !strings.component) {
+  if (!fields || !strings.rule) {
     return null;
   }
 
   if (fieldRef === '') {
     return (
-      <ComponentContainer
+      <RuleContainer
+        dragHandle={dragHandle}
         controls={
-          !readOnly && (
-            <Remove label={strings.component.delete} onClick={handleDelete} />
-          )
+          !readOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
         }
+        data-test={dataTest}
       >
         <FieldSelect selectedValue="" id={id} />
-      </ComponentContainer>
+      </RuleContainer>
     );
   }
 
@@ -81,16 +88,16 @@ export const Component: React.FC<ComponentProps> = ({
       operators &&
       operators.map(item => ({
         value: item,
-        label: strings.operators && strings.operators[item],
+        label: (strings.operators && strings.operators[item]) || item,
       }));
 
     return (
-      <ComponentContainer
+      <RuleContainer
+        dragHandle={dragHandle}
         controls={
-          !readOnly && (
-            <Remove label={strings.component.delete} onClick={handleDelete} />
-          )
+          !readOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
         }
+        data-test={dataTest}
       >
         <FieldSelect selectedValue={field} id={id} />
 
@@ -182,7 +189,7 @@ export const Component: React.FC<ComponentProps> = ({
               )}
             </>
           )}
-      </ComponentContainer>
+      </RuleContainer>
     );
   } catch (error) {
     console.error(`Field "${fieldRef}" not found in fields definition.`);

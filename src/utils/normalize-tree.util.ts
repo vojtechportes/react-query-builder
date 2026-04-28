@@ -2,21 +2,22 @@ import { clone } from './clone.util';
 import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
 import {
   DenormalizedGroupNode,
+  IDenormalizedGroupNodeWithModifiers,
   DenormalizedQuery,
   NormalizedGroupNode,
   NormalizedNode,
   NormalizedQuery,
 } from './query-tree';
 
-interface TreeContainer {
+interface ITreeContainer {
   children: DenormalizedQuery;
 }
 
 export const normalizeTree = (data: DenormalizedQuery): NormalizedQuery => {
-  const clonedData: TreeContainer = { children: clone(data) };
+  const clonedData: ITreeContainer = { children: clone(data) };
   const normalizedData: NormalizedQuery = [];
 
-  const run = (item: DenormalizedGroupNode | TreeContainer, parentId?: string) => {
+  const run = (item: DenormalizedGroupNode | ITreeContainer, parentId?: string) => {
     const children: string[] = [];
 
     item.children.forEach(childItem => {
@@ -31,14 +32,24 @@ export const normalizeTree = (data: DenormalizedQuery): NormalizedQuery => {
       }
 
       if (isDenormalizedGroupNode(childItem)) {
-        const normalizedItem: NormalizedGroupNode = {
-          id: childId,
-          parent: childItem.parent,
-          type: childItem.type,
-          value: childItem.value,
-          isNegated: childItem.isNegated,
-          children: [],
-        };
+        const normalizedItem: NormalizedGroupNode =
+          'value' in childItem &&
+          typeof childItem.value !== 'undefined' &&
+          'isNegated' in childItem
+            ? {
+                id: childId,
+                parent: childItem.parent,
+                type: childItem.type,
+                value: (childItem as IDenormalizedGroupNodeWithModifiers).value,
+                isNegated: childItem.isNegated,
+                children: [],
+              }
+            : {
+                id: childId,
+                parent: childItem.parent,
+                type: childItem.type,
+                children: [],
+              };
 
         normalizedData.push(normalizedItem);
         children.push(normalizedItem.id);

@@ -3,13 +3,17 @@
 exports[`#components/Group Tests snapshot 1`] = `
 <Group
   id="test"
+  isNegated={false}
   isRoot={true}
+  value="AND"
 />
 `;
 
 exports[`#components/Group Tests snapshot 2`] = `
 <Group
   id="test"
+  isNegated={false}
   isRoot={true}
+  value="AND"
 />
 `;

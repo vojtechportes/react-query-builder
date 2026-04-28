@@ -1,4 +1,5 @@
 {
+  "references": [{ "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

@@ -1,8 +1,8 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
-  BuilderComponentsProps,
-  BuilderFieldProps,
+  IBuilderComponentsProps,
+  IBuilderFieldProps,
   defaultComponents,
 } from './builder';
 import { BuilderContext } from './builder-context';
@@ -10,8 +10,8 @@ import { strings } from './constants/strings';
 import { Iterator } from './iterator';
 import { NormalizedQuery } from './utils/query-tree';
 
-const components: BuilderComponentsProps = defaultComponents;
-const fields: BuilderFieldProps[] = [
+const components: IBuilderComponentsProps = defaultComponents;
+const fields: IBuilderFieldProps[] = [
   {
     field: 'MOCK_FIELD',
     label: 'Mock Field',
@@ -66,6 +66,6 @@ describe('#components/Iterator', () => {
       </BuilderContext.Provider>
     );
 
-    expect(wrapper.find('[data-test="IteratorComponent"]').length).toEqual(2)
+    expect(wrapper.find('[data-test="IteratorRule"]').hostNodes().length).toEqual(2)
   });
 });

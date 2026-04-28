@@ -1,16 +1,16 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
-  BuilderComponentsProps,
-  BuilderFieldProps,
+  IBuilderComponentsProps,
+  IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { strings } from '../constants/strings';
-import { Component } from './component';
+import { Rule } from './rule';
 
-const components: BuilderComponentsProps = defaultComponents;
-const fields: BuilderFieldProps[] = [
+const components: IBuilderComponentsProps = defaultComponents;
+const fields: IBuilderFieldProps[] = [
   {
     field: 'MOCK_FIELD_1',
     label: 'Mock Field',
@@ -108,7 +108,7 @@ const data: any[] = [
 const setData = jest.fn();
 const onChange = () => jest.fn();
 
-describe('#components/Component', () => {
+describe('#components/Rule', () => {
   it('Tests snapshot', () => {
     expect(
       shallow(
@@ -123,7 +123,7 @@ describe('#components/Component', () => {
             readOnly: false,
           }}
         >
-          <Component id="test-2" field="MOCK_FIELD_1" />
+          <Rule id="test-2" field="MOCK_FIELD_1" />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
@@ -141,7 +141,7 @@ describe('#components/Component', () => {
             readOnly: true,
           }}
         >
-          <Component id="test-2" field="MOCK_FIELD_1" />
+          <Rule id="test-2" field="MOCK_FIELD_1" />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
@@ -160,37 +160,37 @@ describe('#components/Component', () => {
           readOnly: false,
         }}
       >
-        <Component data-test="Component[0]" id="test-2" field="" />
-        <Component data-test="Component[1]" id="test-2" field="MOCK_FIELD_1" />
-        <Component data-test="Component[2]" id="test-3" field="MOCK_FIELD_2" />
-        <Component data-test="Component[3]" id="test-4" field="MOCK_FIELD_3" />
-        <Component data-test="Component[4]" id="test-5" field="MOCK_FIELD_4" />
-        <Component data-test="Component[5]" id="test-6" field="MOCK_FIELD_5" />
-        <Component data-test="Component[6]" id="test-7" field="MOCK_FIELD_6" />
-        <Component data-test="Component[7]" id="test-8" field="MOCK_FIELD_7" />
-        <Component
-          data-test="Component[8]"
+        <Rule data-test="Rule[0]" id="test-2" field="" />
+        <Rule data-test="Rule[1]" id="test-2" field="MOCK_FIELD_1" />
+        <Rule data-test="Rule[2]" id="test-3" field="MOCK_FIELD_2" />
+        <Rule data-test="Rule[3]" id="test-4" field="MOCK_FIELD_3" />
+        <Rule data-test="Rule[4]" id="test-5" field="MOCK_FIELD_4" />
+        <Rule data-test="Rule[5]" id="test-6" field="MOCK_FIELD_5" />
+        <Rule data-test="Rule[6]" id="test-7" field="MOCK_FIELD_6" />
+        <Rule data-test="Rule[7]" id="test-8" field="MOCK_FIELD_7" />
+        <Rule
+          data-test="Rule[8]"
           id="test-9"
           field="SOME_FIELD_THAT_DOESNT_EXISTS"
         />
       </BuilderContext.Provider>
     );
 
-    expect(wrapper.find('[data-test="Component[0]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[1]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[2]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[3]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[4]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[5]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[6]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Component[7]"]')).toBeDefined();
-    expect(Object.keys(wrapper.find('[data-test="Component[8]"]')).length).toBe(
+    expect(wrapper.find('[data-test="Rule[0]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[1]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[2]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[3]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[4]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[5]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[6]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[7]"]')).toBeDefined();
+    expect(Object.keys(wrapper.find('[data-test="Rule[8]"]')).length).toBe(
       0
     );
 
-    wrapper.find('[data-test="Component[1]"] button').simulate('click');
+    wrapper.find('[data-test="Rule[1]"] button').simulate('click');
 
-    expect(Object.keys(wrapper.find('[data-test="Component[1]"]')).length).toBe(
+    expect(Object.keys(wrapper.find('[data-test="Rule[1]"]')).length).toBe(
       0
     );
   });
@@ -208,7 +208,7 @@ describe('#components/Component', () => {
           readOnly: false,
         }}
       >
-        <Component id="test-9" field="" />
+        <Rule id="test-9" field="" />
       </BuilderContext.Provider>
     );
 

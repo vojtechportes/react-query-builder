@@ -1,7 +1,30 @@
 import styled from 'styled-components';
-import { Button, ButtonProps } from './button';
-import { colors } from './constants/colors';
+import { Button, IButtonProps } from './button';
+import React, { FC, PropsWithChildren } from 'react';
+import { IThemeProps } from './theme-provider/theme-provider';
+import { useTheme } from './theme-provider/hooks/use-theme';
 
-export const SecondaryButton = styled(Button)<ButtonProps>`
-  background-color: ${colors.tertiary};
+export const StyledSecondaryButton = styled(Button)<
+  IButtonProps & { $theme: Required<IThemeProps> }
+>`
+  background-color: ${({ $theme }) => $theme.colors.secondary.light};
+  border: 1px solid ${({ $theme }) => $theme.colors.secondary.dark};
+  color: ${({ $theme }) => $theme.colors.secondary.contrastText};
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme.colors.secondary.default};
+  }
 `;
+
+export const SecondaryButton: FC<PropsWithChildren<IButtonProps>> = ({
+  children,
+  ...rest
+}) => {
+  const theme = useTheme();
+
+  return (
+    <StyledSecondaryButton $theme={theme} {...rest}>
+      {children}
+    </StyledSecondaryButton>
+  );
+};

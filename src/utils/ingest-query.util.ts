@@ -1,12 +1,21 @@
 import { assignIds } from './assign-ids.util';
 import { createEmptyRootGroup } from './create-empty-root-group.util';
 import { normalizeTree } from './normalize-tree.util';
-import { DenormalizedQuery, NormalizedQuery } from './query-tree';
+import {
+  DenormalizedQuery,
+  NormalizedQuery,
+  QueryGroupType,
+} from './query-tree';
 
-export const ingestQuery = (inputQuery: DenormalizedQuery): NormalizedQuery => {
+export const ingestQuery = (
+  inputQuery: DenormalizedQuery,
+  rootGroupType: QueryGroupType = 'with-modifiers'
+): NormalizedQuery => {
   const queryWithIds = assignIds(inputQuery || []);
   const normalizedInput =
-    queryWithIds.length > 0 ? queryWithIds : createEmptyRootGroup();
+    queryWithIds.length > 0
+      ? queryWithIds
+      : createEmptyRootGroup(rootGroupType);
 
   try {
     return normalizeTree(normalizedInput);

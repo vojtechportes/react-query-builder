@@ -1,23 +1,24 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderFieldOperator } from '../builder';
 import { BuilderContext } from '../builder-context';
+import { Select as DefaultSelect } from '../form/select';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isStringArray } from '../utils/is-string-array.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface OperatorSelectValuesProps {
+export interface IOperatorSelectValuesProps {
   value: BuilderFieldOperator;
-  label?: string;
+  label: string;
 }
 
-export interface OperatorSelectProps {
-  values: OperatorSelectValuesProps[];
+export interface IOperatorSelectProps {
+  values: IOperatorSelectValuesProps[];
   selectedValue?: BuilderFieldOperator;
   id: string;
 }
 
-export const OperatorSelect: React.FC<OperatorSelectProps> = ({
+export const OperatorSelect: FC<IOperatorSelectProps> = ({
   values,
   selectedValue,
   id,
@@ -32,7 +33,7 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
     strings,
     readOnly,
   } = useContext(BuilderContext);
-  const { form } = components;
+  const Select = components.form?.Select || DefaultSelect;
 
   const handleChange = (value: BuilderFieldOperator) => {
     applyDataUpdate(
@@ -70,12 +71,12 @@ export const OperatorSelect: React.FC<OperatorSelectProps> = ({
     );
   };
 
-  if (!form || !strings.form) {
+  if (!strings.form) {
     return null;
   }
 
   return (
-    <form.Select
+    <Select
       values={values}
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}

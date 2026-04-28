@@ -1,18 +1,19 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
+import { Switch as DefaultSwitch } from '../form/switch';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface BooleanProps {
+export interface IBooleanProps {
   selectedValue: boolean;
   id: string;
 }
 
-export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
+export const Boolean: FC<IBooleanProps> = ({ selectedValue, id }) => {
   const { data, setData, onChange, updateData, components, readOnly } =
     useContext(BuilderContext);
 
-  const { form } = components;
+  const Switch = components.form?.Switch || DefaultSwitch;
 
   const handleChange = (value: boolean) => {
     applyDataUpdate(
@@ -27,12 +28,8 @@ export const Boolean: React.FC<BooleanProps> = ({ selectedValue, id }) => {
     );
   };
 
-  if (!form) {
-    return null;
-  }
-
   return (
-    <form.Switch
+    <Switch
       onChange={handleChange}
       switched={selectedValue}
       disabled={readOnly}

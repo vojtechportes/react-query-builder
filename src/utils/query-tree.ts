@@ -14,10 +14,11 @@ export type QueryOperator =
   | 'NOT_LIKE';
 
 export type QueryGroupValue = 'AND' | 'OR';
+export type QueryGroupType = 'with-modifiers' | 'without-modifiers';
 
 export type QueryRuleValue = string | string[] | boolean;
 
-export interface DenormalizedRuleNode {
+export interface IDenormalizedRuleNode {
   id?: string;
   parent?: string;
   field: string;
@@ -26,32 +27,60 @@ export interface DenormalizedRuleNode {
   operators?: QueryOperator[];
 }
 
-export interface DenormalizedGroupNode {
+export interface IDenormalizedGroupNodeBase {
   id?: string;
   parent?: string;
   type: 'GROUP';
-  value: QueryGroupValue;
-  isNegated: boolean;
   children: DenormalizedNode[];
 }
 
-export type DenormalizedNode = DenormalizedRuleNode | DenormalizedGroupNode;
+export interface IDenormalizedGroupNodeWithModifiers
+  extends IDenormalizedGroupNodeBase {
+  value: QueryGroupValue;
+  isNegated: boolean;
+}
 
-export interface NormalizedRuleNode extends DenormalizedRuleNode {
+export interface IDenormalizedGroupNodeWithoutModifiers
+  extends IDenormalizedGroupNodeBase {
+  value?: undefined;
+  isNegated?: undefined;
+}
+
+export type DenormalizedGroupNode =
+  | IDenormalizedGroupNodeWithModifiers
+  | IDenormalizedGroupNodeWithoutModifiers;
+
+export type DenormalizedNode = IDenormalizedRuleNode | DenormalizedGroupNode;
+
+export interface INormalizedRuleNode extends IDenormalizedRuleNode {
   id: string;
   parent?: string;
 }
 
-export interface NormalizedGroupNode {
+export interface INormalizedGroupNodeBase {
   id: string;
   parent?: string;
   type: 'GROUP';
-  value: QueryGroupValue;
-  isNegated: boolean;
   children: string[];
 }
 
-export type NormalizedNode = NormalizedRuleNode | NormalizedGroupNode;
+export interface INormalizedGroupNodeWithModifiers
+  extends INormalizedGroupNodeBase {
+  value: QueryGroupValue;
+  isNegated: boolean;
+}
+
+export interface INormalizedGroupNodeWithoutModifiers
+  extends INormalizedGroupNodeBase {
+  value?: undefined;
+  isNegated?: undefined;
+}
+
+export type NormalizedGroupNode =
+  | INormalizedGroupNodeWithModifiers
+  | INormalizedGroupNodeWithoutModifiers;
+
+export type NormalizedNode = INormalizedRuleNode | NormalizedGroupNode;
 
 export type DenormalizedQuery = DenormalizedNode[];
 export type NormalizedQuery = NormalizedNode[];

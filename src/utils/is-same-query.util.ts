@@ -1,7 +1,7 @@
 import {
   DenormalizedNode,
   DenormalizedQuery,
-  DenormalizedRuleNode,
+  IDenormalizedRuleNode,
 } from './query-tree';
 import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
 
@@ -29,8 +29,8 @@ const isSameNode = (left: DenormalizedNode, right: DenormalizedNode): boolean =>
     );
   }
 
-  const leftRule = left as DenormalizedRuleNode;
-  const rightRule = right as DenormalizedRuleNode;
+  const leftRule = left as IDenormalizedRuleNode;
+  const rightRule = right as IDenormalizedRuleNode;
 
   return (
     leftRule.field === rightRule.field &&

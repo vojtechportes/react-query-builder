@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 import { Option } from './option';
 import { OptionContainer } from './option-container';
-import { Select, SelectProps } from './select';
+import { Select, ISelectProps } from './select';
 
 const Container = styled.div`
   display: grid;
@@ -15,8 +15,8 @@ const Delete = styled.span<{ disabled: boolean }>`
   cursor: ${({ disabled }) => (!disabled ? `pointer` : 'default')};
 `;
 
-export interface SelectMultiProps
-  extends Pick<SelectProps, 'onChange' | 'values'> {
+export interface ISelectMultiProps
+  extends Pick<ISelectProps, 'onChange' | 'values'> {
   onDelete: (value: string) => void;
   selectedValue: string[];
   emptyValue?: string;
@@ -24,7 +24,7 @@ export interface SelectMultiProps
   className?: string;
 }
 
-export const SelectMulti: React.FC<SelectMultiProps> = ({
+export const SelectMulti: FC<ISelectMultiProps> = ({
   onChange,
   onDelete,
   selectedValue,

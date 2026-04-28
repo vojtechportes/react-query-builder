@@ -1,15 +1,15 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
-  BuilderComponentsProps,
-  BuilderFieldProps,
+  IBuilderComponentsProps,
+  IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Input } from './input';
 
-const components: BuilderComponentsProps = defaultComponents;
-const fields: BuilderFieldProps[] = [
+const components: IBuilderComponentsProps = defaultComponents;
+const fields: IBuilderFieldProps[] = [
   {
     field: 'MOCK_FIELD',
     label: 'Mock Field',

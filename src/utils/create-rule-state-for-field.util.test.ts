@@ -1,9 +1,9 @@
-import { BuilderFieldProps } from '../builder';
+import { IBuilderFieldProps } from '../builder';
 import { createRuleStateForField } from './create-rule-state-for-field.util';
 
 describe('#utils/createRuleStateForField', () => {
   it('Creates a boolean rule state', () => {
-    const field: BuilderFieldProps = {
+    const field: IBuilderFieldProps = {
       field: 'IS_ACTIVE',
       label: 'Is active',
       type: 'BOOLEAN',
@@ -16,7 +16,7 @@ describe('#utils/createRuleStateForField', () => {
   });
 
   it('Creates a between text rule state', () => {
-    const field: BuilderFieldProps = {
+    const field: IBuilderFieldProps = {
       field: 'NAME',
       label: 'Name',
       type: 'TEXT',
@@ -32,7 +32,7 @@ describe('#utils/createRuleStateForField', () => {
   });
 
   it('Creates a list rule state from the first option', () => {
-    const field: BuilderFieldProps = {
+    const field: IBuilderFieldProps = {
       field: 'STATUS',
       label: 'Status',
       type: 'LIST',
@@ -52,7 +52,7 @@ describe('#utils/createRuleStateForField', () => {
   });
 
   it('Creates a statement rule state', () => {
-    const field: BuilderFieldProps = {
+    const field: IBuilderFieldProps = {
       field: 'NOTE',
       label: 'Note',
       type: 'STATEMENT',

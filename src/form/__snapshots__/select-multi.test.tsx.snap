@@ -16,7 +16,7 @@ exports[`#components/SelectMulti Tests Snapshot 1`] = `
     }
   />
   <styled.div>
-    <styled.span
+    <Option
       key="test"
     >
       test
@@ -28,7 +28,7 @@ exports[`#components/SelectMulti Tests Snapshot 1`] = `
       >
         [x]
       </styled.span>
-    </styled.span>
+    </Option>
   </styled.div>
 </styled.div>
 `;

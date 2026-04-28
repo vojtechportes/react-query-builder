@@ -1,17 +1,18 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
+import { SelectMulti as DefaultSelectMulti } from '../form/select-multi';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isStringArray } from '../utils/is-string-array.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface SelectMultiProps {
+export interface ISelectMultiProps {
   values: Array<{ value: string; label: string }>;
   selectedValue: string[];
   id: string;
 }
 
-export const SelectMulti: React.FC<SelectMultiProps> = ({
+export const SelectMulti: FC<ISelectMultiProps> = ({
   values,
   selectedValue,
   id,
@@ -25,7 +26,8 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
     strings,
     readOnly,
   } = useContext(BuilderContext);
-  const { form } = components;
+  const SelectMultiComponent =
+    components.form?.SelectMulti || DefaultSelectMulti;
 
   const handleChange = (value: string) => {
     applyDataUpdate(
@@ -62,12 +64,12 @@ export const SelectMulti: React.FC<SelectMultiProps> = ({
     );
   };
 
-  if (!form || !strings.form) {
+  if (!strings.form) {
     return null;
   }
 
   return (
-    <form.SelectMulti
+    <SelectMultiComponent
       onChange={handleChange}
       onDelete={handleDelete}
       selectedValue={selectedValue}

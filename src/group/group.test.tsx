@@ -1,16 +1,16 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
-  BuilderComponentsProps,
-  BuilderFieldProps,
+  IBuilderComponentsProps,
+  IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { strings } from '../constants/strings';
 import { Group } from './group';
 
-const components: BuilderComponentsProps = defaultComponents;
-const fields: BuilderFieldProps[] = [
+const components: IBuilderComponentsProps = defaultComponents;
+const fields: IBuilderFieldProps[] = [
   {
     field: 'MOCK_FIELD',
     label: 'Mock Field',
@@ -51,7 +51,7 @@ describe('#components/Group', () => {
             readOnly: false,
           }}
         >
-          <Group id="test" isRoot />
+          <Group id="test" isRoot value="AND" isNegated={false} />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
@@ -69,7 +69,7 @@ describe('#components/Group', () => {
             readOnly: true,
           }}
         >
-          <Group id="test" isRoot />
+          <Group id="test" isRoot value="AND" isNegated={false} />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
@@ -88,7 +88,7 @@ describe('#components/Group', () => {
           readOnly: false,
         }}
       >
-        <Group id="test-2" isRoot={false} />
+        <Group id="test-2" isRoot={false} value="AND" isNegated={false} />
       </BuilderContext.Provider>
     );
 
@@ -124,7 +124,7 @@ describe('#components/Group', () => {
           readOnly: false,
         }}
       >
-        <Group id="test-1" isRoot />
+        <Group id="test-1" isRoot value="AND" isNegated={false} />
       </BuilderContext.Provider>
     );
 

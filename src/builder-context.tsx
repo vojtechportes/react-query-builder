@@ -1,18 +1,21 @@
-import React, { createContext } from 'react';
+import React, { FC, createContext } from 'react';
 import {
-  BuilderComponentsProps,
-  BuilderFieldProps,
+  IBuilderComponentsProps,
+  IBuilderFieldProps,
+  BuilderGroupMode,
   defaultComponents,
 } from './builder';
-import { Strings, strings as defaultStrings } from './constants/strings';
+import { IStrings, strings as defaultStrings } from './constants/strings';
 import { NormalizedQuery } from './utils/query-tree';
 
-export interface BuilderContextProps {
-  fields: BuilderFieldProps[];
+export interface IBuilderContextProps {
+  fields: IBuilderFieldProps[];
   data: NormalizedQuery;
   readOnly: boolean;
-  components: BuilderComponentsProps;
-  strings: Strings;
+  draggable?: boolean;
+  groupTypes?: BuilderGroupMode;
+  components: IBuilderComponentsProps;
+  strings: IStrings;
   setData: React.Dispatch<NormalizedQuery>;
   onChange: (data: NormalizedQuery) => void;
   updateData?: (
@@ -20,20 +23,34 @@ export interface BuilderContextProps {
   ) => void;
 }
 
-export const BuilderContext = createContext<BuilderContextProps>(
-  {} as BuilderContextProps
+export const BuilderContext = createContext<IBuilderContextProps>(
+  {} as IBuilderContextProps
 );
 
-export interface BuilderContextProviderProps extends BuilderContextProps {
+export interface IBuilderContextProviderProps {
+  fields: IBuilderFieldProps[];
+  data: NormalizedQuery;
+  readOnly: boolean;
+  draggable?: boolean;
+  groupTypes?: BuilderGroupMode;
+  components: IBuilderComponentsProps;
+  strings: IStrings;
+  setData: React.Dispatch<NormalizedQuery>;
+  onChange: (data: NormalizedQuery) => void;
+  updateData?: (
+    updater: (currentData: NormalizedQuery) => NormalizedQuery
+  ) => void;
   children: React.ReactNode;
 }
 
-export const BuilderContextProvider: React.FC<BuilderContextProviderProps> = ({
+export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   fields,
   components,
   strings,
   data,
   readOnly,
+  draggable,
+  groupTypes,
   setData,
   onChange,
   updateData,
@@ -48,9 +65,9 @@ export const BuilderContextProvider: React.FC<BuilderContextProviderProps> = ({
   const resolvedStrings = {
     ...defaultStrings,
     ...strings,
-    component: {
-      ...defaultStrings.component,
-      ...strings.component,
+    rule: {
+      ...defaultStrings.rule,
+      ...strings.rule,
     },
     form: {
       ...defaultStrings.form,
@@ -74,6 +91,8 @@ export const BuilderContextProvider: React.FC<BuilderContextProviderProps> = ({
         strings: resolvedStrings,
         data,
         readOnly,
+        draggable,
+        groupTypes,
         setData,
         onChange,
         updateData,

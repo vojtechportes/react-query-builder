@@ -5,7 +5,13 @@ import {
   Builder,
   BuilderFieldProps,
   colors,
-} from '@vojtechportes/react-query-builder';
+  type DenormalizedQuery,
+} from '../../src';
+import { Theme } from './components/theme';
+import {
+  IThemeProviderProps,
+  ThemeProvider,
+} from '../../src/theme-provider/theme-provider';
 
 const Page = styled.div`
   padding: 2rem;
@@ -21,8 +27,8 @@ const Toolbar = styled.div`
 
 const ActionButton = styled.button`
   padding: 0.5rem 0.75rem;
-  background: #fff;
-  border: 1px solid ${colors.medium};
+  background: ${colors.white};
+  border: 1px solid ${colors.grey['500']};
   cursor: pointer;
 `;
 
@@ -30,15 +36,15 @@ const Code = styled.pre`
   margin: 1rem 0 0;
   padding: 1rem;
   font-size: 0.75rem;
-  background: ${colors.light};
-  border: 1px solid ${colors.darker};
+  background: ${colors.grey['100']};
+  border: 1px solid ${colors.grey['300']};
   overflow: auto;
 `;
 
-const initialQueryTree = [
+const initialQueryTree: DenormalizedQuery = [
   {
-    type: 'GROUP' as const,
-    value: 'AND' as const,
+    type: 'GROUP',
+    value: 'AND',
     isNegated: false,
     children: [
       {
@@ -136,26 +142,37 @@ const fields: BuilderFieldProps[] = [
 ];
 
 const App: React.FC = () => {
-  const [output, setOutput] = React.useState(initialQueryTree);
+  const [output, setOutput] =
+    React.useState<DenormalizedQuery>(initialQueryTree);
   const [readOnly, setReadOnly] = React.useState(false);
+  const [draggable, setDraggable] = React.useState(false);
+  const [theme, setTheme] = React.useState<IThemeProviderProps>({
+    colors,
+  });
 
   return (
     <Page>
       <Toolbar>
         <ActionButton
           type="button"
-          onClick={() => setReadOnly(value => !value)}
+          onClick={() => setReadOnly((value) => !value)}
         >
           Toggle read-only
         </ActionButton>
         <ActionButton
           type="button"
+          onClick={() => setDraggable((value) => !value)}
+        >
+          Toggle draggable
+        </ActionButton>
+        <ActionButton
+          type="button"
           onClick={() =>
-            setOutput(value => [
+            setOutput((value) => [
               ...value,
               {
-                type: 'GROUP' as const,
-                value: 'AND' as const,
+                type: 'GROUP',
+                value: 'AND',
                 isNegated: false,
                 children: [
                   {
@@ -171,12 +188,22 @@ const App: React.FC = () => {
         </ActionButton>
       </Toolbar>
 
-      <Builder
-        data={output}
-        fields={fields}
-        readOnly={readOnly}
-        onChange={setOutput}
+      <Theme
+        onColorsChange={(colors) => {
+          setTheme((value) => ({ ...value, colors }));
+        }}
       />
+
+      <ThemeProvider colors={theme.colors}>
+        <Builder
+          data={output}
+          fields={fields}
+          readOnly={readOnly}
+          onChange={setOutput}
+          draggable={draggable}
+          groupTypes="both"
+        />
+      </ThemeProvider>
 
       <h3>Output</h3>
       <Code>{JSON.stringify(output, null, 2)}</Code>

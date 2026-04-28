@@ -1,32 +1,36 @@
-import React from 'react';
+import React, { FC, useCallback } from 'react';
 import styled, { css } from 'styled-components';
-import { colors } from '../constants/colors';
+import { IThemeProps } from '../theme-provider/theme-provider';
+import { useTheme } from '../theme-provider/hooks/use-theme';
 
-interface StyledOptionProps {
+export interface IStyledOptionProps {
   isSelected: boolean;
   disabled: boolean;
+  $theme: Required<IThemeProps>;
 }
 
-const StyledOption = styled.div<StyledOptionProps>`
+const StyledOption = styled.div<IStyledOptionProps>`
   padding: 0.5rem 0.6rem;
   color: #fff;
   font-weight: bold;
   font-size: 0.7rem;
   text-transform: uppercase;
-  background: ${({ isSelected }) =>
-    isSelected ? colors.primary : colors.darker};
-  border: 1px solid ${colors.dark};
+  background: ${({ isSelected, $theme }) =>
+    isSelected ? $theme.colors.primary.default : $theme.colors.grey['500']};
+  border: 1px solid ${({ $theme }) => $theme.colors.grey['800']};
   cursor: pointer;
 
-  ${({ disabled, isSelected }) =>
+  ${({ disabled, isSelected, $theme }) =>
     disabled &&
     css`
-      background: ${isSelected ? colors.dark : colors.darker};
+      background: ${isSelected
+        ? $theme.colors.grey['800']
+        : $theme.colors.grey['500']};
       cursor: initial;
     `}
 `;
 
-export interface OptionProps {
+export interface IOptionProps {
   children: React.ReactNode;
   value: any;
   onClick: (value: any) => void;
@@ -35,7 +39,7 @@ export interface OptionProps {
   className?: string;
 }
 
-export const Option: React.FC<OptionProps> = ({
+export const Option: FC<IOptionProps> = ({
   children,
   onClick,
   disabled,
@@ -43,11 +47,13 @@ export const Option: React.FC<OptionProps> = ({
   isSelected,
   className,
 }) => {
-  const handleClick = () => {
+  const theme = useTheme();
+
+  const handleClick = useCallback(() => {
     if (!disabled) {
       onClick(value);
     }
-  };
+  }, [disabled, onClick, value]);
 
   return (
     <StyledOption
@@ -55,6 +61,7 @@ export const Option: React.FC<OptionProps> = ({
       isSelected={isSelected}
       disabled={disabled}
       onClick={handleClick}
+      $theme={theme}
     >
       {children}
     </StyledOption>

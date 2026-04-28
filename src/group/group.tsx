@@ -1,32 +1,38 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BuilderGroupValues } from '../builder';
 import { BuilderContext } from '../builder-context';
+import { Button } from '../button';
+import { Popover as DefaultPopover } from '../popover';
+import { PopoverItem as DefaultPopoverItem } from '../popover-item';
+import { Group as DefaultGroupContainer } from './group-container';
+import { Option as DefaultOption } from './option';
+import { SecondaryButton } from '../secondary-button';
 import { appendToGroup } from '../utils/append-to-group.util';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
+import { createGroupNode } from '../utils/create-group-node.util';
 import { createId } from '../utils/create-id.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import {
-  NormalizedGroupNode,
-  NormalizedNode,
-  NormalizedRuleNode,
-} from '../utils/query-tree';
+import { NormalizedNode, INormalizedRuleNode } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
 import { updateItem } from '../utils/update-item.util';
 
-export interface GroupProps {
+export interface IGroupProps {
   value?: BuilderGroupValues;
   isNegated?: boolean;
   children?: React.ReactNode;
+  dragHandle?: React.ReactNode;
+  contentOverlay?: React.ReactNode;
   id: string;
   isRoot: boolean;
 }
 
-export const Group: React.FC<GroupProps> = ({
+export const Group: FC<IGroupProps> = ({
   value,
   isNegated,
   children,
+  dragHandle,
+  contentOverlay,
   id,
-  isRoot,
 }) => {
   const {
     components,
@@ -36,39 +42,36 @@ export const Group: React.FC<GroupProps> = ({
     updateData,
     strings,
     readOnly,
+    groupTypes,
   } = useContext(BuilderContext);
-  const {
-    Add,
-    Group: GroupContainer,
-    GroupHeaderOption: Option,
-    Remove,
-  } = components;
+  const Add = components.Add || Button;
+  const GroupContainer = components.Group || DefaultGroupContainer;
+  const Option = components.GroupHeaderOption || DefaultOption;
+  const Popover = components.Popover || DefaultPopover;
+  const PopoverItem = components.PopoverItem || DefaultPopoverItem;
+  const Remove = components.Remove || SecondaryButton;
+  const resolvedGroupTypes = groupTypes || 'with-modifiers';
 
   const addItem = (payload: NormalizedNode) => {
     applyDataUpdate(
       data,
       setData,
       onChange,
-      currentData => appendToGroup(currentData, id, payload),
+      (currentData) => appendToGroup(currentData, id, payload),
       updateData
     );
   };
 
   const handleAddGroup = () => {
-    const emptyGroup: NormalizedGroupNode = {
-      type: 'GROUP',
-      value: 'AND',
-      isNegated: false,
-      id: createId(),
-      parent: id,
-      children: [],
-    };
+    addItem(createGroupNode('with-modifiers', id));
+  };
 
-    addItem(emptyGroup);
+  const handleAddGroupWithoutModifiers = () => {
+    addItem(createGroupNode('without-modifiers', id));
   };
 
   const handleAddRule = () => {
-    const emptyRule: NormalizedRuleNode = {
+    const emptyRule: INormalizedRuleNode = {
       field: '',
       id: createId(),
       parent: id,
@@ -82,8 +85,8 @@ export const Group: React.FC<GroupProps> = ({
       data,
       setData,
       onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
+      (currentData) =>
+        updateItem(currentData, id, (item) => {
           if (isNormalizedGroupNode(item)) {
             item.value = nextValue;
           }
@@ -97,8 +100,8 @@ export const Group: React.FC<GroupProps> = ({
       data,
       setData,
       onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
+      (currentData) =>
+        updateItem(currentData, id, (item) => {
           if (isNormalizedGroupNode(item)) {
             item.isNegated = nextValue;
           }
@@ -112,7 +115,7 @@ export const Group: React.FC<GroupProps> = ({
       data,
       setData,
       onChange,
-      currentData => removeItem(currentData, id),
+      (currentData) => removeItem(currentData, id),
       updateData
     );
   };
@@ -121,59 +124,86 @@ export const Group: React.FC<GroupProps> = ({
     return null;
   }
 
+  const hasModifiers =
+    typeof value !== 'undefined' && typeof isNegated !== 'undefined';
+
+  const addGroupControl =
+    resolvedGroupTypes === 'both' ? (
+      <Popover
+        label={strings.group.addGroup || 'Add Group'}
+        data-test="AddGroup"
+      >
+        <PopoverItem
+          label={strings.group.addGroupWithModifiers || 'With Modifiers'}
+          onClick={handleAddGroup}
+          data-test="AddGroupWithModifiers"
+        />
+        <PopoverItem
+          label={strings.group.addGroupWithoutModifiers || 'Without Modifiers'}
+          onClick={handleAddGroupWithoutModifiers}
+          data-test="AddGroupWithoutModifiers"
+        />
+      </Popover>
+    ) : (
+      <Add
+        onClick={
+          resolvedGroupTypes === 'without-modifiers'
+            ? handleAddGroupWithoutModifiers
+            : handleAddGroup
+        }
+        data-test="AddGroup"
+      >
+        {strings.group.addGroup}
+      </Add>
+    );
+
   return (
     <GroupContainer
+      dragHandle={dragHandle}
+      contentOverlay={contentOverlay}
       controlsLeft={
-        <>
-          <Option
-            isSelected={Boolean(isNegated)}
-            value={!isNegated}
-            disabled={readOnly}
-            onClick={handleToggleNegateGroup}
-            data-test="Option[not]"
-          >
-            {strings.group.not}
-          </Option>
-          <Option
-            isSelected={value === 'AND'}
-            value="AND"
-            disabled={readOnly}
-            onClick={handleChangeGroupType}
-            data-test="Option[and]"
-          >
-            {strings.group.and}
-          </Option>
-          <Option
-            isSelected={value === 'OR'}
-            value="OR"
-            disabled={readOnly}
-            onClick={handleChangeGroupType}
-            data-test="Option[or]"
-          >
-            {strings.group.or}
-          </Option>
-        </>
+        hasModifiers ? (
+          <>
+            <Option
+              isSelected={Boolean(isNegated)}
+              value={!isNegated}
+              disabled={readOnly}
+              onClick={handleToggleNegateGroup}
+              data-test="Option[not]"
+            >
+              {strings.group.not}
+            </Option>
+            <Option
+              isSelected={value === 'AND'}
+              value="AND"
+              disabled={readOnly}
+              onClick={handleChangeGroupType}
+              data-test="Option[and]"
+            >
+              {strings.group.and}
+            </Option>
+            <Option
+              isSelected={value === 'OR'}
+              value="OR"
+              disabled={readOnly}
+              onClick={handleChangeGroupType}
+              data-test="Option[or]"
+            >
+              {strings.group.or}
+            </Option>
+          </>
+        ) : null
       }
       controlsRight={
         !readOnly && (
           <>
-            <Add
-              onClick={handleAddRule}
-              label={strings.group.addRule}
-              data-test="AddRule"
-            />
-            <Add
-              onClick={handleAddGroup}
-              label={strings.group.addGroup}
-              data-test="AddGroup"
-            />
-            {!isRoot && (
-              <Remove
-                onClick={handleDeleteGroup}
-                label={strings.group.delete}
-                data-test="Remove"
-              />
-            )}
+            <Add onClick={handleAddRule} data-test="AddRule">
+              {strings.group.addRule}
+            </Add>
+            {addGroupControl}
+            <Remove onClick={handleDeleteGroup} data-test="Remove">
+              {strings.group.delete}
+            </Remove>
           </>
         )
       }

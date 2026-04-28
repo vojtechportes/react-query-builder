@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { colors } from '../constants/colors';
+import { useTheme } from '../theme-provider/hooks/use-theme';
+import { IThemeProps } from '../theme-provider/theme-provider';
 
-const StyledGroup = styled.div`
-  margin: 0.5rem 0;
-  padding: 0.7rem;
+const StyledGroup = styled.div<{
+  hasDragHandle: boolean;
+  $theme: Required<IThemeProps>;
+}>`
+  display: grid;
+  grid-template-columns: ${({ hasDragHandle }) =>
+    hasDragHandle ? 'auto 1fr' : '1fr'};
   background: #f4f4f4;
-  border: 1px solid ${colors.medium};
+  border: 1px solid ${({ $theme }) => $theme.colors.grey['200']};
   box-shadow: 0px 0px 5px -1px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  margin-top: 0.5rem;
 `;
 
-const GroupHeader = styled.div`
+const Body = styled.div`
+  position: relative;
+  padding: 0.7rem;
+`;
+
+const GroupHeader = styled.div<{ $theme: Required<IThemeProps> }>`
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: 1fr 1fr;
   padding: 0 0 0.5rem;
-  border-bottom: 1px solid ${colors.medium};
+  border-bottom: 1px solid ${({ $theme }) => $theme.colors.grey['200']};
 `;
 
 const Left = styled.div`
@@ -51,26 +63,40 @@ const Right = styled.div`
   justify-self: end;
 `;
 
-export interface GroupProps {
+export interface IGroupProps {
   controlsLeft?: React.ReactNode;
   controlsRight?: React.ReactNode;
   children: React.ReactNode;
+  dragHandle?: React.ReactNode;
   className?: string;
+  contentOverlay?: React.ReactNode;
 }
 
-export const Group: React.FC<GroupProps> = ({
+export const Group: FC<IGroupProps> = ({
   controlsLeft,
   controlsRight,
   children,
+  dragHandle,
   className,
+  contentOverlay,
 }) => {
+  const theme = useTheme();
+
   return (
-    <StyledGroup className={className}>
-      <GroupHeader>
-        <Left>{controlsLeft}</Left>
-        <Right>{controlsRight}</Right>
-      </GroupHeader>
-      {children}
+    <StyledGroup
+      className={className}
+      hasDragHandle={Boolean(dragHandle)}
+      $theme={theme}
+    >
+      {dragHandle}
+      <Body>
+        <GroupHeader $theme={theme}>
+          <Left>{controlsLeft}</Left>
+          <Right>{controlsRight}</Right>
+        </GroupHeader>
+        {contentOverlay}
+        {children}
+      </Body>
     </StyledGroup>
   );
 };

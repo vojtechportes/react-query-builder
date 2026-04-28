@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`#components/Component Tests snapshot 1`] = `
-<Component
+exports[`#components/Rule Tests snapshot 1`] = `
+<Rule
   field="MOCK_FIELD_1"
   id="test-2"
 />
 `;
 
-exports[`#components/Component Tests snapshot 2`] = `
-<Component
+exports[`#components/Rule Tests snapshot 2`] = `
+<Rule
   field="MOCK_FIELD_1"
   id="test-2"
 />
