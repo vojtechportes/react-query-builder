@@ -44,7 +44,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && node scripts/copy-dts.mjs",
     "dev": "tsdown --watch",
     "test": "jest --runInBand",
     "test:update": "jest --updateSnapshot --runInBand",
