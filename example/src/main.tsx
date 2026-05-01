@@ -146,7 +146,7 @@ const App: React.FC = () => {
     React.useState<DenormalizedQuery>(initialQueryTree);
   const [readOnly, setReadOnly] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
-  const [singleRootGroup, setSingleRootGroup] = React.useState(false);
+  const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [theme, setTheme] = React.useState<IThemeProviderProps>({
     colors,
   });
