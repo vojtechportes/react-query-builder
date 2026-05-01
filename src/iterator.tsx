@@ -31,13 +31,16 @@ export const Iterator: FC<IIteratorProps> = ({
   isOverlay = false,
   disableDropZoneTransition = false,
 }) => {
-  const { draggable, readOnly, components } = useContext(BuilderContext);
+  const { draggable, readOnly, components, singleRootGroup } =
+    useContext(BuilderContext);
   const resolvedComponents = components || {};
   const {
     DropZone = DefaultDropZone,
     EmptyGroupDropZone = DefaultEmptyGroupDropZone,
   } = resolvedComponents;
   const isSortable = draggable && !readOnly && !isOverlay;
+  const isRootLocked = Boolean(singleRootGroup && isRoot);
+  const canSortAtLevel = isSortable && !isRootLocked;
   const activeDragIndex = activeDragId
     ? filteredData.findIndex((item) => item.id === activeDragId)
     : -1;
@@ -49,7 +52,7 @@ export const Iterator: FC<IIteratorProps> = ({
     const isCollapsedSourceBoundary =
       activeDragIndex !== -1 && index === activeDragIndex + 1;
     const leadingDropZone =
-      isSortable && shouldRenderLeadingDropZone ? (
+      canSortAtLevel && shouldRenderLeadingDropZone ? (
         <DropZone
           key={dropZoneId}
           id={dropZoneId}
@@ -71,7 +74,7 @@ export const Iterator: FC<IIteratorProps> = ({
       const { id, value, isNegated } = item;
       const emptyGroupDropZoneId = `drop-zone:${id}:0`;
       const emptyGroupDropZone =
-        isSortable && items.length === 0 ? (
+        canSortAtLevel && items.length === 0 ? (
           <EmptyGroupDropZone
             id={emptyGroupDropZoneId}
             index={0}
@@ -106,7 +109,7 @@ export const Iterator: FC<IIteratorProps> = ({
         </Group>
       );
 
-      if (!isSortable) {
+      if (!canSortAtLevel) {
         return [group()];
       }
 
@@ -132,7 +135,7 @@ export const Iterator: FC<IIteratorProps> = ({
       />
     );
 
-    if (!isSortable) {
+    if (!canSortAtLevel) {
       return [rule()];
     }
 
@@ -144,7 +147,7 @@ export const Iterator: FC<IIteratorProps> = ({
     ];
   });
 
-  if (!isSortable) {
+  if (!canSortAtLevel) {
     return <>{content}</>;
   }
 

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 import {
   Builder,
-  BuilderFieldProps,
+  IBuilderFieldProps,
   colors,
   type DenormalizedQuery,
 } from '../../src';
@@ -55,7 +55,7 @@ const initialQueryTree: DenormalizedQuery = [
   },
 ];
 
-const fields: BuilderFieldProps[] = [
+const fields: IBuilderFieldProps[] = [
   {
     field: 'STATE',
     label: 'State',
@@ -146,6 +146,7 @@ const App: React.FC = () => {
     React.useState<DenormalizedQuery>(initialQueryTree);
   const [readOnly, setReadOnly] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
+  const [singleRootGroup, setSingleRootGroup] = React.useState(false);
   const [theme, setTheme] = React.useState<IThemeProviderProps>({
     colors,
   });
@@ -164,6 +165,12 @@ const App: React.FC = () => {
           onClick={() => setDraggable((value) => !value)}
         >
           Toggle draggable
+        </ActionButton>
+        <ActionButton
+          type="button"
+          onClick={() => setSingleRootGroup((value) => !value)}
+        >
+          Toggle single root group
         </ActionButton>
         <ActionButton
           type="button"
@@ -202,6 +209,7 @@ const App: React.FC = () => {
           onChange={setOutput}
           draggable={draggable}
           groupTypes="both"
+          singleRootGroup={singleRootGroup}
         />
       </ThemeProvider>
 

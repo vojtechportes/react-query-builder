@@ -33,6 +33,7 @@ export const Group: FC<IGroupProps> = ({
   dragHandle,
   contentOverlay,
   id,
+  isRoot,
 }) => {
   const {
     components,
@@ -43,6 +44,7 @@ export const Group: FC<IGroupProps> = ({
     strings,
     readOnly,
     groupTypes,
+    singleRootGroup,
   } = useContext(BuilderContext);
   const Add = components.Add || Button;
   const GroupContainer = components.Group || DefaultGroupContainer;
@@ -51,6 +53,7 @@ export const Group: FC<IGroupProps> = ({
   const PopoverItem = components.PopoverItem || DefaultPopoverItem;
   const Remove = components.Remove || SecondaryButton;
   const resolvedGroupTypes = groupTypes || 'with-modifiers';
+  const canDeleteGroup = !(singleRootGroup && isRoot);
 
   const addItem = (payload: NormalizedNode) => {
     applyDataUpdate(
@@ -201,9 +204,11 @@ export const Group: FC<IGroupProps> = ({
               {strings.group.addRule}
             </Add>
             {addGroupControl}
-            <Remove onClick={handleDeleteGroup} data-test="Remove">
-              {strings.group.delete}
-            </Remove>
+            {canDeleteGroup ? (
+              <Remove onClick={handleDeleteGroup} data-test="Remove">
+                {strings.group.delete}
+              </Remove>
+            ) : null}
           </>
         )
       }

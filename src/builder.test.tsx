@@ -202,4 +202,24 @@ describe('#components/Builder', () => {
     expect(wrapper.find('[data-test="Option[and]"]').length).toEqual(0);
     expect(wrapper.find('[data-test="Option[or]"]').length).toEqual(0);
   });
+
+  it('Locks the builder to a single undeletable root group', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }]}
+        singleRootGroup
+        draggable
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(wrapper.find('[data-test="AddRootRule"]').length).toEqual(0);
+    expect(wrapper.find('[data-test="AddRootGroup"]').length).toEqual(0);
+    expect(wrapper.find('[data-test="IteratorRule"]').hostNodes().length).toEqual(1);
+    expect(
+      wrapper.find('button').filterWhere((node) => node.text() === 'Delete').length
+    ).toEqual(1);
+    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(1);
+  });
 });
