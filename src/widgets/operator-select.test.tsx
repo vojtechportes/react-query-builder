@@ -36,10 +36,16 @@ const data: any[] = [
     id: 'test-2',
     value: 'Test',
   },
+  {
+    field: 'MOCK_FIELD_2',
+    id: 'test-3',
+    value: [1, 2],
+    operator: 'NOT_BETWEEN',
+  },
 ];
 const strings = { form: {} };
 const setData = jest.fn();
-const onChange = () => jest.fn();
+const onChange = jest.fn();
 
 const operatorSelectValues: IOperatorSelectValuesProps[][] = [
   // Testing scenario where BETWEEN is first in operator list
@@ -134,6 +140,8 @@ describe('#components/Widgets/OperatorSelect', () => {
   });
 
   it('Tests user interaction where BETWEEN is first in operator list and field is of NUMBER type', () => {
+    onChange.mockClear();
+
     const wrapper = mount(
       <BuilderContext.Provider
         value={{
@@ -152,9 +160,31 @@ describe('#components/Widgets/OperatorSelect', () => {
 
     const select = wrapper.find('select').first();
     select.simulate('change', { target: { value: 'BETWEEN' } });
+
+    expect(onChange).toHaveBeenCalledWith([
+      {
+        field: 'MOCK_FIELD_1',
+        id: 'test-1',
+        value: 'Test',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-2',
+        value: [0, 0],
+        operator: 'BETWEEN',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: [1, 2],
+        operator: 'NOT_BETWEEN',
+      },
+    ]);
   });
 
   it('Tests user interaction where BETWEEN is NOT first in operator list and field is of NUMBER type', () => {
+    onChange.mockClear();
+
     const wrapper = mount(
       <BuilderContext.Provider
         value={{
@@ -173,6 +203,68 @@ describe('#components/Widgets/OperatorSelect', () => {
 
     const select = wrapper.find('select').first();
     select.simulate('change', { target: { value: 'ALL_IN' } });
+
+    expect(onChange).toHaveBeenCalledWith([
+      {
+        field: 'MOCK_FIELD_1',
+        id: 'test-1',
+        value: 'Test',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-2',
+        value: 'Test',
+        operator: 'ALL_IN',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: [1, 2],
+        operator: 'NOT_BETWEEN',
+      },
+    ]);
+  });
+
+  it('Resets NOT_BETWEEN number values back to numeric scalar output', () => {
+    onChange.mockClear();
+
+    const wrapper = mount(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
+      >
+        <OperatorSelect id="test-3" values={operatorSelectValues[1]} />
+      </BuilderContext.Provider>
+    );
+
+    const select = wrapper.find('select').first();
+    select.simulate('change', { target: { value: 'ALL_IN' } });
+
+    expect(onChange).toHaveBeenCalledWith([
+      {
+        field: 'MOCK_FIELD_1',
+        id: 'test-1',
+        value: 'Test',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-2',
+        value: 'Test',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: 0,
+        operator: 'ALL_IN',
+      },
+    ]);
   });
 
   it('Tests no form components scenario', () => {

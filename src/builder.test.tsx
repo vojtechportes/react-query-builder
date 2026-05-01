@@ -9,6 +9,12 @@ export const fields: IBuilderFieldProps[] = [
     type: 'TEXT',
     operators: ['EQUAL', 'NOT_EQUAL'],
   },
+  {
+    field: 'MOCK_NUMBER',
+    label: 'Mock Number',
+    type: 'NUMBER',
+    operators: ['EQUAL', 'NOT_EQUAL'],
+  },
 ];
 
 describe('#components/Builder', () => {
@@ -221,5 +227,37 @@ describe('#components/Builder', () => {
       wrapper.find('button').filterWhere((node) => node.text() === 'Delete').length
     ).toEqual(1);
     expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(1);
+  });
+
+  it('Emits numeric values for number fields', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_NUMBER', value: 0, operator: 'EQUAL' }],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('input[type="number"]').first().simulate('change', {
+      target: { value: '42.5' },
+    });
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [{ field: 'MOCK_NUMBER', value: 42.5, operator: 'EQUAL' }],
+      },
+    ]);
   });
 });

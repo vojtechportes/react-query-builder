@@ -12,7 +12,7 @@ const StyledInput = styled.input<{ $theme: Required<IThemeProps> }>`
 
 export interface IInputProps {
   type: 'date' | 'number' | 'text';
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   className?: string;
   disabled?: boolean;

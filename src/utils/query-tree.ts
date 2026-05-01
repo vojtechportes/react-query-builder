@@ -16,7 +16,12 @@ export type QueryOperator =
 export type QueryGroupValue = 'AND' | 'OR';
 export type QueryGroupType = 'with-modifiers' | 'without-modifiers';
 
-export type QueryRuleValue = string | string[] | boolean;
+export type QueryRuleValue =
+  | string
+  | number
+  | string[]
+  | number[]
+  | boolean;
 
 export interface IDenormalizedRuleNode {
   id?: string;

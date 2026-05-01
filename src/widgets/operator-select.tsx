@@ -4,7 +4,7 @@ import { BuilderContext } from '../builder-context';
 import { Select as DefaultSelect } from '../form/select';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { isStringArray } from '../utils/is-string-array.util';
+import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { updateItem } from '../utils/update-item.util';
 
 export interface IOperatorSelectValuesProps {
@@ -53,15 +53,15 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
           if (['DATE', 'TEXT', 'NUMBER'].includes(fields[fieldIndex].type)) {
             if (
               !['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
-              isStringArray(item.value)
+              isStringOrNumberArray(item.value)
             ) {
-              item.value = fields[fieldIndex].type === 'NUMBER' ? '0' : '';
+              item.value = fields[fieldIndex].type === 'NUMBER' ? 0 : '';
             } else if (
               ['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
-              !isStringArray(item.value)
+              !isStringOrNumberArray(item.value)
             ) {
               item.value =
-                fields[fieldIndex].type === 'NUMBER' ? ['0', '0'] : ['', ''];
+                fields[fieldIndex].type === 'NUMBER' ? [0, 0] : ['', ''];
             }
           }
 
