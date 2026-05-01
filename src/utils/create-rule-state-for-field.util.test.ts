@@ -51,6 +51,38 @@ describe('#utils/createRuleStateForField', () => {
     });
   });
 
+  it('Creates a numeric rule state with numeric defaults', () => {
+    const field: IBuilderFieldProps = {
+      field: 'PRICE',
+      label: 'Price',
+      type: 'NUMBER',
+      operators: ['EQUAL'],
+    };
+
+    expect(createRuleStateForField(field)).toEqual({
+      field: 'PRICE',
+      operator: 'EQUAL',
+      operators: ['EQUAL'],
+      value: 0,
+    });
+  });
+
+  it('Creates a between numeric rule state with numeric defaults', () => {
+    const field: IBuilderFieldProps = {
+      field: 'PRICE_RANGE',
+      label: 'Price Range',
+      type: 'NUMBER',
+      operators: ['BETWEEN'],
+    };
+
+    expect(createRuleStateForField(field)).toEqual({
+      field: 'PRICE_RANGE',
+      operator: 'BETWEEN',
+      operators: ['BETWEEN'],
+      value: [0, 0],
+    });
+  });
+
   it('Creates a statement rule state', () => {
     const field: IBuilderFieldProps = {
       field: 'NOTE',

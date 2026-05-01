@@ -12,9 +12,12 @@ import { Select } from '../widgets/select';
 import { SelectMulti } from '../widgets/select-multi';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isBoolean } from '../utils/is-boolean.util';
+import { isNumber } from '../utils/is-number.util';
+import { isNumberArray } from '../utils/is-number-array.util';
 import { isOptionList } from '../utils/is-option-list.util';
 import { isString } from '../utils/is-string.util';
 import { isStringArray } from '../utils/is-string-array.util';
+import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
 import { QueryRuleValue } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
@@ -162,7 +165,10 @@ export const Rule: FC<IRuleProps> = ({
 
         {type === 'NUMBER' &&
           isOptionList(operatorsOptionList) &&
-          (isString(selectedValue) || isStringArray(selectedValue)) && (
+          (isString(selectedValue) ||
+            isNumber(selectedValue) ||
+            isStringOrNumberArray(selectedValue) ||
+            isNumberArray(selectedValue)) && (
             <>
               <OperatorSelect
                 id={id}

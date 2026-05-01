@@ -223,6 +223,13 @@ const data = [
 
 Groups without modifiers do not render `Not`, `And`, or `Or`, and they do not output `value` or `isNegated`.
 
+#### Number values
+
+`NUMBER` fields emit numeric values in the builder output.
+
+- standard numeric operators emit `number`
+- `BETWEEN` and `NOT_BETWEEN` emit `number[]`
+
 ### Builder Props
 
 Important `Builder` props:

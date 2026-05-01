@@ -8,8 +8,8 @@ const getDefaultValueForTextLikeField = (field: IBuilderFieldProps) =>
 
 const getDefaultValueForNumberField = (field: IBuilderFieldProps) =>
   field.operators && ['BETWEEN', 'NOT_BETWEEN'].includes(field.operators[0])
-    ? ['0', '0']
-    : '0';
+    ? [0, 0]
+    : 0;
 
 export const createRuleStateForField = (field: IBuilderFieldProps) => {
   const baseRuleState = {
