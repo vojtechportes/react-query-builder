@@ -154,6 +154,7 @@ export interface IBuilderProps {
   strings?: IStrings;
   readOnly?: boolean;
   draggable?: boolean;
+  singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
   onChange?: (data: DenormalizedQuery) => any;
 }
@@ -184,6 +185,7 @@ export const Builder: FC<IBuilderProps> = ({
   strings = defaultStrings,
   readOnly = false,
   draggable = false,
+  singleRootGroup = false,
   groupTypes = 'with-modifiers',
   onChange,
 }) => {
@@ -192,7 +194,7 @@ export const Builder: FC<IBuilderProps> = ({
 
   const theme = useTheme();
   const [data, setData] = useState<NormalizedQuery>(() =>
-    ingestQuery(originalData, rootGroupType)
+    ingestQuery(originalData, rootGroupType, singleRootGroup)
   );
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [activeDropZoneId, setActiveDropZoneId] = useState<string | null>(null);
@@ -267,8 +269,8 @@ export const Builder: FC<IBuilderProps> = ({
     }
 
     pendingChangeData.current = null;
-    setData(ingestQuery(originalData, rootGroupType));
-  }, [originalData, rootGroupType]);
+    setData(ingestQuery(originalData, rootGroupType, singleRootGroup));
+  }, [originalData, rootGroupType, singleRootGroup]);
 
   const resetDragState = useCallback(() => {
     setActiveDragId(null);
@@ -470,6 +472,7 @@ export const Builder: FC<IBuilderProps> = ({
       strings={strings}
       readOnly={readOnly}
       draggable={draggable}
+      singleRootGroup={singleRootGroup}
       groupTypes={groupTypes}
       data={data}
       setData={setData}
@@ -477,7 +480,7 @@ export const Builder: FC<IBuilderProps> = ({
       updateData={updateData}
     >
       <StyledBuilder $theme={theme}>
-        {!readOnly && strings.group && (
+        {!readOnly && strings.group && !singleRootGroup && (
           <RootControls>
             <AddComponent onClick={handleAddRootRule} data-test="AddRootRule">
               {strings.group.addRule}

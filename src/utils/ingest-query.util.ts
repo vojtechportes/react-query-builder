@@ -1,5 +1,6 @@
 import { assignIds } from './assign-ids.util';
 import { createEmptyRootGroup } from './create-empty-root-group.util';
+import { ensureSingleRootGroup } from './ensure-single-root-group.util';
 import { normalizeTree } from './normalize-tree.util';
 import {
   DenormalizedQuery,
@@ -9,12 +10,16 @@ import {
 
 export const ingestQuery = (
   inputQuery: DenormalizedQuery,
-  rootGroupType: QueryGroupType = 'with-modifiers'
+  rootGroupType: QueryGroupType = 'with-modifiers',
+  singleRootGroup = false
 ): NormalizedQuery => {
   const queryWithIds = assignIds(inputQuery || []);
+  const preparedInput = singleRootGroup
+    ? ensureSingleRootGroup(queryWithIds, rootGroupType)
+    : queryWithIds;
   const normalizedInput =
-    queryWithIds.length > 0
-      ? queryWithIds
+    preparedInput.length > 0
+      ? preparedInput
       : createEmptyRootGroup(rootGroupType);
 
   try {

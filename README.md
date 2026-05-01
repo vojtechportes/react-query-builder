@@ -234,6 +234,7 @@ Important `Builder` props:
 - `strings?: IStrings`
 - `readOnly?: boolean`
 - `draggable?: boolean`
+- `singleRootGroup?: boolean`
 - `groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both'`
 
 #### `readOnly`
@@ -250,6 +251,20 @@ When `draggable` is `true`, rules and groups render drag handles and can be:
 - reordered at the root level
 
 When `draggable` is `false`, no drag handles or drop zones are rendered.
+
+#### `singleRootGroup`
+
+When `singleRootGroup` is `true`, the builder is locked to exactly one root group.
+
+- root-level rules cannot be added
+- additional root-level groups cannot be added
+- the root group cannot be deleted
+- the root group cannot be dragged
+- root-level drop zones are not rendered
+
+Nested rules and groups inside the root group still work normally.
+
+If the incoming `data` contains root-level rules or multiple root items, React Query Builder wraps them into a single root group automatically.
 
 #### `groupTypes`
 
