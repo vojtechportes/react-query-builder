@@ -185,7 +185,7 @@ export const Builder: FC<IBuilderProps> = ({
   strings = defaultStrings,
   readOnly = false,
   draggable = false,
-  singleRootGroup = false,
+  singleRootGroup = true,
   groupTypes = 'with-modifiers',
   onChange,
 }) => {

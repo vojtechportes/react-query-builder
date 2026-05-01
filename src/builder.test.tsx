@@ -75,7 +75,12 @@ describe('#components/Builder', () => {
   it('Adds a group at the root level', () => {
     const onChange = jest.fn();
     const wrapper = mount(
-      <Builder fields={fields} data={[]} onChange={onChange} />
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        onChange={onChange}
+      />
     );
 
     wrapper.find('[data-test="AddRootGroup"]').first().simulate('click');
@@ -90,7 +95,12 @@ describe('#components/Builder', () => {
   it('Adds a rule at the root level', () => {
     const onChange = jest.fn();
     const wrapper = mount(
-      <Builder fields={fields} data={[]} onChange={onChange} />
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        onChange={onChange}
+      />
     );
 
     wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
@@ -115,6 +125,7 @@ describe('#components/Builder', () => {
             children: [],
           },
         ]}
+        singleRootGroup={false}
         onChange={onChange}
       />
     );
@@ -134,6 +145,7 @@ describe('#components/Builder', () => {
         fields={fields}
         data={[]}
         groupTypes="without-modifiers"
+        singleRootGroup={false}
         onChange={onChange}
       />
     );
@@ -164,6 +176,7 @@ describe('#components/Builder', () => {
         fields={fields}
         data={[]}
         groupTypes="both"
+        singleRootGroup={false}
         onChange={jest.fn()}
       />
     );

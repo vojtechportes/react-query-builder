@@ -261,7 +261,7 @@ When `draggable` is `false`, no drag handles or drop zones are rendered.
 
 #### `singleRootGroup`
 
-When `singleRootGroup` is `true`, the builder is locked to exactly one root group.
+`singleRootGroup` is enabled by default. When it is `true`, the builder is locked to exactly one root group.
 
 - root-level rules cannot be added
 - additional root-level groups cannot be added
@@ -272,6 +272,8 @@ When `singleRootGroup` is `true`, the builder is locked to exactly one root grou
 Nested rules and groups inside the root group still work normally.
 
 If the incoming `data` contains root-level rules or multiple root items, React Query Builder wraps them into a single root group automatically.
+
+Set `singleRootGroup={false}` if you want to allow root-level rules, multiple root groups, and root-level drag-and-drop slots.
 
 #### `groupTypes`
 
