@@ -56,6 +56,7 @@ const operatorSelectValues: IOperatorSelectValuesProps[][] = [
   ],
   // Testing scenario where BETWEEN is NOT first in operator list
   [{ value: 'ALL_IN', label: 'Test' }, { value: 'ANY_IN', label: 'Test' }],
+  [{ value: 'IS_NULL', label: 'Test' }, { value: 'IS_NOT_NULL', label: 'Test' }],
 ];
 
 describe('#components/Widgets/OperatorSelect', () => {
@@ -285,5 +286,48 @@ describe('#components/Widgets/OperatorSelect', () => {
     );
 
     expect(Object.keys(wrapper).length).toBe(0);
+  });
+
+  it('Clears value when switching to IS_NULL', () => {
+    onChange.mockClear();
+
+    const wrapper = mount(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
+      >
+        <OperatorSelect id="test-1" values={operatorSelectValues[2]} />
+      </BuilderContext.Provider>
+    );
+
+    wrapper.find('select').first().simulate('change', {
+      target: { value: 'IS_NULL' },
+    });
+
+    expect(onChange).toHaveBeenCalledWith([
+      {
+        field: 'MOCK_FIELD_1',
+        id: 'test-1',
+        operator: 'IS_NULL',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-2',
+        value: 'Test',
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: [1, 2],
+        operator: 'NOT_BETWEEN',
+      },
+    ]);
   });
 });

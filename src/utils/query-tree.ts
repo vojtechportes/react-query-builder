@@ -1,17 +1,6 @@
-export type QueryOperator =
-  | 'LARGER'
-  | 'SMALLER'
-  | 'LARGER_EQUAL'
-  | 'SMALLER_EQUAL'
-  | 'EQUAL'
-  | 'NOT_EQUAL'
-  | 'ALL_IN'
-  | 'ANY_IN'
-  | 'NOT_IN'
-  | 'BETWEEN'
-  | 'NOT_BETWEEN'
-  | 'LIKE'
-  | 'NOT_LIKE';
+import { QueryOperator } from './query-operators';
+
+export type { QueryOperator } from './query-operators';
 
 export type QueryGroupValue = 'AND' | 'OR';
 export type QueryGroupType = 'with-modifiers' | 'without-modifiers';

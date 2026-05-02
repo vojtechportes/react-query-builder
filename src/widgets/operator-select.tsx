@@ -3,8 +3,10 @@ import { BuilderFieldOperator } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Select as DefaultSelect } from '../form/select';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
+import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
+import { isRangeOperator } from '../utils/is-range-operator.util';
+import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { updateItem } from '../utils/update-item.util';
 
 export interface IOperatorSelectValuesProps {
@@ -49,20 +51,22 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
           const fieldIndex = fields.findIndex(
             fieldItem => item.field === fieldItem.field
           );
+          const nextField = fields[fieldIndex];
 
-          if (['DATE', 'TEXT', 'NUMBER'].includes(fields[fieldIndex].type)) {
-            if (
-              !['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
-              isStringOrNumberArray(item.value)
-            ) {
-              item.value = fields[fieldIndex].type === 'NUMBER' ? 0 : '';
-            } else if (
-              ['BETWEEN', 'NOT_BETWEEN'].includes(value) &&
-              !isStringOrNumberArray(item.value)
-            ) {
-              item.value =
-                fields[fieldIndex].type === 'NUMBER' ? [0, 0] : ['', ''];
-            }
+          if (!nextField) {
+            return;
+          }
+
+          const nextRequiresValue = operatorRequiresValue(value);
+          const currentRequiresValue = operatorRequiresValue(item.operator);
+
+          if (!nextRequiresValue) {
+            delete item.value;
+          } else if (
+            !currentRequiresValue ||
+            isRangeOperator(item.operator) !== isRangeOperator(value)
+          ) {
+            item.value = createRuleValueForFieldOperator(nextField, value);
           }
 
           item.operator = value;

@@ -174,14 +174,26 @@ LARGER_EQUAL
 SMALLER_EQUAL
 EQUAL
 NOT_EQUAL
+IN
+NOT_IN
 ALL_IN
 ANY_IN
-NOT_IN
 BETWEEN
 NOT_BETWEEN
+IS_NULL
+IS_NOT_NULL
+CONTAINS
+NOT_CONTAINS
+STARTS_WITH
+ENDS_WITH
 LIKE
 NOT_LIKE
 ```
+
+`ANY_IN`, `LIKE`, and `NOT_LIKE` are deprecated and will be removed in `2.0.0`.
+Prefer `IN`, `CONTAINS`, and `NOT_CONTAINS`.
+
+`IS_NULL` and `IS_NOT_NULL` are value-less operators, so the built-in UI does not render a value input for them.
 
 ### Data
 
@@ -388,14 +400,23 @@ const strings: IStrings = {
     EQUAL: 'Equal',
     NOT_EQUAL: 'Not equal',
     ALL_IN: 'All in',
+    IN: 'In',
     ANY_IN: 'Any in',
     NOT_IN: 'Not in',
     BETWEEN: 'Between',
     NOT_BETWEEN: 'Not between',
+    IS_NULL: 'Is null',
+    IS_NOT_NULL: 'Is not null',
+    CONTAINS: 'Contains',
+    NOT_CONTAINS: 'Does not contain',
+    STARTS_WITH: 'Starts with',
+    ENDS_WITH: 'Ends with',
     LIKE: 'Like',
     NOT_LIKE: 'Not like',
   },
 };
 ```
+
+`ANY_IN`, `LIKE`, and `NOT_LIKE` are deprecated here as well and will be removed in `2.0.0`.
 
 It is not required to translate every string. Any string you omit falls back to the built-in defaults.

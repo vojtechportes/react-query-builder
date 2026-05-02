@@ -1,53 +1,30 @@
 import { IBuilderFieldProps } from '../builder';
-import { isOptionList } from './is-option-list.util';
-
-const getDefaultValueForTextLikeField = (field: IBuilderFieldProps) =>
-  field.operators && ['BETWEEN', 'NOT_BETWEEN'].includes(field.operators[0])
-    ? ['', '']
-    : '';
-
-const getDefaultValueForNumberField = (field: IBuilderFieldProps) =>
-  field.operators && ['BETWEEN', 'NOT_BETWEEN'].includes(field.operators[0])
-    ? [0, 0]
-    : 0;
+import { createRuleValueForFieldOperator } from './create-rule-value-for-field-operator.util';
 
 export const createRuleStateForField = (field: IBuilderFieldProps) => {
+  const nextOperator = field.operators && field.operators[0];
   const baseRuleState = {
     field: field.field,
-    operator: field.operators && field.operators[0],
+    operator: nextOperator,
     operators: field.operators,
   };
+  const nextValue = createRuleValueForFieldOperator(field, nextOperator);
 
   switch (field.type) {
     case 'BOOLEAN':
       return {
-        field: field.field,
-        value: false,
+        ...baseRuleState,
+        ...(typeof nextValue !== 'undefined' ? { value: nextValue } : {}),
       };
 
     case 'DATE':
     case 'TEXT':
-      return {
-        ...baseRuleState,
-        value: getDefaultValueForTextLikeField(field),
-      };
-
     case 'NUMBER':
-      return {
-        ...baseRuleState,
-        value: getDefaultValueForNumberField(field),
-      };
-
     case 'LIST':
-      return {
-        ...baseRuleState,
-        value: isOptionList(field.value) ? field.value[0].value : undefined,
-      };
-
     case 'MULTI_LIST':
       return {
         ...baseRuleState,
-        value: isOptionList(field.value) ? [] : undefined,
+        ...(typeof nextValue !== 'undefined' ? { value: nextValue } : {}),
       };
 
     case 'STATEMENT':

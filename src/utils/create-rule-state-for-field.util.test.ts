@@ -83,6 +83,21 @@ describe('#utils/createRuleStateForField', () => {
     });
   });
 
+  it('Creates a valueless rule state for IS_NULL', () => {
+    const field: IBuilderFieldProps = {
+      field: 'DELETED_AT',
+      label: 'Deleted At',
+      type: 'DATE',
+      operators: ['IS_NULL'],
+    };
+
+    expect(createRuleStateForField(field)).toEqual({
+      field: 'DELETED_AT',
+      operator: 'IS_NULL',
+      operators: ['IS_NULL'],
+    });
+  });
+
   it('Creates a statement rule state', () => {
     const field: IBuilderFieldProps = {
       field: 'NOTE',
