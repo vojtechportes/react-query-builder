@@ -20,7 +20,7 @@ const fields: IBuilderFieldProps[] = [
   {
     field: 'MOCK_FIELD_2',
     label: 'Mock Field 2',
-    operators: ['EQUAL'],
+    operators: ['EQUAL', 'IS_NULL'],
     type: 'TEXT',
   },
   {
@@ -72,6 +72,12 @@ const data: any[] = [
     field: 'MOCK_FIELD_2',
     value: '',
     id: 'test-3',
+    parent: 'test-1',
+  },
+  {
+    field: 'MOCK_FIELD_2',
+    operator: 'IS_NULL',
+    id: 'test-10',
     parent: 'test-1',
   },
   {
@@ -173,6 +179,7 @@ describe('#components/Rule', () => {
           id="test-9"
           field="SOME_FIELD_THAT_DOESNT_EXISTS"
         />
+        <Rule data-test="Rule[9]" id="test-10" field="MOCK_FIELD_2" operator="IS_NULL" />
       </BuilderContext.Provider>
     );
 
@@ -184,6 +191,8 @@ describe('#components/Rule', () => {
     expect(wrapper.find('[data-test="Rule[5]"]')).toBeDefined();
     expect(wrapper.find('[data-test="Rule[6]"]')).toBeDefined();
     expect(wrapper.find('[data-test="Rule[7]"]')).toBeDefined();
+    expect(wrapper.find('[data-test="Rule[9]"] select').length).toBeGreaterThan(0);
+    expect(wrapper.find('[data-test="Rule[9]"] input').length).toEqual(0);
     expect(Object.keys(wrapper.find('[data-test="Rule[8]"]')).length).toBe(
       0
     );

@@ -19,6 +19,7 @@ import { isString } from '../utils/is-string.util';
 import { isStringArray } from '../utils/is-string-array.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
+import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { QueryRuleValue } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
 
@@ -93,6 +94,7 @@ export const Rule: FC<IRuleProps> = ({
         value: item,
         label: (strings.operators && strings.operators[item]) || item,
       }));
+    const shouldRenderValueInput = operatorRequiresValue(operator);
 
     return (
       <RuleContainer
@@ -104,14 +106,24 @@ export const Rule: FC<IRuleProps> = ({
       >
         <FieldSelect selectedValue={field} id={id} />
 
-        {type === 'BOOLEAN' && isBoolean(selectedValue) && (
-          <BooleanContainer>
-            <Boolean id={id} selectedValue={selectedValue} />
-          </BooleanContainer>
+        {type === 'BOOLEAN' && (
+          <>
+            {isOptionList(operatorsOptionList) && (
+              <OperatorSelect
+                id={id}
+                values={operatorsOptionList}
+                selectedValue={operator}
+              />
+            )}
+            {shouldRenderValueInput && isBoolean(selectedValue) && (
+              <BooleanContainer>
+                <Boolean id={id} selectedValue={selectedValue} />
+              </BooleanContainer>
+            )}
+          </>
         )}
 
         {type === 'LIST' &&
-          isString(selectedValue) &&
           isOptionList(fieldValue) &&
           isOptionList(operatorsOptionList) && (
             <>
@@ -120,7 +132,7 @@ export const Rule: FC<IRuleProps> = ({
                 values={operatorsOptionList}
                 selectedValue={operator}
               />
-              {operator && (
+              {operator && shouldRenderValueInput && isString(selectedValue) && (
                 <Select
                   id={id}
                   selectedValue={selectedValue}
@@ -132,15 +144,16 @@ export const Rule: FC<IRuleProps> = ({
 
         {type === 'MULTI_LIST' &&
           isOptionList(fieldValue) &&
-          isOptionList(operatorsOptionList) &&
-          isStringArray(selectedValue) && (
+          isOptionList(operatorsOptionList) && (
             <>
               <OperatorSelect
                 id={id}
                 values={operatorsOptionList}
                 selectedValue={operator}
               />
-              {operator && (
+              {operator &&
+                shouldRenderValueInput &&
+                isStringArray(selectedValue) && (
                 <SelectMulti
                   id={id}
                   values={fieldValue}
@@ -150,49 +163,51 @@ export const Rule: FC<IRuleProps> = ({
             </>
           )}
 
-        {type === 'TEXT' &&
-          isOptionList(operatorsOptionList) &&
-          (isString(selectedValue) || isStringArray(selectedValue)) && (
+        {type === 'TEXT' && isOptionList(operatorsOptionList) && (
             <>
               <OperatorSelect
                 id={id}
                 values={operatorsOptionList}
                 selectedValue={operator}
               />
-              {operator && <Input type="text" value={selectedValue} id={id} />}
+              {operator &&
+                shouldRenderValueInput &&
+                (isString(selectedValue) || isStringArray(selectedValue)) && (
+                  <Input type="text" value={selectedValue} id={id} />
+                )}
             </>
           )}
 
-        {type === 'NUMBER' &&
-          isOptionList(operatorsOptionList) &&
-          (isString(selectedValue) ||
-            isNumber(selectedValue) ||
-            isStringOrNumberArray(selectedValue) ||
-            isNumberArray(selectedValue)) && (
+        {type === 'NUMBER' && isOptionList(operatorsOptionList) && (
             <>
               <OperatorSelect
                 id={id}
                 values={operatorsOptionList}
                 selectedValue={operator}
               />
-              {operator && (
+              {operator &&
+                shouldRenderValueInput &&
+                (isString(selectedValue) ||
+                  isNumber(selectedValue) ||
+                  isStringOrNumberArray(selectedValue) ||
+                  isNumberArray(selectedValue)) && (
                 <Input type="number" value={selectedValue} id={id} />
-              )}
+                )}
             </>
           )}
 
-        {type === 'DATE' &&
-          isOptionList(operatorsOptionList) &&
-          (isString(selectedValue) || isStringArray(selectedValue)) && (
+        {type === 'DATE' && isOptionList(operatorsOptionList) && (
             <>
               <OperatorSelect
                 id={id}
                 values={operatorsOptionList}
                 selectedValue={operator}
               />
-              {!isUndefined(operator) && (
+              {!isUndefined(operator) &&
+                shouldRenderValueInput &&
+                (isString(selectedValue) || isStringArray(selectedValue)) && (
                 <Input type="date" value={selectedValue} id={id} />
-              )}
+                )}
             </>
           )}
       </RuleContainer>

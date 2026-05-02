@@ -52,6 +52,7 @@ export { colors } from './constants/colors';
 export type { IColors, IColorVariant, IGreyColorVariant } from './constants/colors';
 export { strings } from './constants/strings';
 export type { IStrings } from './constants/strings';
+export { queryOperators } from './utils/query-operators';
 export type {
   DenormalizedNode,
   DenormalizedQuery,
