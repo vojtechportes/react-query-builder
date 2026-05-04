@@ -91,7 +91,7 @@ export const Rule: FC<IRuleProps> = ({
     return null;
   }
 
-  if (fieldRef === '') {
+  if (typeof fieldRef !== 'string' || fieldRef.trim() === '') {
     return (
       <RuleContainer
         dragHandle={dragHandle}

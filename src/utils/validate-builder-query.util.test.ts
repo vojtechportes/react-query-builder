@@ -94,6 +94,23 @@ describe('validateBuilderQuery', () => {
     expect(result.issues).toHaveLength(0);
   });
 
+  it('Returns no issue for placeholder rules without a selected field', async () => {
+    const result = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [{ id: 'rule-empty', field: '' }],
+        },
+      ],
+      context
+    );
+
+    expect(result.isValid).toEqual(true);
+    expect(result.issuesByRuleId['rule-empty']).toBeUndefined();
+  });
+
   it('Returns a range issue when numeric range order is invalid', async () => {
     const result = await validateBuilderQuery(
       [
