@@ -29,6 +29,10 @@ export const validateBuilderQuery = (
   const pendingIssueGroups: Array<Promise<IBuilderValidationIssue[]>> = [];
 
   for (const rule of rules) {
+    if (typeof rule.field !== 'string' || rule.field.trim() === '') {
+      continue;
+    }
+
     const field = context.fields.find((fieldItem) => fieldItem.field === rule.field);
 
     if (!field) {

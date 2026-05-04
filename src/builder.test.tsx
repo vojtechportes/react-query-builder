@@ -314,4 +314,48 @@ describe('#components/Builder', () => {
     });
     expect(wrapper.text()).toContain('This value is required');
   });
+
+  it('Does not render field validation errors for placeholder rules without a selected field', async () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: '' }],
+          },
+        ]}
+        showValidation
+      />
+    );
+
+    await Promise.resolve();
+    wrapper.update();
+
+    expect(wrapper.text()).not.toContain('Field "" is not defined');
+  });
+
+  it('Does not render field validation errors for placeholder rules with missing field values', async () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{} as never],
+          },
+        ]}
+        showValidation
+      />
+    );
+
+    await Promise.resolve();
+    wrapper.update();
+
+    expect(wrapper.text()).not.toContain('is not defined');
+  });
 });
