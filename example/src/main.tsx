@@ -132,6 +132,9 @@ const fields: IBuilderFieldProps[] = [
       'LIKE',
       'NOT_LIKE',
     ],
+    validation: {
+      required: true
+    }
   },
   {
     field: 'HAS_LOW_CREDIT',
@@ -210,6 +213,8 @@ const App: React.FC = () => {
           draggable={draggable}
           groupTypes="both"
           singleRootGroup={singleRootGroup}
+          showValidation
+         
         />
       </ThemeProvider>
 

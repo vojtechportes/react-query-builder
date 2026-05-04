@@ -27,6 +27,20 @@ const BooleanContainer = styled.div`
   align-self: center;
 `;
 
+const FieldsContent = styled.div`
+  display: grid;
+  grid-auto-columns: min-content;
+  grid-auto-flow: column;
+  grid-gap: 0.5rem;
+`;
+
+const ValidationIssues = styled.ul`
+  margin: 0.4rem 0 0;
+  padding-left: 1rem;
+  color: #b42318;
+  font-size: 0.75rem;
+`;
+
 export interface IRuleProps {
   field: string;
   value?: QueryRuleValue;
@@ -53,9 +67,15 @@ export const Rule: FC<IRuleProps> = ({
     components,
     strings,
     readOnly,
+    validation,
+    showValidation,
   } = useContext(BuilderContext);
   const RuleContainer = components.Rule || DefaultRuleContainer;
   const Remove = components.Remove || SecondaryButton;
+  const validationIssues =
+    showValidation && validation?.issuesByRuleId[id]
+      ? validation.issuesByRuleId[id]
+      : [];
 
   const handleDelete = useCallback(() => {
     applyDataUpdate(
@@ -80,7 +100,20 @@ export const Rule: FC<IRuleProps> = ({
         }
         data-test={dataTest}
       >
-        <FieldSelect selectedValue="" id={id} />
+        <div>
+          <FieldsContent>
+            <FieldSelect selectedValue="" id={id} />
+          </FieldsContent>
+          {validationIssues.length > 0 && (
+            <ValidationIssues>
+              {validationIssues.map((issue) => (
+                <li key={`${issue.code || issue.message}-${issue.message}`}>
+                  {issue.message}
+                </li>
+              ))}
+            </ValidationIssues>
+          )}
+        </div>
       </RuleContainer>
     );
   }
@@ -104,112 +137,127 @@ export const Rule: FC<IRuleProps> = ({
         }
         data-test={dataTest}
       >
-        <FieldSelect selectedValue={field} id={id} />
+        <div>
+          <FieldsContent>
+            <FieldSelect selectedValue={field} id={id} />
 
-        {type === 'BOOLEAN' && (
-          <>
-            {isOptionList(operatorsOptionList) && (
-              <OperatorSelect
-                id={id}
-                values={operatorsOptionList}
-                selectedValue={operator}
-              />
+            {type === 'BOOLEAN' && (
+              <>
+                {isOptionList(operatorsOptionList) && (
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                  />
+                )}
+                {shouldRenderValueInput && isBoolean(selectedValue) && (
+                  <BooleanContainer>
+                    <Boolean id={id} selectedValue={selectedValue} />
+                  </BooleanContainer>
+                )}
+              </>
             )}
-            {shouldRenderValueInput && isBoolean(selectedValue) && (
-              <BooleanContainer>
-                <Boolean id={id} selectedValue={selectedValue} />
-              </BooleanContainer>
+
+            {type === 'LIST' &&
+              isOptionList(fieldValue) &&
+              isOptionList(operatorsOptionList) && (
+                <>
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                  />
+                  {operator &&
+                    shouldRenderValueInput &&
+                    isString(selectedValue) && (
+                      <Select
+                        id={id}
+                        selectedValue={selectedValue}
+                        values={fieldValue}
+                      />
+                    )}
+                </>
+              )}
+
+            {type === 'MULTI_LIST' &&
+              isOptionList(fieldValue) &&
+              isOptionList(operatorsOptionList) && (
+                <>
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                  />
+                  {operator &&
+                    shouldRenderValueInput &&
+                    isStringArray(selectedValue) && (
+                      <SelectMulti
+                        id={id}
+                        values={fieldValue}
+                        selectedValue={selectedValue}
+                      />
+                    )}
+                </>
+              )}
+
+            {type === 'TEXT' && isOptionList(operatorsOptionList) && (
+              <>
+                <OperatorSelect
+                  id={id}
+                  values={operatorsOptionList}
+                  selectedValue={operator}
+                />
+                {operator &&
+                  shouldRenderValueInput &&
+                  (isString(selectedValue) || isStringArray(selectedValue)) && (
+                    <Input type="text" value={selectedValue} id={id} />
+                  )}
+              </>
             )}
-          </>
-        )}
 
-        {type === 'LIST' &&
-          isOptionList(fieldValue) &&
-          isOptionList(operatorsOptionList) && (
-            <>
-              <OperatorSelect
-                id={id}
-                values={operatorsOptionList}
-                selectedValue={operator}
-              />
-              {operator && shouldRenderValueInput && isString(selectedValue) && (
-                <Select
+            {type === 'NUMBER' && isOptionList(operatorsOptionList) && (
+              <>
+                <OperatorSelect
                   id={id}
-                  selectedValue={selectedValue}
-                  values={fieldValue}
+                  values={operatorsOptionList}
+                  selectedValue={operator}
                 />
-              )}
-            </>
-          )}
+                {operator &&
+                  shouldRenderValueInput &&
+                  (isString(selectedValue) ||
+                    isNumber(selectedValue) ||
+                    isStringOrNumberArray(selectedValue) ||
+                    isNumberArray(selectedValue)) && (
+                    <Input type="number" value={selectedValue} id={id} />
+                  )}
+              </>
+            )}
 
-        {type === 'MULTI_LIST' &&
-          isOptionList(fieldValue) &&
-          isOptionList(operatorsOptionList) && (
-            <>
-              <OperatorSelect
-                id={id}
-                values={operatorsOptionList}
-                selectedValue={operator}
-              />
-              {operator &&
-                shouldRenderValueInput &&
-                isStringArray(selectedValue) && (
-                <SelectMulti
+            {type === 'DATE' && isOptionList(operatorsOptionList) && (
+              <>
+                <OperatorSelect
                   id={id}
-                  values={fieldValue}
-                  selectedValue={selectedValue}
+                  values={operatorsOptionList}
+                  selectedValue={operator}
                 />
-              )}
-            </>
+                {!isUndefined(operator) &&
+                  shouldRenderValueInput &&
+                  (isString(selectedValue) || isStringArray(selectedValue)) && (
+                    <Input type="date" value={selectedValue} id={id} />
+                  )}
+              </>
+            )}
+          </FieldsContent>
+          {validationIssues.length > 0 && (
+            <ValidationIssues>
+              {validationIssues.map((issue) => (
+                <li key={`${issue.code || issue.message}-${issue.message}`}>
+                  {issue.message}
+                </li>
+              ))}
+            </ValidationIssues>
           )}
-
-        {type === 'TEXT' && isOptionList(operatorsOptionList) && (
-            <>
-              <OperatorSelect
-                id={id}
-                values={operatorsOptionList}
-                selectedValue={operator}
-              />
-              {operator &&
-                shouldRenderValueInput &&
-                (isString(selectedValue) || isStringArray(selectedValue)) && (
-                  <Input type="text" value={selectedValue} id={id} />
-                )}
-            </>
-          )}
-
-        {type === 'NUMBER' && isOptionList(operatorsOptionList) && (
-            <>
-              <OperatorSelect
-                id={id}
-                values={operatorsOptionList}
-                selectedValue={operator}
-              />
-              {operator &&
-                shouldRenderValueInput &&
-                (isString(selectedValue) ||
-                  isNumber(selectedValue) ||
-                  isStringOrNumberArray(selectedValue) ||
-                  isNumberArray(selectedValue)) && (
-                <Input type="number" value={selectedValue} id={id} />
-                )}
-            </>
-          )}
-
-        {type === 'DATE' && isOptionList(operatorsOptionList) && (
-            <>
-              <OperatorSelect
-                id={id}
-                values={operatorsOptionList}
-                selectedValue={operator}
-              />
-              {!isUndefined(operator) &&
-                shouldRenderValueInput &&
-                (isString(selectedValue) || isStringArray(selectedValue)) && (
-                <Input type="date" value={selectedValue} id={id} />
-                )}
-            </>
-          )}
+        </div>
       </RuleContainer>
     );
   } catch (error) {

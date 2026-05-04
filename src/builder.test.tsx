@@ -273,4 +273,45 @@ describe('#components/Builder', () => {
       },
     ]);
   });
+
+  it('Emits validation state and renders validation issues when enabled', async () => {
+    const onStateChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={[
+          {
+            field: 'REQUIRED_TEXT',
+            label: 'Required Text',
+            type: 'TEXT',
+            operators: ['EQUAL'],
+            validation: {
+              required: true,
+            },
+          },
+        ]}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'REQUIRED_TEXT', value: '', operator: 'EQUAL' }],
+          },
+        ]}
+        showValidation
+        onStateChange={onStateChange}
+      />
+    );
+
+    await Promise.resolve();
+    wrapper.update();
+
+    expect(onStateChange).toHaveBeenCalled();
+    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
+      isValid: false,
+      validation: {
+        isValid: false,
+      },
+    });
+    expect(wrapper.text()).toContain('This value is required');
+  });
 });

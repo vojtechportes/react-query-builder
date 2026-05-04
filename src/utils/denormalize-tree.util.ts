@@ -10,9 +10,14 @@ import {
   INormalizedGroupNodeWithModifiers,
 } from './query-tree';
 
+export interface IDenormalizeTreeOptions {
+  preserveIds?: boolean;
+}
+
 const toDenormalizedNode = (
   item: NormalizedNode,
-  originalData: NormalizedQuery
+  originalData: NormalizedQuery,
+  options: IDenormalizeTreeOptions = {}
 ): DenormalizedNode => {
   if (isNormalizedGroupNode(item)) {
     const children = item.children.map(childId => {
@@ -24,18 +29,20 @@ const toDenormalizedNode = (
         throw new Error('Input data tree is in invalid format');
       }
 
-      return toDenormalizedNode(childItem, originalData);
+      return toDenormalizedNode(childItem, originalData, options);
     });
 
     const denormalizedGroup: DenormalizedGroupNode =
       typeof item.value !== 'undefined'
         ? {
+            ...(options.preserveIds ? { id: item.id } : {}),
             type: item.type,
             value: (item as INormalizedGroupNodeWithModifiers).value,
             isNegated: item.isNegated,
             children,
           }
         : {
+            ...(options.preserveIds ? { id: item.id } : {}),
             type: item.type,
             children,
           };
@@ -45,14 +52,20 @@ const toDenormalizedNode = (
 
   const denormalizedRule = clone(item) as IDenormalizedRuleNode;
 
-  delete denormalizedRule.id;
+  if (!options.preserveIds) {
+    delete denormalizedRule.id;
+  }
+
   delete denormalizedRule.parent;
   delete denormalizedRule.operators;
 
   return denormalizedRule;
 };
 
-export const denormalizeTree = (data: NormalizedQuery): DenormalizedQuery =>
+export const denormalizeTree = (
+  data: NormalizedQuery,
+  options: IDenormalizeTreeOptions = {}
+): DenormalizedQuery =>
   data
     .filter(item => !item.parent)
-    .map(item => toDenormalizedNode(item, data));
+    .map(item => toDenormalizedNode(item, data, options));

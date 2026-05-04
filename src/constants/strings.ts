@@ -46,6 +46,31 @@ export interface IStrings {
     STARTS_WITH?: string;
     ENDS_WITH?: string;
   };
+  validation?: {
+    operatorNotAllowed?: string;
+    valueNotAllowed?: string;
+    required?: string;
+    minLength?: string;
+    maxLength?: string;
+    matches?: string;
+    min?: string;
+    max?: string;
+    integer?: string;
+    positive?: string;
+    negative?: string;
+    minDate?: string;
+    maxDate?: string;
+    boolean?: string;
+    oneOf?: string;
+    minItems?: string;
+    maxItems?: string;
+    custom?: string;
+    rangeOrder?: string;
+    rangeOrderAllowEqual?: string;
+    rangeCustom?: string;
+    fieldNotFound?: string;
+    invalidTree?: string;
+  };
 }
 
 export const strings: IStrings = {
@@ -86,5 +111,30 @@ export const strings: IStrings = {
     NOT_CONTAINS: 'Does not contain',
     STARTS_WITH: 'Starts with',
     ENDS_WITH: 'Ends with',
+  },
+  validation: {
+    operatorNotAllowed: 'Operator "{operator}" is not allowed for field "{field}"',
+    valueNotAllowed: 'This operator must not have a value',
+    required: 'This value is required',
+    minLength: 'Value must be at least {min} characters long',
+    maxLength: 'Value must be at most {max} characters long',
+    matches: 'Value has invalid format',
+    min: 'Value must be greater than or equal to {min}',
+    max: 'Value must be less than or equal to {max}',
+    integer: 'Value must be an integer',
+    positive: 'Value must be positive',
+    negative: 'Value must be negative',
+    minDate: 'Date is earlier than allowed',
+    maxDate: 'Date is later than allowed',
+    boolean: 'Value must be boolean',
+    oneOf: 'Value must be one of the allowed options',
+    minItems: 'Select at least {min} values',
+    maxItems: 'Select at most {max} values',
+    custom: 'Value is invalid',
+    rangeOrder: 'Range start must be less than range end',
+    rangeOrderAllowEqual: 'Range start must be less than or equal to range end',
+    rangeCustom: 'Range is invalid',
+    fieldNotFound: 'Field "{field}" is not defined',
+    invalidTree: 'Input data tree is in invalid format',
   },
 };
