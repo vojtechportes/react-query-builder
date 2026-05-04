@@ -409,8 +409,6 @@ The validator receives:
 
 It should return an `IBuilderValidationResult` or a promise resolving to one.
 
-This makes it possible to plug in optional adapters such as Yup or Joi without coupling the core builder to a specific validation library.
-
 #### `onStateChange`
 
 `onStateChange` emits the current builder state together with validation output:
