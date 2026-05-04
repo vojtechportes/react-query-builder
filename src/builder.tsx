@@ -46,13 +46,13 @@ import { Text } from './text';
 import { IButtonProps } from './button';
 import { createGroupNode } from './utils/create-group-node.util';
 import { createId } from './utils/create-id.util';
-import { createBuilderValidationResult } from './utils/create-builder-validation-result.util';
 import { emitQuery } from './utils/emit-query.util';
 import { ingestQuery } from './utils/ingest-query.util';
 import { isPromiseLike } from './utils/is-promise-like.util';
 import { isSameQuery } from './utils/is-same-query.util';
 import { moveQueryNode } from './utils/move-query-node.util';
-import { validateBuilderQuery } from './utils/validate-builder-query.util';
+import { createBuilderValidationResult } from './utils/validation/create-builder-validation-result.util';
+import { validateBuilderQuery } from './utils/validation/validate-builder-query.util';
 import {
   DenormalizedQuery,
   INormalizedRuleNode,
@@ -111,16 +111,26 @@ export interface IBuilderValidationMessageContext {
   operator?: BuilderFieldOperator;
   value?: BuilderFieldValue;
   ruleId?: string;
+  rangeBoundary?: 'start' | 'end';
 }
 
 export type BuilderValidationMessage =
   | string
   | ((context: IBuilderValidationMessageContext) => string);
 
-export interface IBuilderRangeValidation<TValue = string | number> {
+export interface IBuilderRangeValidation<
+  TValueValidation = unknown,
+  TRangeValue = string | number
+> {
+  common?: Partial<TValueValidation>;
+  start?: Partial<TValueValidation>;
+  end?: Partial<TValueValidation>;
   allowEqual?: boolean;
   requireAscending?: boolean;
-  validate?: (range: [TValue, TValue]) => boolean | Promise<boolean>;
+  validate?: (
+    range: [TRangeValue, TRangeValue],
+    context: IBuilderValidationMessageContext
+  ) => boolean | Promise<boolean>;
   message?: BuilderValidationMessage;
 }
 
@@ -134,47 +144,99 @@ export interface IBuilderFieldValidationBase<TValue = unknown> {
   customMessage?: BuilderValidationMessage;
 }
 
-export interface ITextFieldValidation
+export interface ITextValueValidationRule
   extends IBuilderFieldValidationBase<string | string[]> {
   minLength?: number;
   maxLength?: number;
   matches?: RegExp;
-  range?: IBuilderRangeValidation<string>;
 }
 
-export interface INumberFieldValidation
+export interface INumberValueValidationRule
   extends IBuilderFieldValidationBase<number | number[]> {
   min?: number;
   max?: number;
   integer?: boolean;
   positive?: boolean;
   negative?: boolean;
-  range?: IBuilderRangeValidation<number>;
 }
 
-export interface IDateFieldValidation
+export interface IDateValueValidationRule
   extends IBuilderFieldValidationBase<string | string[]> {
   minDate?: string | Date;
   maxDate?: string | Date;
-  range?: IBuilderRangeValidation<string>;
 }
 
-export type IBooleanFieldValidation = IBuilderFieldValidationBase<boolean>;
+export type IBooleanValueValidationRule = IBuilderFieldValidationBase<boolean>;
 
-export type IListFieldValidation =
+export type IListValueValidationRule =
   IBuilderFieldValidationBase<string | number>;
 
-export interface IMultiListFieldValidation
+export interface IMultiListValueValidationRule
   extends IBuilderFieldValidationBase<Array<string | number>> {
   minItems?: number;
   maxItems?: number;
 }
 
-export type IStatementFieldValidation = IBuilderFieldValidationBase<string> & {
+export type IStatementValueValidationRule =
+  IBuilderFieldValidationBase<string> & {
   minLength?: number;
   maxLength?: number;
   matches?: RegExp;
 };
+
+export type IBuilderOperatorValidationRule<TRule> = Partial<TRule> & {
+  operators: BuilderFieldOperator[];
+};
+
+export interface IBuilderValidationConfig<TRule> {
+  common?: Partial<TRule>;
+  rules?: Array<IBuilderOperatorValidationRule<TRule>>;
+}
+
+export interface ITextFieldValidationRule extends ITextValueValidationRule {
+  range?: IBuilderRangeValidation<ITextValueValidationRule, string>;
+}
+
+export interface INumberFieldValidationRule extends INumberValueValidationRule {
+  range?: IBuilderRangeValidation<INumberValueValidationRule, number>;
+}
+
+export interface IDateFieldValidationRule extends IDateValueValidationRule {
+  range?: IBuilderRangeValidation<IDateValueValidationRule, string>;
+}
+
+export type IStatementFieldValidationRule = IStatementValueValidationRule;
+export type IBooleanFieldValidationRule = IBooleanValueValidationRule;
+export type IListFieldValidationRule = IListValueValidationRule;
+export type IMultiListFieldValidationRule = IMultiListValueValidationRule;
+
+export type ITextFieldValidation =
+  | Partial<ITextFieldValidationRule>
+  | IBuilderValidationConfig<ITextFieldValidationRule>;
+
+export type INumberFieldValidation =
+  | Partial<INumberFieldValidationRule>
+  | IBuilderValidationConfig<INumberFieldValidationRule>;
+
+export type IDateFieldValidation =
+  | Partial<IDateFieldValidationRule>
+  | IBuilderValidationConfig<IDateFieldValidationRule>;
+
+export type IBooleanFieldValidation =
+  | Partial<IBooleanFieldValidationRule>
+  | IBuilderValidationConfig<IBooleanFieldValidationRule>;
+
+export type IListFieldValidation =
+  | Partial<IListFieldValidationRule>
+  | IBuilderValidationConfig<IListFieldValidationRule>;
+
+export type IMultiListFieldValidation =
+  | Partial<IMultiListFieldValidationRule>
+  | IBuilderValidationConfig<IMultiListFieldValidationRule>;
+
+export type IStatementFieldValidation =
+  | Partial<IStatementFieldValidationRule>
+  | IBuilderValidationConfig<IStatementFieldValidationRule>;
 
 interface IBuilderFieldBase<
   TType extends BuilderFieldType,

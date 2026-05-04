@@ -3,7 +3,7 @@ import {
   IBuilderValidationContext,
 } from '../builder';
 import { strings } from '../constants/strings';
-import { validateBuilderQuery } from './validate-builder-query.util';
+import { validateBuilderQuery } from './validation/validate-builder-query.util';
 
 describe('validateBuilderQuery', () => {
   const context: IBuilderValidationContext = {
@@ -22,13 +22,35 @@ describe('validateBuilderQuery', () => {
         field: 'AMOUNT',
         label: 'Amount',
         type: 'NUMBER',
-        operators: ['BETWEEN'],
+        operators: ['LARGER', 'BETWEEN', 'NOT_BETWEEN'],
         validation: {
-          required: true,
-          range: {
-            requireAscending: true,
-            allowEqual: false,
+          common: {
+            required: true,
           },
+          rules: [
+            {
+              operators: ['LARGER'],
+              min: 10,
+              max: 20,
+            },
+            {
+              operators: ['BETWEEN', 'NOT_BETWEEN'],
+              range: {
+                common: {
+                  min: 10,
+                  max: 20,
+                },
+                start: {
+                  max: 15,
+                },
+                end: {
+                  min: 12,
+                },
+                requireAscending: true,
+                allowEqual: false,
+              },
+            },
+          ],
         },
       },
     ] as IBuilderFieldProps[],
@@ -93,7 +115,59 @@ describe('validateBuilderQuery', () => {
     );
 
     expect(result.isValid).toEqual(false);
-    expect(result.issuesByRuleId['rule-2'][0].code).toEqual('range_order');
+    expect(result.issuesByRuleId['rule-2'].map((issue) => issue.code)).toEqual(
+      expect.arrayContaining(['range_order'])
+    );
+  });
+
+  it('Applies operator-specific scalar validation for single-value operators', async () => {
+    const result = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              id: 'rule-3',
+              field: 'AMOUNT',
+              operator: 'LARGER',
+              value: 5,
+            },
+          ],
+        },
+      ],
+      context
+    );
+
+    expect(result.isValid).toEqual(false);
+    expect(result.issuesByRuleId['rule-3'][0].code).toEqual('min');
+  });
+
+  it('Applies common and boundary-specific validation for range operators', async () => {
+    const result = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              id: 'rule-4',
+              field: 'AMOUNT',
+              operator: 'BETWEEN',
+              value: [16, 11],
+            },
+          ],
+        },
+      ],
+      context
+    );
+
+    expect(result.isValid).toEqual(false);
+    expect(result.issuesByRuleId['rule-4'].map((issue) => issue.code)).toEqual(
+      expect.arrayContaining(['max', 'min', 'range_order'])
+    );
   });
 
   it('Uses localized validation messages from strings', async () => {

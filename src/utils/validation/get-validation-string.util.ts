@@ -1,4 +1,4 @@
-import { IStrings } from '../constants/strings';
+import { IStrings } from '../../constants/strings';
 
 export interface IValidationStringReplacements {
   [key: string]: string | number | undefined;

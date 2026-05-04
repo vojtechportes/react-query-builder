@@ -1,12 +1,12 @@
 import {
   IBuilderRangeValidation,
+  IBuilderValidationContext,
   IBuilderValidationIssue,
   IBuilderValidationMessageContext,
-  IBuilderValidationContext,
-} from '../builder';
+} from '../../builder';
 import { getBuilderValidationMessage } from './get-builder-validation-message.util';
 import { getValidationString } from './get-validation-string.util';
-import { isPromiseLike } from './is-promise-like.util';
+import { isPromiseLike } from '../is-promise-like.util';
 
 const compareValues = (left: string | number, right: string | number) => {
   if (typeof left === 'number' && typeof right === 'number') {
@@ -16,13 +16,19 @@ const compareValues = (left: string | number, right: string | number) => {
   return String(left).localeCompare(String(right));
 };
 
-export const validateBuilderRange = <TValue extends string | number>(
-  range: [TValue, TValue],
-  validation: IBuilderRangeValidation<TValue>,
+export const validateBuilderRange = <TValueValidation, TRangeValue extends string | number>(
+  range: [TRangeValue, TRangeValue],
+  validation:
+    | IBuilderRangeValidation<TValueValidation, TRangeValue>
+    | undefined,
   baseIssue: Omit<IBuilderValidationIssue, 'message'>,
   context: IBuilderValidationMessageContext,
   validationContext: IBuilderValidationContext
 ): IBuilderValidationIssue[] | Promise<IBuilderValidationIssue[]> => {
+  if (!validation) {
+    return [];
+  }
+
   const issues: IBuilderValidationIssue[] = [];
   const [left, right] = range;
   const comparison = compareValues(left, right);
@@ -49,49 +55,51 @@ export const validateBuilderRange = <TValue extends string | number>(
     }
   }
 
-  if (validation.validate) {
-    const validateResult = validation.validate(range);
+  if (!validation.validate) {
+    return issues;
+  }
 
-    if (isPromiseLike(validateResult)) {
-      return validateResult.then((isValid) => {
-        if (!isValid) {
-          return [
-            ...issues,
-            {
-              ...baseIssue,
-              code: 'range_custom',
-              message: getBuilderValidationMessage(
-                validation.message,
-                getValidationString(
-                  validationContext.strings.validation,
-                  'rangeCustom',
-                  'Range is invalid'
-                ),
-                context
-              ),
-            },
-          ];
-        }
+  const validateResult = validation.validate(range, context);
 
+  if (isPromiseLike(validateResult)) {
+    return validateResult.then((isValid) => {
+      if (isValid) {
         return issues;
-      });
-    }
+      }
 
-    if (!validateResult) {
-      issues.push({
-        ...baseIssue,
-        code: 'range_custom',
-        message: getBuilderValidationMessage(
-          validation.message,
-          getValidationString(
-            validationContext.strings.validation,
-            'rangeCustom',
-            'Range is invalid'
+      return [
+        ...issues,
+        {
+          ...baseIssue,
+          code: 'range_custom',
+          message: getBuilderValidationMessage(
+            validation.message,
+            getValidationString(
+              validationContext.strings.validation,
+              'rangeCustom',
+              'Range is invalid'
+            ),
+            context
           ),
-          context
+        },
+      ];
+    });
+  }
+
+  if (!validateResult) {
+    issues.push({
+      ...baseIssue,
+      code: 'range_custom',
+      message: getBuilderValidationMessage(
+        validation.message,
+        getValidationString(
+          validationContext.strings.validation,
+          'rangeCustom',
+          'Range is invalid'
         ),
-      });
-    }
+        context
+      ),
+    });
   }
 
   return issues;

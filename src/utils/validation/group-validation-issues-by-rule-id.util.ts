@@ -1,4 +1,4 @@
-import { IBuilderValidationIssue } from '../builder';
+import { IBuilderValidationIssue } from '../../builder';
 
 export const groupValidationIssuesByRuleId = (
   issues: IBuilderValidationIssue[]

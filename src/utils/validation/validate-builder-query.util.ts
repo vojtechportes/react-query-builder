@@ -2,12 +2,12 @@ import {
   IBuilderValidationContext,
   IBuilderValidationIssue,
   IBuilderValidationResult,
-} from '../builder';
+} from '../../builder';
+import { isDenormalizedGroupNode } from '../is-denormalized-group-node.util';
+import { isPromiseLike } from '../is-promise-like.util';
+import { DenormalizedQuery, IDenormalizedRuleNode } from '../query-tree';
 import { createBuilderValidationResult } from './create-builder-validation-result.util';
 import { getValidationString } from './get-validation-string.util';
-import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
-import { isPromiseLike } from './is-promise-like.util';
-import { DenormalizedQuery, IDenormalizedRuleNode } from './query-tree';
 import { validateBuilderRule } from './validate-builder-rule.util';
 
 const collectRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] => {
