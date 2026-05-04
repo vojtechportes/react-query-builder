@@ -107,6 +107,7 @@ React Query Builder is designed to be highly configurable. You can control:
 - field definitions
 - initial and controlled query data
 - drag and drop support
+- validation rules
 - read-only behavior
 - supported group types
 - theming
@@ -145,6 +146,7 @@ Each field can define:
 - `type`: field type
 - `operators`: allowed operators for the field
 - `value`: source value for `LIST`, `MULTI_LIST`, or `STATEMENT`
+- `validation`: optional validation rules for the field
 
 #### Type
 
@@ -194,6 +196,55 @@ NOT_LIKE
 Prefer `IN`, `CONTAINS`, and `NOT_CONTAINS`.
 
 `IS_NULL` and `IS_NOT_NULL` are value-less operators, so the built-in UI does not render a value input for them.
+
+#### Validation
+
+Validation is defined per field and is type-aware.
+
+```typescript
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'NAME',
+    label: 'Name',
+    type: 'TEXT',
+    operators: ['EQUAL', 'CONTAINS'],
+    validation: {
+      required: true,
+      minLength: 2,
+      maxLength: 50,
+    },
+  },
+  {
+    field: 'PRICE',
+    label: 'Price',
+    type: 'NUMBER',
+    operators: ['EQUAL', 'BETWEEN'],
+    validation: {
+      min: 0,
+      range: {
+        requireAscending: true,
+        allowEqual: false,
+      },
+    },
+  },
+];
+```
+
+Built-in validation supports:
+
+- shared rules like `required`, `oneOf`, and `custom`
+- text rules like `minLength`, `maxLength`, and `matches`
+- number rules like `min`, `max`, `integer`, `positive`, and `negative`
+- date rules like `minDate` and `maxDate`
+- multi-list rules like `minItems` and `maxItems`
+- range validation for `BETWEEN` and `NOT_BETWEEN`
+
+If you use `range`, you can validate both the range shape and the relationship between values:
+
+- `requireAscending`
+- `allowEqual`
+- `validate`
+- `message`
 
 ### Data
 
@@ -255,6 +306,9 @@ Important `Builder` props:
 - `draggable?: boolean`
 - `singleRootGroup?: boolean`
 - `groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both'`
+- `validator?: IBuilderValidator`
+- `onStateChange?: (state: IBuilderStateChange) => void`
+- `showValidation?: boolean`
 
 #### `readOnly`
 
@@ -296,6 +350,37 @@ Controls what kinds of groups users can add:
 - `'both'`
 
 When set to `'both'`, the `Add Group` action becomes a popover that lets the user choose which group type to create.
+
+#### `validator`
+
+`validator` lets you override the built-in validation engine with your own implementation.
+
+The validator receives:
+
+- the current query data
+- builder validation context including `fields`, `singleRootGroup`, and `groupTypes`
+
+It should return an `IBuilderValidationResult` or a promise resolving to one.
+
+This makes it possible to plug in optional adapters such as Yup or Joi without coupling the core builder to a specific validation library.
+
+#### `onStateChange`
+
+`onStateChange` emits the current builder state together with validation output:
+
+```typescript
+{
+  data: DenormalizedQuery;
+  isValid: boolean;
+  validation: IBuilderValidationResult;
+}
+```
+
+`onChange` still emits only the denormalized query data.
+
+#### `showValidation`
+
+When `showValidation` is `true`, the built-in `Rule` component renders validation issues under the affected rule.
 
 ### Components
 
@@ -420,3 +505,19 @@ const strings: IStrings = {
 `ANY_IN`, `LIKE`, and `NOT_LIKE` are deprecated here as well and will be removed in `2.0.0`.
 
 It is not required to translate every string. Any string you omit falls back to the built-in defaults.
+
+Validation copy is also configurable through `strings.validation`, for example:
+
+```typescript
+const strings: IStrings = {
+  validation: {
+    required: 'This field is required',
+    min: 'Value must be at least {min}',
+    max: 'Value must be at most {max}',
+    minItems: 'Select at least {min} values',
+    maxItems: 'Select at most {max} values',
+  },
+};
+```
+
+Validation strings support placeholder replacement for values such as `{field}`, `{operator}`, `{min}`, and `{max}`.

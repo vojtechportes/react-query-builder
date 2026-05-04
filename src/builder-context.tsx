@@ -2,6 +2,7 @@ import React, { FC, createContext } from 'react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
+  IBuilderValidationResult,
   BuilderGroupMode,
   defaultComponents,
 } from './builder';
@@ -15,6 +16,8 @@ export interface IBuilderContextProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
+  showValidation?: boolean;
+  validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
   strings: IStrings;
   setData: React.Dispatch<NormalizedQuery>;
@@ -35,6 +38,8 @@ export interface IBuilderContextProviderProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
+  showValidation?: boolean;
+  validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
   strings: IStrings;
   setData: React.Dispatch<NormalizedQuery>;
@@ -54,6 +59,8 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   draggable,
   singleRootGroup,
   groupTypes,
+  showValidation,
+  validation,
   setData,
   onChange,
   updateData,
@@ -84,6 +91,10 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
       ...defaultStrings.operators,
       ...strings.operators,
     },
+    validation: {
+      ...defaultStrings.validation,
+      ...strings.validation,
+    },
   };
 
   return (
@@ -97,6 +108,8 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         draggable,
         singleRootGroup,
         groupTypes,
+        showValidation,
+        validation,
         setData,
         onChange,
         updateData,

@@ -46,10 +46,13 @@ import { Text } from './text';
 import { IButtonProps } from './button';
 import { createGroupNode } from './utils/create-group-node.util';
 import { createId } from './utils/create-id.util';
+import { createBuilderValidationResult } from './utils/create-builder-validation-result.util';
 import { emitQuery } from './utils/emit-query.util';
 import { ingestQuery } from './utils/ingest-query.util';
+import { isPromiseLike } from './utils/is-promise-like.util';
 import { isSameQuery } from './utils/is-same-query.util';
 import { moveQueryNode } from './utils/move-query-node.util';
+import { validateBuilderQuery } from './utils/validate-builder-query.util';
 import {
   DenormalizedQuery,
   INormalizedRuleNode,
@@ -97,16 +100,183 @@ export type BuilderGroupValues = QueryGroupValue;
 
 export type BuilderFieldValue =
   | string
+  | number
   | string[]
+  | number[]
   | boolean
   | Array<{ value: string | number; label: string }>;
 
-export interface IBuilderFieldProps {
+export interface IBuilderValidationMessageContext {
+  field: IBuilderFieldProps;
+  operator?: BuilderFieldOperator;
+  value?: BuilderFieldValue;
+  ruleId?: string;
+}
+
+export type BuilderValidationMessage =
+  | string
+  | ((context: IBuilderValidationMessageContext) => string);
+
+export interface IBuilderRangeValidation<TValue = string | number> {
+  allowEqual?: boolean;
+  requireAscending?: boolean;
+  validate?: (range: [TValue, TValue]) => boolean | Promise<boolean>;
+  message?: BuilderValidationMessage;
+}
+
+export interface IBuilderFieldValidationBase<TValue = unknown> {
+  required?: boolean;
+  oneOf?: TValue[];
+  custom?: (
+    value: TValue,
+    context: IBuilderValidationMessageContext
+  ) => boolean | Promise<boolean>;
+  customMessage?: BuilderValidationMessage;
+}
+
+export interface ITextFieldValidation
+  extends IBuilderFieldValidationBase<string | string[]> {
+  minLength?: number;
+  maxLength?: number;
+  matches?: RegExp;
+  range?: IBuilderRangeValidation<string>;
+}
+
+export interface INumberFieldValidation
+  extends IBuilderFieldValidationBase<number | number[]> {
+  min?: number;
+  max?: number;
+  integer?: boolean;
+  positive?: boolean;
+  negative?: boolean;
+  range?: IBuilderRangeValidation<number>;
+}
+
+export interface IDateFieldValidation
+  extends IBuilderFieldValidationBase<string | string[]> {
+  minDate?: string | Date;
+  maxDate?: string | Date;
+  range?: IBuilderRangeValidation<string>;
+}
+
+export type IBooleanFieldValidation = IBuilderFieldValidationBase<boolean>;
+
+export type IListFieldValidation =
+  IBuilderFieldValidationBase<string | number>;
+
+export interface IMultiListFieldValidation
+  extends IBuilderFieldValidationBase<Array<string | number>> {
+  minItems?: number;
+  maxItems?: number;
+}
+
+export type IStatementFieldValidation = IBuilderFieldValidationBase<string> & {
+  minLength?: number;
+  maxLength?: number;
+  matches?: RegExp;
+};
+
+interface IBuilderFieldBase<
+  TType extends BuilderFieldType,
+  TValue extends BuilderFieldValue | undefined,
+  TValidation
+> {
   field: string;
   label: string;
-  value?: BuilderFieldValue;
-  type: BuilderFieldType;
+  value?: TValue;
+  type: TType;
   operators?: BuilderFieldOperator[];
+  validation?: TValidation;
+}
+
+export type IBooleanFieldProps = IBuilderFieldBase<
+  'BOOLEAN',
+  boolean,
+  IBooleanFieldValidation
+>;
+
+export type ITextFieldProps = IBuilderFieldBase<
+  'TEXT',
+  string,
+  ITextFieldValidation
+>;
+
+export type IDateFieldProps = IBuilderFieldBase<
+  'DATE',
+  string,
+  IDateFieldValidation
+>;
+
+export type INumberFieldProps = IBuilderFieldBase<
+  'NUMBER',
+  number,
+  INumberFieldValidation
+>;
+
+export type IStatementFieldProps = IBuilderFieldBase<
+  'STATEMENT',
+  string,
+  IStatementFieldValidation
+>;
+
+export type IListFieldProps = IBuilderFieldBase<
+  'LIST',
+  Array<{ value: string | number; label: string }>,
+  IListFieldValidation
+>;
+
+export type IMultiListFieldProps = IBuilderFieldBase<
+  'MULTI_LIST',
+  Array<{ value: string | number; label: string }>,
+  IMultiListFieldValidation
+>;
+
+export type IGroupFieldProps = IBuilderFieldBase<'GROUP', undefined, never>;
+
+export type IBuilderFieldProps =
+  | IBooleanFieldProps
+  | ITextFieldProps
+  | IDateFieldProps
+  | INumberFieldProps
+  | IStatementFieldProps
+  | IListFieldProps
+  | IMultiListFieldProps
+  | IGroupFieldProps;
+
+export type BuilderValidationSeverity = 'error' | 'warning';
+
+export interface IBuilderValidationIssue {
+  ruleId: string;
+  field: string;
+  message: string;
+  severity?: BuilderValidationSeverity;
+  code?: string;
+}
+
+export interface IBuilderValidationResult {
+  isValid: boolean;
+  issues: IBuilderValidationIssue[];
+  issuesByRuleId: Record<string, IBuilderValidationIssue[]>;
+}
+
+export interface IBuilderValidationContext {
+  fields: IBuilderFieldProps[];
+  singleRootGroup: boolean;
+  groupTypes: BuilderGroupMode;
+  strings: IStrings;
+}
+
+export interface IBuilderValidator {
+  (
+    data: DenormalizedQuery,
+    context: IBuilderValidationContext
+  ): IBuilderValidationResult | Promise<IBuilderValidationResult>;
+}
+
+export interface IBuilderStateChange {
+  data: DenormalizedQuery;
+  isValid: boolean;
+  validation: IBuilderValidationResult;
 }
 
 export interface IBuilderComponentsProps {
@@ -156,6 +326,9 @@ export interface IBuilderProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
+  validator?: IBuilderValidator;
+  onStateChange?: (state: IBuilderStateChange) => void;
+  showValidation?: boolean;
   onChange?: (data: DenormalizedQuery) => any;
 }
 
@@ -187,6 +360,9 @@ export const Builder: FC<IBuilderProps> = ({
   draggable = false,
   singleRootGroup = true,
   groupTypes = 'with-modifiers',
+  validator,
+  onStateChange,
+  showValidation = false,
   onChange,
 }) => {
   const rootGroupType =
@@ -199,10 +375,14 @@ export const Builder: FC<IBuilderProps> = ({
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [activeDropZoneId, setActiveDropZoneId] = useState<string | null>(null);
   const [isDropSettling, setIsDropSettling] = useState(false);
+  const [validation, setValidation] = useState<IBuilderValidationResult>(() =>
+    createBuilderValidationResult([])
+  );
   const dragDirectionY = useRef(0);
   const lastPointerY = useRef<number | null>(null);
   const lastEmittedData = useRef<DenormalizedQuery | null>(null);
   const pendingChangeData = useRef<NormalizedQuery | null>(null);
+  const validationRequestId = useRef(0);
   const filteredData = data.filter((item) => !item.parent);
   const AddComponent = components.Add || Button;
   const PopoverComponent = components.Popover || Popover;
@@ -247,6 +427,21 @@ export const Builder: FC<IBuilderProps> = ({
     []
   );
 
+  const emitStateChange = useCallback(
+    (nextData: DenormalizedQuery, nextValidation: IBuilderValidationResult) => {
+      if (!onStateChange) {
+        return;
+      }
+
+      onStateChange({
+        data: nextData,
+        isValid: nextValidation.isValid,
+        validation: nextValidation,
+      });
+    },
+    [onStateChange]
+  );
+
   useEffect(() => {
     if (!pendingChangeData.current || pendingChangeData.current !== data) {
       return;
@@ -271,6 +466,81 @@ export const Builder: FC<IBuilderProps> = ({
     pendingChangeData.current = null;
     setData(ingestQuery(originalData, rootGroupType, singleRootGroup));
   }, [originalData, rootGroupType, singleRootGroup]);
+
+  useEffect(() => {
+    const currentRequestId = validationRequestId.current + 1;
+    validationRequestId.current = currentRequestId;
+
+    let isSubscribed = true;
+    const applyValidationResult = (
+      denormalizedData: DenormalizedQuery,
+      nextValidation: IBuilderValidationResult
+    ) => {
+      if (!isSubscribed || validationRequestId.current !== currentRequestId) {
+        return;
+      }
+
+      setValidation(nextValidation);
+      emitStateChange(denormalizedData, nextValidation);
+    };
+
+    const runValidation = () => {
+      let denormalizedData: DenormalizedQuery;
+      let validationData: DenormalizedQuery;
+
+      try {
+        denormalizedData = emitQuery(data);
+        validationData = emitQuery(data, { preserveIds: true });
+      } catch (error) {
+        const nextValidation = createBuilderValidationResult([
+          {
+            ruleId: 'root',
+            field: 'root',
+            code: 'invalid_tree',
+            message:
+              strings.validation?.invalidTree || 'Input data tree is in invalid format',
+          },
+        ]);
+
+        applyValidationResult(originalData, nextValidation);
+        return;
+      }
+
+      const validationContext: IBuilderValidationContext = {
+        fields,
+        singleRootGroup,
+        groupTypes,
+        strings,
+      };
+      const validationResult = validator
+        ? validator(validationData, validationContext)
+        : validateBuilderQuery(validationData, validationContext);
+
+      if (isPromiseLike(validationResult)) {
+        void validationResult.then((nextValidation) => {
+          applyValidationResult(denormalizedData, nextValidation);
+        });
+        return;
+      }
+
+      applyValidationResult(denormalizedData, validationResult);
+    };
+
+    runValidation();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [
+    data,
+    emitStateChange,
+    fields,
+    groupTypes,
+    originalData,
+    singleRootGroup,
+    strings,
+    validator,
+  ]);
 
   const resetDragState = useCallback(() => {
     setActiveDragId(null);
@@ -474,6 +744,8 @@ export const Builder: FC<IBuilderProps> = ({
       draggable={draggable}
       singleRootGroup={singleRootGroup}
       groupTypes={groupTypes}
+      showValidation={showValidation}
+      validation={validation}
       data={data}
       setData={setData}
       onChange={emitChange}
