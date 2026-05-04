@@ -1,7 +1,7 @@
 import {
   BuilderValidationMessage,
   IBuilderValidationMessageContext,
-} from '../builder';
+} from '../../builder';
 
 export const getBuilderValidationMessage = (
   message: BuilderValidationMessage | undefined,

@@ -209,22 +209,51 @@ const fields: IBuilderFieldProps[] = [
     type: 'TEXT',
     operators: ['EQUAL', 'CONTAINS'],
     validation: {
-      required: true,
-      minLength: 2,
-      maxLength: 50,
+      common: {
+        required: true,
+      },
+      rules: [
+        {
+          operators: ['EQUAL', 'CONTAINS'],
+          minLength: 2,
+          maxLength: 50,
+        },
+      ],
     },
   },
   {
     field: 'PRICE',
     label: 'Price',
     type: 'NUMBER',
-    operators: ['EQUAL', 'BETWEEN'],
+    operators: ['EQUAL', 'BETWEEN', 'NOT_BETWEEN'],
     validation: {
-      min: 0,
-      range: {
-        requireAscending: true,
-        allowEqual: false,
+      common: {
+        required: true,
       },
+      rules: [
+        {
+          operators: ['EQUAL'],
+          min: 0,
+          max: 100,
+        },
+        {
+          operators: ['BETWEEN', 'NOT_BETWEEN'],
+          range: {
+            common: {
+              min: 0,
+              max: 100,
+            },
+            start: {
+              max: 80,
+            },
+            end: {
+              min: 10,
+            },
+            requireAscending: true,
+            allowEqual: false,
+          },
+        },
+      ],
     },
   },
 ];
@@ -232,6 +261,8 @@ const fields: IBuilderFieldProps[] = [
 
 Built-in validation supports:
 
+- operator-agnostic validation in `validation.common`
+- operator-aware validation in `validation.rules`
 - shared rules like `required`, `oneOf`, and `custom`
 - text rules like `minLength`, `maxLength`, and `matches`
 - number rules like `min`, `max`, `integer`, `positive`, and `negative`
@@ -239,8 +270,11 @@ Built-in validation supports:
 - multi-list rules like `minItems` and `maxItems`
 - range validation for `BETWEEN` and `NOT_BETWEEN`
 
-If you use `range`, you can validate both the range shape and the relationship between values:
+If you use `range`, you can validate both values together and individually:
 
+- `common`
+- `start`
+- `end`
 - `requireAscending`
 - `allowEqual`
 - `validate`

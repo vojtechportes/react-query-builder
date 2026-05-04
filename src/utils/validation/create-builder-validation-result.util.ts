@@ -1,7 +1,7 @@
 import {
   IBuilderValidationIssue,
   IBuilderValidationResult,
-} from '../builder';
+} from '../../builder';
 import { groupValidationIssuesByRuleId } from './group-validation-issues-by-rule-id.util';
 
 export const createBuilderValidationResult = (
