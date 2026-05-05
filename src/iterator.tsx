@@ -122,7 +122,7 @@ export const Iterator: FC<IIteratorProps> = ({
       );
 
       if (!canSortAtLevel || isGroupReadOnly) {
-        return [group()];
+        return [!isCollapsedSourceBoundary ? leadingDropZone : null, group()];
       }
 
       return [
@@ -150,7 +150,7 @@ export const Iterator: FC<IIteratorProps> = ({
     );
 
     if (!canSortAtLevel || isRuleReadOnly) {
-      return [rule()];
+      return [!isCollapsedSourceBoundary ? leadingDropZone : null, rule()];
     }
 
     return [
