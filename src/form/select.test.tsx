@@ -29,10 +29,9 @@ describe('#components/Select', () => {
       />
     );
 
-    const select = wrapper.find('select');
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper.find('[data-test="SelectMultiOption[test]"]').first().simulate('click');
 
-    select.simulate('focus');
-    select.simulate('change', { target: { value: 'test' } });
     expect(onChange).toBeCalled();
   });
 });

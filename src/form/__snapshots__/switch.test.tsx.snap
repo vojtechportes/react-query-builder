@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`#components/Switch Tests Snapshot 1`] = `
-<styled.div
+<styled.button
+  $disabled={false}
+  $switched={false}
   $theme={
     {
       "colors": {
@@ -32,12 +34,15 @@ exports[`#components/Switch Tests Snapshot 1`] = `
       },
     }
   }
+  aria-checked={false}
+  aria-disabled={false}
   data-test="Switch"
-  disabled={false}
   onClick={[Function]}
-  switched={false}
+  role="switch"
+  type="button"
 >
-  <styled.div
+  <styled.span
+    $switched={false}
     $theme={
       {
         "colors": {
@@ -69,5 +74,5 @@ exports[`#components/Switch Tests Snapshot 1`] = `
       }
     }
   />
-</styled.div>
+</styled.button>
 `;

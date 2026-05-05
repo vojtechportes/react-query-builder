@@ -1,10 +1,10 @@
 import React, { FC, useContext } from 'react';
-import { BuilderContext } from '../builder-context';
-import { SelectMulti as DefaultSelectMulti } from '../form/select-multi';
-import { applyDataUpdate } from '../utils/apply-data-update.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { isStringArray } from '../utils/is-string-array.util';
-import { updateItem } from '../utils/update-item.util';
+import { BuilderContext } from '../../builder-context';
+import { SelectMulti as DefaultSelectMulti } from '../../form/select-multi';
+import { applyDataUpdate } from '../../utils/apply-data-update.util';
+import { isNormalizedGroupNode } from '../../utils/is-normalized-group-node.util';
+import { isStringArray } from '../../utils/is-string-array.util';
+import { updateItem } from '../../utils/update-item.util';
 
 export interface ISelectMultiProps {
   values: Array<{ value: string; label: string }>;
@@ -70,6 +70,8 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
 
   return (
     <SelectMultiComponent
+      id={`query-builder-rule-${id}-value`}
+      name={`query-builder-rule-${id}-value`}
       onChange={handleChange}
       onDelete={handleDelete}
       selectedValue={selectedValue}

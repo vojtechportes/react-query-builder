@@ -21,21 +21,28 @@ describe('#components/SelectMulti', () => {
 
   it('Tests user interaction', () => {
     const onChange = jest.fn();
+    const onDelete = jest.fn();
     const wrapper = mount(
       <SelectMulti
         disabled={false}
         onChange={onChange}
-        onDelete={jest.fn()}
+        onDelete={onDelete}
         selectedValue={['test']}
         values={mockValues}
       />
     );
 
-    const select = wrapper.find('select');
+    const trigger = wrapper.find('[data-test="SelectMultiTrigger"]').first();
+    trigger.simulate('click');
+    wrapper.update();
 
-    select.simulate('focus');
-    select.simulate('change', { target: { value: ['test'] } });
-    select.simulate('change', { target: { value: [] } });
-    expect(onChange).toBeCalledTimes(2);
+    const option = wrapper.find('[data-test="SelectMultiOption[test]"]').first();
+    option.simulate('click');
+
+    const remove = wrapper.find('[data-test="Delete"]').first();
+    remove.simulate('click');
+
+    expect(onChange).toBeCalledTimes(0);
+    expect(onDelete).toBeCalledTimes(2);
   });
 });

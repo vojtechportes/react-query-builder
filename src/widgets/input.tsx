@@ -54,12 +54,16 @@ export const Input: FC<IInputProps> = ({ value, type, id }) => {
     return (
       <>
         <InputComponent
+          id={`query-builder-rule-${id}-value-start`}
+          name={`query-builder-rule-${id}-value-start`}
           type={type}
           value={value[0]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 0)}
           disabled={readOnly}
         />
         <InputComponent
+          id={`query-builder-rule-${id}-value-end`}
+          name={`query-builder-rule-${id}-value-end`}
           type={type}
           value={value[1]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
@@ -75,6 +79,8 @@ export const Input: FC<IInputProps> = ({ value, type, id }) => {
 
   return (
     <InputComponent
+      id={`query-builder-rule-${id}-value`}
+      name={`query-builder-rule-${id}-value`}
       type={type}
       value={value}
       onChange={handleChange}

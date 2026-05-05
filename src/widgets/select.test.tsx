@@ -71,8 +71,8 @@ describe('#components/Widgets/Select', () => {
       </BuilderContext.Provider>
     );
 
-    const select = wrapper.find('select').first();
-    select.simulate('change', { target: { value: 'test' } });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper.find('[data-test="SelectMultiOption[test]"]').first().simulate('click');
   });
 
   it('Test no form components scenario', () => {

@@ -16,6 +16,8 @@ export interface IInputProps {
   onChange: (value: string) => void;
   className?: string;
   disabled?: boolean;
+  id?: string;
+  name?: string;
 }
 
 export const Input: FC<IInputProps> = ({
@@ -24,6 +26,8 @@ export const Input: FC<IInputProps> = ({
   onChange,
   className,
   disabled = false,
+  id,
+  name,
 }) => {
   const theme = useTheme();
 
@@ -36,6 +40,8 @@ export const Input: FC<IInputProps> = ({
 
   return (
     <StyledInput
+      id={id}
+      name={name}
       type={type}
       value={value}
       onChange={handleChange}

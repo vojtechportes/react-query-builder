@@ -38,6 +38,8 @@ export const Select: FC<ISelectProps> = ({
 
   return (
     <SelectComponent
+      id={`query-builder-rule-${id}-value`}
+      name={`query-builder-rule-${id}-value`}
       onChange={handleChange}
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}

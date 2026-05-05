@@ -4,84 +4,42 @@ import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
   defaultComponents,
-} from '../builder';
-import { BuilderContext } from '../builder-context';
-import { FieldSelect } from './field-select';
+} from '../../builder';
+import { BuilderContext } from '../../builder-context';
+import { SelectMulti } from './select-multi';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
   {
-    field: 'MOCK_FIELD_1',
-    label: 'Mock Field',
-    type: 'BOOLEAN',
-  },
-  {
-    field: 'MOCK_FIELD_2',
-    label: 'Mock Field',
-    type: 'DATE',
-    operators: ['BETWEEN'],
-  },
-  {
-    field: 'MOCK_FIELD_3',
-    label: 'Mock Field',
-    type: 'DATE',
-    operators: ['LARGER'],
-  },
-  {
-    field: 'MOCK_FIELD_4',
-    label: 'Mock Field',
-    type: 'TEXT',
-    operators: ['EQUAL'],
-  },
-  {
-    field: 'MOCK_FIELD_5',
-    label: 'Mock Field',
-    type: 'TEXT',
-    operators: ['BETWEEN'],
-  },
-  {
-    field: 'MOCK_FIELD_6',
-    label: 'Mock Field',
-    type: 'NUMBER',
-    operators: ['EQUAL'],
-  },
-  {
-    field: 'MOCK_FIELD_7',
-    label: 'Mock Field',
-    type: 'NUMBER',
-    operators: ['BETWEEN'],
-  },
-  {
-    field: 'MOCK_FIELD_8',
-    label: 'Mock Field',
-    type: 'LIST',
-    value: [{ label: 'test', value: 'test' }],
-  },
-  {
-    field: 'MOCK_FIELD_9',
+    field: 'MOCK_FIELD',
     label: 'Mock Field',
     type: 'MULTI_LIST',
-    value: [{ label: 'test', value: 'test' }],
-  },
-  {
-    field: 'MOCK_FIELD_10',
-    label: 'Mock Field',
-    type: 'STATEMENT',
-    value: 'test',
+    value: [
+      {
+        value: 'test',
+        label: 'test',
+      },
+    ],
   },
 ];
 const data: any[] = [
   {
     id: 'test',
-    field: 'MOCK_FIELD_1',
-    value: false,
+    field: 'MOCK_FIELD',
+    value: [],
+  },
+];
+const selectValues = [
+  {
+    value: 'test',
+    label: 'test',
   },
 ];
 const strings = { form: {} };
 const setData = jest.fn();
 const onChange = () => jest.fn();
 
-describe('#components/Widgets/FieldSelect', () => {
+describe('#components/Widgets/SelectMulti', () => {
   it('Tests Snapshot', () => {
     expect(
       shallow(
@@ -96,7 +54,7 @@ describe('#components/Widgets/FieldSelect', () => {
             readOnly: false,
           }}
         >
-          <FieldSelect id="test" selectedValue={''} />
+          <SelectMulti id="test" selectedValue={[]} values={selectValues} />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
@@ -114,7 +72,7 @@ describe('#components/Widgets/FieldSelect', () => {
             readOnly: true,
           }}
         >
-          <FieldSelect id="test" selectedValue={''} />
+          <SelectMulti id="test" selectedValue={[]} values={selectValues} />
         </BuilderContext.Provider>
       )
     ).toMatchSnapshot();
@@ -133,17 +91,20 @@ describe('#components/Widgets/FieldSelect', () => {
           readOnly: false,
         }}
       >
-        <FieldSelect id="test" selectedValue={''} />
+        <SelectMulti id="test" selectedValue={['test']} values={selectValues} />
       </BuilderContext.Provider>
     );
 
-    fields.forEach(item => {
-      wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-      wrapper
-        .find(`[data-test="SelectMultiOption[${item.field}]"]`)
-        .first()
-        .simulate('click');
-    });
+    const trigger = wrapper.find('[data-test="SelectMultiTrigger"]').first();
+    trigger.simulate('click');
+    wrapper.update();
+
+    const option = wrapper.find('[data-test="SelectMultiOption[test]"]').first();
+    option.simulate('click');
+    option.simulate('click');
+
+    const remove = wrapper.find('[data-test="Delete"]').first();
+    remove.simulate('click');
   });
 
   it('Test no form components scenario', () => {
@@ -159,7 +120,7 @@ describe('#components/Widgets/FieldSelect', () => {
           readOnly: false,
         }}
       >
-        <FieldSelect id="test" selectedValue={''} />
+        <SelectMulti id="test" selectedValue={[]} values={selectValues} />
       </BuilderContext.Provider>
     );
 
