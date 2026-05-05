@@ -1,13 +1,19 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import { IThemeProps } from '../theme-provider/theme-provider';
 import { useTheme } from '../theme-provider/hooks/use-theme';
+import { Option } from '../widgets/select-multi/components/option';
+import { Trigger } from '../widgets/select-multi/components/trigger';
+import { useSelectMulti } from '../widgets/select-multi/hooks/use-select-multi';
+import { Popover } from './popover';
 
-const StyledSelect = styled.select<{ $theme: Required<IThemeProps> }>`
-  min-width: 160px;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid ${({ $theme }) => $theme.colors.grey['500']};
-  border-radius: 3px;
+const Container = styled.div`
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
 `;
 
 export interface ISelectProps {
@@ -17,6 +23,8 @@ export interface ISelectProps {
   onChange: (value: any) => void;
   className?: string;
   disabled?: boolean;
+  id?: string;
+  name?: string;
 }
 
 export const Select: FC<ISelectProps> = ({
@@ -26,34 +34,59 @@ export const Select: FC<ISelectProps> = ({
   onChange,
   className,
   disabled = false,
+  id,
+  name,
 }) => {
   const theme = useTheme();
-
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLSelectElement>) => {
-      if (!disabled) {
-        onChange(event.target.value);
-      }
-    },
-    [disabled, onChange]
+  const { isOpen, close, rootRef, toggle, triggerRef } = useSelectMulti({
+    disabled,
+  });
+  const selectedOption = useMemo(
+    () => values.find(({ value }) => value === selectedValue),
+    [selectedValue, values]
   );
 
+  const handleSelect = (value: string) => {
+    if (disabled) {
+      return;
+    }
+
+    onChange(value);
+    close();
+  };
+
   return (
-    <StyledSelect
-      onChange={handleChange}
-      value={selectedValue}
-      className={className}
-      disabled={disabled}
-      $theme={theme}
-    >
-      <option value="" disabled>
-        {emptyValue}
-      </option>
-      {values.map(({ value: optionValue, label: optionLabel }) => (
-        <option value={optionValue} key={optionValue}>
-          {optionLabel}
-        </option>
-      ))}
-    </StyledSelect>
+    <Container ref={rootRef} className={className}>
+      <HiddenInput
+        type="hidden"
+        id={id}
+        name={name}
+        value={selectedValue || ''}
+        readOnly
+      />
+      <Trigger
+        disabled={disabled}
+        expanded={isOpen}
+        id={id ? `${id}-trigger` : undefined}
+        label={selectedOption?.label || emptyValue || 'Select value'}
+        onClick={toggle}
+        triggerRef={triggerRef}
+        theme={theme}
+      />
+      {isOpen ? (
+        <Popover theme={theme}>
+          {values.map(({ value, label }) => (
+            <Option
+              key={value}
+              value={value}
+              label={label}
+              selected={value === selectedValue}
+              onClick={handleSelect}
+              theme={theme}
+            />
+          ))}
+        </Popover>
+      ) : null}
+    </Container>
   );
 };

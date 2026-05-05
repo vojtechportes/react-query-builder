@@ -457,9 +457,12 @@ const components: IBuilderComponentsProps = {
 This lets you customize not only rules and groups, but also:
 
 - drag-and-drop placeholders
-- the popover used for multi-group-type selection
+- shared popovers used by single-select, multi-select, and multi-group-type selection
 - form controls
 - add/remove buttons
+
+The built-in `Select` and `SelectMulti` are custom popover-based controls.
+`SelectMulti` renders selected values as removable tags/chips.
 
 All custom components should follow the typings of the built-in components.
 
@@ -494,7 +497,7 @@ export const App: React.FC = () => (
 );
 ```
 
-The theme currently controls the built-in color system used by buttons, form fields, groups, rules, popovers, drag handles, and drop zones.
+The theme currently controls the built-in color system used by buttons, form fields, groups, rules, shared dropdown popovers, option states, drag handles, and drop zones.
 
 ---
 

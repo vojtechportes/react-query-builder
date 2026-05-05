@@ -81,6 +81,8 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
 
   return (
     <Select
+      id={`query-builder-rule-${id}-operator`}
+      name={`query-builder-rule-${id}-operator`}
       values={values}
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}

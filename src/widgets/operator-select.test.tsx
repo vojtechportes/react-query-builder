@@ -115,8 +115,11 @@ describe('#components/Widgets/OperatorSelect', () => {
       </BuilderContext.Provider>
     );
 
-    const select = wrapper.find('select').first();
-    select.simulate('change', { target: { value: 'BETWEEN' } });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper
+      .find('[data-test="SelectMultiOption[BETWEEN]"]')
+      .first()
+      .simulate('click');
   });
 
   it('Tests user interaction where BETWEEN is NOT first in operator list and field is of STRING type', () => {
@@ -136,8 +139,11 @@ describe('#components/Widgets/OperatorSelect', () => {
       </BuilderContext.Provider>
     );
 
-    const select = wrapper.find('select').first();
-    select.simulate('change', { target: { value: 'ALL_IN' } });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper
+      .find('[data-test="SelectMultiOption[ALL_IN]"]')
+      .first()
+      .simulate('click');
   });
 
   it('Tests user interaction where BETWEEN is first in operator list and field is of NUMBER type', () => {
@@ -159,8 +165,11 @@ describe('#components/Widgets/OperatorSelect', () => {
       </BuilderContext.Provider>
     );
 
-    const select = wrapper.find('select').first();
-    select.simulate('change', { target: { value: 'BETWEEN' } });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper
+      .find('[data-test="SelectMultiOption[BETWEEN]"]')
+      .first()
+      .simulate('click');
 
     expect(onChange).toHaveBeenCalledWith([
       {
@@ -202,8 +211,11 @@ describe('#components/Widgets/OperatorSelect', () => {
       </BuilderContext.Provider>
     );
 
-    const select = wrapper.find('select').first();
-    select.simulate('change', { target: { value: 'ALL_IN' } });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper
+      .find('[data-test="SelectMultiOption[ALL_IN]"]')
+      .first()
+      .simulate('click');
 
     expect(onChange).toHaveBeenCalledWith([
       {
@@ -245,8 +257,11 @@ describe('#components/Widgets/OperatorSelect', () => {
       </BuilderContext.Provider>
     );
 
-    const select = wrapper.find('select').first();
-    select.simulate('change', { target: { value: 'ALL_IN' } });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper
+      .find('[data-test="SelectMultiOption[ALL_IN]"]')
+      .first()
+      .simulate('click');
 
     expect(onChange).toHaveBeenCalledWith([
       {
@@ -307,9 +322,11 @@ describe('#components/Widgets/OperatorSelect', () => {
       </BuilderContext.Provider>
     );
 
-    wrapper.find('select').first().simulate('change', {
-      target: { value: 'IS_NULL' },
-    });
+    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
+    wrapper
+      .find('[data-test="SelectMultiOption[IS_NULL]"]')
+      .first()
+      .simulate('click');
 
     expect(onChange).toHaveBeenCalledWith([
       {

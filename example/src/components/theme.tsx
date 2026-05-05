@@ -5,32 +5,46 @@ import styled from 'styled-components';
 import { IColors } from '../../../src/constants/colors';
 
 const StyledTheme = styled.div`
-  margin: 24px 0;
-  padding: 24px;
-  background: ${colors.grey['100']};
-  border: 1px solid ${colors.grey['300']};
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const StyledTitle = styled.h3`
   margin: 0;
+  font-size: 0.9rem;
 `;
 
 const StyledContainer = styled.div`
   display: grid;
-  grid-template-columns: max-content max-content max-content auto;
-  gap: 32px;
+  gap: 0.75rem;
 `;
 
 const StyledGreyContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 0.9rem;
 `;
 
 const StyledColorGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
+`;
+
+const StyledSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  background: ${colors.white};
+  border: 1px solid ${colors.grey['300']};
+`;
+
+const StyledSectionTitle = styled.h4`
+  margin: 0;
+  font-size: 0.85rem;
+  color: ${colors.grey['900']};
 `;
 
 export interface IThemeProps {
@@ -56,14 +70,13 @@ export const Theme: FC<IThemeProps> = ({ onColorsChange }) => {
   }, [themeColors]);
 
   return (
-    <>
-      <StyledTheme>
-        <StyledTitle>Theme</StyledTitle>
+    <StyledTheme>
+      <StyledTitle>Theme</StyledTitle>
 
-        <StyledContainer>
+      <StyledContainer>
+        <StyledSection>
+          <StyledSectionTitle>Primary</StyledSectionTitle>
           <StyledColorGroup>
-            <p>Primary</p>
-
             <ThemeColorInput
               themeColors={themeColors}
               setThemeColors={setThemeColors}
@@ -92,10 +105,11 @@ export const Theme: FC<IThemeProps> = ({ onColorsChange }) => {
               name="primary.contrastText"
             />
           </StyledColorGroup>
+        </StyledSection>
 
+        <StyledSection>
+          <StyledSectionTitle>Secondary</StyledSectionTitle>
           <StyledColorGroup>
-            <p>Secondary</p>
-
             <ThemeColorInput
               themeColors={themeColors}
               setThemeColors={setThemeColors}
@@ -124,92 +138,83 @@ export const Theme: FC<IThemeProps> = ({ onColorsChange }) => {
               name="secondary.contrastText"
             />
           </StyledColorGroup>
+        </StyledSection>
 
-          <StyledColorGroup>
-            <p>Grey</p>
+        <StyledSection>
+          <StyledSectionTitle>Grey</StyledSectionTitle>
+          <StyledGreyContainer>
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="100"
+              name="grey.100"
+            />
 
-            <StyledGreyContainer>
-              <StyledColorGroup>
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="100"
-                  name="grey.100"
-                />
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="200"
+              name="grey.200"
+            />
 
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="200"
-                  name="grey.200"
-                />
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="300"
+              name="grey.300"
+            />
 
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="100"
-                  name="grey.300"
-                />
-              </StyledColorGroup>
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="400"
+              name="grey.400"
+            />
 
-              <StyledColorGroup>
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="400"
-                  name="grey.400"
-                />
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="500"
+              name="grey.500"
+            />
 
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="500"
-                  name="grey.500"
-                />
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="600"
+              name="grey.600"
+            />
 
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="600"
-                  name="grey.600"
-                />
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="700"
+              name="grey.700"
+            />
 
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="700"
-                  name="grey.700"
-                />
-              </StyledColorGroup>
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="800"
+              name="grey.800"
+            />
 
-              <StyledColorGroup>
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="800"
-                  name="grey.800"
-                />
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="900"
+              name="grey.900"
+            />
 
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="900"
-                  name="grey.900"
-                />
-
-                <ThemeColorInput
-                  themeColors={themeColors}
-                  setThemeColors={setThemeColors}
-                  label="White"
-                  name="white"
-                />
-              </StyledColorGroup>
-            </StyledGreyContainer>
-          </StyledColorGroup>
-
-          <div />
-        </StyledContainer>
-      </StyledTheme>
-    </>
+            <ThemeColorInput
+              themeColors={themeColors}
+              setThemeColors={setThemeColors}
+              label="White"
+              name="white"
+            />
+          </StyledGreyContainer>
+        </StyledSection>
+      </StyledContainer>
+    </StyledTheme>
   );
 };

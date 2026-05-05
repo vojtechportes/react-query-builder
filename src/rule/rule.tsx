@@ -9,7 +9,7 @@ import { FieldSelect } from '../widgets/field-select';
 import { Input } from '../widgets/input';
 import { OperatorSelect } from '../widgets/operator-select';
 import { Select } from '../widgets/select';
-import { SelectMulti } from '../widgets/select-multi';
+import { SelectMulti } from '../widgets/select-multi/select-multi';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isBoolean } from '../utils/is-boolean.util';
 import { isNumber } from '../utils/is-number.util';

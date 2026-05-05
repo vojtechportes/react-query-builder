@@ -66,6 +66,8 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
 
   return (
     <Select
+      id={`query-builder-rule-${id}-field`}
+      name={`query-builder-rule-${id}-field`}
       values={fieldNames}
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}

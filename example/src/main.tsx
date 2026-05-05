@@ -7,6 +7,10 @@ import {
   colors,
   type DenormalizedQuery,
 } from '../../src';
+import { Brand } from './components/brand';
+import { Checkbox } from './components/checkbox';
+import { Sidepanel } from './components/sidepanel';
+import { SmallButton } from './components/small-button';
 import { Theme } from './components/theme';
 import {
   IThemeProviderProps,
@@ -19,17 +23,33 @@ const Page = styled.div`
   color: #373737;
 `;
 
-const Toolbar = styled.div`
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+const Layout = styled.div`
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
 `;
 
-const ActionButton = styled.button`
-  padding: 0.5rem 0.75rem;
-  background: ${colors.white};
-  border: 1px solid ${colors.grey['500']};
-  cursor: pointer;
+const Main = styled.main`
+  min-width: 0;
+`;
+
+const PanelSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const PanelDivider = styled.hr`
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid ${colors.grey['300']};
+`;
+
+const PanelSectionTitle = styled.h3`
+  margin: 0;
+  font-size: 0.9rem;
 `;
 
 const Code = styled.pre`
@@ -48,8 +68,43 @@ const initialQueryTree: DenormalizedQuery = [
     isNegated: false,
     children: [
       {
-        field: 'IS_IN_CZ',
-        value: false,
+        field: 'CUSTOMER_COUNTRY',
+        operator: 'EQUAL',
+        value: 'CZ',
+      },
+      {
+        type: 'GROUP',
+        value: 'OR',
+        isNegated: false,
+        children: [
+          {
+            field: 'CUSTOMER_CITY',
+            operator: 'EQUAL',
+            value: 'Prague',
+          },
+          {
+            field: 'ORDER_TOTAL',
+            operator: 'BETWEEN',
+            value: [2500, 12000],
+          },
+        ],
+      },
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'IS_VAT_PAYER',
+            operator: 'EQUAL',
+            value: true,
+          },
+          {
+            field: 'CUSTOMER_SEGMENTS',
+            operator: 'ALL_IN',
+            value: ['B2B', 'Priority'],
+          },
+        ],
       },
     ],
   },
@@ -57,51 +112,61 @@ const initialQueryTree: DenormalizedQuery = [
 
 const fields: IBuilderFieldProps[] = [
   {
-    field: 'STATE',
-    label: 'State',
+    field: 'CUSTOMER_COUNTRY',
+    label: 'Customer country',
     type: 'LIST',
-    operators: ['EQUAL', 'NOT_EQUAL'],
+    operators: ['EQUAL', 'NOT_EQUAL', 'IN', 'NOT_IN', 'IS_NULL', 'IS_NOT_NULL'],
     value: [
       { value: 'CZ', label: 'Czech Republic' },
       { value: 'SK', label: 'Slovakia' },
-      { value: 'PL', label: 'Poland' },
+      { value: 'DE', label: 'Germany' },
+      { value: 'AT', label: 'Austria' },
     ],
   },
   {
-    field: 'TEST_MULTI',
-    label: 'Test Multi',
+    field: 'CUSTOMER_SEGMENTS',
+    label: 'Customer segments',
     type: 'MULTI_LIST',
-    operators: ['ALL_IN', 'ANY_IN', 'NOT_IN'],
+    operators: ['ALL_IN', 'ANY_IN', 'IN', 'NOT_IN'],
     value: [
-      { value: 'LOREM', label: 'Lorem' },
-      { value: 'IPSUM', label: 'Ipsum' },
-      { value: 'DOLOR', label: 'Dolor' },
+      { value: 'B2B', label: 'B2B' },
+      { value: 'Retail', label: 'Retail' },
+      { value: 'Priority', label: 'Priority' },
+      { value: 'Dormant', label: 'Dormant' },
     ],
   },
   {
     field: 'IS_IN_EU',
-    label: 'Is in EU',
+    label: 'Customer is in EU',
     type: 'BOOLEAN',
+    operators: ['EQUAL', 'NOT_EQUAL'],
   },
   {
-    field: 'IS_IN_CZ',
-    label: 'Is in CZ',
+    field: 'IS_VAT_PAYER',
+    label: 'Customer is VAT payer',
     type: 'BOOLEAN',
+    operators: ['EQUAL', 'NOT_EQUAL', 'IS_NULL', 'IS_NOT_NULL'],
   },
   {
-    field: 'IS_ACTIVE',
-    label: 'Is Active',
-    type: 'BOOLEAN',
-  },
-  {
-    field: 'TEST_TEXT',
-    label: 'Test text',
+    field: 'CUSTOMER_CITY',
+    label: 'Customer city',
     type: 'TEXT',
-    operators: ['NOT_BETWEEN', 'EQUAL', 'NOT_EQUAL', 'BETWEEN'],
+    operators: [
+      'EQUAL',
+      'NOT_EQUAL',
+      'CONTAINS',
+      'NOT_CONTAINS',
+      'STARTS_WITH',
+      'ENDS_WITH',
+      'LIKE',
+      'NOT_LIKE',
+      'IS_NULL',
+      'IS_NOT_NULL',
+    ],
   },
   {
-    field: 'TEST_NUMBER',
-    label: 'Test Number',
+    field: 'ORDER_TOTAL',
+    label: 'Order total',
     type: 'NUMBER',
     operators: [
       'EQUAL',
@@ -112,35 +177,56 @@ const fields: IBuilderFieldProps[] = [
       'SMALLER',
       'LARGER_EQUAL',
       'SMALLER_EQUAL',
+      'IS_NULL',
+      'IS_NOT_NULL',
     ],
   },
   {
-    field: 'TEST_DATE',
-    label: 'Test Date',
+    field: 'ORDER_CREATED_AT',
+    label: 'Order created at',
     type: 'DATE',
-    operators: ['NOT_EQUAL', 'NOT_BETWEEN'],
-  },
-  {
-    field: 'BLAH',
-    label: 'Blah',
-    type: 'TEXT',
     operators: [
-      'NOT_BETWEEN',
       'EQUAL',
       'NOT_EQUAL',
       'BETWEEN',
-      'LIKE',
-      'NOT_LIKE',
+      'NOT_BETWEEN',
+      'LARGER',
+      'SMALLER',
+      'LARGER_EQUAL',
+      'SMALLER_EQUAL',
+      'IS_NULL',
+      'IS_NOT_NULL',
     ],
-    validation: {
-      required: true
-    }
   },
   {
-    field: 'HAS_LOW_CREDIT',
-    label: 'Has low credits',
+    field: 'COMPANY_NAME',
+    label: 'Company name',
+    type: 'TEXT',
+    operators: [
+      'EQUAL',
+      'NOT_EQUAL',
+      'CONTAINS',
+      'NOT_CONTAINS',
+      'STARTS_WITH',
+      'ENDS_WITH',
+      'IS_NULL',
+      'IS_NOT_NULL',
+    ],
+    validation: {
+      required: true,
+    },
+  },
+  {
+    field: 'DELIVERY_WINDOW',
+    label: 'Delivery window',
+    type: 'TEXT',
+    operators: ['BETWEEN', 'NOT_BETWEEN'],
+  },
+  {
+    field: 'RISK_NOTE',
+    label: 'Risk note',
     type: 'STATEMENT',
-    value: 'HAS_DEBT() AND IS_IN_INSOLVENCY_REGISTER()',
+    value: 'HAS_DEBT() AND LAST_PAYMENT_DAYS_AGO() > 30',
   },
 ];
 
@@ -150,76 +236,90 @@ const App: React.FC = () => {
   const [readOnly, setReadOnly] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
+  const [showValidationErrors, setShowValidationErrors] = React.useState(true);
   const [theme, setTheme] = React.useState<IThemeProviderProps>({
     colors,
   });
 
   return (
     <Page>
-      <Toolbar>
-        <ActionButton
-          type="button"
-          onClick={() => setReadOnly((value) => !value)}
-        >
-          Toggle read-only
-        </ActionButton>
-        <ActionButton
-          type="button"
-          onClick={() => setDraggable((value) => !value)}
-        >
-          Toggle draggable
-        </ActionButton>
-        <ActionButton
-          type="button"
-          onClick={() => setSingleRootGroup((value) => !value)}
-        >
-          Toggle single root group
-        </ActionButton>
-        <ActionButton
-          type="button"
-          onClick={() =>
-            setOutput((value) => [
-              ...value,
-              {
-                type: 'GROUP',
-                value: 'AND',
-                isNegated: false,
-                children: [
+      <Brand />
+      <Layout>
+        <Sidepanel title="Example Controls">
+          <PanelSection>
+            <PanelSectionTitle>Builder</PanelSectionTitle>
+
+            <Checkbox
+              checked={readOnly}
+              label="Read-only"
+              onChange={setReadOnly}
+            />
+            <Checkbox
+              checked={draggable}
+              label="Draggable"
+              onChange={setDraggable}
+            />
+            <Checkbox
+              checked={singleRootGroup}
+              label="Single root group"
+              onChange={setSingleRootGroup}
+            />
+            <Checkbox
+              checked={showValidationErrors}
+              label="Show validation errors"
+              onChange={setShowValidationErrors}
+            />
+
+            <SmallButton
+              onClick={() =>
+                setOutput((value) => [
+                  ...value,
                   {
-                    field: 'IS_IN_EU',
-                    value: false,
+                    type: 'GROUP',
+                    value: 'AND',
+                    isNegated: false,
+                    children: [
+                      {
+                        field: 'IS_IN_EU',
+                        operator: 'EQUAL',
+                        value: true,
+                      },
+                    ],
                   },
-                ],
-              },
-            ])
-          }
-        >
-          Append group to query
-        </ActionButton>
-      </Toolbar>
+                ])
+              }
+            >
+              Add group to query
+            </SmallButton>
+          </PanelSection>
 
-      <Theme
-        onColorsChange={(colors) => {
-          setTheme((value) => ({ ...value, colors }));
-        }}
-      />
+          <PanelDivider />
 
-      <ThemeProvider colors={theme.colors}>
-        <Builder
-          data={output}
-          fields={fields}
-          readOnly={readOnly}
-          onChange={setOutput}
-          draggable={draggable}
-          groupTypes="both"
-          singleRootGroup={singleRootGroup}
-          showValidation
-         
-        />
-      </ThemeProvider>
+          <Theme
+            onColorsChange={(nextColors) => {
+              setTheme((value) => ({ ...value, colors: nextColors }));
+            }}
+          />
+        </Sidepanel>
 
-      <h3>Output</h3>
-      <Code>{JSON.stringify(output, null, 2)}</Code>
+        <Main>
+          <ThemeProvider colors={theme.colors}>
+            <Builder
+              data={output}
+              fields={fields}
+              readOnly={readOnly}
+              onChange={setOutput}
+              draggable={draggable}
+              groupTypes="both"
+              singleRootGroup={singleRootGroup}
+              showValidation={showValidationErrors}
+            />
+          </ThemeProvider>
+
+          <h3>Output</h3>
+          <Code>{JSON.stringify(output, null, 2)}</Code>
+        </Main>
+      </Layout>
     </Page>
   );
 };
