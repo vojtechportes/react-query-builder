@@ -169,12 +169,14 @@ const flattenTree = (
             type: node.type,
             value: node.value,
             isNegated: node.isNegated,
+            readOnly: node.readOnly,
             children: node.children.map(childNode => childNode.id),
           }
         : {
             id: node.id,
             parent: parentId,
             type: node.type,
+            readOnly: node.readOnly,
             children: node.children.map(childNode => childNode.id),
           };
 

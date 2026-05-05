@@ -191,13 +191,34 @@ describe('#components/Rule', () => {
     expect(wrapper.find('[data-test="Rule[5]"]')).toBeDefined();
     expect(wrapper.find('[data-test="Rule[6]"]')).toBeDefined();
     expect(wrapper.find('[data-test="Rule[7]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[9]"] select').length).toBeGreaterThan(0);
-    expect(wrapper.find('[data-test="Rule[9]"] input').length).toEqual(0);
+    expect(
+      wrapper.find('[data-test="Rule[9]"] [data-test="SelectMultiTrigger"]').length
+    ).toBeGreaterThan(0);
+    const ruleNineInputs = wrapper
+      .find('[data-test="Rule[9]"]')
+      .find('input')
+      .filterWhere((node) => {
+        const inputType = node.prop('type');
+
+        return (
+          inputType === 'text' ||
+          inputType === 'date' ||
+          inputType === 'number'
+        );
+      });
+
+    expect(
+      ruleNineInputs.length
+    ).toEqual(0);
     expect(Object.keys(wrapper.find('[data-test="Rule[8]"]')).length).toBe(
       0
     );
 
-    wrapper.find('[data-test="Rule[1]"] button').simulate('click');
+    wrapper
+      .find('[data-test="Rule[1]"] button')
+      .filterWhere((node) => node.text() === 'Delete')
+      .first()
+      .simulate('click');
 
     expect(Object.keys(wrapper.find('[data-test="Rule[1]"]')).length).toBe(
       0
@@ -222,5 +243,25 @@ describe('#components/Rule', () => {
     );
 
     expect(Object.keys(wrapper).length).toBe(0);
+  });
+
+  it('Hides the delete control when the rule is locally read-only', () => {
+    const wrapper = mount(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
+      >
+        <Rule id="test-2" field="MOCK_FIELD_1" readOnly />
+      </BuilderContext.Provider>
+    );
+
+    expect(wrapper.find('button').filterWhere((node) => node.text() === 'Delete').length).toEqual(0);
   });
 });

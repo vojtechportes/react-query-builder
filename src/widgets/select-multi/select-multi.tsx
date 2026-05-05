@@ -10,12 +10,14 @@ export interface ISelectMultiProps {
   values: Array<{ value: string; label: string }>;
   selectedValue: string[];
   id: string;
+  disabled?: boolean;
 }
 
 export const SelectMulti: FC<ISelectMultiProps> = ({
   values,
   selectedValue,
   id,
+  disabled = false,
 }) => {
   const {
     data,
@@ -77,7 +79,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       values={values}
-      disabled={Boolean(readOnly)}
+      disabled={Boolean(readOnly || disabled)}
     />
   );
 };

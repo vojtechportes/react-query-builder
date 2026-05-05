@@ -39,11 +39,17 @@ const toDenormalizedNode = (
             type: item.type,
             value: (item as INormalizedGroupNodeWithModifiers).value,
             isNegated: item.isNegated,
+            ...(typeof item.readOnly !== 'undefined'
+              ? { readOnly: item.readOnly }
+              : {}),
             children,
           }
         : {
             ...(options.preserveIds ? { id: item.id } : {}),
             type: item.type,
+            ...(typeof item.readOnly !== 'undefined'
+              ? { readOnly: item.readOnly }
+              : {}),
             children,
           };
 

@@ -135,6 +135,28 @@ describe('#components/Group', () => {
     addGroup.simulate('click');
   });
 
+  it('Hides group controls when the group is locally read-only', () => {
+    const wrapper = mount(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: false,
+        }}
+      >
+        <Group id="test-2" isRoot={false} value="AND" isNegated={false} readOnly />
+      </BuilderContext.Provider>
+    );
+
+    expect(wrapper.find('[data-test="AddRule"]').length).toEqual(0);
+    expect(wrapper.find('[data-test="AddGroup"]').length).toEqual(0);
+    expect(wrapper.find('[data-test="Remove"]').length).toEqual(0);
+  });
+
   it('Tests no srtrings scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider

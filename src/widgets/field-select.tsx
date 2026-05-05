@@ -9,11 +9,13 @@ import { updateItem } from '../utils/update-item.util';
 export interface IFieldSelectProps {
   selectedValue: string;
   id: string;
+  disabled?: boolean;
 }
 
 export const FieldSelect: FC<IFieldSelectProps> = ({
   selectedValue,
   id,
+  disabled = false,
 }) => {
   const {
     fields,
@@ -72,7 +74,7 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       onChange={handleChange}
-      disabled={readOnly}
+      disabled={readOnly || disabled}
     />
   );
 };

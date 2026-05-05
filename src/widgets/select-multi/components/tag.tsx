@@ -3,11 +3,15 @@ import styled from 'styled-components';
 import { IThemeProps } from '../../../theme-provider/theme-provider';
 import { RemoveIcon } from './remove-icon';
 
-const StyledTag = styled.span<{ $theme: Required<IThemeProps> }>`
+const StyledTag = styled.span<{
+  $theme: Required<IThemeProps>;
+  $hasRemoveButton: boolean;
+}>`
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.2rem 0.3rem 0.2rem 0.55rem;
+  padding: ${({ $hasRemoveButton }) =>
+    $hasRemoveButton ? '0.2rem 0.3rem 0.2rem 0.55rem' : '0.2rem 0.55rem'};
   border: 1px solid ${({ $theme }) => $theme.colors.grey['400']};
   border-radius: 999px;
   background: ${({ $theme }) => $theme.colors.white};
@@ -58,19 +62,27 @@ export const Tag: FC<ITagProps> = ({
   onRemove,
   theme,
 }) => {
+  const hasRemoveButton = !disabled;
+
   return (
-    <StyledTag data-test="SelectMultiTag" $theme={theme}>
+    <StyledTag
+      data-test="SelectMultiTag"
+      $hasRemoveButton={hasRemoveButton}
+      $theme={theme}
+    >
       <StyledLabel>{label}</StyledLabel>
-      <StyledRemoveButton
-        type="button"
-        data-test="Delete"
-        aria-label={`Remove ${label}`}
-        disabled={disabled}
-        onClick={() => onRemove(value)}
-        $theme={theme}
-      >
-        <RemoveIcon />
-      </StyledRemoveButton>
+      {hasRemoveButton ? (
+        <StyledRemoveButton
+          type="button"
+          data-test="Delete"
+          aria-label={`Remove ${label}`}
+          disabled={disabled}
+          onClick={() => onRemove(value)}
+          $theme={theme}
+        >
+          <RemoveIcon />
+        </StyledRemoveButton>
+      ) : null}
     </StyledTag>
   );
 };

@@ -107,6 +107,29 @@ describe('#components/Widgets/SelectMulti', () => {
     remove.simulate('click');
   });
 
+  it('Does not render remove buttons when read-only', () => {
+    const wrapper = mount(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData,
+          onChange,
+          readOnly: true,
+        }}
+    >
+        <SelectMulti id="test" selectedValue={['test']} values={selectValues} />
+      </BuilderContext.Provider>
+    );
+
+    const tags = wrapper.find('[data-test="SelectMultiTag"]').hostNodes();
+
+    expect(tags).toHaveLength(1);
+    expect(tags.find('[data-test="Delete"]')).toHaveLength(0);
+  });
+
   it('Test no form components scenario', () => {
     const wrapper = mount(
       <BuilderContext.Provider

@@ -18,12 +18,14 @@ export interface IOperatorSelectProps {
   values: IOperatorSelectValuesProps[];
   selectedValue?: BuilderFieldOperator;
   id: string;
+  disabled?: boolean;
 }
 
 export const OperatorSelect: FC<IOperatorSelectProps> = ({
   values,
   selectedValue,
   id,
+  disabled = false,
 }) => {
   const {
     fields,
@@ -87,7 +89,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       onChange={handleChange}
-      disabled={readOnly}
+      disabled={readOnly || disabled}
     />
   );
 };
