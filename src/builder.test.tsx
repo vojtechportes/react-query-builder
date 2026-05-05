@@ -1,6 +1,6 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import { Builder, IBuilderFieldProps } from './builder';
+import { Builder, defaultComponents, IBuilderFieldProps } from './builder';
 
 export const fields: IBuilderFieldProps[] = [
   {
@@ -466,5 +466,53 @@ describe('#components/Builder', () => {
         .length
     ).toEqual(0);
     expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
+  });
+
+  it('Keeps the boundary drop zone before a locked sibling group', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        draggable
+        components={{
+          ...defaultComponents,
+          DropZone: ({ index, parentId }) => (
+            <div
+              data-test="DropZone"
+              data-index={index}
+              data-parent-id={parentId || 'root'}
+            />
+          ),
+        }}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                children: [],
+              },
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                readOnly: true,
+                children: [],
+              },
+            ],
+          },
+        ]}
+      />
+    );
+
+    expect(
+      wrapper
+        .find('[data-test="DropZone"]')
+        .hostNodes()
+        .filterWhere((node) => node.prop('data-index') === 1).length
+    ).toEqual(1);
   });
 });
