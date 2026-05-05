@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://i.imgur.com/VXiYZ8g.png" alt="React Query Builder" />
+  <img src="https://github.com/vojtechportes/react-query-builder/blob/master/logo.png" alt="React Query Builder" />
 </h1>
 
 <h3 align="center">
