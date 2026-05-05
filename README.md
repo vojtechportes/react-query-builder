@@ -16,6 +16,7 @@
 ---
 
 - [Installation](#installation)
+- [Example / Demo](#example--demo)
 - [Usage](#usage)
 - [Configuration](#configuration)
   - [Fields](#fields)
@@ -47,6 +48,14 @@ npm install @vojtechportes/react-query-builder
 ```
 
 React Query Builder supports React `18+`.
+
+---
+
+## Example / Demo
+
+Try the live example here:
+
+[https://vojtechportes.github.io/react-query-builder/](https://vojtechportes.github.io/react-query-builder/)
 
 ---
 
