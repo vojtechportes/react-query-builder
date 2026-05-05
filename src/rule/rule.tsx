@@ -46,6 +46,7 @@ export interface IRuleProps {
   value?: QueryRuleValue;
   operator?: BuilderFieldOperator;
   id: string;
+  readOnly?: boolean;
   dragHandle?: React.ReactNode;
   'data-test'?: string;
 }
@@ -55,6 +56,7 @@ export const Rule: FC<IRuleProps> = ({
   value: selectedValue,
   operator,
   id,
+  readOnly: localReadOnly = false,
   dragHandle,
   'data-test': dataTest,
 }) => {
@@ -70,6 +72,7 @@ export const Rule: FC<IRuleProps> = ({
     validation,
     showValidation,
   } = useContext(BuilderContext);
+  const isReadOnly = readOnly || localReadOnly;
   const RuleContainer = components.Rule || DefaultRuleContainer;
   const Remove = components.Remove || SecondaryButton;
   const validationIssues =
@@ -96,13 +99,13 @@ export const Rule: FC<IRuleProps> = ({
       <RuleContainer
         dragHandle={dragHandle}
         controls={
-          !readOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
+          !isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
         }
         data-test={dataTest}
       >
         <div>
           <FieldsContent>
-            <FieldSelect selectedValue="" id={id} />
+            <FieldSelect selectedValue="" id={id} disabled={isReadOnly} />
           </FieldsContent>
           {validationIssues.length > 0 && (
             <ValidationIssues>
@@ -133,13 +136,13 @@ export const Rule: FC<IRuleProps> = ({
       <RuleContainer
         dragHandle={dragHandle}
         controls={
-          !readOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
+          !isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
         }
         data-test={dataTest}
       >
         <div>
           <FieldsContent>
-            <FieldSelect selectedValue={field} id={id} />
+            <FieldSelect selectedValue={field} id={id} disabled={isReadOnly} />
 
             {type === 'BOOLEAN' && (
               <>
@@ -148,11 +151,16 @@ export const Rule: FC<IRuleProps> = ({
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
+                    disabled={isReadOnly}
                   />
                 )}
                 {shouldRenderValueInput && isBoolean(selectedValue) && (
                   <BooleanContainer>
-                    <Boolean id={id} selectedValue={selectedValue} />
+                    <Boolean
+                      id={id}
+                      selectedValue={selectedValue}
+                      disabled={isReadOnly}
+                    />
                   </BooleanContainer>
                 )}
               </>
@@ -166,6 +174,7 @@ export const Rule: FC<IRuleProps> = ({
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
+                    disabled={isReadOnly}
                   />
                   {operator &&
                     shouldRenderValueInput &&
@@ -174,6 +183,7 @@ export const Rule: FC<IRuleProps> = ({
                         id={id}
                         selectedValue={selectedValue}
                         values={fieldValue}
+                        disabled={isReadOnly}
                       />
                     )}
                 </>
@@ -187,6 +197,7 @@ export const Rule: FC<IRuleProps> = ({
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
+                    disabled={isReadOnly}
                   />
                   {operator &&
                     shouldRenderValueInput &&
@@ -195,6 +206,7 @@ export const Rule: FC<IRuleProps> = ({
                         id={id}
                         values={fieldValue}
                         selectedValue={selectedValue}
+                        disabled={isReadOnly}
                       />
                     )}
                 </>
@@ -206,11 +218,17 @@ export const Rule: FC<IRuleProps> = ({
                   id={id}
                   values={operatorsOptionList}
                   selectedValue={operator}
+                  disabled={isReadOnly}
                 />
                 {operator &&
                   shouldRenderValueInput &&
                   (isString(selectedValue) || isStringArray(selectedValue)) && (
-                    <Input type="text" value={selectedValue} id={id} />
+                    <Input
+                      type="text"
+                      value={selectedValue}
+                      id={id}
+                      disabled={isReadOnly}
+                    />
                   )}
               </>
             )}
@@ -221,6 +239,7 @@ export const Rule: FC<IRuleProps> = ({
                   id={id}
                   values={operatorsOptionList}
                   selectedValue={operator}
+                  disabled={isReadOnly}
                 />
                 {operator &&
                   shouldRenderValueInput &&
@@ -228,7 +247,12 @@ export const Rule: FC<IRuleProps> = ({
                     isNumber(selectedValue) ||
                     isStringOrNumberArray(selectedValue) ||
                     isNumberArray(selectedValue)) && (
-                    <Input type="number" value={selectedValue} id={id} />
+                    <Input
+                      type="number"
+                      value={selectedValue}
+                      id={id}
+                      disabled={isReadOnly}
+                    />
                   )}
               </>
             )}
@@ -239,11 +263,17 @@ export const Rule: FC<IRuleProps> = ({
                   id={id}
                   values={operatorsOptionList}
                   selectedValue={operator}
+                  disabled={isReadOnly}
                 />
                 {!isUndefined(operator) &&
                   shouldRenderValueInput &&
                   (isString(selectedValue) || isStringArray(selectedValue)) && (
-                    <Input type="date" value={selectedValue} id={id} />
+                    <Input
+                      type="date"
+                      value={selectedValue}
+                      id={id}
+                      disabled={isReadOnly}
+                    />
                   )}
               </>
             )}

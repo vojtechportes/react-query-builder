@@ -45,4 +45,21 @@ describe('#components/SelectMulti', () => {
     expect(onChange).toBeCalledTimes(0);
     expect(onDelete).toBeCalledTimes(2);
   });
+
+  it('Does not render remove buttons when disabled', () => {
+    const wrapper = mount(
+      <SelectMulti
+        disabled
+        onChange={jest.fn()}
+        onDelete={jest.fn()}
+        selectedValue={['test']}
+        values={mockValues}
+      />
+    );
+
+    const tags = wrapper.find('[data-test="SelectMultiTag"]').hostNodes();
+
+    expect(tags).toHaveLength(1);
+    expect(tags.find('[data-test="Delete"]')).toHaveLength(0);
+  });
 });

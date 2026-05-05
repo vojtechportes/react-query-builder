@@ -93,6 +93,10 @@ const initialQueryTree: DenormalizedQuery = [
         type: 'GROUP',
         value: 'AND',
         isNegated: false,
+        readOnly: {
+          enabled: true,
+          inheritToChildren: true,
+        },
         children: [
           {
             field: 'IS_VAT_PAYER',
@@ -103,6 +107,23 @@ const initialQueryTree: DenormalizedQuery = [
             field: 'CUSTOMER_SEGMENTS',
             operator: 'ALL_IN',
             value: ['B2B', 'Priority'],
+          },
+          {
+            type: 'GROUP',
+            value: 'OR',
+            isNegated: false,
+            children: [
+              {
+                field: 'COMPANY_NAME',
+                operator: 'CONTAINS',
+                value: 'Prague',
+              },
+              {
+                field: 'ORDER_CREATED_AT',
+                operator: 'LARGER_EQUAL',
+                value: '2025-01-01',
+              },
+            ],
           },
         ],
       },

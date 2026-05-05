@@ -358,4 +358,113 @@ describe('#components/Builder', () => {
 
     expect(wrapper.text()).not.toContain('is not defined');
   });
+
+  it('Disables editing and dragging for locally read-only rules', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        draggable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: '',
+                operator: 'EQUAL',
+                readOnly: true,
+              },
+            ],
+          },
+        ]}
+      />
+    );
+
+    expect(
+      wrapper.find('[data-test="IteratorRule"]').find('[data-test="DragHandle"]').length
+    ).toEqual(0);
+    expect(
+      wrapper.find('[data-test="IteratorRule"]').find('button').filterWhere((node) => node.text() === 'Delete').length
+    ).toEqual(0);
+  });
+
+  it('Locks group controls without inheriting read-only to descendants by default', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        draggable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                readOnly: true,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: '',
+                    operator: 'EQUAL',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+      />
+    );
+
+    expect(wrapper.find('[data-test="AddRule"]').hostNodes().length).toEqual(1);
+    expect(
+      wrapper.find('button').filterWhere((node) => node.text() === 'Delete').hostNodes()
+        .length
+    ).toEqual(1);
+    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
+  });
+
+  it('Inherits read-only state to descendants when configured on a group', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        draggable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                readOnly: {
+                  enabled: true,
+                  inheritToChildren: true,
+                },
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: '',
+                    operator: 'EQUAL',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+      />
+    );
+
+    expect(
+      wrapper.find('button').filterWhere((node) => node.text() === 'Delete').hostNodes()
+        .length
+    ).toEqual(0);
+    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
+  });
 });

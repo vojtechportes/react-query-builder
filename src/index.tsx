@@ -97,7 +97,9 @@ export { queryOperators } from './utils/query-operators';
 export type {
   DenormalizedNode,
   DenormalizedQuery,
+  GroupReadOnly,
   IDenormalizedGroupNodeBase,
+  IGroupReadOnlyConfig,
   IDenormalizedGroupNodeWithModifiers,
   IDenormalizedGroupNodeWithoutModifiers,
   IDenormalizedRuleNode,

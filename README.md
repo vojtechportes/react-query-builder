@@ -26,6 +26,7 @@
   - [Data](#data)
     - [Group With Modifiers](#group-with-modifiers)
     - [Group Without Modifiers](#group-without-modifiers)
+    - [Node-level Read-only](#node-level-read-only)
     - [Number Values](#number-values)
   - [Builder Props](#builder-props)
     - [`readOnly`](#readonly)
@@ -341,6 +342,45 @@ const data = [
 ```
 
 Groups without modifiers do not render `Not`, `And`, or `Or`, and they do not output `value` or `isNegated`.
+
+#### Node-level read-only
+
+Read-only can be set globally on `Builder`, but it can also be set directly in the query data on groups and rules.
+
+```typescript
+const data = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    readOnly: {
+      enabled: true,
+      inheritToChildren: true,
+    },
+    children: [
+      {
+        field: 'IS_IN_EU',
+        operator: 'EQUAL',
+        value: false,
+      },
+      {
+        field: 'CUSTOMER_COUNTRY',
+        operator: 'EQUAL',
+        value: 'CZ',
+        readOnly: true,
+      },
+    ],
+  },
+];
+```
+
+Supported shapes:
+
+- rule: `readOnly?: boolean`
+- group: `readOnly?: boolean | { enabled: boolean; inheritToChildren?: boolean }`
+
+When a group or rule is read-only, it cannot be edited, deleted, or dragged.
+If a group uses `inheritToChildren: true`, the read-only state is passed down to all descendants.
 
 #### Number values
 

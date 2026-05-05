@@ -12,9 +12,15 @@ export interface IInputProps {
   value: string | number | Array<string | number>;
   type: 'text' | 'date' | 'number';
   id: string;
+  disabled?: boolean;
 }
 
-export const Input: FC<IInputProps> = ({ value, type, id }) => {
+export const Input: FC<IInputProps> = ({
+  value,
+  type,
+  id,
+  disabled = false,
+}) => {
   const {
     data,
     setData,
@@ -59,7 +65,7 @@ export const Input: FC<IInputProps> = ({ value, type, id }) => {
           type={type}
           value={value[0]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 0)}
-          disabled={readOnly}
+          disabled={readOnly || disabled}
         />
         <InputComponent
           id={`query-builder-rule-${id}-value-end`}
@@ -67,7 +73,7 @@ export const Input: FC<IInputProps> = ({ value, type, id }) => {
           type={type}
           value={value[1]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
-          disabled={readOnly}
+          disabled={readOnly || disabled}
         />
       </>
     );
@@ -84,7 +90,7 @@ export const Input: FC<IInputProps> = ({ value, type, id }) => {
       type={type}
       value={value}
       onChange={handleChange}
-      disabled={readOnly}
+      disabled={readOnly || disabled}
     />
   );
 };

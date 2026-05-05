@@ -8,12 +8,14 @@ export interface ISelectProps {
   values: Array<{ value: string; label: string }>;
   selectedValue: string;
   id: string;
+  disabled?: boolean;
 }
 
 export const Select: FC<ISelectProps> = ({
   values,
   selectedValue,
   id,
+  disabled = false,
 }) => {
   const { data, setData, onChange, updateData, components, strings, readOnly } =
     useContext(BuilderContext);
@@ -44,7 +46,7 @@ export const Select: FC<ISelectProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       values={values}
-      disabled={readOnly}
+      disabled={readOnly || disabled}
     />
   );
 };

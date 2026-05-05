@@ -6,6 +6,7 @@ import { DropZone as DefaultDropZone } from './drop-zone';
 import { EmptyGroupDropZone as DefaultEmptyGroupDropZone } from './empty-group-drop-zone';
 import { Group } from './group/group';
 import { isNormalizedGroupNode } from './utils/is-normalized-group-node.util';
+import { resolveGroupReadOnly } from './utils/resolve-group-read-only.util';
 import { NormalizedQuery } from './utils/query-tree';
 
 export interface IIteratorProps {
@@ -18,6 +19,8 @@ export interface IIteratorProps {
   isDragging?: boolean;
   isOverlay?: boolean;
   disableDropZoneTransition?: boolean;
+  inheritedReadOnly?: boolean;
+  containerReadOnly?: boolean;
 }
 
 export const Iterator: FC<IIteratorProps> = ({
@@ -30,6 +33,8 @@ export const Iterator: FC<IIteratorProps> = ({
   isDragging = false,
   isOverlay = false,
   disableDropZoneTransition = false,
+  inheritedReadOnly = false,
+  containerReadOnly = false,
 }) => {
   const { draggable, readOnly, components, singleRootGroup } =
     useContext(BuilderContext);
@@ -40,7 +45,7 @@ export const Iterator: FC<IIteratorProps> = ({
   } = resolvedComponents;
   const isSortable = draggable && !readOnly && !isOverlay;
   const isRootLocked = Boolean(singleRootGroup && isRoot);
-  const canSortAtLevel = isSortable && !isRootLocked;
+  const canSortAtLevel = isSortable && !isRootLocked && !containerReadOnly;
   const activeDragIndex = activeDragId
     ? filteredData.findIndex((item) => item.id === activeDragId)
     : -1;
@@ -65,6 +70,10 @@ export const Iterator: FC<IIteratorProps> = ({
       ) : null;
 
     if (isNormalizedGroupNode(item)) {
+      const groupReadOnly = resolveGroupReadOnly(item.readOnly);
+      const isGroupReadOnly = inheritedReadOnly || groupReadOnly.enabled;
+      const nextInheritedReadOnly =
+        inheritedReadOnly || groupReadOnly.inheritToChildren;
       const items = item.children
         .map((childId) =>
           originalData.find((originalItem) => childId === originalItem.id)
@@ -74,7 +83,7 @@ export const Iterator: FC<IIteratorProps> = ({
       const { id, value, isNegated } = item;
       const emptyGroupDropZoneId = `drop-zone:${id}:0`;
       const emptyGroupDropZone =
-        canSortAtLevel && items.length === 0 ? (
+        isSortable && !isGroupReadOnly && items.length === 0 ? (
           <EmptyGroupDropZone
             id={emptyGroupDropZoneId}
             index={0}
@@ -92,6 +101,7 @@ export const Iterator: FC<IIteratorProps> = ({
           isNegated={isNegated}
           id={id}
           isRoot={isRoot}
+          readOnly={isGroupReadOnly}
           dragHandle={dragHandle}
           contentOverlay={emptyGroupDropZone}
         >
@@ -105,11 +115,13 @@ export const Iterator: FC<IIteratorProps> = ({
             isDragging={isDragging}
             isOverlay={isOverlay}
             disableDropZoneTransition={disableDropZoneTransition}
+            inheritedReadOnly={nextInheritedReadOnly}
+            containerReadOnly={isGroupReadOnly}
           />
         </Group>
       );
 
-      if (!canSortAtLevel) {
+      if (!canSortAtLevel || isGroupReadOnly) {
         return [group()];
       }
 
@@ -122,6 +134,7 @@ export const Iterator: FC<IIteratorProps> = ({
     }
 
     const { field, value, id, operator } = item as IRuleProps;
+    const isRuleReadOnly = inheritedReadOnly || Boolean(item.readOnly);
 
     const rule = (dragHandle?: React.ReactNode) => (
       <Rule
@@ -130,12 +143,13 @@ export const Iterator: FC<IIteratorProps> = ({
         value={value}
         operator={operator}
         id={id}
+        readOnly={isRuleReadOnly}
         dragHandle={dragHandle}
         data-test="IteratorRule"
       />
     );
 
-    if (!canSortAtLevel) {
+    if (!canSortAtLevel || isRuleReadOnly) {
       return [rule()];
     }
 

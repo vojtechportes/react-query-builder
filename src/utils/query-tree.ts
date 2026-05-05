@@ -4,6 +4,7 @@ export type { QueryOperator } from './query-operators';
 
 export type QueryGroupValue = 'AND' | 'OR';
 export type QueryGroupType = 'with-modifiers' | 'without-modifiers';
+export type GroupReadOnly = boolean | IGroupReadOnlyConfig;
 
 export type QueryRuleValue =
   | string
@@ -12,6 +13,11 @@ export type QueryRuleValue =
   | number[]
   | boolean;
 
+export interface IGroupReadOnlyConfig {
+  enabled: boolean;
+  inheritToChildren?: boolean;
+}
+
 export interface IDenormalizedRuleNode {
   id?: string;
   parent?: string;
@@ -19,6 +25,7 @@ export interface IDenormalizedRuleNode {
   value?: QueryRuleValue;
   operator?: QueryOperator;
   operators?: QueryOperator[];
+  readOnly?: boolean;
 }
 
 export interface IDenormalizedGroupNodeBase {
@@ -26,6 +33,7 @@ export interface IDenormalizedGroupNodeBase {
   parent?: string;
   type: 'GROUP';
   children: DenormalizedNode[];
+  readOnly?: GroupReadOnly;
 }
 
 export interface IDenormalizedGroupNodeWithModifiers
@@ -56,6 +64,7 @@ export interface INormalizedGroupNodeBase {
   parent?: string;
   type: 'GROUP';
   children: string[];
+  readOnly?: GroupReadOnly;
 }
 
 export interface INormalizedGroupNodeWithModifiers

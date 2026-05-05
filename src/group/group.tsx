@@ -24,6 +24,7 @@ export interface IGroupProps {
   contentOverlay?: React.ReactNode;
   id: string;
   isRoot: boolean;
+  readOnly?: boolean;
 }
 
 export const Group: FC<IGroupProps> = ({
@@ -34,6 +35,7 @@ export const Group: FC<IGroupProps> = ({
   contentOverlay,
   id,
   isRoot,
+  readOnly: localReadOnly = false,
 }) => {
   const {
     components,
@@ -46,6 +48,7 @@ export const Group: FC<IGroupProps> = ({
     groupTypes,
     singleRootGroup,
   } = useContext(BuilderContext);
+  const isReadOnly = readOnly || localReadOnly;
   const Add = components.Add || Button;
   const GroupContainer = components.Group || DefaultGroupContainer;
   const Option = components.GroupHeaderOption || DefaultOption;
@@ -53,7 +56,7 @@ export const Group: FC<IGroupProps> = ({
   const PopoverItem = components.PopoverItem || DefaultPopoverItem;
   const Remove = components.Remove || SecondaryButton;
   const resolvedGroupTypes = groupTypes || 'with-modifiers';
-  const canDeleteGroup = !(singleRootGroup && isRoot);
+  const canDeleteGroup = !(singleRootGroup && isRoot) && !isReadOnly;
 
   const addItem = (payload: NormalizedNode) => {
     applyDataUpdate(
@@ -170,7 +173,7 @@ export const Group: FC<IGroupProps> = ({
             <Option
               isSelected={Boolean(isNegated)}
               value={!isNegated}
-              disabled={readOnly}
+              disabled={isReadOnly}
               onClick={handleToggleNegateGroup}
               data-test="Option[not]"
             >
@@ -179,7 +182,7 @@ export const Group: FC<IGroupProps> = ({
             <Option
               isSelected={value === 'AND'}
               value="AND"
-              disabled={readOnly}
+              disabled={isReadOnly}
               onClick={handleChangeGroupType}
               data-test="Option[and]"
             >
@@ -188,7 +191,7 @@ export const Group: FC<IGroupProps> = ({
             <Option
               isSelected={value === 'OR'}
               value="OR"
-              disabled={readOnly}
+              disabled={isReadOnly}
               onClick={handleChangeGroupType}
               data-test="Option[or]"
             >
@@ -198,7 +201,7 @@ export const Group: FC<IGroupProps> = ({
         ) : null
       }
       controlsRight={
-        !readOnly && (
+        !isReadOnly && (
           <>
             <Add onClick={handleAddRule} data-test="AddRule">
               {strings.group.addRule}

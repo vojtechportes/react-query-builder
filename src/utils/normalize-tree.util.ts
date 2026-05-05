@@ -42,12 +42,14 @@ export const normalizeTree = (data: DenormalizedQuery): NormalizedQuery => {
                 type: childItem.type,
                 value: (childItem as IDenormalizedGroupNodeWithModifiers).value,
                 isNegated: childItem.isNegated,
+                readOnly: childItem.readOnly,
                 children: [],
               }
             : {
                 id: childId,
                 parent: childItem.parent,
                 type: childItem.type,
+                readOnly: childItem.readOnly,
                 children: [],
               };
 

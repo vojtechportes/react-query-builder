@@ -7,9 +7,14 @@ import { updateItem } from '../utils/update-item.util';
 export interface IBooleanProps {
   selectedValue: boolean;
   id: string;
+  disabled?: boolean;
 }
 
-export const Boolean: FC<IBooleanProps> = ({ selectedValue, id }) => {
+export const Boolean: FC<IBooleanProps> = ({
+  selectedValue,
+  id,
+  disabled = false,
+}) => {
   const { data, setData, onChange, updateData, components, readOnly } =
     useContext(BuilderContext);
 
@@ -32,7 +37,7 @@ export const Boolean: FC<IBooleanProps> = ({ selectedValue, id }) => {
     <Switch
       onChange={handleChange}
       switched={selectedValue}
-      disabled={readOnly}
+      disabled={readOnly || disabled}
     />
   );
 };
