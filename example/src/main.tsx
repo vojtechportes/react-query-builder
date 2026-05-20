@@ -7,6 +7,7 @@ import {
   colors,
   type DenormalizedQuery,
 } from '../../src';
+import { formatQuery } from '../../src/formatQuery';
 import { Brand } from './components/brand';
 import { Checkbox } from './components/checkbox';
 import { Sidepanel } from './components/sidepanel';
@@ -59,6 +60,32 @@ const Code = styled.pre`
   background: ${colors.grey['100']};
   border: 1px solid ${colors.grey['300']};
   overflow: auto;
+`;
+
+const OutputTabs = styled.div`
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: ${colors.grey['100']};
+  border: 1px solid ${colors.grey['300']};
+  border-radius: 0.5rem;
+`;
+
+const OutputTab = styled.button<{ $active: boolean }>`
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+  color: ${({ $active }) =>
+    $active ? colors.white : colors.grey['700']};
+  background: ${({ $active }) =>
+    $active ? colors.primary.default : 'transparent'};
+  border: 0;
+  border-radius: 0.35rem;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ $active }) =>
+      $active ? colors.primary.dark : colors.grey['200']};
+  }
 `;
 
 const initialQueryTree: DenormalizedQuery = [
@@ -254,12 +281,73 @@ const fields: IBuilderFieldProps[] = [
 const App: React.FC = () => {
   const [output, setOutput] =
     React.useState<DenormalizedQuery>(initialQueryTree);
+  const [outputFormat, setOutputFormat] = React.useState<
+    | 'native'
+    | 'sql'
+    | 'mongo'
+    | 'aql'
+    | 'jsonata'
+    | 'jsonlogic'
+    | 'cel'
+    | 'elasticsearch'
+    | 'spel'
+    | 'prisma'
+    | 'odata'
+    | 'rsql'
+    | 'dynamo'
+    | 'django'
+  >('native');
   const [readOnly, setReadOnly] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidationErrors, setShowValidationErrors] = React.useState(true);
   const [theme, setTheme] = React.useState<IThemeProviderProps>({
     colors,
+  });
+  const nativeOutput = JSON.stringify(output, null, 2);
+  const sqlOutput = formatQuery(output, 'SQL', {
+    fields,
+    wrapWhereClause: true,
+  });
+  const mongoOutput = formatQuery(output, 'Mongo', {
+    fields,
+  });
+  const aqlOutput = formatQuery(output, 'AQL', {
+    fields,
+    variableName: 'doc',
+  });
+  const jsonataOutput = formatQuery(output, 'JSONata', {
+    fields,
+  });
+  const jsonLogicOutput = formatQuery(output, 'JsonLogic', {
+    fields,
+  });
+  const celOutput = formatQuery(output, 'CEL', {
+    fields,
+  });
+  const elasticsearchOutput = formatQuery(output, 'Elasticsearch', {
+    fields,
+    wrapQueryClause: true,
+  });
+  const spelOutput = formatQuery(output, 'SpEL', {
+    fields,
+  });
+  const prismaOutput = formatQuery(output, 'Prisma', {
+    fields,
+    wrapWhereClause: true,
+  });
+  const odataOutput = formatQuery(output, 'OData', {
+    fields,
+    wrapFilterClause: true,
+  });
+  const rsqlOutput = formatQuery(output, 'RSQL', {
+    fields,
+  });
+  const dynamoOutput = formatQuery(output, 'Dynamo', {
+    fields,
+  });
+  const djangoOutput = formatQuery(output, 'Django', {
+    fields,
   });
 
   return (
@@ -338,7 +426,121 @@ const App: React.FC = () => {
           </ThemeProvider>
 
           <h3>Output</h3>
-          <Code>{JSON.stringify(output, null, 2)}</Code>
+          <OutputTabs>
+            <OutputTab
+              $active={outputFormat === 'native'}
+              onClick={() => setOutputFormat('native')}
+            >
+              Native
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'sql'}
+              onClick={() => setOutputFormat('sql')}
+            >
+              SQL
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'mongo'}
+              onClick={() => setOutputFormat('mongo')}
+            >
+              Mongo
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'aql'}
+              onClick={() => setOutputFormat('aql')}
+            >
+              AQL
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'jsonata'}
+              onClick={() => setOutputFormat('jsonata')}
+            >
+              JSONata
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'jsonlogic'}
+              onClick={() => setOutputFormat('jsonlogic')}
+            >
+              JsonLogic
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'cel'}
+              onClick={() => setOutputFormat('cel')}
+            >
+              CEL
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'elasticsearch'}
+              onClick={() => setOutputFormat('elasticsearch')}
+            >
+              Elasticsearch
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'spel'}
+              onClick={() => setOutputFormat('spel')}
+            >
+              SpEL
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'prisma'}
+              onClick={() => setOutputFormat('prisma')}
+            >
+              Prisma
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'odata'}
+              onClick={() => setOutputFormat('odata')}
+            >
+              OData
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'rsql'}
+              onClick={() => setOutputFormat('rsql')}
+            >
+              RSQL
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'dynamo'}
+              onClick={() => setOutputFormat('dynamo')}
+            >
+              Dynamo
+            </OutputTab>
+            <OutputTab
+              $active={outputFormat === 'django'}
+              onClick={() => setOutputFormat('django')}
+            >
+              Django
+            </OutputTab>
+          </OutputTabs>
+          <Code>
+            {outputFormat === 'native'
+              ? nativeOutput
+              : outputFormat === 'sql'
+                ? sqlOutput
+                : outputFormat === 'mongo'
+                  ? mongoOutput
+                  : outputFormat === 'aql'
+                    ? aqlOutput
+                    : outputFormat === 'jsonata'
+                      ? jsonataOutput
+                      : outputFormat === 'jsonlogic'
+                        ? jsonLogicOutput
+                        : outputFormat === 'cel'
+                          ? celOutput
+                          : outputFormat === 'elasticsearch'
+                            ? elasticsearchOutput
+                            : outputFormat === 'spel'
+                              ? spelOutput
+                              : outputFormat === 'prisma'
+                                ? prismaOutput
+                                : outputFormat === 'odata'
+                                  ? odataOutput
+                                  : outputFormat === 'rsql'
+                                    ? rsqlOutput
+                                    : outputFormat === 'dynamo'
+                                      ? dynamoOutput
+                                      : djangoOutput}
+          </Code>
         </Main>
       </Layout>
     </Page>
