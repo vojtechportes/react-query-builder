@@ -4,8 +4,16 @@ import { IThemeProps } from '../../../theme-provider/theme-provider';
 
 const StyledTrigger = styled.button<{ $theme: Required<IThemeProps> }>`
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  appearance: none;
   min-width: 160px;
-  padding: 0.4rem 2.2rem 0.4rem 0.6rem;
+  height: 2rem;
+  padding: 0 2.2rem 0 0.6rem;
+  color: ${({ $theme }) => $theme.colors.grey['800']};
+  font-size: 0.8rem;
+  line-height: calc(2rem - 2px);
   text-align: left;
   border: 1px solid ${({ $theme }) => $theme.colors.grey['500']};
   border-radius: 3px;
@@ -20,6 +28,8 @@ const StyledTrigger = styled.button<{ $theme: Required<IThemeProps> }>`
 
 const StyledLabel = styled.span`
   display: block;
+  flex: 1 1 auto;
+  line-height: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -39,7 +49,7 @@ const StyledChevron = styled.span<{ $theme: Required<IThemeProps> }>`
   &::after {
     content: '';
     position: absolute;
-    top: 0.1rem;
+    top: 0.08rem;
     width: 0.38rem;
     height: 1px;
     background: currentColor;

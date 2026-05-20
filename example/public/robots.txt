@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vojtechportes.github.io/react-query-builder/sitemap.xml

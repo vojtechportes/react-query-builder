@@ -31,7 +31,7 @@ const Controls = styled.div`
   grid-gap: 0.5rem;
   align-self: center;
   justify-self: flex-end;
-  padding: 0.7rem 0.7rem 0.7rem 0;
+  padding: 0.7rem;
 `;
 
 export interface IRuleProps {
