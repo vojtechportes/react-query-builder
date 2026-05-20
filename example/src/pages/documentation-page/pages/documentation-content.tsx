@@ -149,6 +149,66 @@ const componentsSnippet = `const components = {
   onChange={setData}
 />;`;
 
+const validationSnippet = `const fields: IBuilderFieldProps[] = [
+  {
+    field: 'COMPANY_NAME',
+    label: 'Company name',
+    type: 'TEXT',
+    operators: ['EQUAL', 'CONTAINS'],
+    validation: {
+      common: {
+        required: true,
+      },
+      rules: [
+        {
+          operators: ['EQUAL', 'CONTAINS'],
+          minLength: 2,
+          maxLength: 50,
+        },
+      ],
+    },
+  },
+  {
+    field: 'ORDER_TOTAL',
+    label: 'Order total',
+    type: 'NUMBER',
+    operators: ['EQUAL', 'BETWEEN'],
+    validation: {
+      common: {
+        required: true,
+      },
+      rules: [
+        {
+          operators: ['EQUAL'],
+          min: 0,
+          max: 100000,
+        },
+        {
+          operators: ['BETWEEN'],
+          range: {
+            common: {
+              min: 0,
+            },
+            requireAscending: true,
+            allowEqual: false,
+          },
+        },
+      ],
+    },
+  },
+];
+
+<Builder
+  fields={fields}
+  data={data}
+  showValidation
+  onStateChange={state => {
+    console.log(state.isValid);
+    console.log(state.validation);
+  }}
+  onChange={setData}
+/>;`;
+
 const localizationSnippet = `const fields: IBuilderFieldProps[] = [
   {
     field: 'STATE',
@@ -228,6 +288,48 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/api/builder">Builder</TextLink>,{' '}
           <TextLink to="/api/fields">Fields</TextLink>, and{' '}
           <TextLink to="/api/data">Data</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/validation',
+    title: 'Validation',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Built-in validation for fields and rules, validation rendering with showValidation, and custom validator integration.',
+    searchText:
+      'Validation built-in validation validator showValidation onStateChange required minLength maxLength minItems maxItems range validation rules fields builder',
+    content: (
+      <>
+        <p>
+          Built-in validation is defined in <TextLink to="/api/fields">field metadata</TextLink>{' '}
+          and evaluated by <TextLink to="/api/builder">Builder</TextLink>.
+        </p>
+        <List>
+          <li>Use <InlineCode>validation.common</InlineCode> for operator-agnostic rules such as required values.</li>
+          <li>Use <InlineCode>validation.rules</InlineCode> for operator-specific rules.</li>
+          <li>Use <InlineCode>showValidation</InlineCode> to render built-in validation messages in the UI.</li>
+          <li>Use <InlineCode>onStateChange</InlineCode> when query data and validation state need to be read together.</li>
+        </List>
+        <CodeBlock code={validationSnippet} language="tsx" label="Built-in validation" />
+        <SectionTitle>Built-in rule types</SectionTitle>
+        <List>
+          <li>Text fields support rules such as <InlineCode>minLength</InlineCode> and <InlineCode>maxLength</InlineCode>.</li>
+          <li>Number and date fields support boundary rules such as <InlineCode>min</InlineCode>, <InlineCode>max</InlineCode>, <InlineCode>minDate</InlineCode>, and <InlineCode>maxDate</InlineCode>.</li>
+          <li>List and multi-list fields support item-count constraints such as <InlineCode>minItems</InlineCode> and <InlineCode>maxItems</InlineCode>.</li>
+          <li>Range operators such as <InlineCode>BETWEEN</InlineCode> can use <InlineCode>range</InlineCode> validation to validate both values together.</li>
+        </List>
+        <AlertBox title="Custom validator" variant="info">
+          Use <InlineCode>validator</InlineCode> when validation depends on
+          multiple rules, external state, or rules that are not expressible in
+          field-level validation config.
+        </AlertBox>
+        <AlertBox title="API reference" variant="info">
+          <TextLink to="/api/builder">Builder</TextLink> and{' '}
+          <TextLink to="/api/fields">Fields</TextLink>.
         </AlertBox>
       </>
     ),

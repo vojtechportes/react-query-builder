@@ -47,6 +47,7 @@ export const App: React.FC = () => (
           <Route path="/documentation" element={<DocumentationPage />} />
           <Route path="/documentation/installation" element={<DocumentationPage />} />
           <Route path="/documentation/usage" element={<DocumentationPage />} />
+          <Route path="/documentation/validation" element={<DocumentationPage />} />
           <Route path="/documentation/components" element={<DocumentationPage />} />
           <Route
             path="/documentation/parsing-and-formatting"
