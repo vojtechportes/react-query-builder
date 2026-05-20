@@ -1,19 +1,26 @@
 /* global console */
 
-import { copyFile, access } from 'node:fs/promises';
+import { copyFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distDir = path.resolve(__dirname, '..', 'dist');
-const sourcePath = path.join(distDir, 'index.d.mts');
-const targetPath = path.join(distDir, 'index.d.ts');
 
 try {
-  await access(sourcePath);
-  await copyFile(sourcePath, targetPath);
+  const files = await readdir(distDir);
+  const declarationFiles = files.filter(fileName => fileName.endsWith('.d.mts'));
+
+  await Promise.all(
+    declarationFiles.map(fileName =>
+      copyFile(
+        path.join(distDir, fileName),
+        path.join(distDir, fileName.replace(/\.d\.mts$/, '.d.ts'))
+      )
+    )
+  );
 } catch (error) {
-  console.error('Unable to create dist/index.d.ts from dist/index.d.mts');
+  console.error('Unable to create .d.ts files from .d.mts build artifacts');
   throw error;
 }
