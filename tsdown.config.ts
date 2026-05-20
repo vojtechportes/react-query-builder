@@ -3,7 +3,11 @@ import { defineConfig } from 'tsdown';
 export default defineConfig({
   clean: true,
   dts: true,
-  entry: ['src/index.tsx'],
+  entry: {
+    index: 'src/index.tsx',
+    parseQuery: 'src/parseQuery/index.ts',
+    formatQuery: 'src/formatQuery/index.ts',
+  },
   format: ['esm', 'cjs'],
   sourcemap: true,
 });

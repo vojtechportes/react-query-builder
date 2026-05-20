@@ -11,7 +11,21 @@
     "query-builder",
     "react-query-builder",
     "typescript",
-    "configurable"
+    "configurable",
+    "query parser",
+    "query formatter",
+    "sql",
+    "mongodb",
+    "aql",
+    "jsonata",
+    "jsonlogic",
+    "cel",
+    "elasticsearch",
+    "prisma",
+    "odata",
+    "rsql",
+    "dynamodb",
+    "django"
   ],
   "author": {
     "email": "vojtech.v.portes@gmail.com",
@@ -35,6 +49,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./parseQuery": {
+      "types": "./dist/parseQuery.d.ts",
+      "import": "./dist/parseQuery.mjs",
+      "require": "./dist/parseQuery.cjs"
+    },
+    "./formatQuery": {
+      "types": "./dist/formatQuery.d.ts",
+      "import": "./dist/formatQuery.mjs",
+      "require": "./dist/formatQuery.cjs"
     }
   },
   "publishConfig": {

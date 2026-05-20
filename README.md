@@ -18,6 +18,7 @@
 - [Installation](#installation)
 - [Example / Demo](#example--demo)
 - [Usage](#usage)
+- [Parsing And Formatting](#parsing-and-formatting)
 - [Configuration](#configuration)
   - [Fields](#fields)
     - [Type](#type)
@@ -120,6 +121,447 @@ export const MyBuilder: React.FC = () => {
   );
 };
 ```
+
+---
+
+## Parsing And Formatting
+
+React Query Builder also provides separate subpath exports for converting between
+the builder's native `DenormalizedQuery` format and other query formats.
+
+### Format query to SQL
+
+```typescript
+import {
+  type DenormalizedQuery,
+  type IBuilderFieldProps,
+} from '@vojtechportes/react-query-builder';
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'CUSTOMER_COUNTRY',
+    label: 'Customer country',
+    type: 'LIST',
+    operators: ['EQUAL', 'NOT_EQUAL', 'IN', 'NOT_IN'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+  },
+  {
+    field: 'ORDER_TOTAL',
+    label: 'Order total',
+    type: 'NUMBER',
+    operators: ['BETWEEN', 'LARGER_EQUAL'],
+  },
+];
+
+const data: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'CUSTOMER_COUNTRY',
+        operator: 'EQUAL',
+        value: 'CZ',
+      },
+      {
+        field: 'ORDER_TOTAL',
+        operator: 'BETWEEN',
+        value: [1000, 5000],
+      },
+    ],
+  },
+];
+
+const sql = formatQuery(data, 'SQL', {
+  fields,
+  wrapWhereClause: true,
+});
+
+// WHERE (CUSTOMER_COUNTRY = 'CZ' AND ORDER_TOTAL BETWEEN 1000 AND 5000)
+```
+
+`formatQuery` signature:
+
+```typescript
+const formatQuery: (
+  value: DenormalizedQuery,
+  format: 'SQL',
+  options?: {
+    fields?: IBuilderFieldProps[];
+    rootlessCombinator?: 'AND' | 'OR';
+    modifierlessGroupCombinator?: 'AND' | 'OR';
+    wrapWhereClause?: boolean;
+  }
+) => string;
+```
+
+Options:
+
+- `fields`: optional field metadata used during formatting
+- `rootlessCombinator`: how root-level items are combined when there is no root group
+- `modifierlessGroupCombinator`: how children of groups without modifiers are combined
+- `wrapWhereClause`: prefixes the output with `WHERE `
+
+### Format query to Mongo
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const mongo = formatQuery(data, 'Mongo');
+
+// {
+//   "$and": [
+//     { "CUSTOMER_COUNTRY": "CZ" },
+//     { "ORDER_TOTAL": { "$gte": 1000, "$lte": 5000 } }
+//   ]
+// }
+```
+
+`Mongo` formatting outputs a MongoDB filter document serialized as JSON.
+
+### Format query to AQL
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const aql = formatQuery(data, 'AQL', {
+  variableName: 'doc',
+});
+
+// FILTER (doc.CUSTOMER_COUNTRY == "CZ" AND
+//         (doc.ORDER_TOTAL >= 1000 AND doc.ORDER_TOTAL <= 5000))
+```
+
+`AQL` formatting targets `FILTER` expressions. You can customize:
+
+- `variableName`: the AQL document variable prefix, default `doc`
+- `wrapFilterClause`: whether to prefix the expression with `FILTER `
+
+### Format query to JSONata
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const jsonata = formatQuery(data, 'JSONata');
+
+// (CUSTOMER_COUNTRY = "CZ" and
+//  (ORDER_TOTAL >= 1000 and ORDER_TOTAL <= 5000))
+```
+
+`JSONata` formatting targets boolean/filter expressions over JSON data rather
+than full transformation templates.
+
+### Format query to JsonLogic
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const jsonLogic = formatQuery(data, 'JsonLogic');
+
+// {
+//   "and": [
+//     { "==": [{ "var": "CUSTOMER_COUNTRY" }, "CZ"] },
+//     { "<=": [1000, { "var": "ORDER_TOTAL" }, 5000] }
+//   ]
+// }
+```
+
+`JsonLogic` formatting outputs a standard JsonLogic rule serialized as JSON.
+
+### Format query to CEL
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const cel = formatQuery(data, 'CEL');
+
+// (CUSTOMER_COUNTRY == "CZ" &&
+//  (ORDER_TOTAL >= 1000 && ORDER_TOTAL <= 5000))
+```
+
+`CEL` formatting targets boolean expressions compatible with Common Expression
+Language predicate use cases.
+
+### Format query to Elasticsearch
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const elasticsearch = formatQuery(data, 'Elasticsearch', {
+  wrapQueryClause: true,
+});
+
+// {
+//   "query": {
+//     "bool": {
+//       "must": [
+//         { "term": { "CUSTOMER_COUNTRY": "CZ" } },
+//         { "range": { "ORDER_TOTAL": { "gte": 1000, "lte": 5000 } } }
+//       ]
+//     }
+//   }
+// }
+```
+
+`Elasticsearch` formatting outputs a Query DSL clause serialized as JSON.
+
+### Format query to SpEL
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const spel = formatQuery(data, 'SpEL');
+
+// (CUSTOMER_COUNTRY == 'CZ' and
+//  (ORDER_TOTAL >= 1000 and ORDER_TOTAL <= 5000))
+```
+
+`SpEL` formatting targets Spring Expression Language predicate expressions.
+
+### Format query to Prisma
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const prisma = formatQuery(data, 'Prisma', {
+  wrapWhereClause: true,
+});
+
+// {
+//   "where": {
+//     "AND": [
+//       { "CUSTOMER_COUNTRY": "CZ" },
+//       { "ORDER_TOTAL": { "gte": 1000, "lte": 5000 } }
+//     ]
+//   }
+// }
+```
+
+`Prisma` formatting outputs a Prisma `where` object serialized as JSON.
+
+### Format query to OData
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const odata = formatQuery(data, 'OData', {
+  wrapFilterClause: true,
+});
+
+// $filter=(CUSTOMER_COUNTRY eq 'CZ' and
+//          (ORDER_TOTAL ge 1000 and ORDER_TOTAL le 5000))
+```
+
+`OData` formatting targets OData `$filter` expressions.
+
+### Format query to RSQL
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const rsql = formatQuery(data, 'RSQL');
+
+// (CUSTOMER_COUNTRY==CZ;(ORDER_TOTAL=ge=1000;ORDER_TOTAL=le=5000))
+```
+
+`RSQL` formatting targets builder-compatible RSQL / FIQL-style filter expressions.
+
+### Format query to Dynamo
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const dynamo = formatQuery(data, 'Dynamo');
+
+// (CUSTOMER_COUNTRY = 'CZ' AND ORDER_TOTAL BETWEEN 1000 AND 5000)
+```
+
+`Dynamo` formatting targets raw DynamoDB filter expressions.
+
+### Format query to Django
+
+```typescript
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const django = formatQuery(data, 'Django');
+
+// (Q(CUSTOMER_COUNTRY='CZ') & Q(ORDER_TOTAL__gte=1000, ORDER_TOTAL__lte=5000))
+```
+
+`Django` formatting targets `django.db.models.Q(...)` predicate expressions.
+
+### Parse SQL to query builder input
+
+```typescript
+import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
+
+const result = parseQuery(
+  "SELECT * FROM customers WHERE CUSTOMER_COUNTRY = 'CZ' AND ORDER_TOTAL >= 1000",
+  'SQL'
+);
+
+console.log(result.fields);
+console.log(result.data);
+```
+
+`parseQuery` signature:
+
+```typescript
+const parseQuery: (
+  value: string,
+  format:
+    | 'SQL'
+    | 'Mongo'
+    | 'AQL'
+    | 'JSONata'
+    | 'JsonLogic'
+    | 'CEL'
+    | 'Elasticsearch'
+    | 'SpEL'
+    | 'Prisma'
+    | 'OData'
+    | 'RSQL'
+    | 'Dynamo'
+    | 'Django'
+) => {
+  fields: IBuilderFieldProps[];
+  data: DenormalizedQuery;
+};
+```
+
+### Parse Mongo to query builder input
+
+```typescript
+import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
+
+const result = parseQuery(
+  JSON.stringify({
+    $and: [
+      { CUSTOMER_COUNTRY: 'CZ' },
+      { ORDER_TOTAL: { $gte: 1000, $lte: 5000 } },
+    ],
+  }),
+  'Mongo'
+);
+```
+
+The current SQL implementation is focused on builder-compatible filter
+expressions. SQL support includes:
+
+- comparison operators like `=`, `<>`, `>`, `>=`, `<`, `<=`
+- `AND`, `OR`, `NOT`, and nested parentheses
+- `IN`, `NOT IN`, `BETWEEN`, `NOT BETWEEN`
+- `IS NULL`, `IS NOT NULL`
+- `LIKE`, `NOT LIKE`, including mapping simple wildcard patterns to
+  `CONTAINS`, `STARTS_WITH`, and `ENDS_WITH`
+- parsing either a raw predicate or the `WHERE` portion of a larger SQL query
+
+Mongo support includes:
+
+- logical operators like `$and`, `$or`, and `$nor`
+- direct equality and field operator objects
+- comparison operators like `$gt`, `$gte`, `$lt`, `$lte`, `$ne`, and `$eq`
+- array operators like `$in`, `$nin`, and `$all`
+- regex expressions mapped to `CONTAINS`, `STARTS_WITH`, `ENDS_WITH`, `LIKE`,
+  `NOT_CONTAINS`, and `NOT_LIKE`
+- parsing and formatting MongoDB filter documents serialized as JSON strings
+
+AQL support includes:
+
+- comparison operators like `==`, `!=`, `>`, `>=`, `<`, `<=`
+- `AND`, `OR`, `NOT`, and nested parentheses
+- `IN`, `NOT IN`, and `LIKE`, `NOT LIKE`
+- null checks using `== null` and `!= null`
+- parsing either a raw AQL filter expression or the `FILTER` portion of a
+  larger `FOR ... FILTER ... RETURN ...` query
+- configurable variable prefixes such as `doc`, `item`, or `current` during formatting
+
+JSONata support includes:
+
+- comparison operators like `=`, `!=`, `>`, `>=`, `<`, `<=`
+- `and`, `or`, and `$not(...)`
+- `in` array membership expressions
+- string matching through `$contains(...)` with either strings or regex patterns
+- JSONata filter-style expressions rather than full transformation programs
+
+JsonLogic support includes:
+
+- comparison operators like `==`, `!=`, `>`, `>=`, `<`, `<=`
+- boolean groups through `and`, `or`, and `!`
+- array and string membership through `in`
+- array quantifiers through `all` and `some`
+- JsonLogic rules serialized as JSON strings for both formatting and parsing
+
+CEL support includes:
+
+- comparison operators like `==`, `!=`, `>`, `>=`, `<`, `<=`
+- boolean groups through `&&`, `||`, and `!`
+- array membership through `in`
+- collection macros through `.all(...)` and `.exists(...)`
+- string methods like `.contains(...)`, `.startsWith(...)`, `.endsWith(...)`, and `.matches(...)`
+
+Elasticsearch support includes:
+
+- `bool.must`, `bool.should`, and `bool.must_not`
+- `term`, `terms`, `range`, and `exists` queries
+- string matching through `prefix` and `wildcard`
+- parsing either a raw Query DSL clause or a `{ "query": ... }` wrapper
+
+SpEL support includes:
+
+- comparison operators like `==`, `!=`, `>`, `>=`, `<`, `<=`
+- boolean groups through `and`, `or`, and `!`
+- inline list membership via `{...}.contains(...)`
+- collection-based `ALL_IN` and `ANY_IN` expressions using selection and `.size()`
+- string methods like `.contains(...)`, `.startsWith(...)`, `.endsWith(...)`, and regex `matches`
+
+Prisma support includes:
+
+- `AND`, `OR`, and `NOT` groups
+- scalar filters like `gt`, `gte`, `lt`, `lte`, `in`, `notIn`, and `not`
+- string filters like `contains`, `startsWith`, and `endsWith`
+- scalar-list filters like `hasEvery` and `hasSome`
+- parsing either a raw Prisma `where` object or a `{ "where": ... }` wrapper
+
+OData support includes:
+
+- comparison operators like `eq`, `ne`, `gt`, `ge`, `lt`, `le`
+- boolean groups through `and`, `or`, and `not`
+- string functions like `contains`, `startswith`, and `endswith`
+- parsing either a raw filter expression or a `$filter=...` wrapper
+
+RSQL support includes:
+
+- comparison operators like `==`, `!=`, `=gt=`, `=ge=`, `=lt=`, and `=le=`
+- boolean groups through `;` for `AND`, `,` for `OR`, and nested parentheses
+- set operators `=in=` and `=out=`
+- wildcard-based string matching that maps `*value*`, `value*`, and `*value`
+  to `CONTAINS`, `STARTS_WITH`, and `ENDS_WITH`
+- collapsed parsing and formatting for builder-friendly `BETWEEN`, `NOT_BETWEEN`,
+  `ALL_IN`, and `ANY_IN` patterns
+
+Dynamo support includes:
+
+- comparison operators like `=`, `<>`, `>`, `>=`, `<`, and `<=`
+- boolean groups through `AND`, `OR`, and `NOT`
+- `IN` and `BETWEEN`
+- null-style checks through `attribute_exists(...)` and `attribute_not_exists(...)`
+- string functions through `contains(...)` and `begins_with(...)`
+- raw DynamoDB filter expressions only, without placeholder maps such as
+  `ExpressionAttributeNames` or `ExpressionAttributeValues`
+
+Django support includes:
+
+- `Q(...)` expressions combined with `&`, `|`, and `~`
+- common lookups like exact equality, `__gt`, `__gte`, `__lt`, `__lte`,
+  `__in`, `__contains`, `__startswith`, `__endswith`, and `__isnull`
+- grouped keyword arguments inside a single `Q(...)` call for builder-friendly
+  cases like `BETWEEN`
 
 ---
 
