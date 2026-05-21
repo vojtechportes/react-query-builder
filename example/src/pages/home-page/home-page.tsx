@@ -16,6 +16,10 @@ const Hero = styled.section`
     linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
   box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
 
+  @media (max-width: 860px) {
+    padding: 2rem;
+  }
+
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }

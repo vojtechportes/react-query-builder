@@ -70,6 +70,8 @@ const Main = styled.div`
 `;
 
 const BuilderCard = styled.section`
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 1.5rem;
   border: 1px solid #dbe4f0;
   border-radius: 16px;
@@ -78,6 +80,7 @@ const BuilderCard = styled.section`
 `;
 
 const BuilderSurface = styled.div`
+  min-width: 920px;
   font-family: Arial, sans-serif;
   font-size: 16px;
   line-height: normal;
