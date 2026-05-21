@@ -15,6 +15,7 @@ const builderSignature = `export interface IBuilderProps {
   components?: IBuilderComponentsProps;
   strings?: IStrings;
   readOnly?: boolean;
+  lockable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both';
@@ -92,6 +93,7 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   };
   Remove?: React.ComponentType<IButtonProps>;
   Add?: React.ComponentType<IButtonProps>;
+  LockToggle?: React.ComponentType<ILockToggleProps>;
   Rule?: React.ComponentType<IRuleContainerProps>;
   Group?: React.ComponentType<IGroupContainerProps>;
   GroupHeaderOption?: React.ComponentType<IGroupHeaderOptionProps>;
@@ -100,6 +102,18 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   EmptyGroupDropZone?: React.ComponentType<IEmptyGroupDropZoneProps>;
   Popover?: React.ComponentType<IPopoverProps>;
   PopoverItem?: React.ComponentType<IPopoverItemProps>;
+}`;
+
+const lockToggleSignature = `export type BuilderLockState = 'unlocked' | 'self' | 'all';
+
+export interface ILockToggleProps {
+  state: BuilderLockState;
+  nodeType: 'rule' | 'group';
+  disabled?: boolean;
+  onChange?: (nextState: BuilderLockState) => void;
+  className?: string;
+  title?: string;
+  'data-test'?: string;
 }`;
 
 const themeProviderSignature = `export interface IThemeProps {
@@ -275,6 +289,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Optional overrides for internal UI pieces. Omitted entries fall back to default components.</li>
           <li><ItemTitle><InlineCode>strings</InlineCode>:</ItemTitle> Optional localized UI strings used by the built-in controls.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Disables editing actions when enabled.</li>
+          <li><ItemTitle><InlineCode>lockable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders lock controls for rules and groups and writes the resulting lock state back into emitted query data.</li>
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group.</li>
           <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both.</li>
@@ -346,6 +361,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional rule value. Supported scalar/array forms are defined by <InlineCode>QueryRuleValue</InlineCode>.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional rule-level operator override list.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock flag. It locks only that rule and does not affect siblings, parents, or descendants.</li>
+          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, rules cycle between unlocked and locked, which maps to omitted <InlineCode>readOnly</InlineCode> and <InlineCode>readOnly: true</InlineCode>.</li>
           <li><ItemTitle><InlineCode>id</InlineCode> and <InlineCode>parent</InlineCode>:</ItemTitle> Optional in denormalized input. The builder can ingest data without them.</li>
         </List>
         <SectionTitle>Group props</SectionTitle>
@@ -356,6 +372,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>isNegated</InlineCode>:</ItemTitle> Present only for groups with modifiers.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Can be a boolean or an object with <InlineCode>enabled</InlineCode> and optional <InlineCode>inheritToChildren</InlineCode>.</li>
           <li><ItemTitle><InlineCode>readOnly: true</InlineCode>:</ItemTitle> Locks only the group&apos;s own controls by default. Descendant rules and groups remain editable unless inheritance is enabled.</li>
+          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, groups cycle through unlocked, locked group only, and locked group with descendants.</li>
           <li><ItemTitle><InlineCode>inheritToChildren</InlineCode>:</ItemTitle> Applies the group lock to all descendants when the group is enabled. Descendants cannot override an inherited lock from an ancestor.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
@@ -378,10 +395,12 @@ export const apiPages: IApiPage[] = [
     content: (
       <>
         <CodeBlock code={componentsSignature} language="ts" label="Component overrides" />
+        <CodeBlock code={lockToggleSignature} language="ts" label="LockToggle props" />
         <SectionTitle>Props</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>form.Select</InlineCode> / <InlineCode>form.SelectMulti</InlineCode> / <InlineCode>form.Switch</InlineCode> / <InlineCode>form.Input</InlineCode>:</ItemTitle> Replace the built-in form controls used by rules and groups.</li>
           <li><ItemTitle><InlineCode>Remove</InlineCode> and <InlineCode>Add</InlineCode>:</ItemTitle> Replace action buttons used for structural editing.</li>
+          <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Replaces the built-in lock control used when <InlineCode>lockable</InlineCode> is enabled.</li>
           <li><ItemTitle><InlineCode>Rule</InlineCode> and <InlineCode>Group</InlineCode>:</ItemTitle> Replace the main structural containers.</li>
           <li><ItemTitle><InlineCode>GroupHeaderOption</InlineCode>:</ItemTitle> Replaces the header option control used in group UIs.</li>
           <li><ItemTitle><InlineCode>Text</InlineCode>:</ItemTitle> Replaces the built-in text rendering component.</li>
@@ -394,6 +413,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>form.Select</InlineCode>:</ItemTitle> Receives <InlineCode>values</InlineCode>, <InlineCode>selectedValue</InlineCode>, <InlineCode>emptyValue</InlineCode>, and <InlineCode>onChange(value)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>form.SelectMulti</InlineCode>:</ItemTitle> Receives <InlineCode>selectedValue</InlineCode>, <InlineCode>values</InlineCode>, <InlineCode>onChange(value)</InlineCode>, and <InlineCode>onDelete(value)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>form.Switch</InlineCode>:</ItemTitle> Receives <InlineCode>switched</InlineCode>, optional <InlineCode>onChange(value)</InlineCode>, and optional <InlineCode>disabled</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Receives <InlineCode>state</InlineCode>, <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onChange(nextState)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>Rule</InlineCode>:</ItemTitle> Receives already-built <InlineCode>children</InlineCode>, <InlineCode>controls</InlineCode>, and optional <InlineCode>dragHandle</InlineCode>.</li>
           <li><ItemTitle><InlineCode>Group</InlineCode>:</ItemTitle> Receives <InlineCode>controlsLeft</InlineCode>, <InlineCode>controlsRight</InlineCode>, <InlineCode>children</InlineCode>, and optional overlays or drag handles.</li>
           <li><ItemTitle><InlineCode>DropZone</InlineCode>:</ItemTitle> Receives <InlineCode>id</InlineCode>, <InlineCode>index</InlineCode>, optional <InlineCode>parentId</InlineCode>, and drag-state flags.</li>

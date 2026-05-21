@@ -6,6 +6,10 @@ import { DropZone as DefaultDropZone } from './drop-zone';
 import { EmptyGroupDropZone as DefaultEmptyGroupDropZone } from './empty-group-drop-zone';
 import { Group } from './group/group';
 import { isNormalizedGroupNode } from './utils/is-normalized-group-node.util';
+import {
+  resolveGroupLockState,
+  resolveRuleLockState,
+} from './utils/lock-state';
 import { resolveGroupReadOnly } from './utils/resolve-group-read-only.util';
 import { NormalizedQuery } from './utils/query-tree';
 
@@ -102,6 +106,8 @@ export const Iterator: FC<IIteratorProps> = ({
           id={id}
           isRoot={isRoot}
           readOnly={isGroupReadOnly}
+          lockState={resolveGroupLockState(item.readOnly)}
+          lockDisabled={inheritedReadOnly}
           dragHandle={dragHandle}
           contentOverlay={emptyGroupDropZone}
         >
@@ -144,6 +150,8 @@ export const Iterator: FC<IIteratorProps> = ({
         operator={operator}
         id={id}
         readOnly={isRuleReadOnly}
+        lockState={resolveRuleLockState(Boolean(item.readOnly))}
+        lockDisabled={inheritedReadOnly}
         dragHandle={dragHandle}
         data-test="IteratorRule"
       />

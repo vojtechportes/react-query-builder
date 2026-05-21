@@ -13,6 +13,7 @@ export interface IBuilderContextProps {
   fields: IBuilderFieldProps[];
   data: NormalizedQuery;
   readOnly: boolean;
+  lockable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
@@ -35,6 +36,7 @@ export interface IBuilderContextProviderProps {
   fields: IBuilderFieldProps[];
   data: NormalizedQuery;
   readOnly: boolean;
+  lockable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
@@ -56,6 +58,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   strings,
   data,
   readOnly,
+  lockable,
   draggable,
   singleRootGroup,
   groupTypes,
@@ -105,6 +108,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         strings: resolvedStrings,
         data,
         readOnly,
+        lockable,
         draggable,
         singleRootGroup,
         groupTypes,

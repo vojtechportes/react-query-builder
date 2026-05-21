@@ -1,7 +1,8 @@
 import React, { FC, useContext } from 'react';
-import { BuilderGroupValues } from '../builder';
+import { BuilderGroupValues, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Button } from '../button';
+import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Popover as DefaultPopover } from '../popover';
 import { PopoverItem as DefaultPopoverItem } from '../popover-item';
 import { Group as DefaultGroupContainer } from './group-container';
@@ -25,6 +26,8 @@ export interface IGroupProps {
   id: string;
   isRoot: boolean;
   readOnly?: boolean;
+  lockState?: BuilderLockState;
+  lockDisabled?: boolean;
 }
 
 export const Group: FC<IGroupProps> = ({
@@ -36,6 +39,8 @@ export const Group: FC<IGroupProps> = ({
   id,
   isRoot,
   readOnly: localReadOnly = false,
+  lockState = localReadOnly ? 'self' : 'unlocked',
+  lockDisabled = false,
 }) => {
   const {
     components,
@@ -45,12 +50,14 @@ export const Group: FC<IGroupProps> = ({
     updateData,
     strings,
     readOnly,
+    lockable,
     groupTypes,
     singleRootGroup,
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const Add = components.Add || Button;
   const GroupContainer = components.Group || DefaultGroupContainer;
+  const LockToggle = components.LockToggle || DefaultLockToggle;
   const Option = components.GroupHeaderOption || DefaultOption;
   const Popover = components.Popover || DefaultPopover;
   const PopoverItem = components.PopoverItem || DefaultPopoverItem;
@@ -126,6 +133,30 @@ export const Group: FC<IGroupProps> = ({
     );
   };
 
+  const handleChangeLockState = (nextState: BuilderLockState) => {
+    applyDataUpdate(
+      data,
+      setData,
+      onChange,
+      currentData =>
+        updateItem(currentData, id, item => {
+          if (isNormalizedGroupNode(item)) {
+            if (nextState === 'all') {
+              item.readOnly = {
+                enabled: true,
+                inheritToChildren: true,
+              };
+            } else if (nextState === 'self') {
+              item.readOnly = true;
+            } else {
+              delete item.readOnly;
+            }
+          }
+        }),
+      updateData
+    );
+  };
+
   if (!strings.group) {
     return null;
   }
@@ -162,6 +193,17 @@ export const Group: FC<IGroupProps> = ({
         {strings.group.addGroup}
       </Add>
     );
+
+  const lockControl =
+    lockable && !readOnly ? (
+      <LockToggle
+        state={lockState}
+        nodeType="group"
+        disabled={lockDisabled}
+        onChange={handleChangeLockState}
+        data-test="LockToggle[group]"
+      />
+    ) : null;
 
   return (
     <GroupContainer
@@ -201,19 +243,22 @@ export const Group: FC<IGroupProps> = ({
         ) : null
       }
       controlsRight={
-        !isReadOnly && (
-          <>
-            <Add onClick={handleAddRule} data-test="AddRule">
-              {strings.group.addRule}
-            </Add>
-            {addGroupControl}
-            {canDeleteGroup ? (
-              <Remove onClick={handleDeleteGroup} data-test="Remove">
-                {strings.group.delete}
-              </Remove>
-            ) : null}
-          </>
-        )
+        <>
+          {!isReadOnly && (
+            <>
+              <Add onClick={handleAddRule} data-test="AddRule">
+                {strings.group.addRule}
+              </Add>
+              {addGroupControl}
+            </>
+          )}
+          {!isReadOnly && canDeleteGroup ? (
+            <Remove onClick={handleDeleteGroup} data-test="Remove">
+              {strings.group.delete}
+            </Remove>
+          ) : null}
+          {lockControl}
+        </>
       }
     >
       {children}

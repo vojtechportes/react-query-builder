@@ -75,6 +75,12 @@ const initialData: DenormalizedQuery = [
     isNegated: false,
     children: [
       {
+        field: 'STATE',
+        operator: 'EQUAL',
+        value: 'CZ',
+        readOnly: true,
+      },
+      {
         field: 'IS_IN_EU',
         operator: 'EQUAL',
         value: true,

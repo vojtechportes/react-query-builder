@@ -6,11 +6,25 @@ import { useTheme } from '../theme-provider/hooks/use-theme';
 
 const StyledRule = styled.div<{
   hasDragHandle: boolean;
+  hasControls: boolean;
   $theme: Required<IThemeProps>;
 }>`
   display: grid;
-  grid-template-columns: ${({ hasDragHandle }) =>
-    hasDragHandle ? 'auto 1fr auto' : '1fr auto'};
+  grid-template-columns: ${({ hasDragHandle, hasControls }) => {
+    if (hasDragHandle && hasControls) {
+      return 'auto 1fr auto';
+    }
+
+    if (hasDragHandle) {
+      return 'auto 1fr';
+    }
+
+    if (hasControls) {
+      return '1fr auto';
+    }
+
+    return '1fr';
+  }};
   background-color: ${({ $theme }) => $theme.colors.white};
   border: 1px solid ${({ $theme }) => $theme.colors.grey['300']};
   border-radius: 4px;
@@ -21,6 +35,10 @@ const Content = styled.div`
   display: grid;
   min-width: 0;
   padding: 0.7rem 0 0.7rem 0.7rem;
+`;
+
+const ContentWithoutControls = styled(Content)`
+  padding-right: 0.7rem;
 `;
 
 const Controls = styled.div`
@@ -53,17 +71,20 @@ export const Rule: FC<IRuleProps> = ({
   'data-test': dataTest,
 }) => {
   const theme = useTheme();
+  const hasControls = React.Children.toArray(controls).length > 0;
+  const ResolvedContent = hasControls ? Content : ContentWithoutControls;
 
   return (
     <StyledRule
       className={className}
       hasDragHandle={Boolean(dragHandle)}
+      hasControls={hasControls}
       data-test={dataTest}
       $theme={theme}
     >
       {dragHandle}
-      <Content>{children}</Content>
-      <Controls>{controls}</Controls>
+      <ResolvedContent>{children}</ResolvedContent>
+      {hasControls ? <Controls>{controls}</Controls> : null}
     </StyledRule>
   );
 };

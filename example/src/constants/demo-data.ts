@@ -134,6 +134,7 @@ export const initialQueryTree: DenormalizedQuery = [
         field: 'CUSTOMER_COUNTRY',
         operator: 'EQUAL',
         value: 'CZ',
+        readOnly: true,
       },
       {
         type: 'GROUP',

@@ -390,6 +390,68 @@ describe('#components/Builder', () => {
     ).toEqual(0);
   });
 
+  it('Allows locking and unlocking rules through the GUI when lockable is enabled', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        lockable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: '',
+                operator: 'EQUAL',
+              },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('[data-test="LockToggle[rule]"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: '',
+            operator: 'EQUAL',
+            readOnly: true,
+          },
+        ],
+      },
+    ]);
+
+    wrapper.find('[data-test="LockToggle[rule]"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: '',
+            operator: 'EQUAL',
+          },
+        ],
+      },
+    ]);
+  });
+
   it('Locks group controls without inheriting read-only to descendants by default', () => {
     const wrapper = mount(
       <Builder
@@ -466,6 +528,164 @@ describe('#components/Builder', () => {
         .length
     ).toEqual(0);
     expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
+  });
+
+  it('Cycles group lock state through self, inherited, and unlocked states', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        lockable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                children: [],
+              },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('[data-test="LockToggle[group]"]').last().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            readOnly: true,
+            children: [],
+          },
+        ],
+      },
+    ]);
+
+    wrapper.find('[data-test="LockToggle[group]"]').last().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            readOnly: {
+              enabled: true,
+              inheritToChildren: true,
+            },
+            children: [],
+          },
+        ],
+      },
+    ]);
+
+    wrapper.find('[data-test="LockToggle[group]"]').last().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [],
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('Disables descendant lock toggles when read-only is inherited from a parent group', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        lockable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            readOnly: {
+              enabled: true,
+              inheritToChildren: true,
+            },
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: '',
+                operator: 'EQUAL',
+              },
+            ],
+          },
+        ]}
+      />
+    );
+
+    expect(
+      wrapper.find('[data-test="LockToggle[rule]"]').first().prop('disabled')
+    ).toEqual(true);
+  });
+
+  it('Uses a custom LockToggle component when provided', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        lockable
+        components={{
+          ...defaultComponents,
+          LockToggle: ({ state, nodeType, onChange, disabled }) => (
+            <button
+              type="button"
+              data-test={`CustomLockToggle[${nodeType}]`}
+              disabled={disabled}
+              onClick={() => onChange?.(state === 'unlocked' ? 'self' : 'unlocked')}
+            >
+              custom
+            </button>
+          ),
+        }}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: '',
+                operator: 'EQUAL',
+              },
+            ],
+          },
+        ]}
+      />
+    );
+
+    expect(wrapper.find('[data-test="CustomLockToggle[group]"]').length).toEqual(1);
+    expect(wrapper.find('[data-test="CustomLockToggle[rule]"]').length).toEqual(1);
   });
 
   it('Keeps the boundary drop zone before a locked sibling group', () => {
