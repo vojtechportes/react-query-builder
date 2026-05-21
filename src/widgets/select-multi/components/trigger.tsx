@@ -1,29 +1,16 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { IThemeProps } from '../../../theme-provider/theme-provider';
+import { inputControlStyles } from '../../../styles/input.styles';
 
 const StyledTrigger = styled.button<{ $theme: Required<IThemeProps> }>`
   position: relative;
   display: inline-flex;
   align-items: center;
-  box-sizing: border-box;
-  appearance: none;
-  min-width: 160px;
-  height: 2rem;
+  ${inputControlStyles}
   padding: 0 2.2rem 0 0.6rem;
-  color: ${({ $theme }) => $theme.colors.grey['800']};
-  font-size: 0.8rem;
-  line-height: calc(2rem - 2px);
   text-align: left;
-  border: 1px solid ${({ $theme }) => $theme.colors.grey['500']};
-  border-radius: 3px;
-  background: ${({ $theme }) => $theme.colors.white};
   cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-    background: ${({ $theme }) => $theme.colors.grey['100']};
-  }
 `;
 
 const StyledLabel = styled.span`
