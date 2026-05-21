@@ -26,6 +26,8 @@ const theme: PrismTheme = {
 };
 
 const Wrapper = styled.div`
+  min-width: 0;
+  max-width: 100%;
   margin-bottom: 1rem;
   overflow: hidden;
   border: 1px solid #1e293b;
@@ -46,6 +48,7 @@ const Header = styled.div`
 `;
 
 const Pre = styled.pre`
+  max-width: 100%;
   margin: 0;
   padding: 1rem;
   overflow: auto;

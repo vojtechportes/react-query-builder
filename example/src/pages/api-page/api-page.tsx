@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
+import { ContentArticle } from '../../components/content-article';
 import { DocumentationSidebar } from '../../components/documentation-sidebar';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
 import {
@@ -16,24 +17,6 @@ const Layout = styled.div`
 
   @media (max-width: 1080px) {
     grid-template-columns: 1fr;
-  }
-`;
-
-const Article = styled.article`
-  padding: 2rem;
-  border: 1px solid #dbe4f0;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.08);
-
-  > * + * {
-    margin-top: 1rem;
-  }
-
-  > p {
-    margin: 0;
-    color: #334155;
-    line-height: 1.8;
   }
 `;
 
@@ -67,12 +50,12 @@ export const ApiPage: React.FC = () => {
         overviewPage={apiOverviewPage}
         groups={apiGroups}
       />
-      <Article>
+      <ContentArticle>
         <SectionLabel>{page.sectionTitle}</SectionLabel>
         <Title>{page.title}</Title>
         {page.summary ? <Summary>{page.summary}</Summary> : null}
         {page.content}
-      </Article>
+      </ContentArticle>
     </Layout>
   );
 };

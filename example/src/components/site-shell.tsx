@@ -93,6 +93,10 @@ const BrandText = styled.div`
   align-items: baseline;
   gap: 0.4rem;
   line-height: 1;
+
+  @media (max-width: 479px) {
+    display: none;
+  }
 `;
 
 const ReactText = styled.span`
