@@ -209,6 +209,99 @@ const validationSnippet = `const fields: IBuilderFieldProps[] = [
   onChange={setData}
 />;`;
 
+const builderBehaviorSnippet = `<Builder
+  fields={fields}
+  data={data}
+  draggable
+  singleRootGroup={false}
+  groupTypes="both"
+  onChange={setData}
+/>;
+
+// draggable:
+// Enables drag-and-drop for editable rules and groups.
+//
+// singleRootGroup={false}:
+// Allows multiple root-level nodes instead of wrapping everything into one root group.
+//
+// groupTypes="both":
+// Lets users choose between groups with AND/OR/NOT controls and groups without modifiers.`;
+
+const lockingSnippet = `const data: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'STATUS',
+        operator: 'EQUAL',
+        value: 'ACTIVE',
+        readOnly: true,
+      },
+      {
+        type: 'GROUP',
+        value: 'OR',
+        isNegated: false,
+        readOnly: true,
+        children: [
+          {
+            field: 'COUNTRY',
+            operator: 'EQUAL',
+            value: 'CZ',
+          },
+        ],
+      },
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        readOnly: {
+          enabled: true,
+          inheritToChildren: true,
+        },
+        children: [
+          {
+            field: 'IS_VAT_PAYER',
+            operator: 'EQUAL',
+            value: true,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+<Builder fields={fields} data={data} onChange={setData} />;`;
+
+const stringsSnippet = `import { strings } from '@vojtechportes/react-query-builder';
+
+<Builder
+  fields={fields}
+  data={data}
+  strings={{
+    ...strings,
+    group: {
+      ...strings.group,
+      addRule: 'Add filter',
+      addGroup: 'Add condition group',
+    },
+    operators: {
+      ...strings.operators,
+      EQUAL: 'Is exactly',
+      NOT_EQUAL: 'Is not',
+    },
+    validation: {
+      ...strings.validation,
+      required: 'Please provide a value',
+    },
+  }}
+  onChange={setData}
+/>;
+
+// You can override only the keys you need.
+// Unspecified labels fall back to the built-in defaults.`;
+
 const localizationSnippet = `const fields: IBuilderFieldProps[] = [
   {
     field: 'STATE',
@@ -289,6 +382,13 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/api/fields">Fields</TextLink>, and{' '}
           <TextLink to="/api/data">Data</TextLink>.
         </AlertBox>
+        <AlertBox title="Next step" variant="tip">
+          Continue with{' '}
+          <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>{' '}
+          for editing model choices, or{' '}
+          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
+          for partial locking.
+        </AlertBox>
       </>
     ),
   },
@@ -330,6 +430,139 @@ export const documentationPages: IDocumentationPage[] = [
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink> and{' '}
           <TextLink to="/api/fields">Fields</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/builder-behavior',
+    title: 'Builder Behavior',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Documentation for drag-and-drop, root-group behavior, and group mode configuration.',
+    searchText:
+      'builder behavior draggable drag and drop singleRootGroup groupTypes with modifiers without modifiers both root group',
+    content: (
+      <>
+        <p>
+          A few builder props shape the overall editing model more than the
+          field or query data itself. These are worth deciding early because
+          they affect how users add, move, and organize rules.
+        </p>
+        <CodeBlock code={builderBehaviorSnippet} language="tsx" label="Builder behavior" />
+        <SectionTitle>draggable</SectionTitle>
+        <List>
+          <li>Enables drag-and-drop reordering and movement for editable rules and groups.</li>
+          <li>Read-only rules and groups are excluded from dragging.</li>
+          <li>When the entire builder is read-only, drag-and-drop is disabled as well.</li>
+          <li>Empty groups expose a dedicated drop zone so items can be moved into them.</li>
+        </List>
+        <SectionTitle>singleRootGroup</SectionTitle>
+        <List>
+          <li>
+            Defaults to <InlineCode>true</InlineCode>, which means the builder
+            maintains a single root group around the visible tree.
+          </li>
+          <li>
+            The root group cannot be deleted while <InlineCode>singleRootGroup</InlineCode>{' '}
+            is enabled.
+          </li>
+          <li>
+            Set it to <InlineCode>false</InlineCode> when your application
+            wants multiple top-level nodes instead of one wrapped root group.
+          </li>
+        </List>
+        <SectionTitle>groupTypes</SectionTitle>
+        <List>
+          <li>
+            <InlineCode>with-modifiers</InlineCode> shows group controls such as{' '}
+            <InlineCode>AND</InlineCode>, <InlineCode>OR</InlineCode>, and negation.
+          </li>
+          <li>
+            <InlineCode>without-modifiers</InlineCode> creates structural groups
+            that do not render combinator or negation controls.
+          </li>
+          <li>
+            <InlineCode>both</InlineCode> lets users choose which group kind to
+            insert when adding a new group.
+          </li>
+        </List>
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
+          and <TextLink to="/api/builder">Builder</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/locking-and-read-only',
+    title: 'Locking and Read-only',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Documentation for builder-level, rule-level, and group-level read-only behavior, including group inheritance semantics.',
+    searchText:
+      'readOnly locking locked rule group inheritToChildren inheritance read only builder rule group drag delete add controls',
+    content: (
+      <>
+        <p>
+          Locking can be applied at the builder, rule, or group level. The key
+          distinction is that rules lock only themselves, while groups can lock
+          either just their own controls or their entire subtree.
+        </p>
+        <SectionTitle>How each level behaves</SectionTitle>
+        <List>
+          <li>
+            <InlineCode>{'<Builder readOnly />'}</InlineCode> locks the entire
+            builder. No rules or groups remain editable.
+          </li>
+          <li>
+            <InlineCode>rule.readOnly = true</InlineCode> locks only that rule.
+            Siblings and parent groups are unaffected.
+          </li>
+          <li>
+            <InlineCode>group.readOnly = true</InlineCode> locks only that
+            group&apos;s own controls. Its child rules and child groups stay
+            editable by default.
+          </li>
+          <li>
+            <InlineCode>{`group.readOnly = { enabled: true, inheritToChildren: true }`}</InlineCode>{' '}
+            locks the group and all descendant rules and groups.
+          </li>
+        </List>
+        <CodeBlock code={lockingSnippet} language="tsx" label="Locking examples" />
+        <SectionTitle>What &quot;locked&quot; means in the UI</SectionTitle>
+        <List>
+          <li>Locked rules cannot change field, operator, or value, and cannot be deleted.</li>
+          <li>Locked groups cannot change their group operator, negation, add actions, or delete action.</li>
+          <li>Locked rules and groups are removed from drag-and-drop interactions.</li>
+          <li>
+            A locked group without inheritance still renders editable descendants
+            when those descendants are not otherwise locked.
+          </li>
+        </List>
+        <SectionTitle>Inheritance and precedence</SectionTitle>
+        <List>
+          <li>Inheritance only applies to groups, never to rules.</li>
+          <li>
+            <InlineCode>inheritToChildren</InlineCode> has an effect only when{' '}
+            <InlineCode>enabled</InlineCode> is <InlineCode>true</InlineCode>.
+          </li>
+          <li>
+            Once a parent group inherits read-only to descendants, child nodes
+            cannot opt back into editability with <InlineCode>readOnly: false</InlineCode>.
+          </li>
+          <li>
+            Descendants may still add their own local <InlineCode>readOnly</InlineCode>{' '}
+            flags, but they cannot override an inherited lock from an ancestor.
+          </li>
+        </List>
+        <AlertBox title="API reference" variant="info">
+          <TextLink to="/api/builder">Builder</TextLink> and{' '}
+          <TextLink to="/api/data">Data</TextLink>.
         </AlertBox>
       </>
     ),
@@ -456,6 +689,29 @@ export const documentationPages: IDocumentationPage[] = [
           <InlineCode>components</InlineCode> prop.
         </p>
         <CodeBlock code={componentsSnippet} language="tsx" label="Component overrides" />
+        <SectionTitle>Override contracts</SectionTitle>
+        <List>
+          <li>
+            Form controls should behave like controlled inputs. They receive the
+            current value plus change handlers and disabled state.
+          </li>
+          <li>
+            <InlineCode>Rule</InlineCode> and <InlineCode>Group</InlineCode> are
+            layout containers. They receive already-prepared children and
+            control regions rather than raw builder state.
+          </li>
+          <li>
+            <InlineCode>DropZone</InlineCode> and <InlineCode>EmptyGroupDropZone</InlineCode>{' '}
+            are drag-and-drop render hooks. They receive ids, indices, parent
+            ids, drag state, and active state.
+          </li>
+          <li>
+            Button-like overrides such as <InlineCode>Add</InlineCode>,{' '}
+            <InlineCode>Remove</InlineCode>, <InlineCode>Popover</InlineCode>,
+            and <InlineCode>PopoverItem</InlineCode> should preserve click
+            semantics and remain accessible.
+          </li>
+        </List>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/components">Components</TextLink>.
         </AlertBox>
@@ -504,6 +760,21 @@ export const documentationPages: IDocumentationPage[] = [
           <InlineCode>strings</InlineCode>.
         </p>
         <CodeBlock code={localizationSnippet} language="ts" label="Localized fields" />
+        <SectionTitle>Built-in UI strings</SectionTitle>
+        <p>
+          The exported <InlineCode>strings</InlineCode> object can be used as a
+          base for selective overrides of built-in copy.
+        </p>
+        <CodeBlock code={stringsSnippet} language="tsx" label="Custom UI strings" />
+        <List>
+          <li><InlineCode>group</InlineCode> covers labels such as add, delete, and group mode choices.</li>
+          <li><InlineCode>rule</InlineCode> covers rule-level action labels.</li>
+          <li><InlineCode>operators</InlineCode> lets you rename operator captions shown in selectors.</li>
+          <li><InlineCode>validation</InlineCode> customizes built-in validation messages.</li>
+        </List>
+        <AlertBox title="API reference" variant="info">
+          <TextLink to="/api/builder">Builder</TextLink>.
+        </AlertBox>
       </>
     ),
   },
