@@ -377,6 +377,13 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional operator whitelist. When omitted, the builder falls back to the default operators for the field type.</li>
           <li><ItemTitle><InlineCode>validation</InlineCode>:</ItemTitle> Optional validation config. The shape depends on field type.</li>
         </List>
+        <SectionTitle>Type notes</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>BOOLEAN</InlineCode> / <InlineCode>TEXT</InlineCode> / <InlineCode>DATE</InlineCode> / <InlineCode>NUMBER</InlineCode>:</ItemTitle> The standard scalar field families with built-in widget and validation behavior.</li>
+          <li><ItemTitle><InlineCode>LIST</InlineCode> / <InlineCode>MULTI_LIST</InlineCode>:</ItemTitle> Option-backed selectors where <InlineCode>value</InlineCode> holds the option set.</li>
+          <li><ItemTitle><InlineCode>STATEMENT</InlineCode>:</ItemTitle> Advanced field type for free-form statement-like values. Document it carefully in consuming apps because it is less self-explanatory than scalar or list fields.</li>
+          <li><ItemTitle><InlineCode>GROUP</InlineCode>:</ItemTitle> Advanced structural field type intended for specialized query models rather than everyday filter fields.</li>
+        </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
           <TextLink to="/documentation/localization">Localization</TextLink>.
@@ -403,7 +410,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>operator</InlineCode>:</ItemTitle> Optional operator for the rule. Some field and operator combinations imply different value shapes.</li>
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional rule value. Supported scalar/array forms are defined by <InlineCode>QueryRuleValue</InlineCode>.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional rule-level operator override list.</li>
-          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock flag.</li>
+          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock flag. It locks only that rule and does not affect siblings, parents, or descendants.</li>
           <li><ItemTitle><InlineCode>id</InlineCode> and <InlineCode>parent</InlineCode>:</ItemTitle> Optional in denormalized input. The builder can ingest data without them.</li>
         </List>
         <SectionTitle>Group props</SectionTitle>
@@ -413,9 +420,12 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Present only for groups with modifiers and must be <InlineCode>'AND'</InlineCode> or <InlineCode>'OR'</InlineCode>.</li>
           <li><ItemTitle><InlineCode>isNegated</InlineCode>:</ItemTitle> Present only for groups with modifiers.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Can be a boolean or an object with <InlineCode>enabled</InlineCode> and optional <InlineCode>inheritToChildren</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>readOnly: true</InlineCode>:</ItemTitle> Locks only the group&apos;s own controls by default. Descendant rules and groups remain editable unless inheritance is enabled.</li>
+          <li><ItemTitle><InlineCode>inheritToChildren</InlineCode>:</ItemTitle> Applies the group lock to all descendants when the group is enabled. Descendants cannot override an inherited lock from an ancestor.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
-          <TextLink to="/documentation/usage">Usage</TextLink>.
+          <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
+          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>.
         </AlertBox>
       </>
     ),
@@ -442,6 +452,17 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>Text</InlineCode>:</ItemTitle> Replaces the built-in text rendering component.</li>
           <li><ItemTitle><InlineCode>DropZone</InlineCode> and <InlineCode>EmptyGroupDropZone</InlineCode>:</ItemTitle> Replaces drag-and-drop target renderers.</li>
           <li><ItemTitle><InlineCode>Popover</InlineCode> and <InlineCode>PopoverItem</InlineCode>:</ItemTitle> Replaces the popover UI used by group creation mode where relevant.</li>
+        </List>
+        <SectionTitle>Key prop contracts</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>form.Input</InlineCode>:</ItemTitle> Receives <InlineCode>type</InlineCode>, <InlineCode>value</InlineCode>, <InlineCode>onChange(value)</InlineCode>, and optional <InlineCode>disabled</InlineCode>, <InlineCode>id</InlineCode>, and <InlineCode>name</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>form.Select</InlineCode>:</ItemTitle> Receives <InlineCode>values</InlineCode>, <InlineCode>selectedValue</InlineCode>, <InlineCode>emptyValue</InlineCode>, and <InlineCode>onChange(value)</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>form.SelectMulti</InlineCode>:</ItemTitle> Receives <InlineCode>selectedValue</InlineCode>, <InlineCode>values</InlineCode>, <InlineCode>onChange(value)</InlineCode>, and <InlineCode>onDelete(value)</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>form.Switch</InlineCode>:</ItemTitle> Receives <InlineCode>switched</InlineCode>, optional <InlineCode>onChange(value)</InlineCode>, and optional <InlineCode>disabled</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>Rule</InlineCode>:</ItemTitle> Receives already-built <InlineCode>children</InlineCode>, <InlineCode>controls</InlineCode>, and optional <InlineCode>dragHandle</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>Group</InlineCode>:</ItemTitle> Receives <InlineCode>controlsLeft</InlineCode>, <InlineCode>controlsRight</InlineCode>, <InlineCode>children</InlineCode>, and optional overlays or drag handles.</li>
+          <li><ItemTitle><InlineCode>DropZone</InlineCode>:</ItemTitle> Receives <InlineCode>id</InlineCode>, <InlineCode>index</InlineCode>, optional <InlineCode>parentId</InlineCode>, and drag-state flags.</li>
+          <li><ItemTitle><InlineCode>EmptyGroupDropZone</InlineCode>:</ItemTitle> Receives the target group id plus drag-state flags for empty containers.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/components">Components</TextLink>.
@@ -500,9 +521,15 @@ export const apiPages: IApiPage[] = [
         </List>
         <SectionTitle>Shared options</SectionTitle>
         <List>
-          <li><ItemTitle><InlineCode>fields</InlineCode>:</ItemTitle> Supplies <TextLink to="/api/fields">field metadata</TextLink> to the formatter. This is important when formatting values whose output depends on field type or option semantics.</li>
-          <li><ItemTitle><InlineCode>rootlessCombinator</InlineCode>:</ItemTitle> Chooses how root-level items are combined when the query does not have a single explicit root group.</li>
-          <li><ItemTitle><InlineCode>modifierlessGroupCombinator</InlineCode>:</ItemTitle> Chooses how children of modifierless groups are combined.</li>
+          <li><ItemTitle><InlineCode>fields</InlineCode>:</ItemTitle> Supplies <TextLink to="/api/fields">field metadata</TextLink> to the formatter. This is often required when output depends on field type, option labels, or value semantics.</li>
+          <li><ItemTitle><InlineCode>rootlessCombinator</InlineCode>:</ItemTitle> Chooses how root-level items are combined when the query does not have a single explicit root group. This matters most when <InlineCode>singleRootGroup</InlineCode> is disabled.</li>
+          <li><ItemTitle><InlineCode>modifierlessGroupCombinator</InlineCode>:</ItemTitle> Chooses how children of modifierless groups are combined when a group has structure but no embedded AND/OR modifier.</li>
+        </List>
+        <SectionTitle>Behavior notes</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>fields</InlineCode>:</ItemTitle> Treat this as recommended for anything beyond trivial string-only formatting, especially for typed values and list-backed fields.</li>
+          <li><ItemTitle><InlineCode>rootlessCombinator</InlineCode>:</ItemTitle> If your tree has multiple top-level nodes, this decides whether the exported expression joins them with <InlineCode>AND</InlineCode> or <InlineCode>OR</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>modifierlessGroupCombinator</InlineCode>:</ItemTitle> Use this when your UI allows groups without modifiers and your target syntax still needs a combinator in serialized output.</li>
         </List>
         <SectionTitle>Format-specific options</SectionTitle>
         <List>
