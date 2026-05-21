@@ -2,19 +2,25 @@ import React, { FC, useCallback } from 'react';
 import styled from 'styled-components';
 import { IThemeProps } from '../theme-provider/theme-provider';
 import { useTheme } from '../theme-provider/hooks/use-theme';
+import {
+  inputControlStyles,
+  inputTypographyStyles,
+} from '../styles/input.styles';
 
 const StyledInput = styled.input<{ $theme: Required<IThemeProps> }>`
-  box-sizing: border-box;
-  appearance: none;
+  ${inputControlStyles}
   -moz-appearance: textfield;
-  min-width: 160px;
-  height: 2rem;
   padding: 0 0.6rem;
-  color: ${({ $theme }) => $theme.colors.grey['800']};
-  font-size: 0.8rem;
-  line-height: calc(2rem - 2px);
-  border: 1px solid ${({ $theme }) => $theme.colors.grey['500']};
-  border-radius: 3px;
+
+  &::-webkit-date-and-time-value,
+  &::-webkit-datetime-edit,
+  &::-webkit-datetime-edit-fields-wrapper,
+  &::-webkit-datetime-edit-text,
+  &::-webkit-datetime-edit-month-field,
+  &::-webkit-datetime-edit-day-field,
+  &::-webkit-datetime-edit-year-field {
+    ${inputTypographyStyles}
+  }
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
