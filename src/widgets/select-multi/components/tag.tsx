@@ -9,6 +9,8 @@ const StyledTag = styled.span<{
 }>`
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
   gap: 0.35rem;
   padding: ${({ $hasRemoveButton }) =>
     $hasRemoveButton ? '0.2rem 0.3rem 0.2rem 0.55rem' : '0.2rem 0.55rem'};
@@ -20,7 +22,11 @@ const StyledTag = styled.span<{
 `;
 
 const StyledLabel = styled.span`
+  min-width: 0;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledRemoveButton = styled.button<{ $theme: Required<IThemeProps> }>`

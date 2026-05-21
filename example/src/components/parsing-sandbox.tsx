@@ -98,7 +98,6 @@ const BuilderScrollArea = styled.div`
 
 const BuilderViewport = styled.div`
   display: inline-block;
-  min-width: 920px;
   font-family: Arial, sans-serif;
   font-size: 16px;
   line-height: normal;

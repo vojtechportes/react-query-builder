@@ -9,6 +9,8 @@ import { Popover } from './popover';
 const Container = styled.div`
   position: relative;
   display: inline-block;
+  width: var(--query-builder-control-width, 160px);
+  min-width: var(--query-builder-control-min-width, 160px);
   max-width: 100%;
 `;
 

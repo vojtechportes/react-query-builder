@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import { compactBuilderMedia } from '../styles/responsive.styles';
 import { useTheme } from '../theme-provider/hooks/use-theme';
 import { IThemeProps } from '../theme-provider/theme-provider';
 
@@ -25,9 +26,14 @@ const Body = styled.div`
 const GroupHeader = styled.div<{ $theme: Required<IThemeProps> }>`
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) auto;
   padding: 0 0 0.5rem;
   border-bottom: 1px solid ${({ $theme }) => $theme.colors.grey['200']};
+
+  ${compactBuilderMedia`
+    grid-template-columns: minmax(0, 1fr);
+    grid-gap: 0.75rem;
+  `}
 `;
 
 const Left = styled.div`
@@ -61,6 +67,12 @@ const Right = styled.div`
   grid-auto-flow: column;
   grid-gap: 0.5rem;
   justify-self: end;
+
+  ${compactBuilderMedia`
+    justify-self: start;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, minmax(0, max-content));
+  `}
 `;
 
 export interface IGroupProps {

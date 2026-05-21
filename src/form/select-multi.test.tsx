@@ -2,7 +2,10 @@ import { SelectMulti } from './select-multi';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 
-const mockValues = [{ value: 'test', label: 'test' }];
+const mockValues = [
+  { value: 'test', label: 'test' },
+  { value: 'another', label: 'another' },
+];
 
 describe('#components/SelectMulti', () => {
   it('Tests Snapshot', () => {
@@ -39,27 +42,31 @@ describe('#components/SelectMulti', () => {
     const option = wrapper.find('[data-test="SelectMultiOption[test]"]').first();
     option.simulate('click');
 
-    const remove = wrapper.find('[data-test="Delete"]').first();
-    remove.simulate('click');
+    const secondOption = wrapper.find('[data-test="SelectMultiOption[another]"]').first();
+    secondOption.simulate('click');
 
-    expect(onChange).toBeCalledTimes(0);
-    expect(onDelete).toBeCalledTimes(2);
+    expect(onChange).toBeCalledTimes(1);
+    expect(onDelete).toBeCalledTimes(1);
   });
 
-  it('Does not render remove buttons when disabled', () => {
+  it('Shows summary badge for hidden values', () => {
     const wrapper = mount(
       <SelectMulti
-        disabled
+        disabled={false}
         onChange={jest.fn()}
         onDelete={jest.fn()}
-        selectedValue={['test']}
-        values={mockValues}
+        selectedValue={['test', 'another', 'third', 'fourth']}
+        values={[
+          { value: 'test', label: 'Retail' },
+          { value: 'another', label: 'Priority' },
+          { value: 'third', label: 'Enterprise' },
+          { value: 'fourth', label: 'Wholesale' },
+        ]}
       />
     );
 
-    const tags = wrapper.find('[data-test="SelectMultiTag"]').hostNodes();
-
-    expect(tags).toHaveLength(1);
-    expect(tags.find('[data-test="Delete"]')).toHaveLength(0);
+    expect(
+      wrapper.find('[data-test="SelectMultiSummaryBadge"]').first().text()
+    ).toEqual('+1');
   });
 });

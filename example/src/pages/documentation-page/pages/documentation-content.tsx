@@ -655,7 +655,7 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation for replacing built-in builder controls and containers with custom components.',
     searchText:
-      'Components component overrides custom controls custom renderers builder customization add remove select input group rule',
+      'Components component overrides custom controls custom renderers builder customization add remove select input group rule responsive responsiveness compact layout multiselect summary',
     content: (
       <>
         <p>
@@ -684,6 +684,26 @@ export const documentationPages: IDocumentationPage[] = [
             <InlineCode>Remove</InlineCode>, <InlineCode>Popover</InlineCode>,
             and <InlineCode>PopoverItem</InlineCode> should preserve click
             semantics and remain accessible.
+          </li>
+        </List>
+        <SectionTitle>Responsive behavior</SectionTitle>
+        <List>
+          <li>
+            The built-in <InlineCode>Rule</InlineCode> and <InlineCode>Group</InlineCode>{' '}
+            components include a compact responsive layout for medium-width screens.
+          </li>
+          <li>
+            Multi-select controls use a summarized closed state so selected
+            values do not overflow the available rule width.
+          </li>
+          <li>
+            Responsive behavior is automatic when you use the default
+            components.
+          </li>
+          <li>
+            If you replace <InlineCode>components.Rule</InlineCode> or{' '}
+            <InlineCode>components.Group</InlineCode>, your custom layout is
+            responsible for its own responsive behavior.
           </li>
         </List>
         <AlertBox title="API reference" variant="info">

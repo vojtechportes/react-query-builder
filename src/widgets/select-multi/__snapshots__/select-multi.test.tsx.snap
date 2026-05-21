@@ -7,8 +7,20 @@ exports[`#components/Widgets/SelectMulti Tests Snapshot 1`] = `
   values={
     [
       {
-        "label": "test",
+        "label": "Retail",
         "value": "test",
+      },
+      {
+        "label": "Priority",
+        "value": "another",
+      },
+      {
+        "label": "Enterprise",
+        "value": "third",
+      },
+      {
+        "label": "Wholesale",
+        "value": "fourth",
       },
     ]
   }
@@ -22,8 +34,20 @@ exports[`#components/Widgets/SelectMulti Tests Snapshot 2`] = `
   values={
     [
       {
-        "label": "test",
+        "label": "Retail",
         "value": "test",
+      },
+      {
+        "label": "Priority",
+        "value": "another",
+      },
+      {
+        "label": "Enterprise",
+        "value": "third",
+      },
+      {
+        "label": "Wholesale",
+        "value": "fourth",
       },
     ]
   }
