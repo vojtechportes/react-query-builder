@@ -4,9 +4,10 @@ import { IThemeProps } from './theme-provider/theme-provider';
 import { useTheme } from './theme-provider/hooks/use-theme';
 
 const StyledButton = styled.button<{ $theme: Required<IThemeProps> }>`
-  padding: 0.6rem 1.2rem;
+  padding: 0.5rem 1.2rem;
   color: ${({ $theme }) => $theme.colors.primary.contrastText};
   font-size: 0.7rem;
+  min-height: 2rem;
   white-space: nowrap;
   text-transform: uppercase;
   background-color: ${({ $theme }) => $theme.colors.primary.default};

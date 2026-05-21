@@ -7,6 +7,7 @@ export type {
   BuilderFieldValue,
   BuilderGroupMode,
   BuilderGroupValues,
+  BuilderLockState,
   IBooleanFieldProps,
   IBooleanFieldValidation,
   IBuilderComponentsProps,
@@ -73,6 +74,8 @@ export type { ISwitchProps } from './form/switch';
 
 export { Button } from './button';
 export type { IButtonProps } from './button';
+export { LockToggle } from './lock-toggle';
+export type { ILockToggleProps } from './lock-toggle';
 
 export { SecondaryButton } from './secondary-button';
 export { Popover } from './popover';

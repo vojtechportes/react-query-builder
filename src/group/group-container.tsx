@@ -93,6 +93,9 @@ export const Group: FC<IGroupProps> = ({
   contentOverlay,
 }) => {
   const theme = useTheme();
+  const hasControlsLeft = React.Children.toArray(controlsLeft).length > 0;
+  const hasControlsRight = React.Children.toArray(controlsRight).length > 0;
+  const hasHeader = hasControlsLeft || hasControlsRight;
 
   return (
     <StyledGroup
@@ -102,10 +105,12 @@ export const Group: FC<IGroupProps> = ({
     >
       {dragHandle}
       <Body>
-        <GroupHeader $theme={theme}>
-          <Left>{controlsLeft}</Left>
-          <Right>{controlsRight}</Right>
-        </GroupHeader>
+        {hasHeader ? (
+          <GroupHeader $theme={theme}>
+            {hasControlsLeft ? <Left>{controlsLeft}</Left> : null}
+            {hasControlsRight ? <Right>{controlsRight}</Right> : null}
+          </GroupHeader>
+        ) : null}
         {contentOverlay}
         {children}
       </Body>

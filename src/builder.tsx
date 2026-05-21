@@ -39,6 +39,7 @@ import { IGroupProps as IGroupContainerProps } from './group/group-container';
 import { Option as GroupHeaderOption } from './group/option';
 import { IOptionProps as IGroupHeaderOptionProps } from './group/option';
 import { Iterator } from './iterator';
+import { LockToggle, ILockToggleProps } from './lock-toggle';
 import { Popover, IPopoverProps } from './popover';
 import { PopoverItem, IPopoverItemProps } from './popover-item';
 import { SecondaryButton } from './secondary-button';
@@ -60,6 +61,7 @@ import {
   QueryGroupValue,
   QueryOperator,
 } from './utils/query-tree';
+import { BuilderLockState } from './utils/lock-state';
 import { IThemeProps } from './theme-provider/theme-provider';
 import { useTheme } from './theme-provider/hooks/use-theme';
 
@@ -100,6 +102,7 @@ export type BuilderFieldType =
 export type BuilderFieldOperator = QueryOperator;
 
 export type BuilderGroupValues = QueryGroupValue;
+export type { BuilderLockState };
 
 export type BuilderFieldValue =
   | string
@@ -353,6 +356,7 @@ export interface IBuilderComponentsProps {
   };
   Remove?: React.ComponentType<IButtonProps>;
   Add?: React.ComponentType<IButtonProps>;
+  LockToggle?: React.ComponentType<ILockToggleProps>;
   Rule?: React.ComponentType<IRuleContainerProps>;
   Group?: React.ComponentType<IGroupContainerProps>;
   GroupHeaderOption?: React.ComponentType<IGroupHeaderOptionProps>;
@@ -372,6 +376,7 @@ export interface IResolvedBuilderComponentsProps {
   };
   Remove: React.ComponentType<IButtonProps>;
   Add: React.ComponentType<IButtonProps>;
+  LockToggle: React.ComponentType<ILockToggleProps>;
   Rule: React.ComponentType<IRuleContainerProps>;
   Group: React.ComponentType<IGroupContainerProps>;
   GroupHeaderOption: React.ComponentType<IGroupHeaderOptionProps>;
@@ -388,6 +393,7 @@ export interface IBuilderProps {
   components?: IBuilderComponentsProps;
   strings?: IStrings;
   readOnly?: boolean;
+  lockable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
@@ -406,6 +412,7 @@ export const defaultComponents: IResolvedBuilderComponentsProps = {
   },
   Remove: SecondaryButton,
   Add: Button,
+  LockToggle,
   Rule,
   Group,
   GroupHeaderOption,
@@ -422,6 +429,7 @@ export const Builder: FC<IBuilderProps> = ({
   components = defaultComponents,
   strings = defaultStrings,
   readOnly = false,
+  lockable = false,
   draggable = false,
   singleRootGroup = true,
   groupTypes = 'with-modifiers',
@@ -806,6 +814,7 @@ export const Builder: FC<IBuilderProps> = ({
       components={components}
       strings={strings}
       readOnly={readOnly}
+      lockable={lockable}
       draggable={draggable}
       singleRootGroup={singleRootGroup}
       groupTypes={groupTypes}

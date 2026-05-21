@@ -1,7 +1,8 @@
 import React, { FC, useCallback, useContext } from 'react';
 import styled from 'styled-components';
-import { BuilderFieldOperator } from '../builder';
+import { BuilderFieldOperator, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
+import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Rule as DefaultRuleContainer } from './rule-container';
 import { SecondaryButton } from '../secondary-button';
 import { compactBuilderMedia } from '../styles/responsive.styles';
@@ -21,8 +22,10 @@ import { isStringArray } from '../utils/is-string-array.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
+import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { QueryRuleValue } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
+import { updateItem } from '../utils/update-item.util';
 
 const BooleanContainer = styled.div`
   display: flex;
@@ -69,6 +72,8 @@ export interface IRuleProps {
   operator?: BuilderFieldOperator;
   id: string;
   readOnly?: boolean;
+  lockState?: BuilderLockState;
+  lockDisabled?: boolean;
   dragHandle?: React.ReactNode;
   'data-test'?: string;
 }
@@ -79,6 +84,8 @@ export const Rule: FC<IRuleProps> = ({
   operator,
   id,
   readOnly: localReadOnly = false,
+  lockState = localReadOnly ? 'self' : 'unlocked',
+  lockDisabled = false,
   dragHandle,
   'data-test': dataTest,
 }) => {
@@ -91,11 +98,13 @@ export const Rule: FC<IRuleProps> = ({
     components,
     strings,
     readOnly,
+    lockable,
     validation,
     showValidation,
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const RuleContainer = components.Rule || DefaultRuleContainer;
+  const LockToggle = components.LockToggle || DefaultLockToggle;
   const Remove = components.Remove || SecondaryButton;
   const validationIssues =
     showValidation && validation?.issuesByRuleId[id]
@@ -112,17 +121,56 @@ export const Rule: FC<IRuleProps> = ({
     );
   }, [data, id, onChange, setData, updateData]);
 
+  const handleChangeLockState = useCallback(
+    (nextState: BuilderLockState) => {
+      applyDataUpdate(
+        data,
+        setData,
+        onChange,
+        currentData =>
+          updateItem(currentData, id, item => {
+            if (!isNormalizedGroupNode(item)) {
+              if (nextState === 'self') {
+                item.readOnly = true;
+              } else {
+                delete item.readOnly;
+              }
+            }
+          }),
+        updateData
+      );
+    },
+    [data, id, onChange, setData, updateData]
+  );
+
+  const lockControl =
+    lockable && !readOnly ? (
+      <LockToggle
+        state={lockState}
+        nodeType="rule"
+        disabled={lockDisabled}
+        onChange={handleChangeLockState}
+        data-test="LockToggle[rule]"
+      />
+    ) : null;
+
   if (!fields || !strings.rule) {
     return null;
   }
+
+  const controls =
+    !isReadOnly || lockControl ? (
+      <>
+        {!isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>}
+        {lockControl}
+      </>
+    ) : null;
 
   if (typeof fieldRef !== 'string' || fieldRef.trim() === '') {
     return (
       <RuleContainer
         dragHandle={dragHandle}
-        controls={
-          !isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
-        }
+        controls={controls}
         data-test={dataTest}
       >
         <div>
@@ -159,9 +207,7 @@ export const Rule: FC<IRuleProps> = ({
     return (
       <RuleContainer
         dragHandle={dragHandle}
-        controls={
-          !isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
-        }
+        controls={controls}
         data-test={dataTest}
       >
         <div>

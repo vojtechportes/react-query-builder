@@ -116,6 +116,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [data, setData] = React.useState<DenormalizedQuery>(initialData);
   const [outputFormat, setOutputFormat] = React.useState<OutputFormat>('Native');
   const [readOnly, setReadOnly] = React.useState(false);
+  const [lockable, setLockable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidation, setShowValidation] = React.useState(true);
@@ -144,6 +145,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               onChange={event => setReadOnly(event.target.checked)}
             />
             <span>Read-only mode</span>
+          </ToggleRow>
+
+          <ToggleRow>
+            <Toggle
+              type="checkbox"
+              checked={lockable}
+              onChange={event => setLockable(event.target.checked)}
+            />
+            <span>Lock controls</span>
           </ToggleRow>
 
           <ToggleRow>
@@ -187,6 +197,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 data={data}
                 fields={demoFields}
                 readOnly={readOnly}
+                lockable={lockable}
                 onChange={setData}
                 draggable={draggable}
                 groupTypes="both"

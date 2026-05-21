@@ -11,7 +11,8 @@ export interface IStyledOptionProps {
 
 const StyledOption = styled.div<IStyledOptionProps>`
   padding: 0.5rem 0.6rem;
-  color: #fff;
+  color: ${({ $theme }) => $theme.colors.primary.contrastText};
+  min-height: 2rem;
   font-weight: bold;
   font-size: 0.7rem;
   text-transform: uppercase;

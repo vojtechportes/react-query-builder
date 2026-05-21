@@ -59,6 +59,12 @@ const initialData: DenormalizedQuery = [
     isNegated: false,
     children: [
       {
+        field: 'STATE',
+        operator: 'EQUAL',
+        value: 'CZ',
+        readOnly: true,
+      },
+      {
         field: 'IS_IN_EU',
         operator: 'EQUAL',
         value: true,
@@ -186,12 +192,17 @@ const validationSnippet = `const fields: IBuilderFieldProps[] = [
 const builderBehaviorSnippet = `<Builder
   fields={fields}
   data={data}
+  lockable
   draggable
   singleRootGroup={false}
   groupTypes="both"
   onChange={setData}
 />;
 
+// lockable:
+// Renders built-in lock controls for rules and groups and writes the resulting
+// lock state back into the emitted query via rule/group readOnly values.
+//
 // draggable:
 // Enables drag-and-drop for editable rules and groups.
 //
@@ -247,6 +258,42 @@ const lockingSnippet = `const data: DenormalizedQuery = [
 ];
 
 <Builder fields={fields} data={data} onChange={setData} />;`;
+
+const lockingGuiSnippet = `<Builder
+  fields={fields}
+  data={data}
+  lockable
+  onChange={setData}
+/>;
+
+// Rules cycle through:
+// unlocked -> locked
+//
+// Groups cycle through:
+// unlocked -> locked group only -> locked group and descendants
+//
+// The emitted query stores those states in readOnly:
+// rule: readOnly: true
+// group: readOnly: true
+// group + descendants: readOnly: { enabled: true, inheritToChildren: true }`;
+
+const lockToggleSnippet = `const components = {
+  LockToggle: MyLockToggle,
+};
+
+<Builder
+  fields={fields}
+  data={data}
+  lockable
+  components={components}
+  onChange={setData}
+/>;
+
+// LockToggle receives:
+// state: 'unlocked' | 'self' | 'all'
+// nodeType: 'rule' | 'group'
+// disabled?: boolean
+// onChange?: (nextState) => void`;
 
 const stringsSnippet = `import { strings } from '@vojtechportes/react-query-builder';
 
@@ -351,6 +398,11 @@ export const documentationPages: IDocumentationPage[] = [
       <>
         <p>Basic controlled usage.</p>
         <CodeBlock code={basicUsageSnippet} language="tsx" label="Basic setup" />
+        <p>
+          The example includes a single rule with <InlineCode>readOnly: true</InlineCode>{' '}
+          to show that locking can live directly in the query data without changing
+          the rest of the builder configuration.
+        </p>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink>,{' '}
           <TextLink to="/api/fields">Fields</TextLink>, and{' '}
@@ -428,6 +480,7 @@ export const documentationPages: IDocumentationPage[] = [
         <CodeBlock code={builderBehaviorSnippet} language="tsx" label="Builder behavior" />
         <SectionTitle>draggable</SectionTitle>
         <List>
+          <li>Use <InlineCode>lockable</InlineCode> to expose lock controls directly in the UI.</li>
           <li>Enables drag-and-drop reordering and movement for editable rules and groups.</li>
           <li>Read-only rules and groups are excluded from dragging.</li>
           <li>When the entire builder is read-only, drag-and-drop is disabled as well.</li>
@@ -487,6 +540,20 @@ export const documentationPages: IDocumentationPage[] = [
           distinction is that rules lock only themselves, while groups can lock
           either just their own controls or their entire subtree.
         </p>
+        <SectionTitle>GUI Locking</SectionTitle>
+        <p>
+          Set <InlineCode>lockable</InlineCode> on <TextLink to="/api/builder">Builder</TextLink>{' '}
+          to render lock controls directly in the UI. The built-in controls update
+          the same <InlineCode>readOnly</InlineCode> fields that are already part of
+          the query data model, so the resulting lock state is preserved in output.
+        </p>
+        <CodeBlock code={lockingGuiSnippet} language="tsx" label="GUI locking" />
+        <List>
+          <li>Rules cycle through two states: unlocked and locked.</li>
+          <li>Groups cycle through three states: unlocked, locked group only, and locked group with descendants.</li>
+          <li>The default group cycle maps to <InlineCode>false</InlineCode>, <InlineCode>true</InlineCode>, and <InlineCode>{`{ enabled: true, inheritToChildren: true }`}</InlineCode>.</li>
+          <li>When a parent group inherits a lock to descendants, child lock controls render disabled because descendants cannot override that inherited state.</li>
+        </List>
         <SectionTitle>How each level behaves</SectionTitle>
         <List>
           <li>
@@ -508,6 +575,12 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <CodeBlock code={lockingSnippet} language="tsx" label="Locking examples" />
+        <SectionTitle>Custom Lock Control</SectionTitle>
+        <p>
+          The default lock button can be replaced through{' '}
+          <InlineCode>components.LockToggle</InlineCode>.
+        </p>
+        <CodeBlock code={lockToggleSnippet} language="tsx" label="LockToggle override" />
         <SectionTitle>What &quot;locked&quot; means in the UI</SectionTitle>
         <List>
           <li>Locked rules cannot change field, operator, or value, and cannot be deleted.</li>
