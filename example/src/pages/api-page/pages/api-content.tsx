@@ -1,78 +1,13 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { AlertBox } from '../../../components/alert-box';
 import { CodeBlock } from '../../../components/code-block';
-import { siteTheme } from '../../../constants/site-theme';
-
-const TextLink = styled(Link)`
-  color: ${siteTheme.primary};
-  font-weight: 600;
-`;
-
-const List = styled.ul`
-  margin: 0 0 1rem;
-  padding-left: 1.2rem;
-  line-height: 1.7;
-
-  li::marker {
-    color: ${siteTheme.marker};
-    font-size: 0.8em;
-  }
-
-  li + li {
-    margin-top: 0.65rem;
-  }
-`;
-
-const SectionTitle = styled.h2`
-  margin: 0 0 0.75rem;
-  font-size: 1.15rem;
-`;
-
-const ItemTitleText = styled.span`
-  display: inline;
-  font-weight: 400;
-
-  &::after {
-    content: ' - ';
-    color: #64748b;
-  }
-`;
-
-const InlineCode = styled.code`
-  padding: 0.16rem 0.45rem;
-  margin-right: 0.2rem;
-  border: 1px solid #dbe4f0;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: ${siteTheme.primaryDark};
-  font-size: 0.92em;
-  font-weight: 400;
-`;
-
-const trimTrailingColon = (value: React.ReactNode): React.ReactNode => {
-  if (typeof value === 'string') {
-    return value.replace(/:\s*$/, '');
-  }
-
-  if (Array.isArray(value)) {
-    const items = [...value];
-    const lastIndex = items.length - 1;
-
-    if (lastIndex >= 0) {
-      items[lastIndex] = trimTrailingColon(items[lastIndex]);
-    }
-
-    return items;
-  }
-
-  return value;
-};
-
-const ItemTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ItemTitleText>{trimTrailingColon(children)}</ItemTitleText>
-);
+import {
+  InlineCode,
+  ItemTitle,
+  List,
+  SectionTitle,
+  TextLink,
+} from '../../../components/docs-primitives';
 
 const builderSignature = `export interface IBuilderProps {
   fields: IBuilderFieldProps[];

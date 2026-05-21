@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useSiteSearch } from '../hooks/use-site-search';
-import { SearchIcon } from './icons';
+import { CloseIcon, SearchIcon } from './icons';
 
 const Root = styled.div`
   position: relative;
@@ -13,8 +13,8 @@ const Root = styled.div`
     width: 250px;
   }
 
-  @media (max-width: 980px) {
-    width: min(100%, 320px);
+  @media (max-width: 1079px) {
+    width: 100%;
   }
 `;
 
@@ -35,11 +35,41 @@ const SearchIconWrap = styled.span`
 
 const Input = styled.input`
   width: 100%;
-  padding: 0.78rem 1rem 0.78rem 2.5rem;
+  padding: 0.78rem 2.6rem 0.78rem 2.5rem;
   border: 1px solid #dbe4f0;
   border-radius: 999px;
   background: #fff;
   color: #0f172a;
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+`;
+
+const ClearButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transform: translateY(-50%);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const Results = styled.div`
@@ -82,11 +112,34 @@ const ResultSummary = styled.div`
 
 export const HeaderSearch: React.FC = () => {
   const [query, setQuery] = React.useState('');
+  const [isOpen, setIsOpen] = React.useState(false);
   const navigate = useNavigate();
   const results = useSiteSearch(query);
+  const rootRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (
+        rootRef.current &&
+        event.target instanceof Node &&
+        !rootRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+    };
+  }, []);
+
+  const hasQuery = query.trim().length > 0;
+  const shouldShowResults = isOpen && hasQuery && results.length > 0;
 
   return (
-    <Root>
+    <Root ref={rootRef}>
       <SearchIconWrap>
         <SearchIcon />
       </SearchIconWrap>
@@ -94,16 +147,38 @@ export const HeaderSearch: React.FC = () => {
         type="search"
         placeholder="Search docs and pages"
         value={query}
-        onChange={event => setQuery(event.target.value)}
+        onFocus={() => {
+          if (query.trim()) {
+            setIsOpen(true);
+          }
+        }}
+        onChange={event => {
+          const nextValue = event.target.value;
+          setQuery(nextValue);
+          setIsOpen(Boolean(nextValue.trim()));
+        }}
       />
+      {hasQuery ? (
+        <ClearButton
+          type="button"
+          aria-label="Clear search"
+          onClick={() => {
+            setQuery('');
+            setIsOpen(false);
+          }}
+        >
+          <CloseIcon />
+        </ClearButton>
+      ) : null}
 
-      {query.trim() && results.length > 0 ? (
+      {shouldShowResults ? (
         <Results>
           {results.slice(0, 6).map(result => (
             <ResultButton
               key={result.id}
               onClick={() => {
                 setQuery('');
+                setIsOpen(false);
                 navigate(result.path);
               }}
             >

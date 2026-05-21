@@ -1,38 +1,12 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { AlertBox } from '../../../components/alert-box';
 import { CodeBlock } from '../../../components/code-block';
-import { siteTheme } from '../../../constants/site-theme';
-
-const TextLink = styled(Link)`
-  color: ${siteTheme.primary};
-  font-weight: 600;
-`;
-
-const List = styled.ul`
-  margin: 0;
-  margin-bottom: 1rem;
-  padding-left: 1.2rem;
-  line-height: 1.7;
-
-  li + li {
-    margin-top: 0.55rem;
-  }
-`;
-
-const SectionTitle = styled.h2`
-  margin: 0 0 0.75rem;
-  font-size: 1.15rem;
-`;
-
-const InlineCode = styled.code`
-  padding: 0.14rem 0.32rem;
-  border-radius: 16px;
-  background: ${siteTheme.primarySurface};
-  color: ${siteTheme.primaryDark};
-  font-size: 0.92em;
-`;
+import {
+  InlineCode,
+  List,
+  SectionTitle,
+  TextLink,
+} from '../../../components/docs-primitives';
 
 export interface IDocumentationPage {
   path: string;
