@@ -1,12 +1,26 @@
 import React, { FC, useContext } from 'react';
+import styled from 'styled-components';
 import { BuilderContext } from '../builder-context';
 import { Input as DefaultInput } from '../form/input';
+import { compactBuilderMedia } from '../styles/responsive.styles';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { coerceNumberInputValue } from '../utils/coerce-number-input-value.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
 import { updateItem } from '../utils/update-item.util';
+
+const RangeInputs = styled.div`
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 0.5rem;
+  width: 100%;
+
+  ${compactBuilderMedia`
+    grid-auto-flow: row;
+  `}
+`;
 
 export interface IInputProps {
   value: string | number | Array<string | number>;
@@ -58,7 +72,7 @@ export const Input: FC<IInputProps> = ({
 
   if (isStringOrNumberArray(value)) {
     return (
-      <>
+      <RangeInputs>
         <InputComponent
           id={`query-builder-rule-${id}-value-start`}
           name={`query-builder-rule-${id}-value-start`}
@@ -75,7 +89,7 @@ export const Input: FC<IInputProps> = ({
           onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
           disabled={readOnly || disabled}
         />
-      </>
+      </RangeInputs>
     );
   }
 

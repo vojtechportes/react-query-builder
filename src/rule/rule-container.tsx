@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import { compactBuilderMedia } from '../styles/responsive.styles';
 import { IThemeProps } from '../theme-provider/theme-provider';
 import { useTheme } from '../theme-provider/hooks/use-theme';
 
@@ -18,9 +19,7 @@ const StyledRule = styled.div<{
 
 const Content = styled.div`
   display: grid;
-  grid-auto-columns: min-content;
-  grid-auto-flow: column;
-  grid-gap: 0.5rem;
+  min-width: 0;
   padding: 0.7rem 0 0.7rem 0.7rem;
 `;
 
@@ -29,9 +28,13 @@ const Controls = styled.div`
   grid-auto-columns: min-content;
   grid-auto-flow: column;
   grid-gap: 0.5rem;
-  align-self: center;
+  align-self: start;
   justify-self: flex-end;
   padding: 0.7rem;
+
+  ${compactBuilderMedia`
+    padding-left: 0.5rem;
+  `}
 `;
 
 export interface IRuleProps {

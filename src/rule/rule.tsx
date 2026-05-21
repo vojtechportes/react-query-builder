@@ -4,6 +4,7 @@ import { BuilderFieldOperator } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Rule as DefaultRuleContainer } from './rule-container';
 import { SecondaryButton } from '../secondary-button';
+import { compactBuilderMedia } from '../styles/responsive.styles';
 import { Boolean } from '../widgets/boolean';
 import { FieldSelect } from '../widgets/field-select';
 import { Input } from '../widgets/input';
@@ -24,14 +25,35 @@ import { QueryRuleValue } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
 
 const BooleanContainer = styled.div`
-  align-self: center;
+  display: flex;
+  align-items: center;
+  min-height: 2rem;
 `;
 
 const FieldsContent = styled.div`
   display: grid;
-  grid-auto-columns: min-content;
-  grid-auto-flow: column;
   grid-gap: 0.5rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.4fr);
+  align-items: start;
+  width: 100%;
+  --query-builder-control-width: 100%;
+  --query-builder-control-min-width: 0px;
+
+  ${compactBuilderMedia`
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  `}
+`;
+
+const LayoutItem = styled.div`
+  min-width: 0;
+`;
+
+const ValueContent = styled(LayoutItem)`
+  min-width: 0;
+
+  ${compactBuilderMedia`
+    grid-column: 1 / -1;
+  `}
 `;
 
 const ValidationIssues = styled.ul`
@@ -105,7 +127,9 @@ export const Rule: FC<IRuleProps> = ({
       >
         <div>
           <FieldsContent>
-            <FieldSelect selectedValue="" id={id} disabled={isReadOnly} />
+            <LayoutItem>
+              <FieldSelect selectedValue="" id={id} disabled={isReadOnly} />
+            </LayoutItem>
           </FieldsContent>
           {validationIssues.length > 0 && (
             <ValidationIssues>
@@ -142,26 +166,32 @@ export const Rule: FC<IRuleProps> = ({
       >
         <div>
           <FieldsContent>
-            <FieldSelect selectedValue={field} id={id} disabled={isReadOnly} />
+            <LayoutItem>
+              <FieldSelect selectedValue={field} id={id} disabled={isReadOnly} />
+            </LayoutItem>
 
             {type === 'BOOLEAN' && (
               <>
                 {isOptionList(operatorsOptionList) && (
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isReadOnly}
-                  />
-                )}
-                {shouldRenderValueInput && isBoolean(selectedValue) && (
-                  <BooleanContainer>
-                    <Boolean
+                  <LayoutItem>
+                    <OperatorSelect
                       id={id}
-                      selectedValue={selectedValue}
+                      values={operatorsOptionList}
+                      selectedValue={operator}
                       disabled={isReadOnly}
                     />
-                  </BooleanContainer>
+                  </LayoutItem>
+                )}
+                {shouldRenderValueInput && isBoolean(selectedValue) && (
+                  <ValueContent>
+                    <BooleanContainer>
+                      <Boolean
+                        id={id}
+                        selectedValue={selectedValue}
+                        disabled={isReadOnly}
+                      />
+                    </BooleanContainer>
+                  </ValueContent>
                 )}
               </>
             )}
@@ -170,21 +200,25 @@ export const Rule: FC<IRuleProps> = ({
               isOptionList(fieldValue) &&
               isOptionList(operatorsOptionList) && (
                 <>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isReadOnly}
-                  />
+                  <LayoutItem>
+                    <OperatorSelect
+                      id={id}
+                      values={operatorsOptionList}
+                      selectedValue={operator}
+                      disabled={isReadOnly}
+                    />
+                  </LayoutItem>
                   {operator &&
                     shouldRenderValueInput &&
                     isString(selectedValue) && (
-                      <Select
-                        id={id}
-                        selectedValue={selectedValue}
-                        values={fieldValue}
-                        disabled={isReadOnly}
-                      />
+                      <ValueContent>
+                        <Select
+                          id={id}
+                          selectedValue={selectedValue}
+                          values={fieldValue}
+                          disabled={isReadOnly}
+                        />
+                      </ValueContent>
                     )}
                 </>
               )}
@@ -193,87 +227,103 @@ export const Rule: FC<IRuleProps> = ({
               isOptionList(fieldValue) &&
               isOptionList(operatorsOptionList) && (
                 <>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isReadOnly}
-                  />
+                  <LayoutItem>
+                    <OperatorSelect
+                      id={id}
+                      values={operatorsOptionList}
+                      selectedValue={operator}
+                      disabled={isReadOnly}
+                    />
+                  </LayoutItem>
                   {operator &&
                     shouldRenderValueInput &&
                     isStringArray(selectedValue) && (
-                      <SelectMulti
-                        id={id}
-                        values={fieldValue}
-                        selectedValue={selectedValue}
-                        disabled={isReadOnly}
-                      />
+                      <ValueContent>
+                        <SelectMulti
+                          id={id}
+                          values={fieldValue}
+                          selectedValue={selectedValue}
+                          disabled={isReadOnly}
+                        />
+                      </ValueContent>
                     )}
                 </>
               )}
 
             {type === 'TEXT' && isOptionList(operatorsOptionList) && (
               <>
-                <OperatorSelect
-                  id={id}
-                  values={operatorsOptionList}
-                  selectedValue={operator}
-                  disabled={isReadOnly}
-                />
+                <LayoutItem>
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                    disabled={isReadOnly}
+                  />
+                </LayoutItem>
                 {operator &&
                   shouldRenderValueInput &&
                   (isString(selectedValue) || isStringArray(selectedValue)) && (
-                    <Input
-                      type="text"
-                      value={selectedValue}
-                      id={id}
-                      disabled={isReadOnly}
-                    />
+                    <ValueContent>
+                      <Input
+                        type="text"
+                        value={selectedValue}
+                        id={id}
+                        disabled={isReadOnly}
+                      />
+                    </ValueContent>
                   )}
               </>
             )}
 
             {type === 'NUMBER' && isOptionList(operatorsOptionList) && (
               <>
-                <OperatorSelect
-                  id={id}
-                  values={operatorsOptionList}
-                  selectedValue={operator}
-                  disabled={isReadOnly}
-                />
+                <LayoutItem>
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                    disabled={isReadOnly}
+                  />
+                </LayoutItem>
                 {operator &&
                   shouldRenderValueInput &&
                   (isString(selectedValue) ||
                     isNumber(selectedValue) ||
                     isStringOrNumberArray(selectedValue) ||
                     isNumberArray(selectedValue)) && (
-                    <Input
-                      type="number"
-                      value={selectedValue}
-                      id={id}
-                      disabled={isReadOnly}
-                    />
+                    <ValueContent>
+                      <Input
+                        type="number"
+                        value={selectedValue}
+                        id={id}
+                        disabled={isReadOnly}
+                      />
+                    </ValueContent>
                   )}
               </>
             )}
 
             {type === 'DATE' && isOptionList(operatorsOptionList) && (
               <>
-                <OperatorSelect
-                  id={id}
-                  values={operatorsOptionList}
-                  selectedValue={operator}
-                  disabled={isReadOnly}
-                />
+                <LayoutItem>
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                    disabled={isReadOnly}
+                  />
+                </LayoutItem>
                 {!isUndefined(operator) &&
                   shouldRenderValueInput &&
                   (isString(selectedValue) || isStringArray(selectedValue)) && (
-                    <Input
-                      type="date"
-                      value={selectedValue}
-                      id={id}
-                      disabled={isReadOnly}
-                    />
+                    <ValueContent>
+                      <Input
+                        type="date"
+                        value={selectedValue}
+                        id={id}
+                        disabled={isReadOnly}
+                      />
+                    </ValueContent>
                   )}
               </>
             )}

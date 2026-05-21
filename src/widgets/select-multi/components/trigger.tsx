@@ -16,10 +16,26 @@ const StyledTrigger = styled.button<{ $theme: Required<IThemeProps> }>`
 const StyledLabel = styled.span`
   display: block;
   flex: 1 1 auto;
+  min-width: 0;
   line-height: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledSummaryBadge = styled.span<{ $theme: Required<IThemeProps> }>`
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  max-width: 4rem;
+  margin-right: 0.35rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: ${({ $theme }) => $theme.colors.primary.default};
+  color: ${({ $theme }) => $theme.colors.primary.contrastText};
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
 `;
 
 const StyledChevron = styled.span<{ $theme: Required<IThemeProps> }>`
@@ -56,21 +72,25 @@ const StyledChevron = styled.span<{ $theme: Required<IThemeProps> }>`
 `;
 
 export interface ITriggerProps {
+  badgeContent?: string;
   disabled: boolean;
   expanded: boolean;
   id?: string;
   label: string;
   onClick: () => void;
+  title?: string;
   triggerRef: React.RefObject<HTMLButtonElement>;
   theme: Required<IThemeProps>;
 }
 
 export const Trigger: FC<ITriggerProps> = ({
+  badgeContent,
   disabled,
   expanded,
   id,
   label,
   onClick,
+  title,
   triggerRef,
   theme,
 }) => {
@@ -84,9 +104,15 @@ export const Trigger: FC<ITriggerProps> = ({
       aria-expanded={expanded}
       disabled={disabled}
       onClick={onClick}
+      title={title}
       $theme={theme}
     >
       <StyledLabel>{label}</StyledLabel>
+      {badgeContent ? (
+        <StyledSummaryBadge data-test="SelectMultiSummaryBadge" $theme={theme}>
+          {badgeContent}
+        </StyledSummaryBadge>
+      ) : null}
       <StyledChevron $theme={theme} />
     </StyledTrigger>
   );

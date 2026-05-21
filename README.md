@@ -103,3 +103,17 @@ Supported formats are documented on the website:
 - [Supported Formats](https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats)
 - [formatQuery API](https://vojtechportes.github.io/react-query-builder/api/format-query)
 - [parseQuery API](https://vojtechportes.github.io/react-query-builder/api/parse-query)
+
+## Responsive Behavior
+
+The default builder components include a compact responsive layout for medium-width screens.
+
+- Rule rows reflow to preserve field, operator, action, and value legibility when horizontal space gets tighter.
+- Multi-select values use a summarized closed state to avoid chip overflow.
+- The default responsive behavior applies automatically when you use the built-in components.
+- If you replace layout containers such as `components.Rule` or `components.Group`, your custom components are responsible for their own responsive behavior.
+
+Responsive behavior is documented in more detail on the website:
+
+- [Components](https://vojtechportes.github.io/react-query-builder/documentation/components)
+- [API: Components](https://vojtechportes.github.io/react-query-builder/api/components)

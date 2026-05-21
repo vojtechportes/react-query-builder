@@ -80,7 +80,6 @@ const BuilderCard = styled.section`
 `;
 
 const BuilderSurface = styled.div`
-  min-width: 920px;
   font-family: Arial, sans-serif;
   font-size: 16px;
   line-height: normal;

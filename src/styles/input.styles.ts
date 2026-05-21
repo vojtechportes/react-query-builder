@@ -16,8 +16,8 @@ export const inputTypographyStyles = css<InputStyleProps>`
 export const inputControlStyles = css<InputStyleProps>`
   box-sizing: border-box;
   appearance: none;
-  width: 160px;
-  min-width: 160px;
+  width: var(--query-builder-control-width, 160px);
+  min-width: var(--query-builder-control-min-width, 160px);
   max-width: 100%;
   height: 2rem;
   border: 1px solid ${({ $theme }) => $theme.colors.grey['500']};

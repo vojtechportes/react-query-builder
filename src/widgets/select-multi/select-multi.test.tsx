@@ -32,7 +32,19 @@ const data: any[] = [
 const selectValues = [
   {
     value: 'test',
-    label: 'test',
+    label: 'Retail',
+  },
+  {
+    value: 'another',
+    label: 'Priority',
+  },
+  {
+    value: 'third',
+    label: 'Enterprise',
+  },
+  {
+    value: 'fourth',
+    label: 'Wholesale',
   },
 ];
 const strings = { form: {} };
@@ -101,13 +113,13 @@ describe('#components/Widgets/SelectMulti', () => {
 
     const option = wrapper.find('[data-test="SelectMultiOption[test]"]').first();
     option.simulate('click');
-    option.simulate('click');
-
-    const remove = wrapper.find('[data-test="Delete"]').first();
-    remove.simulate('click');
+    const secondOption = wrapper
+      .find('[data-test="SelectMultiOption[another]"]')
+      .first();
+    secondOption.simulate('click');
   });
 
-  it('Does not render remove buttons when read-only', () => {
+  it('Shows summary badge when values overflow the summary width', () => {
     const wrapper = mount(
       <BuilderContext.Provider
         value={{
@@ -117,17 +129,20 @@ describe('#components/Widgets/SelectMulti', () => {
           strings,
           setData,
           onChange,
-          readOnly: true,
+          readOnly: false,
         }}
-    >
-        <SelectMulti id="test" selectedValue={['test']} values={selectValues} />
+      >
+        <SelectMulti
+          id="test"
+          selectedValue={['test', 'another', 'third', 'fourth']}
+          values={selectValues}
+        />
       </BuilderContext.Provider>
     );
 
-    const tags = wrapper.find('[data-test="SelectMultiTag"]').hostNodes();
-
-    expect(tags).toHaveLength(1);
-    expect(tags.find('[data-test="Delete"]')).toHaveLength(0);
+    expect(
+      wrapper.find('[data-test="SelectMultiSummaryBadge"]').first().text()
+    ).toEqual('+1');
   });
 
   it('Test no form components scenario', () => {
