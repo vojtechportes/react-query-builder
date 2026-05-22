@@ -23,6 +23,10 @@ const Hero = styled.section`
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
+
+  @media (max-width: 540px) {
+    padding: 1.25rem;
+  }
 `;
 
 const HeroContent = styled.div`

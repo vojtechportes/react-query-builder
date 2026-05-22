@@ -77,6 +77,10 @@ const BuilderCard = styled.section`
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+
+  @media (max-width: 540px) {
+    padding: 1.25rem;
+  }
 `;
 
 const BuilderSurface = styled.div`

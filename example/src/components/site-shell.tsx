@@ -49,6 +49,12 @@ const Header = styled.header`
   border-bottom: 1px solid rgba(203, 213, 225, 0.85);
 `;
 
+const Page = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
 const HeaderInner = styled.div`
   display: flex;
   align-items: center;
@@ -57,6 +63,10 @@ const HeaderInner = styled.div`
   max-width: 1320px;
   margin: 0 auto;
   padding: 1rem 1.5rem;
+
+  @media (max-width: 540px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 const Brand = styled(NavLink)`
@@ -94,7 +104,7 @@ const BrandText = styled.div`
   gap: 0.4rem;
   line-height: 1;
 
-  @media (max-width: 479px) {
+  @media (max-width: 540px) {
     display: none;
   }
 `;
@@ -111,6 +121,24 @@ const QueryBuilderText = styled.span`
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.04em;
+`;
+
+const VersionBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.9rem;
+  margin-bottom: -2px;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid ${siteTheme.primaryBorder};
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  color: ${siteTheme.primaryDark};
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
 `;
 
 const Right = styled.div`
@@ -269,21 +297,40 @@ const MobileSearchWrap = styled.div`
 
 const Main = styled.main`
   max-width: 1320px;
-  min-height: 100vh;
+  width: 100%;
+  flex: 1 0 auto;
   margin: 0 auto;
   padding: 7rem 1.5rem 3rem;
+
+  @media (max-width: 540px) {
+    padding: 6rem 0.5rem 3rem;
+  }
+`;
+
+const Footer = styled.footer`
+  padding: 2rem 1.5rem;
+  border-top: 1px solid rgba(203, 213, 225, 0.85);
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: center;
+
+  @media (max-width: 540px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 export const SiteShell: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const location = useLocation();
+  const year = new Date().getFullYear();
 
   React.useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
   return (
-    <>
+    <Page>
       <GlobalStyle />
       <Header>
         <HeaderInner>
@@ -293,6 +340,7 @@ export const SiteShell: React.FC = () => {
               <ReactText>React</ReactText>
               <QueryBuilderText>Query Builder</QueryBuilderText>
             </BrandText>
+            <VersionBadge aria-label="Documentation version">Docs v1</VersionBadge>
           </Brand>
 
           <Right>
@@ -374,6 +422,10 @@ export const SiteShell: React.FC = () => {
       <Main>
         <Outlet />
       </Main>
-    </>
+      <Footer>
+        &copy; Vojtěch Václav Porteš {year} - All library contents are available under the
+        MIT license.
+      </Footer>
+    </Page>
   );
 };

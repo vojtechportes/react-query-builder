@@ -8,6 +8,10 @@ export const ContentArticle = styled.article`
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 28px 70px rgba(15, 23, 42, 0.08);
 
+  @media (max-width: 540px) {
+    padding: 1.25rem;
+  }
+
   > * + * {
     margin-top: 1rem;
   }
