@@ -41,6 +41,7 @@ export const App: React.FC = () => (
           <Route path="/api/data" element={<ApiPage />} />
           <Route path="/api/builder-props" element={<Navigate to="/api/builder" replace />} />
           <Route path="/api/components" element={<ApiPage />} />
+          <Route path="/api/adapters" element={<ApiPage />} />
           <Route path="/api/theming" element={<ApiPage />} />
           <Route path="/api/format-query" element={<ApiPage />} />
           <Route path="/api/parse-query" element={<ApiPage />} />
@@ -55,6 +56,7 @@ export const App: React.FC = () => (
             element={<DocumentationPage />}
           />
           <Route path="/documentation/components" element={<DocumentationPage />} />
+          <Route path="/documentation/adapters" element={<DocumentationPage />} />
           <Route
             path="/documentation/parsing-and-formatting"
             element={<DocumentationPage />}

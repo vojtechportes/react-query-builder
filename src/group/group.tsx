@@ -14,6 +14,8 @@ import { PopoverItem as DefaultPopoverItem } from '../popover-item';
 import { SecondaryButton } from '../secondary-button';
 import { createGroupNode } from '../utils/create-group-node.util';
 import { createId } from '../utils/create-id.util';
+import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
+import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { INormalizedRuleNode, NormalizedNode } from '../utils/query-tree';
 import { Group as DefaultGroupContainer } from './group-container';
@@ -229,6 +231,7 @@ export const Group: FC<IGroupProps> = ({
         nodeType="group"
         disabled={lockDisabled}
         onChange={handleChangeLockState}
+        title={getLockToggleTitle(strings, 'group', lockState)}
         data-test="LockToggle[group]"
       />
     ) : null;
@@ -238,6 +241,7 @@ export const Group: FC<IGroupProps> = ({
       <CloneButton
         nodeType="group"
         onClick={handleCloneGroup}
+        title={getCloneButtonTitle(strings, 'group')}
         data-test="CloneButton[group]"
       />
     ) : null;

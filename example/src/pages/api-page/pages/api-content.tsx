@@ -113,6 +113,46 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   PopoverItem?: React.ComponentType<IPopoverItemProps>;
 }`;
 
+const muiAdapterSnippet = `import { components } from '@vojtechportes/react-query-builder/mui/v9';
+
+<Builder
+  fields={fields}
+  data={data}
+  components={components}
+  onChange={setData}
+/>;`;
+
+const muiV7Snippet = `import { components } from '@vojtechportes/react-query-builder/mui/v7';`;
+
+const muiCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import {
+  createMuiComponents,
+  components as muiComponents,
+} from '@vojtechportes/react-query-builder/mui/v9';
+
+const components = createMuiComponents(muiComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyMuiBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
 const historyControlsSignature = `export interface IHistoryControlsProps {
   undoButton: React.ReactNode;
   redoButton: React.ReactNode;
@@ -286,7 +326,7 @@ export const apiPages: IApiPage[] = [
         <List>
           <li><ItemTitle>Core API:</ItemTitle> <InlineCode>Builder</InlineCode>, <InlineCode>Fields</InlineCode>, and <InlineCode>Data</InlineCode>.</li>
           <li><ItemTitle>Editing state:</ItemTitle> <InlineCode>Builder</InlineCode> also exposes history-related state such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> through <InlineCode>onStateChange</InlineCode>.</li>
-          <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode> and <InlineCode>Theming</InlineCode>.</li>
+          <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode>, <InlineCode>Adapters</InlineCode>, and <InlineCode>Theming</InlineCode>.</li>
           <li><ItemTitle>Query Conversion:</ItemTitle> <InlineCode>formatQuery</InlineCode> and <InlineCode>parseQuery</InlineCode>.</li>
         </List>
         <AlertBox title="Documentation and demo" variant="info">
@@ -464,7 +504,52 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>EmptyGroupDropZone</InlineCode>:</ItemTitle> Receives the target group id plus drag-state flags for empty containers.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
-          <TextLink to="/documentation/components">Components</TextLink>.
+          <TextLink to="/documentation/components">Components</TextLink> and{' '}
+          <TextLink to="/documentation/adapters">Adapters</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters',
+    title: 'Adapters',
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for packaged UI adapter entrypoints such as Material UI v7 and v9 and how they map onto the components override surface.',
+    searchText:
+      'Adapters API mui material ui v7 v9 components object adapter entrypoints customization antd future',
+    content: (
+      <>
+        <CodeBlock code={muiAdapterSnippet} language="tsx" label="MUI v9 adapter usage" />
+        <CodeBlock code={muiV7Snippet} language="tsx" label="MUI v7 import" />
+        <CodeBlock
+          code={muiCreateComponentsSnippet}
+          language="tsx"
+          label="createMuiComponents"
+        />
+        <SectionTitle>Available adapter entrypoints</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode>:</ItemTitle> Recommended Material UI adapter for new projects.</li>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>:</ItemTitle> Material UI adapter for applications still on MUI 7.</li>
+        </List>
+        <SectionTitle>What adapters export</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> A ready-to-pass object that matches <InlineCode>IBuilderComponentsProps</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode> and <InlineCode>MuiInput</InlineCode> for partial customization.</li>
+          <li><ItemTitle><InlineCode>createMuiComponents</InlineCode>:</ItemTitle> Helper for merging the adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
+        </List>
+        <SectionTitle>Relationship to the Components API</SectionTitle>
+        <List>
+          <li>Adapters are built on top of the same override surface documented in <TextLink to="/api/components">Components</TextLink>.</li>
+          <li>They are a convenience layer, not a separate rendering engine.</li>
+          <li><InlineCode>createMuiComponents(base, overrides)</InlineCode> returns a merged <InlineCode>IBuilderComponentsProps</InlineCode> object and handles shallow top-level merging plus nested <InlineCode>form</InlineCode> merging for you.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/theming">Theming</TextLink>.
         </AlertBox>
       </>
     ),
@@ -490,9 +575,11 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>colors.primary</InlineCode> and <InlineCode>colors.secondary</InlineCode>:</ItemTitle> Color variants used by primary and secondary action surfaces.</li>
           <li><ItemTitle><InlineCode>colors.grey</InlineCode>:</ItemTitle> Neutral palette used for borders, text, backgrounds, and control states.</li>
           <li><ItemTitle><InlineCode>colors.white</InlineCode>:</ItemTitle> Surface color used by builder containers and controls.</li>
+          <li><ItemTitle>Adapter note:</ItemTitle> <InlineCode>ThemeProvider</InlineCode> affects the built-in default components. If a packaged adapter is used instead, these tokens do not theme the adapter UI.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
-          <TextLink to="/documentation/theming">Theming</TextLink>.
+          <TextLink to="/documentation/theming">Theming</TextLink> and{' '}
+          <TextLink to="/documentation/adapters">Adapters</TextLink>.
         </AlertBox>
       </>
     ),

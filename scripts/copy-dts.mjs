@@ -8,15 +8,31 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distDir = path.resolve(__dirname, '..', 'dist');
 
+const findDeclarationFiles = async (directory) => {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const nestedFiles = await Promise.all(
+    entries.map(async (entry) => {
+      const resolvedPath = path.join(directory, entry.name);
+
+      if (entry.isDirectory()) {
+        return findDeclarationFiles(resolvedPath);
+      }
+
+      return entry.name.endsWith('.d.mts') ? [resolvedPath] : [];
+    })
+  );
+
+  return nestedFiles.flat();
+};
+
 try {
-  const files = await readdir(distDir);
-  const declarationFiles = files.filter(fileName => fileName.endsWith('.d.mts'));
+  const declarationFiles = await findDeclarationFiles(distDir);
 
   await Promise.all(
     declarationFiles.map(fileName =>
       copyFile(
-        path.join(distDir, fileName),
-        path.join(distDir, fileName.replace(/\.d\.mts$/, '.d.ts'))
+        fileName,
+        fileName.replace(/\.d\.mts$/, '.d.ts')
       )
     )
   );

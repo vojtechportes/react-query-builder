@@ -4,6 +4,7 @@ import {
   Builder,
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
+import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import type { IColors } from '../../../src/constants/colors';
 import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
 import { demoFields, defaultTheme, initialQueryTree } from '../constants/demo-data';
@@ -63,6 +64,11 @@ const Toggle = styled.input`
   height: 18px;
 `;
 
+const ChoiceGroup = styled.div`
+  display: grid;
+  gap: 0.7rem;
+`;
+
 const Main = styled.div`
   display: grid;
   gap: 1.25rem;
@@ -114,6 +120,8 @@ export interface IDemoPlaygroundProps {
   initialData?: DenormalizedQuery;
 }
 
+type CustomizationMode = 'default' | 'mui';
+
 export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   initialData = initialQueryTree,
 }) => {
@@ -126,9 +134,12 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [history, setHistory] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidation, setShowValidation] = React.useState(true);
+  const [customizationMode, setCustomizationMode] =
+    React.useState<CustomizationMode>('default');
   const [themeColors, setThemeColors] = React.useState<IColors>(
     defaultTheme.colors
   );
+  const isMuiMode = customizationMode === 'mui';
 
   const outputText = React.useMemo(() => {
     if (outputFormat === 'Native') {
@@ -209,14 +220,49 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         </Panel>
 
         <Panel>
-          <ThemeEditor value={themeColors} onChange={setThemeColors} />
+          <PanelTitle>Customization</PanelTitle>
+
+          <ChoiceGroup>
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'default'}
+                onChange={() => setCustomizationMode('default')}
+              />
+              <span>Default components</span>
+            </ToggleRow>
+
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'mui'}
+                onChange={() => setCustomizationMode('mui')}
+              />
+              <span>MUI adapter</span>
+            </ToggleRow>
+          </ChoiceGroup>
+        </Panel>
+
+        <Panel>
+          <ThemeEditor
+            value={themeColors}
+            onChange={setThemeColors}
+            disabled={isMuiMode}
+            disabledMessage={
+              isMuiMode
+                ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
+                : undefined
+            }
+          />
         </Panel>
       </Sidebar>
 
       <Main>
         <BuilderCard>
           <BuilderSurface>
-            <ThemeProvider colors={themeColors}>
+            {isMuiMode ? (
               <Builder
                 data={data}
                 fields={demoFields}
@@ -229,8 +275,25 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 groupTypes="both"
                 singleRootGroup={singleRootGroup}
                 showValidation={showValidation}
+                components={muiComponents}
               />
-            </ThemeProvider>
+            ) : (
+              <ThemeProvider colors={themeColors}>
+                <Builder
+                  data={data}
+                  fields={demoFields}
+                  readOnly={readOnly}
+                  lockable={lockable}
+                  cloneable={cloneable}
+                  onChange={setData}
+                  draggable={draggable}
+                  history={history}
+                  groupTypes="both"
+                  singleRootGroup={singleRootGroup}
+                  showValidation={showValidation}
+                />
+              </ThemeProvider>
+            )}
           </BuilderSurface>
         </BuilderCard>
 

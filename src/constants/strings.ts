@@ -12,9 +12,16 @@ export interface IStrings {
     addGroupWithModifiers?: string;
     addGroupWithoutModifiers?: string;
     delete?: string;
+    clone?: string;
+    lock?: string;
+    lockDescendants?: string;
+    unlockDescendants?: string;
   };
   rule?: {
     delete?: string;
+    clone?: string;
+    lock?: string;
+    unlock?: string;
   };
   form?: {
     selectYourValue?: string;
@@ -91,9 +98,16 @@ export const strings: IStrings = {
     addGroupWithModifiers: 'With Modifiers',
     addGroupWithoutModifiers: 'Without Modifiers',
     delete: 'Delete',
+    clone: 'Clone group',
+    lock: 'Lock group',
+    lockDescendants: 'Lock group and descendants',
+    unlockDescendants: 'Unlock group and descendants',
   },
   rule: {
     delete: 'Delete',
+    clone: 'Clone rule',
+    lock: 'Lock rule',
+    unlock: 'Unlock rule',
   },
   form: {
     selectYourValue: 'Select your value',

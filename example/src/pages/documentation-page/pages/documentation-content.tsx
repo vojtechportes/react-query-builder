@@ -113,6 +113,69 @@ import { colors } from '@vojtechportes/react-query-builder';
   <Builder data={data} fields={fields} onChange={setData} />
 </ThemeProvider>;`;
 
+const muiSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/mui/v9';
+
+export const MyMuiBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const muiOverrideSnippet = `import {
+  components as muiComponents,
+  MuiSelect,
+} from '@vojtechportes/react-query-builder/mui/v7';
+
+const components = {
+  ...muiComponents,
+  form: {
+    ...muiComponents.form,
+    Select: MuiSelect,
+  },
+};`;
+
+const adaptersInstallSnippet = `npm install @mui/material@^9.0.1 @mui/icons-material@^9.0.1 @emotion/react @emotion/styled`;
+
+const muiCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import {
+  createMuiComponents,
+  components as muiComponents,
+  MuiSelect,
+} from '@vojtechportes/react-query-builder/mui/v9';
+
+const components = createMuiComponents(muiComponents, {
+  form: {
+    Select: MuiSelect,
+  },
+});
+
+export const MyMuiBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
 const componentsSnippet = `const components = {
   Add: MyAddButton,
   Remove: MyRemoveButton,
@@ -434,7 +497,7 @@ export const documentationPages: IDocumentationPage[] = [
     sectionTitle: 'Documentation',
     summary: '',
     description:
-      'Documentation overview for installation, usage, parsing and formatting, customization, and localization.',
+      'Documentation overview for installation, usage, parsing and formatting, customization, adapters, and localization.',
     searchText:
       'Documentation overview installation usage parsing formatting configuration theming localization demo query builder react library website',
     content: (
@@ -959,8 +1022,71 @@ export const documentationPages: IDocumentationPage[] = [
             responsible for its own responsive behavior.
           </li>
         </List>
+        <AlertBox title="Adapter packages" variant="info">
+          If you want ready-made component mappings instead of wiring every
+          override by hand, see <TextLink to="/documentation/adapters">Adapters</TextLink>.
+        </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/components">Components</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/adapters',
+    title: 'Adapters',
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for packaged UI adapters such as Material UI mappings, versioned adapter entrypoints, and partial override patterns.',
+    searchText:
+      'Adapters customization mui material ui v7 v9 components mapping adapter packages ready made overrides antd future',
+    content: (
+      <>
+        <p>
+          Adapters provide pre-mapped <InlineCode>components</InlineCode> objects
+          for UI libraries so you do not need to implement every override in{' '}
+          <TextLink to="/documentation/components">Components</TextLink> yourself.
+        </p>
+        <SectionTitle>Available adapter entrypoints</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode> is the recommended Material UI adapter for new projects and the one showcased in the demo.</li>
+          <li><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode> is available for applications that are still on Material UI 7.</li>
+        </List>
+        <SectionTitle>Installation</SectionTitle>
+        <p>
+          Install the MUI peer dependencies that match the adapter version you want
+          to use. For new setups, prefer <InlineCode>mui/v9</InlineCode>.
+        </p>
+        <CodeBlock code={adaptersInstallSnippet} language="bash" label="MUI v9 peers" />
+        <SectionTitle>Using MUI v9</SectionTitle>
+        <CodeBlock code={muiSnippet} language="tsx" label="MUI v9 adapter" />
+        <SectionTitle>Supporting MUI v7</SectionTitle>
+        <p>
+          If your application is still on Material UI 7, switch the import path to{' '}
+          <InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>.
+        </p>
+        <CodeBlock
+          code={muiOverrideSnippet}
+          language="tsx"
+          label="Starting from the MUI v7 mapping"
+        />
+        <SectionTitle>Extending an adapter</SectionTitle>
+        <List>
+          <li>Start with the exported adapter <InlineCode>components</InlineCode> object.</li>
+          <li>Override only the pieces you want to replace, such as a single select or button component.</li>
+          <li>This keeps your app aligned with future adapter updates while still allowing local customization.</li>
+        </List>
+        <CodeBlock
+          code={muiCreateComponentsSnippet}
+          language="tsx"
+          label="Merging adapter defaults"
+        />
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/components">Components</TextLink>,{' '}
+          <TextLink to="/documentation/theming">Theming</TextLink>, and{' '}
+          <TextLink to="/api/adapters">Adapters API</TextLink>.
         </AlertBox>
       </>
     ),
@@ -982,8 +1108,16 @@ export const documentationPages: IDocumentationPage[] = [
           and container replacement, see <TextLink to="/documentation/components">Components</TextLink>.
         </p>
         <CodeBlock code={themeSnippet} language="tsx" label="Theme provider" />
+        <AlertBox title="Adapters and theming" variant="info">
+          <InlineCode>ThemeProvider</InlineCode> customizes the built-in default
+          component set. If you use an adapter from{' '}
+          <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
+          <InlineCode>mui/v7</InlineCode> or <InlineCode>mui/v9</InlineCode>,
+          these theme tokens do not affect the adapter UI.
+        </AlertBox>
         <AlertBox title="API reference" variant="info">
-          <TextLink to="/api/theming">Theming</TextLink>.
+          <TextLink to="/api/theming">Theming</TextLink> and{' '}
+          <TextLink to="/api/adapters">Adapters</TextLink>.
         </AlertBox>
       </>
     ),
