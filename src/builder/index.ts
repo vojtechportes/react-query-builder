@@ -2,8 +2,10 @@ export { Builder } from './builder';
 export { defaultComponents } from './constants/default-components';
 export { HistoryButton } from './components/history-button';
 export { HistoryControls } from './components/history-controls';
+export { useBuilderRef } from '../hooks/use-builder-ref';
 export type { IHistoryButtonProps } from './components/history-button';
 export type {
+  BuilderRef,
   BuilderValidationMessage,
   BuilderValidationSeverity,
   BuilderFieldOperator,
@@ -13,6 +15,7 @@ export type {
   BuilderGroupValues,
   IBuilderHistoryAction,
   IBuilderHistoryConfig,
+  IBuilderRef,
   BuilderLockState,
   IBooleanFieldProps,
   IBooleanFieldValidation,

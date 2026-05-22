@@ -1,6 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -8,9 +9,11 @@ import {
 } from '@testing-library/react';
 import {
   Builder,
+  BuilderRef,
   defaultComponents,
   IBuilderFieldProps,
   IBuilderProps,
+  useBuilderRef,
 } from './index';
 
 export const fields: IBuilderFieldProps[] = [
@@ -1182,5 +1185,232 @@ describe('#components/Builder', () => {
         (node) => node.getAttribute('data-index') === '1'
       )
     ).toHaveLength(1);
+  });
+
+  it('Exposes imperative builderRef methods for reads, mutations, and history', () => {
+    const onChange = jest.fn();
+    let builderRefObject: BuilderRef | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={fields}
+          history
+          cloneable
+          lockable
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+                { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+              ],
+            },
+          ]}
+          onChange={onChange}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      expect(builderRefObject?.current).toBeDefined();
+      return builderRefObject?.current!;
+    };
+    const initialNodes = getBuilderRef().getNodes();
+    const rootGroupId = initialNodes.find((node) => 'type' in node)?.id as string;
+    const ruleIds = initialNodes
+      .filter((node) => 'field' in node)
+      .map((node) => node.id);
+    const firstRuleId = ruleIds[0];
+    const secondRuleId = ruleIds[1];
+
+    expect(initialNodes).toHaveLength(3);
+    expect(getBuilderRef().getData()).toEqual([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+        ],
+      },
+    ]);
+
+    expect(getBuilderRef().getNodeById(firstRuleId)).toMatchObject({
+      field: 'MOCK_FIELD',
+      value: 'alpha',
+      operator: 'EQUAL',
+    });
+
+    act(() => {
+      expect(getBuilderRef().cloneNode(firstRuleId)).toBe(true);
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+        ],
+      },
+    ]);
+
+    act(() => {
+      expect(
+        getBuilderRef().addRule(
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          rootGroupId
+        )
+      ).toBe(true);
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+
+    act(() => {
+      expect(getBuilderRef().setNodeLock(firstRuleId, 'self')).toBe(true);
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: 'alpha',
+            operator: 'EQUAL',
+            readOnly: true,
+          },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+
+    act(() => {
+      expect(getBuilderRef().unlockNode(firstRuleId)).toBe(true);
+      expect(getBuilderRef().moveNode(secondRuleId, 0, rootGroupId)).toBe(true);
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+
+    act(() => {
+      expect(
+        getBuilderRef().updateNode(secondRuleId, (node) =>
+          'field' in node
+            ? {
+                ...node,
+                value: 10,
+              }
+            : node
+        )
+      ).toBe(true);
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+
+    const history = getBuilderRef().getHistory();
+    expect(history.past.length).toBeGreaterThan(0);
+
+    act(() => {
+      getBuilderRef().undo();
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+
+    act(() => {
+      getBuilderRef().redo();
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+
+    act(() => {
+      getBuilderRef().setHistory({ past: [], future: [] });
+    });
+    expect(getBuilderRef().getHistory()).toEqual({ past: [], future: [] });
+
+    act(() => {
+      expect(getBuilderRef().deleteNode(firstRuleId)).toBe(true);
+    });
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
   });
 });

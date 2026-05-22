@@ -32,6 +32,50 @@ const historyConfigSignature = `export interface IBuilderHistoryConfig {
   controls?: boolean;
 }`;
 
+const builderRefSignature = `export interface IBuilderRef {
+  cloneNode: (nodeId: string) => boolean;
+  deleteNode: (nodeId: string) => boolean;
+  replaceNode: (nodeId: string, node: NormalizedNode) => boolean;
+  updateNode: (
+    nodeId: string,
+    updater: (node: NormalizedNode) => NormalizedNode
+  ) => boolean;
+  insertNodes: (
+    nodes: NormalizedQuery,
+    index: number,
+    parentId?: string
+  ) => boolean;
+  addNode: (node: NormalizedNode, parentId?: string, index?: number) => boolean;
+  addGroup: (
+    groupType?: QueryGroupType,
+    parentId?: string,
+    index?: number
+  ) => boolean;
+  addRule: (
+    rule?: Partial<INormalizedRuleNode>,
+    parentId?: string,
+    index?: number
+  ) => boolean;
+  moveNode: (nodeId: string, index: number, parentId?: string) => boolean;
+  setNodeLock: (
+    nodeId: string,
+    state: 'unlocked' | 'self' | 'all'
+  ) => boolean;
+  lockNode: (nodeId: string, state?: 'self' | 'all') => boolean;
+  unlockNode: (nodeId: string) => boolean;
+  getNodeById: (nodeId: string) => NormalizedNode | undefined;
+  getNodes: () => NormalizedQuery;
+  getData: () => DenormalizedQuery;
+  getHistory: () => IBuilderHistoryState;
+  setHistory: (history: IBuilderHistoryState) => void;
+  undo: () => void;
+  redo: () => void;
+}
+
+export type BuilderRef = React.MutableRefObject<IBuilderRef | null>;
+
+export const useBuilderRef = (): BuilderRef;`;
+
 const fieldTypesSignature = `export type BuilderFieldType =
   | 'BOOLEAN'
   | 'TEXT'
@@ -366,6 +410,7 @@ export const apiPages: IApiPage[] = [
         <List>
           <li><ItemTitle>Core API:</ItemTitle> <InlineCode>Builder</InlineCode>, <InlineCode>Fields</InlineCode>, and <InlineCode>Data</InlineCode>.</li>
           <li><ItemTitle>Editing state:</ItemTitle> <InlineCode>Builder</InlineCode> also exposes history-related state such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> through <InlineCode>onStateChange</InlineCode>.</li>
+          <li><ItemTitle>Imperative control:</ItemTitle> <InlineCode>useBuilderRef</InlineCode> and <InlineCode>IBuilderRef</InlineCode> expose builder actions through a React ref.</li>
           <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode>, <InlineCode>Adapters</InlineCode>, and <InlineCode>Theming</InlineCode>.</li>
           <li><ItemTitle>Query Conversion:</ItemTitle> <InlineCode>formatQuery</InlineCode> and <InlineCode>parseQuery</InlineCode>.</li>
         </List>
@@ -396,6 +441,7 @@ export const apiPages: IApiPage[] = [
         <List>
           <li><ItemTitle><InlineCode>fields</InlineCode>:</ItemTitle> Required. Defines the available fields, their types, allowed operators, and optional validation metadata.</li>
           <li><ItemTitle><InlineCode>data</InlineCode>:</ItemTitle> Required. The current denormalized query tree. The builder treats this as controlled input.</li>
+          <li><ItemTitle>Ref support:</ItemTitle> <InlineCode>Builder</InlineCode> supports React refs and can be paired with <InlineCode>useBuilderRef()</InlineCode> for imperative access.</li>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Optional overrides for internal UI pieces. Omitted entries fall back to default components.</li>
           <li><ItemTitle><InlineCode>strings</InlineCode>:</ItemTitle> Optional localized UI strings used by the built-in controls.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Disables editing actions when enabled.</li>
@@ -417,7 +463,61 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
-          <TextLink to="/documentation/history">Undo and Redo</TextLink>.
+          <TextLink to="/documentation/history">Undo and Redo</TextLink>, and{' '}
+          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/builder-ref',
+    title: 'Builder Ref',
+    sectionKey: 'core',
+    sectionTitle: 'Core API',
+    summary: '',
+    description:
+      'API reference for useBuilderRef, IBuilderRef, and the imperative builder methods for node operations and history access.',
+    searchText:
+      'useBuilderRef IBuilderRef BuilderRef imperative ref cloneNode deleteNode replaceNode updateNode insertNodes addNode addGroup addRule moveNode setNodeLock lockNode unlockNode getNodeById getNodes getData getHistory setHistory undo redo',
+    content: (
+      <>
+        <CodeBlock code={builderRefSignature} language="ts" label="Builder ref API" />
+        <SectionTitle>How to attach it</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>useBuilderRef()</InlineCode>:</ItemTitle> Returns a typed mutable React ref object for the builder instance.</li>
+          <li><ItemTitle><InlineCode>{'<Builder ref={builderRef} />'}</InlineCode>:</ItemTitle> Attaches the ref to the builder so <InlineCode>builderRef.current</InlineCode> exposes the imperative methods.</li>
+        </List>
+        <SectionTitle>Read methods</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>getNodeById(nodeId)</InlineCode>:</ItemTitle> Returns one normalized node by id, or <InlineCode>undefined</InlineCode> when it does not exist.</li>
+          <li><ItemTitle><InlineCode>getNodes()</InlineCode>:</ItemTitle> Returns the current normalized query array.</li>
+          <li><ItemTitle><InlineCode>getData()</InlineCode>:</ItemTitle> Returns the current denormalized query tree in the same shape emitted by <InlineCode>onChange</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>getHistory()</InlineCode>:</ItemTitle> Returns the current history object with <InlineCode>past</InlineCode> and <InlineCode>future</InlineCode> stacks.</li>
+        </List>
+        <SectionTitle>Mutation methods</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>cloneNode(nodeId)</InlineCode>:</ItemTitle> Clones a rule or group subtree directly below the original node.</li>
+          <li><ItemTitle><InlineCode>deleteNode(nodeId)</InlineCode>:</ItemTitle> Removes a node subtree.</li>
+          <li><ItemTitle><InlineCode>replaceNode(nodeId, node)</InlineCode>:</ItemTitle> Replaces a normalized node directly.</li>
+          <li><ItemTitle><InlineCode>updateNode(nodeId, updater)</InlineCode>:</ItemTitle> Reads the current normalized node, passes it to an updater, and replaces it with the updater result.</li>
+          <li><ItemTitle><InlineCode>insertNodes(nodes, index, parentId?)</InlineCode>:</ItemTitle> Inserts one or more normalized nodes at the target index, either at the root or inside a group.</li>
+          <li><ItemTitle><InlineCode>addNode(node, parentId?, index?)</InlineCode>:</ItemTitle> Inserts one normalized node and appends it when <InlineCode>index</InlineCode> is omitted.</li>
+          <li><ItemTitle><InlineCode>addGroup(groupType?, parentId?, index?)</InlineCode>:</ItemTitle> Creates and inserts a new group node.</li>
+          <li><ItemTitle><InlineCode>addRule(rule?, parentId?, index?)</InlineCode>:</ItemTitle> Creates and inserts a new rule node with optional initial values.</li>
+          <li><ItemTitle><InlineCode>moveNode(nodeId, index, parentId?)</InlineCode>:</ItemTitle> Moves a node to a new index and optional parent group.</li>
+        </List>
+        <SectionTitle>Lock and history methods</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>setNodeLock(nodeId, state)</InlineCode>:</ItemTitle> Sets the explicit lock state for a rule or group. Groups additionally support <InlineCode>'all'</InlineCode> for descendant inheritance.</li>
+          <li><ItemTitle><InlineCode>lockNode(nodeId, state?)</InlineCode>:</ItemTitle> Convenience wrapper for locking a node. For rules, the effective lock state is always <InlineCode>'self'</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>unlockNode(nodeId)</InlineCode>:</ItemTitle> Clears the node&apos;s lock state.</li>
+          <li><ItemTitle><InlineCode>undo()</InlineCode> and <InlineCode>redo()</InlineCode>:</ItemTitle> Replay history steps when history is enabled.</li>
+          <li><ItemTitle><InlineCode>setHistory(history)</InlineCode>:</ItemTitle> Replaces the current history state. This is useful for clearing or restoring custom history snapshots.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
+          <TextLink to="/documentation/history">Undo and Redo</TextLink>, and{' '}
+          <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
       </>
     ),

@@ -1,10 +1,23 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { BuilderContextProvider } from '../builder-context';
 import { Button } from '../button';
 import { strings as defaultStrings } from '../constants/strings';
 import { DragPreview } from '../drag-preview';
+import { createClonedSubtree } from '../history/create-cloned-subtree';
 import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
+import { createMoveNodeAction } from '../history/create-move-node-action';
+import { createRemoveSubtreeAction } from '../history/create-remove-subtree-action';
+import { createReplaceNodeAction } from '../history/create-replace-node-action';
+import { findNodeById } from '../history/find-node-by-id';
+import { getNodePosition } from '../history/get-node-position';
 import { Iterator } from '../iterator';
 import { Popover } from '../popover';
 import { PopoverItem } from '../popover-item';
@@ -14,6 +27,7 @@ import { createId } from '../utils/create-id.util';
 import { emitQuery } from '../utils/emit-query.util';
 import { ingestQuery } from '../utils/ingest-query.util';
 import { isSameQuery } from '../utils/is-same-query.util';
+import { clone } from '../utils/clone.util';
 import {
   DenormalizedQuery,
   INormalizedRuleNode,
@@ -26,11 +40,14 @@ import { useBuilderDragAndDrop } from './hooks/use-builder-drag-and-drop';
 import { useBuilderHistory } from './hooks/use-builder-history';
 import { useBuilderValidation } from './hooks/use-builder-validation';
 import {
+  IBuilderRef,
   IBuilderProps,
   IBuilderValidationResult,
 } from './types';
+import { createAppendNodeIndex } from '../hooks/use-builder-ref/utils/create-append-node-index.util';
+import { resolveLockedNode } from '../hooks/use-builder-ref/utils/resolve-locked-node.util';
 
-export const Builder: FC<IBuilderProps> = ({
+export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   data: originalData = [],
   fields,
   components = defaultComponents,
@@ -46,7 +63,7 @@ export const Builder: FC<IBuilderProps> = ({
   showValidation = false,
   history = false,
   onChange,
-}) => {
+}, ref) => {
   const rootGroupType =
     groupTypes === 'without-modifiers' ? 'without-modifiers' : 'with-modifiers';
   const theme = useTheme();
@@ -70,6 +87,7 @@ export const Builder: FC<IBuilderProps> = ({
     historyState,
     redo,
     resetHistory,
+    setHistory,
     showHistoryControls,
     undo,
   } = useBuilderHistory({
@@ -119,6 +137,145 @@ export const Builder: FC<IBuilderProps> = ({
       }
     },
     [onChange]
+  );
+
+  useImperativeHandle(
+    ref,
+    (): IBuilderRef => ({
+      cloneNode: (nodeId) => {
+        const currentPosition = getNodePosition(data, nodeId);
+
+        if (!currentPosition) {
+          return false;
+        }
+
+        return commitData(
+          createInsertSubtreeAction(
+            createClonedSubtree(data, nodeId),
+            currentPosition.index + 1,
+            currentPosition.parentId
+          )
+        );
+      },
+      deleteNode: (nodeId) => commitData(createRemoveSubtreeAction(nodeId)),
+      replaceNode: (nodeId, node) =>
+        commitData(createReplaceNodeAction(nodeId, clone(node))),
+      updateNode: (nodeId, updater) => {
+        const currentNode = findNodeById(data, nodeId);
+
+        if (!currentNode) {
+          return false;
+        }
+
+        return commitData(
+          createReplaceNodeAction(nodeId, clone(updater(clone(currentNode))))
+        );
+      },
+      insertNodes: (nodes, index, parentId) =>
+        commitData(createInsertSubtreeAction(clone(nodes), index, parentId)),
+      addNode: (node, parentId, index) => {
+        const resolvedIndex = index ?? createAppendNodeIndex(data, parentId);
+
+        if (resolvedIndex === null) {
+          return false;
+        }
+
+        return commitData(
+          createInsertSubtreeAction(
+            [{ ...clone(node), parent: parentId }],
+            resolvedIndex,
+            parentId
+          )
+        );
+      },
+      addGroup: (groupType = 'with-modifiers', parentId, index) => {
+        const resolvedIndex = index ?? createAppendNodeIndex(data, parentId);
+
+        if (resolvedIndex === null) {
+          return false;
+        }
+
+        return commitData(
+          createInsertSubtreeAction(
+            [createGroupNode(groupType, parentId)],
+            resolvedIndex,
+            parentId
+          )
+        );
+      },
+      addRule: (rule = {}, parentId, index) => {
+        const resolvedIndex = index ?? createAppendNodeIndex(data, parentId);
+
+        if (resolvedIndex === null) {
+          return false;
+        }
+
+        const nextRule: INormalizedRuleNode = {
+          field: '',
+          id: createId(),
+          parent: parentId,
+          ...clone(rule),
+        };
+
+        return commitData(
+          createInsertSubtreeAction([nextRule], resolvedIndex, parentId)
+        );
+      },
+      moveNode: (nodeId, index, parentId) =>
+        commitData(createMoveNodeAction(nodeId, index, parentId)),
+      setNodeLock: (nodeId, state) => {
+        const currentNode = findNodeById(data, nodeId);
+
+        if (!currentNode) {
+          return false;
+        }
+
+        return commitData(
+          createReplaceNodeAction(nodeId, resolveLockedNode(currentNode, state))
+        );
+      },
+      lockNode: (nodeId, state = 'self') => {
+        const currentNode = findNodeById(data, nodeId);
+
+        if (!currentNode) {
+          return false;
+        }
+
+        const resolvedState =
+          'type' in currentNode && currentNode.type === 'GROUP'
+            ? state
+            : 'self';
+
+        return commitData(
+          createReplaceNodeAction(
+            nodeId,
+            resolveLockedNode(currentNode, resolvedState)
+          )
+        );
+      },
+      unlockNode: (nodeId) => {
+        const currentNode = findNodeById(data, nodeId);
+
+        if (!currentNode) {
+          return false;
+        }
+
+        return commitData(
+          createReplaceNodeAction(nodeId, resolveLockedNode(currentNode, 'unlocked'))
+        );
+      },
+      getNodeById: (nodeId) => {
+        const node = findNodeById(data, nodeId);
+        return node ? clone(node) : undefined;
+      },
+      getNodes: () => clone(data),
+      getData: () => emitQuery(data),
+      getHistory: () => clone(historyState),
+      setHistory,
+      undo,
+      redo,
+    }),
+    [commitData, data, historyState, redo, setHistory, undo]
   );
 
   useEffect(() => {
@@ -241,4 +398,6 @@ export const Builder: FC<IBuilderProps> = ({
       </StyledBuilder>
     </BuilderContextProvider>
   );
-};
+});
+
+Builder.displayName = 'Builder';

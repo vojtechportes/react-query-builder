@@ -1,5 +1,7 @@
 export { Builder, defaultComponents } from './builder';
+export { useBuilderRef } from './hooks/use-builder-ref';
 export type {
+  BuilderRef,
   BuilderValidationMessage,
   BuilderValidationSeverity,
   BuilderFieldOperator,
@@ -9,6 +11,7 @@ export type {
   BuilderGroupValues,
   IBuilderHistoryAction,
   IBuilderHistoryConfig,
+  IBuilderRef,
   BuilderLockState,
   IBooleanFieldProps,
   IBooleanFieldValidation,
