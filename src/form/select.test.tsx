@@ -1,37 +1,47 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import { Select } from './select';
 
 const mockValues = [{ value: 'test', label: 'test' }];
 
-describe('#components/Select', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(
-        <Select
-          disabled={false}
-          onChange={jest.fn()}
-          selectedValue={'Test'}
-          values={mockValues}
-        />
-      )
-    ).toMatchSnapshot();
-  });
+const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
+  const element = container.querySelector(`[data-test="${value}"]`);
 
-  it('Tests user interaction', () => {
-    const onChange = jest.fn();
-    const wrapper = mount(
+  if (!element) {
+    throw new Error(`Unable to find element with data-test="${value}"`);
+  }
+
+  return element as HTMLElement;
+};
+
+describe('#components/Select', () => {
+  it('renders the select trigger', () => {
+    const { container } = render(
       <Select
         disabled={false}
-        onChange={onChange}
-        selectedValue={'Test'}
+        onChange={jest.fn()}
+        selectedValue="Test"
         values={mockValues}
       />
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper.find('[data-test="SelectMultiOption[test]"]').first().simulate('click');
+    expect(getByDataTest(container, 'SelectMultiTrigger')).toBeTruthy();
+  });
 
-    expect(onChange).toBeCalled();
+  it('emits a selected value', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Select
+        disabled={false}
+        onChange={onChange}
+        selectedValue="Test"
+        values={mockValues}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[test]'));
+
+    expect(onChange).toHaveBeenCalled();
   });
 });

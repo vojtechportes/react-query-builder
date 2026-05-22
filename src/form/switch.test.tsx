@@ -1,24 +1,24 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import { Switch } from './switch';
 
 describe('#components/Switch', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(<Switch disabled={false} onChange={jest.fn()} switched={false} />)
-    ).toMatchSnapshot();
+  it('renders the switch control', () => {
+    const { container } = render(
+      <Switch disabled={false} onChange={jest.fn()} switched={false} />
+    );
+
+    expect(container.querySelector('[data-test="Switch"]')).toBeTruthy();
   });
 
-  it('Tests user interaction', () => {
+  it('emits a change when clicked', () => {
     const onChange = jest.fn();
-
-    const wrapper = mount(
+    const { container } = render(
       <Switch disabled={false} onChange={onChange} switched={false} />
     );
 
-    const swtichElement = wrapper.find('[data-test="Switch"]').first();
+    fireEvent.click(container.querySelector('[data-test="Switch"]') as HTMLElement);
 
-    swtichElement.simulate('click');
-    expect(onChange).toBeCalled();
+    expect(onChange).toHaveBeenCalled();
   });
 });

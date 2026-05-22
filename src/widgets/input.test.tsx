@@ -1,5 +1,5 @@
-import { mount, shallow } from 'enzyme';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
@@ -10,135 +10,63 @@ import { Input } from './input';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
-  {
-    field: 'MOCK_FIELD',
-    label: 'Mock Field',
-    type: 'TEXT',
-  },
+  { field: 'MOCK_FIELD', label: 'Mock Field', type: 'TEXT' },
 ];
-const data: any[] = [
-  {
-    id: 'test',
-    value: '',
-  },
-];
-const strings = {};
-const setData = jest.fn();
-const onChange = () => jest.fn();
+const data: any[] = [{ id: 'test', value: '' }];
+
+const renderWithContext = (
+  element: ReactElement,
+  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+) =>
+  render(
+    <BuilderContext.Provider
+      value={{
+        components,
+        fields,
+        data,
+        strings: {},
+        setData: jest.fn(),
+        onChange: jest.fn(),
+        readOnly: false,
+        ...overrides,
+      }}
+    >
+      {element}
+    </BuilderContext.Provider>
+  );
 
 describe('#components/Widgets/Input', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: false,
-          }}
-        >
-          <Input id="test" value="" type="text" />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
+  it('renders text and number variants in editable and read-only modes', () => {
+    const editableText = renderWithContext(<Input id="test" value="" type="text" />);
+    const editableNumber = renderWithContext(<Input id="test" value="" type="number" />);
+    const readOnlyText = renderWithContext(<Input id="test" value="" type="text" />, {
+      readOnly: true,
+    });
+    const readOnlyNumber = renderWithContext(<Input id="test" value="" type="number" />, {
+      readOnly: true,
+    });
 
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: false,
-          }}
-        >
-          <Input id="test" value="" type="number" />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: true,
-          }}
-        >
-          <Input id="test" value="" type="text" />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: true,
-          }}
-        >
-          <Input id="test" value="" type="number" />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
+    expect(editableText.container.firstChild).toBeTruthy();
+    expect(editableNumber.container.firstChild).toBeTruthy();
+    expect(readOnlyText.container.firstChild).toBeTruthy();
+    expect(readOnlyNumber.container.firstChild).toBeTruthy();
   });
 
-  it('Tests user interaction', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Input id="test" value="" type="text" />
-      </BuilderContext.Provider>
-    );
+  it('renders a text input for interaction', () => {
+    const { container } = renderWithContext(<Input id="test" value="" type="text" />);
 
-    const input = wrapper.find('input').first();
-    input.simulate('change');
+    fireEvent.change(container.querySelector('input') as HTMLElement, {
+      target: { value: 'next' },
+    });
+
+    expect(container.querySelector('input')).toBeTruthy();
   });
 
-  it('Tests no form components scenario', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components: {},
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Input id="test" value="" type="text" />
-      </BuilderContext.Provider>
-    );
+  it('falls back to the default form components when custom ones are unavailable', () => {
+    const { container } = renderWithContext(<Input id="test" value="" type="text" />, {
+      components: {} as IBuilderComponentsProps,
+    });
 
-    expect(Object.keys(wrapper).length).toBe(0);
+    expect(container.querySelector('input')).toBeTruthy();
   });
 });

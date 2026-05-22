@@ -1,12 +1,28 @@
-import { mount } from 'enzyme';
-import React, { act } from 'react';
+import React from 'react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { Popover } from './popover';
 import { PopoverItem } from './popover-item';
 
+const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
+  const element = container.querySelector(`[data-test="${value}"]`);
+
+  if (!element) {
+    throw new Error(`Unable to find element with data-test="${value}"`);
+  }
+
+  return element as HTMLElement;
+};
+
+const queryByDataTest = (
+  container: HTMLElement,
+  value: string
+): HTMLElement | null =>
+  container.querySelector(`[data-test="${value}"]`);
+
 describe('#components/Popover', () => {
-  it('Closes when a popover item is clicked', () => {
+  it('closes when a popover item is clicked', () => {
     const onClick = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Popover label="Add Group" data-test="PopoverTrigger">
         <PopoverItem
           label="With Modifiers"
@@ -16,32 +32,17 @@ describe('#components/Popover', () => {
       </Popover>
     );
 
-    wrapper
-      .find('button[data-test="PopoverTrigger"]')
-      .hostNodes()
-      .first()
-      .simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'PopoverTrigger'));
+    expect(queryByDataTest(container, 'PopoverItem')).toBeTruthy();
 
-    expect(
-      wrapper.find('button[data-test="PopoverItem"]').hostNodes().length
-    ).toEqual(1);
-
-    wrapper
-      .find('button[data-test="PopoverItem"]')
-      .hostNodes()
-      .first()
-      .simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'PopoverItem'));
 
     expect(onClick).toHaveBeenCalledTimes(1);
-    expect(
-      wrapper.find('button[data-test="PopoverItem"]').hostNodes().length
-    ).toEqual(0);
+    expect(queryByDataTest(container, 'PopoverItem')).toBeNull();
   });
 
-  it('Closes when clicking outside the popover', () => {
-    const wrapper = mount(
+  it('closes when clicking outside the popover', () => {
+    const { container, queryByText } = render(
       <div>
         <Popover label="Add Group" data-test="PopoverTrigger">
           <PopoverItem label="With Modifiers" onClick={jest.fn()} />
@@ -52,20 +53,13 @@ describe('#components/Popover', () => {
       </div>
     );
 
-    wrapper
-      .find('button[data-test="PopoverTrigger"]')
-      .hostNodes()
-      .first()
-      .simulate('click');
-    wrapper.update();
-
-    expect(wrapper.text()).toContain('With Modifiers');
+    fireEvent.click(getByDataTest(container, 'PopoverTrigger'));
+    expect(queryByText('With Modifiers')).toBeTruthy();
 
     act(() => {
       document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     });
-    wrapper.update();
 
-    expect(wrapper.text()).not.toContain('With Modifiers');
+    expect(queryByText('With Modifiers')).toBeNull();
   });
 });

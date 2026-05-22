@@ -255,6 +255,39 @@ export const MyBuilder = () => {
   );
 };`;
 
+const historyControlsSnippet = `const components = {
+  HistoryControls: ({
+    undoButton,
+    redoButton,
+    canUndo,
+    canRedo,
+  }) => (
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <span>History</span>
+      {undoButton}
+      {redoButton}
+      <small>{canUndo ? 'Undo ready' : 'No undo yet'}</small>
+      <small>{canRedo ? 'Redo ready' : 'No redo yet'}</small>
+    </div>
+  ),
+};
+
+<Builder
+  fields={fields}
+  data={data}
+  history
+  components={components}
+  onChange={setData}
+/>;
+
+// HistoryControls receives:
+// undoButton: React.ReactNode
+// redoButton: React.ReactNode
+// canUndo: boolean
+// canRedo: boolean
+// onUndo: () => void
+// onRedo: () => void`;
+
 const lockingSnippet = `const data: DenormalizedQuery = [
   {
     type: 'GROUP',
@@ -560,6 +593,22 @@ export const documentationPages: IDocumentationPage[] = [
           <li><InlineCode>onStateChange</InlineCode> includes <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> so custom toolbars can stay in sync.</li>
           <li>The built-in controls already use those flags and render disabled when no action is available.</li>
           <li>Redo history is cleared after a new forward edit, which matches standard editor behavior.</li>
+        </List>
+        <SectionTitle>Custom HistoryControls</SectionTitle>
+        <p>
+          Use <InlineCode>components.HistoryControls</InlineCode> when you want
+          to change the placement or surrounding layout of the built-in history
+          controls without reimplementing undo and redo behavior yourself.
+        </p>
+        <CodeBlock
+          code={historyControlsSnippet}
+          language="tsx"
+          label="HistoryControls override"
+        />
+        <List>
+          <li>The override receives ready-to-render <InlineCode>undoButton</InlineCode> and <InlineCode>redoButton</InlineCode> nodes.</li>
+          <li>It also receives <InlineCode>canUndo</InlineCode>, <InlineCode>canRedo</InlineCode>, <InlineCode>onUndo</InlineCode>, and <InlineCode>onRedo</InlineCode> when you need custom wrappers or auxiliary UI.</li>
+          <li>This lets you reorder, wrap, or annotate the default buttons without having to rebuild their disabled-state logic.</li>
         </List>
         <AlertBox title="Related docs" variant="info">
           <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>,{' '}
@@ -883,6 +932,11 @@ export const documentationPages: IDocumentationPage[] = [
             <InlineCode>Remove</InlineCode>, <InlineCode>Popover</InlineCode>,
             and <InlineCode>PopoverItem</InlineCode> should preserve click
             semantics and remain accessible.
+          </li>
+          <li>
+            <InlineCode>HistoryControls</InlineCode> receives built-in undo and
+            redo button nodes plus history state and handlers, so custom layouts
+            can reuse the default controls instead of recreating them.
           </li>
         </List>
         <SectionTitle>Responsive behavior</SectionTitle>

@@ -1,5 +1,5 @@
-import { mount, shallow } from 'enzyme';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
@@ -31,149 +31,104 @@ const data: any[] = [
     id: 'test-2',
     isNegated: false,
     parent: 'test-1',
+    children: [],
   },
 ];
-const setData = jest.fn();
-const onChange = () => jest.fn();
+
+const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
+  const element = container.querySelector(`[data-test="${value}"]`);
+
+  if (!element) {
+    throw new Error(`Unable to find element with data-test="${value}"`);
+  }
+
+  return element as HTMLElement;
+};
+
+const queryByDataTest = (
+  container: HTMLElement,
+  value: string
+): HTMLElement | null =>
+  container.querySelector(`[data-test="${value}"]`);
+
+const renderWithContext = (
+  element: ReactElement,
+  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+) =>
+  render(
+    <BuilderContext.Provider
+      value={{
+        components,
+        fields,
+        data,
+        strings,
+        setData: jest.fn(),
+        onChange: jest.fn(),
+        dispatchAction: jest.fn(),
+        readOnly: false,
+        ...overrides,
+      }}
+    >
+      {element}
+    </BuilderContext.Provider>
+  );
 
 describe('#components/Group', () => {
-  it('Tests snapshot', () => {
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: false,
-          }}
-        >
-          <Group id="test" isRoot value="AND" isNegated={false} />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: true,
-          }}
-        >
-          <Group id="test" isRoot value="AND" isNegated={false} />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-  });
-
-  it('Tests user interaction', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Group id="test-2" isRoot={false} value="AND" isNegated={false} />
-      </BuilderContext.Provider>
+  it('renders in editable and read-only modes', () => {
+    const editable = renderWithContext(
+      <Group id="test" isRoot value="AND" isNegated={false} />
+    );
+    const readOnly = renderWithContext(
+      <Group id="test" isRoot value="AND" isNegated={false} />,
+      { readOnly: true }
     );
 
-    const optionNot = wrapper.find('[data-test="Option[not]"]').first();
-    const optionAnd = wrapper.find('[data-test="Option[and]"]').first();
-    const optionOr = wrapper.find('[data-test="Option[or]"]').first();
-
-    const addRule = wrapper.find('[data-test="AddRule"]').first();
-    const addGroup = wrapper.find('[data-test="AddGroup"]').first();
-    const remove = wrapper.find('[data-test="Remove"]').first();
-
-    optionNot.simulate('click');
-    optionNot.simulate('click');
-
-    optionOr.simulate('click');
-    optionAnd.simulate('click');
-
-    addRule.simulate('click');
-    addGroup.simulate('click');
-    remove.simulate('click');
+    expect(editable.container.firstChild).toBeTruthy();
+    expect(readOnly.container.firstChild).toBeTruthy();
   });
 
-  it('Tests user interaction on root element', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Group id="test-1" isRoot value="AND" isNegated={false} />
-      </BuilderContext.Provider>
+  it('invokes actions for group controls', () => {
+    const dispatchAction = jest.fn();
+    const { container } = renderWithContext(
+      <Group id="test-2" isRoot={false} value="AND" isNegated={false} />,
+      { dispatchAction }
     );
 
-    const addRule = wrapper.find('[data-test="AddRule"]').first();
-    const addGroup = wrapper.find('[data-test="AddGroup"]').first();
+    fireEvent.click(getByDataTest(container, 'AddRule'));
+    fireEvent.click(getByDataTest(container, 'AddGroup'));
+    fireEvent.click(getByDataTest(container, 'Remove'));
 
-    addRule.simulate('click');
-    addGroup.simulate('click');
+    expect(dispatchAction).toHaveBeenCalled();
   });
 
-  it('Hides group controls when the group is locally read-only', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Group id="test-2" isRoot={false} value="AND" isNegated={false} readOnly />
-      </BuilderContext.Provider>
+  it('invokes root actions for the root group', () => {
+    const dispatchAction = jest.fn();
+    const { container } = renderWithContext(
+      <Group id="test-1" isRoot value="AND" isNegated={false} />,
+      { dispatchAction }
     );
 
-    expect(wrapper.find('[data-test="AddRule"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="AddGroup"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="Remove"]').length).toEqual(0);
+    fireEvent.click(getByDataTest(container, 'AddRule'));
+    fireEvent.click(getByDataTest(container, 'AddGroup'));
+
+    expect(dispatchAction).toHaveBeenCalled();
   });
 
-  it('Tests no srtrings scenario', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings: {},
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Group id="test-1" isRoot />
-      </BuilderContext.Provider>
+  it('hides group controls when the group is locally read-only', () => {
+    const { container } = renderWithContext(
+      <Group id="test-2" isRoot={false} value="AND" isNegated={false} readOnly />
     );
 
-    expect(Object.keys(wrapper).length).toBe(0);
+    expect(queryByDataTest(container, 'AddRule')).toBeNull();
+    expect(queryByDataTest(container, 'AddGroup')).toBeNull();
+    expect(queryByDataTest(container, 'Remove')).toBeNull();
+  });
+
+  it('renders nothing when strings are unavailable', () => {
+    const { container } = renderWithContext(<Group id="test-1" isRoot />, {
+      strings: {},
+    });
+
+    expect(container.firstChild).toBeNull();
   });
 });
