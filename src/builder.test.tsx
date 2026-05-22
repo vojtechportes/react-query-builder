@@ -72,6 +72,175 @@ describe('#components/Builder', () => {
     expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toBeGreaterThan(0);
   });
 
+  it('Does not render clone controls when cloneable is disabled', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }],
+          },
+        ]}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(wrapper.find('[data-test="CloneButton[group]"]').hostNodes().length).toEqual(0);
+    expect(wrapper.find('[data-test="CloneButton[rule]"]').hostNodes().length).toEqual(0);
+  });
+
+  it('Clones a rule directly below the original rule', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        cloneable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+              { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('[data-test="CloneButton[rule]"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: 'alpha',
+            operator: 'EQUAL',
+          },
+          {
+            field: 'MOCK_FIELD',
+            value: 'alpha',
+            operator: 'EQUAL',
+          },
+          {
+            field: 'MOCK_NUMBER',
+            value: 5,
+            operator: 'NOT_EQUAL',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('Clones a group subtree directly below the original group', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        cloneable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: true,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'nested',
+                    operator: 'EQUAL',
+                  },
+                ],
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 9,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('[data-test="CloneButton[group]"]').last().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'OR',
+            isNegated: true,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'nested',
+                operator: 'EQUAL',
+              },
+            ],
+          },
+          {
+            type: 'GROUP',
+            value: 'OR',
+            isNegated: true,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'nested',
+                operator: 'EQUAL',
+              },
+            ],
+          },
+          {
+            field: 'MOCK_NUMBER',
+            value: 9,
+            operator: 'NOT_EQUAL',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('Does not render a clone control for the single root group', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        cloneable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [],
+          },
+        ]}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(wrapper.find('[data-test="CloneButton[group]"]').hostNodes().length).toEqual(0);
+  });
+
   it('Adds a group at the root level', () => {
     const onChange = jest.fn();
     const wrapper = mount(

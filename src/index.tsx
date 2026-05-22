@@ -74,6 +74,8 @@ export type { ISwitchProps } from './form/switch';
 
 export { Button } from './button';
 export type { IButtonProps } from './button';
+export { CloneButton } from './clone-button';
+export type { ICloneButtonProps } from './clone-button';
 export { LockToggle } from './lock-toggle';
 export type { ILockToggleProps } from './lock-toggle';
 

@@ -16,6 +16,7 @@ const builderSignature = `export interface IBuilderProps {
   strings?: IStrings;
   readOnly?: boolean;
   lockable?: boolean;
+  cloneable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both';
@@ -93,6 +94,7 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   };
   Remove?: React.ComponentType<IButtonProps>;
   Add?: React.ComponentType<IButtonProps>;
+  CloneButton?: React.ComponentType<ICloneButtonProps>;
   LockToggle?: React.ComponentType<ILockToggleProps>;
   Rule?: React.ComponentType<IRuleContainerProps>;
   Group?: React.ComponentType<IGroupContainerProps>;
@@ -111,6 +113,15 @@ export interface ILockToggleProps {
   nodeType: 'rule' | 'group';
   disabled?: boolean;
   onChange?: (nextState: BuilderLockState) => void;
+  className?: string;
+  title?: string;
+  'data-test'?: string;
+}`;
+
+const cloneButtonSignature = `export interface ICloneButtonProps {
+  nodeType: 'rule' | 'group';
+  disabled?: boolean;
+  onClick?: () => void;
   className?: string;
   title?: string;
   'data-test'?: string;
@@ -290,6 +301,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>strings</InlineCode>:</ItemTitle> Optional localized UI strings used by the built-in controls.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Disables editing actions when enabled.</li>
           <li><ItemTitle><InlineCode>lockable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders lock controls for rules and groups and writes the resulting lock state back into emitted query data.</li>
+          <li><ItemTitle><InlineCode>cloneable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders clone controls for rules and groups and inserts the cloned node directly below the original.</li>
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group.</li>
           <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both.</li>
@@ -395,11 +407,13 @@ export const apiPages: IApiPage[] = [
     content: (
       <>
         <CodeBlock code={componentsSignature} language="ts" label="Component overrides" />
+        <CodeBlock code={cloneButtonSignature} language="ts" label="CloneButton props" />
         <CodeBlock code={lockToggleSignature} language="ts" label="LockToggle props" />
         <SectionTitle>Props</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>form.Select</InlineCode> / <InlineCode>form.SelectMulti</InlineCode> / <InlineCode>form.Switch</InlineCode> / <InlineCode>form.Input</InlineCode>:</ItemTitle> Replace the built-in form controls used by rules and groups.</li>
           <li><ItemTitle><InlineCode>Remove</InlineCode> and <InlineCode>Add</InlineCode>:</ItemTitle> Replace action buttons used for structural editing.</li>
+          <li><ItemTitle><InlineCode>CloneButton</InlineCode>:</ItemTitle> Replaces the built-in clone control used when <InlineCode>cloneable</InlineCode> is enabled.</li>
           <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Replaces the built-in lock control used when <InlineCode>lockable</InlineCode> is enabled.</li>
           <li><ItemTitle><InlineCode>Rule</InlineCode> and <InlineCode>Group</InlineCode>:</ItemTitle> Replace the main structural containers.</li>
           <li><ItemTitle><InlineCode>GroupHeaderOption</InlineCode>:</ItemTitle> Replaces the header option control used in group UIs.</li>
@@ -413,6 +427,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>form.Select</InlineCode>:</ItemTitle> Receives <InlineCode>values</InlineCode>, <InlineCode>selectedValue</InlineCode>, <InlineCode>emptyValue</InlineCode>, and <InlineCode>onChange(value)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>form.SelectMulti</InlineCode>:</ItemTitle> Receives <InlineCode>selectedValue</InlineCode>, <InlineCode>values</InlineCode>, <InlineCode>onChange(value)</InlineCode>, and <InlineCode>onDelete(value)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>form.Switch</InlineCode>:</ItemTitle> Receives <InlineCode>switched</InlineCode>, optional <InlineCode>onChange(value)</InlineCode>, and optional <InlineCode>disabled</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>CloneButton</InlineCode>:</ItemTitle> Receives <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onClick()</InlineCode>.</li>
           <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Receives <InlineCode>state</InlineCode>, <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onChange(nextState)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>Rule</InlineCode>:</ItemTitle> Receives already-built <InlineCode>children</InlineCode>, <InlineCode>controls</InlineCode>, and optional <InlineCode>dragHandle</InlineCode>.</li>
           <li><ItemTitle><InlineCode>Group</InlineCode>:</ItemTitle> Receives <InlineCode>controlsLeft</InlineCode>, <InlineCode>controlsRight</InlineCode>, <InlineCode>children</InlineCode>, and optional overlays or drag handles.</li>
