@@ -15,46 +15,50 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import styled from 'styled-components';
-import { Button } from './button';
+import { Button, IButtonProps } from './button';
 import { BuilderContextProvider } from './builder-context';
-import { Rule } from './rule/rule-container';
-import { IRuleProps as IRuleContainerProps } from './rule/rule-container';
 import { IStrings, strings as defaultStrings } from './constants/strings';
-import { DragPreview } from './drag-preview';
 import { DropZone, IDropZoneProps } from './drop-zone';
+import { DragPreview } from './drag-preview';
 import {
   EmptyGroupDropZone,
   IEmptyGroupDropZoneProps,
 } from './empty-group-drop-zone';
-import { Input } from './form/input';
-import { IInputProps } from './form/input';
-import { Select } from './form/select';
-import { ISelectProps } from './form/select';
-import { SelectMulti } from './form/select-multi';
-import { ISelectMultiProps } from './form/select-multi';
-import { Switch } from './form/switch';
-import { ISwitchProps } from './form/switch';
-import { Group } from './group/group-container';
-import { IGroupProps as IGroupContainerProps } from './group/group-container';
+import { Input, IInputProps } from './form/input';
+import { Select, ISelectProps } from './form/select';
+import { SelectMulti, ISelectMultiProps } from './form/select-multi';
+import { Switch, ISwitchProps } from './form/switch';
+import {
+  applyHistoryAction,
+} from './history/apply-history-action';
+import { createBuilderHistoryState } from './history/create-builder-history-state';
+import { createInsertSubtreeAction } from './history/create-insert-subtree-action';
+import { createMoveNodeAction } from './history/create-move-node-action';
+import type {
+  BuilderHistoryAction,
+  IBuilderHistoryConfig,
+  IBuilderHistoryState,
+} from './history/types';
+import { Iterator } from './iterator';
+import { CloneButton, ICloneButtonProps } from './clone-button';
+import { Group, IGroupProps as IGroupContainerProps } from './group/group-container';
 import { Option as GroupHeaderOption } from './group/option';
 import { IOptionProps as IGroupHeaderOptionProps } from './group/option';
-import { Iterator } from './iterator';
 import { LockToggle, ILockToggleProps } from './lock-toggle';
-import { CloneButton, ICloneButtonProps } from './clone-button';
 import { Popover, IPopoverProps } from './popover';
 import { PopoverItem, IPopoverItemProps } from './popover-item';
+import { Rule, IRuleProps as IRuleContainerProps } from './rule/rule-container';
 import { SecondaryButton } from './secondary-button';
 import { Text } from './text';
-import { IButtonProps } from './button';
+import { useTheme } from './theme-provider/hooks/use-theme';
+import { IThemeProps } from './theme-provider/theme-provider';
 import { createGroupNode } from './utils/create-group-node.util';
 import { createId } from './utils/create-id.util';
 import { emitQuery } from './utils/emit-query.util';
 import { ingestQuery } from './utils/ingest-query.util';
 import { isPromiseLike } from './utils/is-promise-like.util';
 import { isSameQuery } from './utils/is-same-query.util';
-import { moveQueryNode } from './utils/move-query-node.util';
-import { createBuilderValidationResult } from './utils/validation/create-builder-validation-result.util';
-import { validateBuilderQuery } from './utils/validation/validate-builder-query.util';
+import { BuilderLockState } from './utils/lock-state';
 import {
   DenormalizedQuery,
   INormalizedRuleNode,
@@ -62,9 +66,8 @@ import {
   QueryGroupValue,
   QueryOperator,
 } from './utils/query-tree';
-import { BuilderLockState } from './utils/lock-state';
-import { IThemeProps } from './theme-provider/theme-provider';
-import { useTheme } from './theme-provider/hooks/use-theme';
+import { createBuilderValidationResult } from './utils/validation/create-builder-validation-result.util';
+import { validateBuilderQuery } from './utils/validation/validate-builder-query.util';
 
 export const StyledBuilder = styled.div<{
   $theme: Required<IThemeProps>;
@@ -86,6 +89,34 @@ const RootControls = styled.div`
   margin-bottom: 0.5rem;
 `;
 
+const HistoryButton = styled(Button)<{
+  $theme: Required<IThemeProps>;
+}>`
+  background-color: ${({ $theme }) => $theme.colors.white};
+  border: 1px solid ${({ $theme }) => $theme.colors.grey['300']};
+  color: ${({ $theme }) => $theme.colors.grey['700']};
+  text-transform: none;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.9rem;
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme.colors.grey['100']};
+    color: ${({ $theme }) => $theme.colors.grey['800']};
+  }
+
+  &:disabled {
+    background-color: ${({ $theme }) => $theme.colors.grey['100']};
+    border-color: ${({ $theme }) => $theme.colors.grey['200']};
+    color: ${({ $theme }) => $theme.colors.grey['400']};
+    cursor: not-allowed;
+  }
+
+  &:disabled:hover {
+    background-color: ${({ $theme }) => $theme.colors.grey['100']};
+    color: ${({ $theme }) => $theme.colors.grey['400']};
+  }
+`;
+
 const DROP_ZONE_PROXIMITY = 24;
 
 export type BuilderGroupMode = 'with-modifiers' | 'without-modifiers' | 'both';
@@ -104,6 +135,11 @@ export type BuilderFieldOperator = QueryOperator;
 
 export type BuilderGroupValues = QueryGroupValue;
 export type { BuilderLockState };
+export type {
+  BuilderHistoryAction as IBuilderHistoryAction,
+  IBuilderHistoryConfig,
+  IBuilderHistoryState,
+} from './history/types';
 
 export type BuilderFieldValue =
   | string
@@ -186,10 +222,10 @@ export interface IMultiListValueValidationRule
 
 export type IStatementValueValidationRule =
   IBuilderFieldValidationBase<string> & {
-  minLength?: number;
-  maxLength?: number;
-  matches?: RegExp;
-};
+    minLength?: number;
+    maxLength?: number;
+    matches?: RegExp;
+  };
 
 export type IBuilderOperatorValidationRule<TRule> = Partial<TRule> & {
   operators: BuilderFieldOperator[];
@@ -346,6 +382,8 @@ export interface IBuilderStateChange {
   data: DenormalizedQuery;
   isValid: boolean;
   validation: IBuilderValidationResult;
+  canUndo: boolean;
+  canRedo: boolean;
 }
 
 export interface IBuilderComponentsProps {
@@ -404,6 +442,7 @@ export interface IBuilderProps {
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
   showValidation?: boolean;
+  history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
 }
 
@@ -442,10 +481,17 @@ export const Builder: FC<IBuilderProps> = ({
   validator,
   onStateChange,
   showValidation = false,
+  history = false,
   onChange,
 }) => {
   const rootGroupType =
     groupTypes === 'without-modifiers' ? 'without-modifiers' : 'with-modifiers';
+  const resolvedHistoryConfig =
+    history && typeof history === 'object' ? history : history ? {} : null;
+  const historyEnabled = Boolean(history);
+  const historyMaxEntries = resolvedHistoryConfig?.maxEntries || 50;
+  const showHistoryControls =
+    historyEnabled && resolvedHistoryConfig?.controls !== false;
 
   const theme = useTheme();
   const [data, setData] = useState<NormalizedQuery>(() =>
@@ -457,6 +503,9 @@ export const Builder: FC<IBuilderProps> = ({
   const [validation, setValidation] = useState<IBuilderValidationResult>(() =>
     createBuilderValidationResult([])
   );
+  const [historyState, setHistoryState] = useState<IBuilderHistoryState>(() =>
+    createBuilderHistoryState()
+  );
   const dragDirectionY = useRef(0);
   const lastPointerY = useRef<number | null>(null);
   const lastEmittedData = useRef<DenormalizedQuery | null>(null);
@@ -466,6 +515,8 @@ export const Builder: FC<IBuilderProps> = ({
   const AddComponent = components.Add || Button;
   const PopoverComponent = components.Popover || Popover;
   const PopoverItemComponent = components.PopoverItem || PopoverItem;
+  const canUndo = historyState.past.length > 0;
+  const canRedo = historyState.future.length > 0;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -486,25 +537,92 @@ export const Builder: FC<IBuilderProps> = ({
         const denormalizedData = emitQuery(nextData);
         lastEmittedData.current = denormalizedData;
         onChange(denormalizedData);
-      } catch (error) {
+      } catch {
         throw new Error('Input data tree is in invalid format');
       }
     },
     [onChange]
   );
 
-  const updateData = useCallback(
-    (updater: (currentData: NormalizedQuery) => NormalizedQuery) => {
-      setData((currentData: NormalizedQuery) => {
-        const nextData = updater(currentData);
+  const commitData = useCallback(
+    (
+      action: BuilderHistoryAction,
+      options: { trackHistory?: boolean } = {}
+    ): boolean => {
+      const appliedAction = applyHistoryAction(data, action);
 
-        pendingChangeData.current = nextData;
+      if (!appliedAction) {
+        return false;
+      }
+      pendingChangeData.current = appliedAction.data;
+      setData(appliedAction.data);
 
-        return nextData;
-      });
+      if (options.trackHistory !== false && historyEnabled) {
+        setHistoryState((currentHistory) => ({
+          past: [
+            ...currentHistory.past.slice(-(historyMaxEntries - 1)),
+            {
+              undo: appliedAction.inverse,
+              redo: action,
+            },
+          ],
+          future: [],
+        }));
+      }
+
+      return true;
     },
-    []
+    [data, historyEnabled, historyMaxEntries]
   );
+
+  const dispatchAction = useCallback(
+    (action: BuilderHistoryAction) => {
+      commitData(action);
+    },
+    [commitData]
+  );
+
+  const undo = useCallback(() => {
+    if (!historyEnabled) {
+      return;
+    }
+
+    const entry = historyState.past[historyState.past.length - 1];
+
+    if (!entry) {
+      return;
+    }
+
+    if (!commitData(entry.undo, { trackHistory: false })) {
+      return;
+    }
+
+    setHistoryState((currentHistory) => ({
+      past: currentHistory.past.slice(0, -1),
+      future: [entry, ...currentHistory.future],
+    }));
+  }, [commitData, historyEnabled, historyState.past]);
+
+  const redo = useCallback(() => {
+    if (!historyEnabled) {
+      return;
+    }
+
+    const entry = historyState.future[0];
+
+    if (!entry) {
+      return;
+    }
+
+    if (!commitData(entry.redo, { trackHistory: false })) {
+      return;
+    }
+
+    setHistoryState((currentHistory) => ({
+      past: [...currentHistory.past, entry],
+      future: currentHistory.future.slice(1),
+    }));
+  }, [commitData, historyEnabled, historyState.future]);
 
   const emitStateChange = useCallback(
     (nextData: DenormalizedQuery, nextValidation: IBuilderValidationResult) => {
@@ -516,9 +634,11 @@ export const Builder: FC<IBuilderProps> = ({
         data: nextData,
         isValid: nextValidation.isValid,
         validation: nextValidation,
+        canUndo,
+        canRedo,
       });
     },
-    [onStateChange]
+    [canRedo, canUndo, onStateChange]
   );
 
   useEffect(() => {
@@ -543,6 +663,7 @@ export const Builder: FC<IBuilderProps> = ({
     }
 
     pendingChangeData.current = null;
+    setHistoryState(createBuilderHistoryState());
     setData(ingestQuery(originalData, rootGroupType, singleRootGroup));
   }, [originalData, rootGroupType, singleRootGroup]);
 
@@ -570,7 +691,7 @@ export const Builder: FC<IBuilderProps> = ({
       try {
         denormalizedData = emitQuery(data);
         validationData = emitQuery(data, { preserveIds: true });
-      } catch (error) {
+      } catch {
         const nextValidation = createBuilderValidationResult([
           {
             ruleId: 'root',
@@ -611,6 +732,8 @@ export const Builder: FC<IBuilderProps> = ({
       isSubscribed = false;
     };
   }, [
+    canRedo,
+    canUndo,
     data,
     emitStateChange,
     fields,
@@ -628,7 +751,6 @@ export const Builder: FC<IBuilderProps> = ({
 
   const handleDragStart = useCallback(({ active }: DragStartEvent) => {
     setActiveDragId(String(active.id));
-
     dragDirectionY.current = 0;
     lastPointerY.current = null;
   }, []);
@@ -656,9 +778,7 @@ export const Builder: FC<IBuilderProps> = ({
 
   const handleDragCancel = useCallback(() => {
     resetDragState();
-
     lastPointerY.current = null;
-
     setIsDropSettling(false);
   }, [resetDragState]);
 
@@ -666,43 +786,63 @@ export const Builder: FC<IBuilderProps> = ({
     ({ active, over }: DragEndEvent) => {
       const dropZoneId = over ? String(over.id) : null;
 
-      if (!draggable || readOnly || !dropZoneId) {
+      if (!draggable || readOnly || !dropZoneId || !dropZoneId.startsWith('drop-zone:')) {
+        resetDragState();
+        lastPointerY.current = null;
+        return;
+      }
+
+      const [, destinationParentSegment, destinationIndexSegment] =
+        dropZoneId.split(':');
+      const destinationParentId =
+        destinationParentSegment === 'root'
+          ? undefined
+          : destinationParentSegment;
+      const destinationIndex = Number(destinationIndexSegment);
+
+      if (Number.isNaN(destinationIndex)) {
         resetDragState();
         lastPointerY.current = null;
         return;
       }
 
       flushSync(() => {
-        updateData((currentData) =>
-          moveQueryNode(currentData, String(active.id), dropZoneId)
+        commitData(
+          createMoveNodeAction(
+            String(active.id),
+            destinationIndex,
+            destinationParentId
+          )
         );
       });
 
       setIsDropSettling(true);
-
       lastPointerY.current = null;
-
       resetDragState();
       requestAnimationFrame(() => {
         setIsDropSettling(false);
       });
     },
-    [draggable, readOnly, resetDragState, updateData]
+    [commitData, draggable, readOnly, resetDragState]
   );
 
   const handleAddRootGroup = useCallback(() => {
-    updateData((currentData) => [
-      ...currentData,
-      createGroupNode('with-modifiers'),
-    ]);
-  }, [updateData]);
+    dispatchAction(
+      createInsertSubtreeAction(
+        [createGroupNode('with-modifiers')],
+        filteredData.length
+      )
+    );
+  }, [dispatchAction, filteredData.length]);
 
   const handleAddRootGroupWithoutModifiers = useCallback(() => {
-    updateData((currentData) => [
-      ...currentData,
-      createGroupNode('without-modifiers'),
-    ]);
-  }, [updateData]);
+    dispatchAction(
+      createInsertSubtreeAction(
+        [createGroupNode('without-modifiers')],
+        filteredData.length
+      )
+    );
+  }, [dispatchAction, filteredData.length]);
 
   const handleAddRootRule = useCallback(() => {
     const emptyRule: INormalizedRuleNode = {
@@ -710,8 +850,8 @@ export const Builder: FC<IBuilderProps> = ({
       id: createId(),
     };
 
-    updateData((currentData) => [...currentData, emptyRule]);
-  }, [updateData]);
+    dispatchAction(createInsertSubtreeAction([emptyRule], filteredData.length));
+  }, [dispatchAction, filteredData.length]);
 
   const collisionDetection: CollisionDetection = useCallback(
     ({ pointerCoordinates, droppableContainers, droppableRects }) => {
@@ -828,48 +968,75 @@ export const Builder: FC<IBuilderProps> = ({
       showValidation={showValidation}
       validation={validation}
       data={data}
-      setData={setData}
-      onChange={emitChange}
-      updateData={updateData}
+      dispatchAction={dispatchAction}
+      history={{
+        ...historyState,
+        canUndo,
+        canRedo,
+        undo,
+        redo,
+      }}
     >
       <StyledBuilder $theme={theme}>
-        {!readOnly && strings.group && !singleRootGroup && (
+        {((!readOnly && strings.group && !singleRootGroup) ||
+          showHistoryControls) && (
           <RootControls>
-            <AddComponent onClick={handleAddRootRule} data-test="AddRootRule">
-              {strings.group.addRule}
-            </AddComponent>
-            {groupTypes === 'both' ? (
-              <PopoverComponent
-                label={strings.group.addGroup || 'Add Group'}
-                data-test="AddRootGroup"
-              >
-                <PopoverItemComponent
-                  label={
-                    strings.group.addGroupWithModifiers || 'With Modifiers'
-                  }
-                  onClick={handleAddRootGroup}
-                  data-test="AddRootGroupWithModifiers"
-                />
-                <PopoverItemComponent
-                  label={
-                    strings.group.addGroupWithoutModifiers ||
-                    'Without Modifiers'
-                  }
-                  onClick={handleAddRootGroupWithoutModifiers}
-                  data-test="AddRootGroupWithoutModifiers"
-                />
-              </PopoverComponent>
-            ) : (
-              <AddComponent
-                onClick={
-                  groupTypes === 'without-modifiers'
-                    ? handleAddRootGroupWithoutModifiers
-                    : handleAddRootGroup
-                }
-                data-test="AddRootGroup"
-              >
-                {strings.group.addGroup}
-              </AddComponent>
+            {showHistoryControls && strings.history && (
+              <>
+                <HistoryButton
+                  onClick={undo}
+                  disabled={!canUndo}
+                  data-test="Undo"
+                  $theme={theme}
+                >
+                  {strings.history.undo}
+                </HistoryButton>
+                <HistoryButton
+                  onClick={redo}
+                  disabled={!canRedo}
+                  data-test="Redo"
+                  $theme={theme}
+                >
+                  {strings.history.redo}
+                </HistoryButton>
+              </>
+            )}
+            {!readOnly && strings.group && !singleRootGroup && (
+              <>
+                <AddComponent onClick={handleAddRootRule} data-test="AddRootRule">
+                  {strings.group.addRule}
+                </AddComponent>
+                {groupTypes === 'both' ? (
+                  <PopoverComponent
+                    label={strings.group.addGroup || 'Add Group'}
+                    data-test="AddRootGroup"
+                  >
+                    <PopoverItemComponent
+                      label={strings.group.addGroupWithModifiers || 'With Modifiers'}
+                      onClick={handleAddRootGroup}
+                      data-test="AddRootGroupWithModifiers"
+                    />
+                    <PopoverItemComponent
+                      label={
+                        strings.group.addGroupWithoutModifiers || 'Without Modifiers'
+                      }
+                      onClick={handleAddRootGroupWithoutModifiers}
+                      data-test="AddRootGroupWithoutModifiers"
+                    />
+                  </PopoverComponent>
+                ) : (
+                  <AddComponent
+                    onClick={
+                      groupTypes === 'without-modifiers'
+                        ? handleAddRootGroupWithoutModifiers
+                        : handleAddRootGroup
+                    }
+                    data-test="AddRootGroup"
+                  >
+                    {strings.group.addGroup}
+                  </AddComponent>
+                )}
+              </>
             )}
           </RootControls>
         )}

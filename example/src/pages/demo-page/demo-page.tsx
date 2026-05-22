@@ -16,7 +16,7 @@ const Title = styled.h1`
 export const DemoPage: React.FC = () => {
   usePageMetadata(
     'Demo',
-    'Interactive demo of React Query Builder with configuration toggles, theme editing, and output previews.'
+    'Interactive demo of React Query Builder with configuration toggles, undo and redo history, theme editing, and output previews.'
   );
 
   return (

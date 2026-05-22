@@ -1,6 +1,8 @@
 import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
 import { Select as DefaultSelect } from '../form/select';
+import { createReplaceNodeAction } from '../history/create-replace-node-action';
+import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleStateForField } from '../utils/create-rule-state-for-field.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
@@ -23,6 +25,7 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
     setData,
     onChange,
     updateData,
+    dispatchAction,
     components,
     strings,
     readOnly,
@@ -31,29 +34,47 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
 
   const handleChange = (value: string) => {
     const nextField = fields.find(item => item.field === value);
+    const currentRule = findNodeById(data, id);
 
-    if (!nextField) {
+    if (!nextField || !currentRule || isNormalizedGroupNode(currentRule)) {
       return;
     }
 
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
-          if (isNormalizedGroupNode(item)) {
-            return;
-          }
+    if (!dispatchAction && setData && onChange) {
+      applyDataUpdate(
+        data,
+        setData,
+        onChange,
+        currentData =>
+          updateItem(currentData, id, item => {
+            if (isNormalizedGroupNode(item)) {
+              return;
+            }
 
-          const nextRuleState = createRuleStateForField(nextField);
+            const nextRuleState = createRuleStateForField(nextField);
+            Object.keys(item).forEach(key => {
+              if (!['id', 'parent', 'readOnly'].includes(key)) {
+                delete ((item as unknown) as Record<string, unknown>)[key];
+              }
+            });
+            Object.assign(item, nextRuleState);
+          }),
+        updateData
+      );
+      return;
+    }
 
-          delete item.value;
-          delete item.operators;
-          delete item.operator;
-          Object.assign(item, nextRuleState);
-        }),
-      updateData
+    if (!dispatchAction) {
+      return;
+    }
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        id: currentRule.id,
+        parent: currentRule.parent,
+        readOnly: currentRule.readOnly,
+        ...createRuleStateForField(nextField),
+      })
     );
   };
 

@@ -7,6 +7,8 @@ export type {
   BuilderFieldValue,
   BuilderGroupMode,
   BuilderGroupValues,
+  IBuilderHistoryAction,
+  IBuilderHistoryConfig,
   BuilderLockState,
   IBooleanFieldProps,
   IBooleanFieldValidation,

@@ -1,9 +1,11 @@
 import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../../builder-context';
 import { SelectMulti as DefaultSelectMulti } from '../../form/select-multi';
-import { applyDataUpdate } from '../../utils/apply-data-update.util';
+import { createReplaceNodeAction } from '../../history/create-replace-node-action';
+import { findNodeById } from '../../history/find-node-by-id';
 import { isNormalizedGroupNode } from '../../utils/is-normalized-group-node.util';
 import { isStringArray } from '../../utils/is-string-array.util';
+import { applyDataUpdate } from '../../utils/apply-data-update.util';
 import { updateItem } from '../../utils/update-item.util';
 
 export interface ISelectMultiProps {
@@ -24,45 +26,106 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     setData,
     onChange,
     updateData,
+    dispatchAction,
     components,
     strings,
     readOnly,
-  } = useContext(BuilderContext);
+  } =
+    useContext(BuilderContext);
   const SelectMultiComponent =
     components.form?.SelectMulti || DefaultSelectMulti;
 
   const handleChange = (value: string) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
-          if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
-            return;
-          }
+    const currentRule = findNodeById(data, id);
 
-          item.value = item.value.filter(currentValue => currentValue !== value);
-          item.value.push(value);
-        }),
-      updateData
+    if (
+      !currentRule ||
+      isNormalizedGroupNode(currentRule) ||
+      !isStringArray(currentRule.value)
+    ) {
+      return;
+    }
+
+    if (!dispatchAction && setData && onChange) {
+      applyDataUpdate(
+        data,
+        setData,
+        onChange,
+        currentData =>
+          updateItem(currentData, id, item => {
+            if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+              return;
+            }
+
+            item.value = item.value.filter(
+              currentValue => currentValue !== value
+            );
+            item.value.push(value);
+          }),
+        updateData
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    const nextValue = currentRule.value.filter(
+      currentValue => currentValue !== value
+    );
+    nextValue.push(value);
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        ...currentRule,
+        value: nextValue,
+      })
     );
   };
 
   const handleDelete = (value: string) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
-          if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
-            return;
-          }
+    const currentRule = findNodeById(data, id);
 
-          item.value = item.value.filter(currentValue => currentValue !== value);
-        }),
-      updateData
+    if (
+      !currentRule ||
+      isNormalizedGroupNode(currentRule) ||
+      !isStringArray(currentRule.value)
+    ) {
+      return;
+    }
+
+    if (!dispatchAction && setData && onChange) {
+      applyDataUpdate(
+        data,
+        setData,
+        onChange,
+        currentData =>
+          updateItem(currentData, id, item => {
+            if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+              return;
+            }
+
+            item.value = item.value.filter(
+              currentValue => currentValue !== value
+            );
+          }),
+        updateData
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        ...currentRule,
+        value: currentRule.value.filter(
+          currentValue => currentValue !== value
+        ),
+      })
     );
   };
 

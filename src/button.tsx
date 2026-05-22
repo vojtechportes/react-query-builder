@@ -23,6 +23,7 @@ const StyledButton = styled.button<{ $theme: Required<IThemeProps> }>`
 
 export interface IButtonProps {
   onClick: () => void;
+  disabled?: boolean;
   className?: string;
   'data-test'?: string;
   label?: string;
@@ -31,6 +32,7 @@ export interface IButtonProps {
 
 export const Button: FC<IButtonProps> = ({
   onClick,
+  disabled = false,
   className,
   children,
   label,
@@ -41,6 +43,7 @@ export const Button: FC<IButtonProps> = ({
   return (
     <StyledButton
       onClick={onClick}
+      disabled={disabled || undefined}
       className={className}
       data-test={dataTest}
       $theme={theme}

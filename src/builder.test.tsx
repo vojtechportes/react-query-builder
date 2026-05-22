@@ -92,6 +92,233 @@ describe('#components/Builder', () => {
     expect(wrapper.find('[data-test="CloneButton[rule]"]').hostNodes().length).toEqual(0);
   });
 
+  it('Does not render history controls unless history is enabled', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(wrapper.find('[data-test="Undo"]').hostNodes().length).toEqual(0);
+    expect(wrapper.find('[data-test="Redo"]').hostNodes().length).toEqual(0);
+  });
+
+  it('Undoes and redoes root-level edits when history is enabled', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        history
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('[data-test="Undo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).not.toHaveBeenCalled();
+
+    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ type: 'GROUP' }),
+      expect.objectContaining({ field: '' }),
+    ]);
+
+    wrapper.find('[data-test="Undo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ type: 'GROUP' }),
+    ]);
+
+    wrapper.find('[data-test="Redo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ type: 'GROUP' }),
+      expect.objectContaining({ field: '' }),
+    ]);
+  });
+
+  it('Clears redo history after a new edit', () => {
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        history
+        onChange={jest.fn()}
+      />
+    );
+
+    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
+    wrapper.update();
+    wrapper.find('[data-test="Undo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(wrapper.find('[data-test="Redo"]').first().prop('disabled')).toEqual(false);
+
+    wrapper.find('[data-test="AddRootGroup"]').first().simulate('click');
+    wrapper.update();
+
+    expect(wrapper.find('[data-test="Redo"]').first().prop('disabled')).toEqual(true);
+  });
+
+  it('Undoes and redoes rule value edits when history is enabled', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        history
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('input[type="text"]').first().simulate('change', {
+      target: { value: 'beta' },
+    });
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+      },
+    ]);
+
+    wrapper.find('[data-test="Undo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+      },
+    ]);
+
+    wrapper.find('[data-test="Redo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+      },
+    ]);
+  });
+
+  it('Undoes deletes when history is enabled', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        history
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+              { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    wrapper.find('button').filterWhere((node) => node.text() === 'Delete').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [{ field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' }],
+      },
+    ]);
+
+    wrapper.find('[data-test="Undo"]').first().simulate('click');
+    wrapper.update();
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+        ],
+      },
+    ]);
+  });
+
+  it('Emits history state through onStateChange', async () => {
+    const onStateChange = jest.fn();
+    const wrapper = mount(
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        history
+        onStateChange={onStateChange}
+        onChange={jest.fn()}
+      />
+    );
+
+    await Promise.resolve();
+    wrapper.update();
+
+    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
+      canUndo: false,
+      canRedo: false,
+    });
+
+    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
+    wrapper.update();
+    await Promise.resolve();
+    wrapper.update();
+
+    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
+      canUndo: true,
+      canRedo: false,
+    });
+
+    wrapper.find('[data-test="Undo"]').first().simulate('click');
+    wrapper.update();
+    await Promise.resolve();
+    wrapper.update();
+
+    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
+      canUndo: false,
+      canRedo: true,
+    });
+  });
+
   it('Clones a rule directly below the original rule', () => {
     const onChange = jest.fn();
     const wrapper = mount(

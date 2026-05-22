@@ -123,6 +123,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [lockable, setLockable] = React.useState(false);
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
+  const [history, setHistory] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidation, setShowValidation] = React.useState(true);
   const [themeColors, setThemeColors] = React.useState<IColors>(
@@ -182,6 +183,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           <ToggleRow>
             <Toggle
               type="checkbox"
+              checked={history}
+              onChange={event => setHistory(event.target.checked)}
+            />
+            <span>Undo / redo history</span>
+          </ToggleRow>
+
+          <ToggleRow>
+            <Toggle
+              type="checkbox"
               checked={singleRootGroup}
               onChange={event => setSingleRootGroup(event.target.checked)}
             />
@@ -215,6 +225,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 cloneable={cloneable}
                 onChange={setData}
                 draggable={draggable}
+                history={history}
                 groupTypes="both"
                 singleRootGroup={singleRootGroup}
                 showValidation={showValidation}

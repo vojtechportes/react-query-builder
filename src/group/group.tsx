@@ -3,21 +3,21 @@ import { BuilderGroupValues, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Button } from '../button';
 import { CloneButton as DefaultCloneButton } from '../clone-button';
+import { createClonedSubtree } from '../history/create-cloned-subtree';
+import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
+import { createRemoveSubtreeAction } from '../history/create-remove-subtree-action';
+import { createReplaceNodeAction } from '../history/create-replace-node-action';
+import { getNodePosition } from '../history/get-node-position';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Popover as DefaultPopover } from '../popover';
 import { PopoverItem as DefaultPopoverItem } from '../popover-item';
-import { Group as DefaultGroupContainer } from './group-container';
-import { Option as DefaultOption } from './option';
 import { SecondaryButton } from '../secondary-button';
-import { appendToGroup } from '../utils/append-to-group.util';
-import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createGroupNode } from '../utils/create-group-node.util';
 import { createId } from '../utils/create-id.util';
-import { cloneItem } from '../utils/clone-item.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { NormalizedNode, INormalizedRuleNode } from '../utils/query-tree';
-import { removeItem } from '../utils/remove-item.util';
-import { updateItem } from '../utils/update-item.util';
+import { INormalizedRuleNode, NormalizedNode } from '../utils/query-tree';
+import { Group as DefaultGroupContainer } from './group-container';
+import { Option as DefaultOption } from './option';
 
 export interface IGroupProps {
   value?: BuilderGroupValues;
@@ -47,9 +47,7 @@ export const Group: FC<IGroupProps> = ({
   const {
     components,
     data,
-    setData,
-    onChange,
-    updateData,
+    dispatchAction,
     strings,
     readOnly,
     cloneable,
@@ -71,12 +69,14 @@ export const Group: FC<IGroupProps> = ({
   const canCloneGroup = !(singleRootGroup && isRoot) && !isReadOnly;
 
   const addItem = (payload: NormalizedNode) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      (currentData) => appendToGroup(currentData, id, payload),
-      updateData
+    const currentGroup = data.find((item) => item.id === id);
+
+    if (!dispatchAction || !currentGroup || !isNormalizedGroupNode(currentGroup)) {
+      return;
+    }
+
+    dispatchAction(
+      createInsertSubtreeAction([payload], currentGroup.children.length, id)
     );
   };
 
@@ -99,77 +99,90 @@ export const Group: FC<IGroupProps> = ({
   };
 
   const handleChangeGroupType = (nextValue: BuilderGroupValues) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      (currentData) =>
-        updateItem(currentData, id, (item) => {
-          if (isNormalizedGroupNode(item)) {
-            item.value = nextValue;
-          }
-        }),
-      updateData
+    const currentGroup = data.find((item) => item.id === id);
+
+    if (
+      !dispatchAction ||
+      !currentGroup ||
+      !isNormalizedGroupNode(currentGroup) ||
+      typeof currentGroup.value === 'undefined' ||
+      typeof currentGroup.isNegated === 'undefined'
+    ) {
+      return;
+    }
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        ...currentGroup,
+        value: nextValue,
+      })
     );
   };
 
   const handleToggleNegateGroup = (nextValue: boolean) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      (currentData) =>
-        updateItem(currentData, id, (item) => {
-          if (isNormalizedGroupNode(item)) {
-            item.isNegated = nextValue;
-          }
-        }),
-      updateData
+    const currentGroup = data.find((item) => item.id === id);
+
+    if (
+      !dispatchAction ||
+      !currentGroup ||
+      !isNormalizedGroupNode(currentGroup) ||
+      typeof currentGroup.value === 'undefined' ||
+      typeof currentGroup.isNegated === 'undefined'
+    ) {
+      return;
+    }
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        ...currentGroup,
+        isNegated: nextValue,
+      })
     );
   };
 
   const handleDeleteGroup = () => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      (currentData) => removeItem(currentData, id),
-      updateData
-    );
+    dispatchAction?.(createRemoveSubtreeAction(id));
   };
 
   const handleCloneGroup = () => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData => cloneItem(currentData, id),
-      updateData
+    const currentPosition = getNodePosition(data, id);
+
+    if (!dispatchAction || !currentPosition) {
+      return;
+    }
+
+    dispatchAction(
+      createInsertSubtreeAction(
+        createClonedSubtree(data, id),
+        currentPosition.index + 1,
+        currentPosition.parentId
+      )
     );
   };
 
   const handleChangeLockState = (nextState: BuilderLockState) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
-          if (isNormalizedGroupNode(item)) {
-            if (nextState === 'all') {
-              item.readOnly = {
-                enabled: true,
-                inheritToChildren: true,
-              };
-            } else if (nextState === 'self') {
-              item.readOnly = true;
-            } else {
-              delete item.readOnly;
-            }
-          }
-        }),
-      updateData
-    );
+    const currentGroup = data.find((item) => item.id === id);
+
+    if (!dispatchAction || !currentGroup || !isNormalizedGroupNode(currentGroup)) {
+      return;
+    }
+
+    const nextGroup = {
+      ...currentGroup,
+    };
+
+    if (nextState === 'all') {
+      nextGroup.readOnly = {
+        enabled: true,
+        inheritToChildren: true,
+      };
+    } else if (nextState === 'self') {
+      nextGroup.readOnly = true;
+    } else {
+      delete nextGroup.readOnly;
+    }
+
+    dispatchAction(createReplaceNodeAction(id, nextGroup));
   };
 
   if (!strings.group) {

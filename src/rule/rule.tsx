@@ -3,6 +3,11 @@ import styled from 'styled-components';
 import { BuilderFieldOperator, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { CloneButton as DefaultCloneButton } from '../clone-button';
+import { createClonedSubtree } from '../history/create-cloned-subtree';
+import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
+import { createRemoveSubtreeAction } from '../history/create-remove-subtree-action';
+import { createReplaceNodeAction } from '../history/create-replace-node-action';
+import { getNodePosition } from '../history/get-node-position';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Rule as DefaultRuleContainer } from './rule-container';
 import { SecondaryButton } from '../secondary-button';
@@ -13,7 +18,6 @@ import { Input } from '../widgets/input';
 import { OperatorSelect } from '../widgets/operator-select';
 import { Select } from '../widgets/select';
 import { SelectMulti } from '../widgets/select-multi/select-multi';
-import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { isBoolean } from '../utils/is-boolean.util';
 import { isNumber } from '../utils/is-number.util';
 import { isNumberArray } from '../utils/is-number-array.util';
@@ -21,13 +25,9 @@ import { isOptionList } from '../utils/is-option-list.util';
 import { isString } from '../utils/is-string.util';
 import { isStringArray } from '../utils/is-string-array.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
-import { isUndefined } from '../utils/is-undefined.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { cloneItem } from '../utils/clone-item.util';
 import { QueryRuleValue } from '../utils/query-tree';
-import { removeItem } from '../utils/remove-item.util';
-import { updateItem } from '../utils/update-item.util';
 
 const BooleanContainer = styled.div`
   display: flex;
@@ -94,9 +94,7 @@ export const Rule: FC<IRuleProps> = ({
   const {
     fields,
     data,
-    setData,
-    onChange,
-    updateData,
+    dispatchAction,
     components,
     strings,
     readOnly,
@@ -116,46 +114,45 @@ export const Rule: FC<IRuleProps> = ({
       : [];
 
   const handleDelete = useCallback(() => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData => removeItem(currentData, id),
-      updateData
-    );
-  }, [data, id, onChange, setData, updateData]);
+    dispatchAction?.(createRemoveSubtreeAction(id));
+  }, [dispatchAction, id]);
 
   const handleChangeLockState = useCallback(
     (nextState: BuilderLockState) => {
-      applyDataUpdate(
-        data,
-        setData,
-        onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if (!isNormalizedGroupNode(item)) {
-              if (nextState === 'self') {
-                item.readOnly = true;
-              } else {
-                delete item.readOnly;
-              }
-            }
-          }),
-        updateData
-      );
+      const currentRule = data.find((item) => item.id === id);
+
+      if (!dispatchAction || !currentRule || isNormalizedGroupNode(currentRule)) {
+        return;
+      }
+
+      const nextRule = { ...currentRule };
+
+      if (nextState === 'self') {
+        nextRule.readOnly = true;
+      } else {
+        delete nextRule.readOnly;
+      }
+
+      dispatchAction(createReplaceNodeAction(id, nextRule));
     },
-    [data, id, onChange, setData, updateData]
+    [data, dispatchAction, id]
   );
 
   const handleClone = useCallback(() => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData => cloneItem(currentData, id),
-      updateData
+    const currentPosition = getNodePosition(data, id);
+
+    if (!dispatchAction || !currentPosition) {
+      return;
+    }
+
+    dispatchAction(
+      createInsertSubtreeAction(
+        createClonedSubtree(data, id),
+        currentPosition.index + 1,
+        currentPosition.parentId
+      )
     );
-  }, [data, id, onChange, setData, updateData]);
+  }, [data, dispatchAction, id]);
 
   const cloneControl =
     cloneable && !isReadOnly ? (
@@ -320,83 +317,83 @@ export const Rule: FC<IRuleProps> = ({
                 </>
               )}
 
-            {type === 'TEXT' && isOptionList(operatorsOptionList) && (
-              <>
-                <LayoutItem>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isReadOnly}
-                  />
-                </LayoutItem>
-                {operator &&
-                  shouldRenderValueInput &&
-                  (isString(selectedValue) || isStringArray(selectedValue)) && (
+            {type === 'TEXT' &&
+              isOptionList(operatorsOptionList) &&
+              operator &&
+              isString(selectedValue) && (
+                <>
+                  <LayoutItem>
+                    <OperatorSelect
+                      id={id}
+                      values={operatorsOptionList}
+                      selectedValue={operator}
+                      disabled={isReadOnly}
+                    />
+                  </LayoutItem>
+                  {shouldRenderValueInput && (
                     <ValueContent>
                       <Input
+                        id={id}
                         type="text"
                         value={selectedValue}
-                        id={id}
                         disabled={isReadOnly}
                       />
                     </ValueContent>
                   )}
-              </>
-            )}
+                </>
+              )}
 
-            {type === 'NUMBER' && isOptionList(operatorsOptionList) && (
-              <>
-                <LayoutItem>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isReadOnly}
-                  />
-                </LayoutItem>
-                {operator &&
-                  shouldRenderValueInput &&
-                  (isString(selectedValue) ||
-                    isNumber(selectedValue) ||
-                    isStringOrNumberArray(selectedValue) ||
-                    isNumberArray(selectedValue)) && (
+            {type === 'DATE' &&
+              isOptionList(operatorsOptionList) &&
+              operator &&
+              (isString(selectedValue) || isStringOrNumberArray(selectedValue)) && (
+                <>
+                  <LayoutItem>
+                    <OperatorSelect
+                      id={id}
+                      values={operatorsOptionList}
+                      selectedValue={operator}
+                      disabled={isReadOnly}
+                    />
+                  </LayoutItem>
+                  {shouldRenderValueInput && (
                     <ValueContent>
                       <Input
-                        type="number"
-                        value={selectedValue}
                         id={id}
-                        disabled={isReadOnly}
-                      />
-                    </ValueContent>
-                  )}
-              </>
-            )}
-
-            {type === 'DATE' && isOptionList(operatorsOptionList) && (
-              <>
-                <LayoutItem>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isReadOnly}
-                  />
-                </LayoutItem>
-                {!isUndefined(operator) &&
-                  shouldRenderValueInput &&
-                  (isString(selectedValue) || isStringArray(selectedValue)) && (
-                    <ValueContent>
-                      <Input
                         type="date"
                         value={selectedValue}
-                        id={id}
                         disabled={isReadOnly}
                       />
                     </ValueContent>
                   )}
-              </>
-            )}
+                </>
+              )}
+
+            {type === 'NUMBER' &&
+              isOptionList(operatorsOptionList) &&
+              operator &&
+              (isNumber(selectedValue) || isNumberArray(selectedValue)) && (
+                <>
+                  <LayoutItem>
+                    <OperatorSelect
+                      id={id}
+                      values={operatorsOptionList}
+                      selectedValue={operator}
+                      disabled={isReadOnly}
+                    />
+                  </LayoutItem>
+                  {shouldRenderValueInput && (
+                    <ValueContent>
+                      <Input
+                        id={id}
+                        type="number"
+                        value={selectedValue}
+                        disabled={isReadOnly}
+                      />
+                    </ValueContent>
+                  )}
+                </>
+              )}
           </FieldsContent>
           {validationIssues.length > 0 && (
             <ValidationIssues>
@@ -410,9 +407,7 @@ export const Rule: FC<IRuleProps> = ({
         </div>
       </RuleContainer>
     );
-  } catch (error) {
-    console.error(`Field "${fieldRef}" not found in fields definition.`);
+  } catch {
+    return null;
   }
-
-  return null;
 };
