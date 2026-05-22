@@ -14,6 +14,7 @@ export interface IBuilderContextProps {
   data: NormalizedQuery;
   readOnly: boolean;
   lockable?: boolean;
+  cloneable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
@@ -37,6 +38,7 @@ export interface IBuilderContextProviderProps {
   data: NormalizedQuery;
   readOnly: boolean;
   lockable?: boolean;
+  cloneable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
@@ -59,6 +61,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   data,
   readOnly,
   lockable,
+  cloneable,
   draggable,
   singleRootGroup,
   groupTypes,
@@ -109,6 +112,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         data,
         readOnly,
         lockable,
+        cloneable,
         draggable,
         singleRootGroup,
         groupTypes,

@@ -117,6 +117,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [outputFormat, setOutputFormat] = React.useState<OutputFormat>('Native');
   const [readOnly, setReadOnly] = React.useState(false);
   const [lockable, setLockable] = React.useState(false);
+  const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidation, setShowValidation] = React.useState(true);
@@ -154,6 +155,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               onChange={event => setLockable(event.target.checked)}
             />
             <span>Lock controls</span>
+          </ToggleRow>
+
+          <ToggleRow>
+            <Toggle
+              type="checkbox"
+              checked={cloneable}
+              onChange={event => setCloneable(event.target.checked)}
+            />
+            <span>Clone controls</span>
           </ToggleRow>
 
           <ToggleRow>
@@ -198,6 +208,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 fields={demoFields}
                 readOnly={readOnly}
                 lockable={lockable}
+                cloneable={cloneable}
                 onChange={setData}
                 draggable={draggable}
                 groupTypes="both"

@@ -193,6 +193,7 @@ const builderBehaviorSnippet = `<Builder
   fields={fields}
   data={data}
   lockable
+  cloneable
   draggable
   singleRootGroup={false}
   groupTypes="both"
@@ -202,6 +203,10 @@ const builderBehaviorSnippet = `<Builder
 // lockable:
 // Renders built-in lock controls for rules and groups and writes the resulting
 // lock state back into the emitted query via rule/group readOnly values.
+//
+// cloneable:
+// Renders built-in clone controls for rules and groups and inserts the cloned
+// node directly below the original node.
 //
 // draggable:
 // Enables drag-and-drop for editable rules and groups.
@@ -294,6 +299,23 @@ const lockToggleSnippet = `const components = {
 // nodeType: 'rule' | 'group'
 // disabled?: boolean
 // onChange?: (nextState) => void`;
+
+const cloneButtonSnippet = `const components = {
+  CloneButton: MyCloneButton,
+};
+
+<Builder
+  fields={fields}
+  data={data}
+  cloneable
+  components={components}
+  onChange={setData}
+/>;
+
+// CloneButton receives:
+// nodeType: 'rule' | 'group'
+// disabled?: boolean
+// onClick?: () => void`;
 
 const stringsSnippet = `import { strings } from '@vojtechportes/react-query-builder';
 
@@ -467,9 +489,9 @@ export const documentationPages: IDocumentationPage[] = [
     sectionTitle: 'Getting Started',
     summary: '',
     description:
-      'Documentation for drag-and-drop, root-group behavior, and group mode configuration.',
+      'Documentation for clone controls, drag-and-drop, root-group behavior, and group mode configuration.',
     searchText:
-      'builder behavior draggable drag and drop singleRootGroup groupTypes with modifiers without modifiers both root group',
+      'builder behavior cloneable clone controls draggable drag and drop singleRootGroup groupTypes with modifiers without modifiers both root group',
     content: (
       <>
         <p>
@@ -478,6 +500,14 @@ export const documentationPages: IDocumentationPage[] = [
           they affect how users add, move, and organize rules.
         </p>
         <CodeBlock code={builderBehaviorSnippet} language="tsx" label="Builder behavior" />
+        <SectionTitle>cloneable</SectionTitle>
+        <List>
+          <li>Defaults to <InlineCode>false</InlineCode> and renders built-in clone controls for rules and groups.</li>
+          <li>The clone button appears immediately to the left of the lock button when both controls are enabled.</li>
+          <li>Cloning a rule inserts a duplicate directly below that rule.</li>
+          <li>Cloning a group duplicates the entire subtree and inserts the clone directly below that group.</li>
+          <li>When <InlineCode>singleRootGroup</InlineCode> is enabled, the synthetic root group does not expose a clone control.</li>
+        </List>
         <SectionTitle>draggable</SectionTitle>
         <List>
           <li>Use <InlineCode>lockable</InlineCode> to expose lock controls directly in the UI.</li>
@@ -553,6 +583,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Groups cycle through three states: unlocked, locked group only, and locked group with descendants.</li>
           <li>The default group cycle maps to <InlineCode>false</InlineCode>, <InlineCode>true</InlineCode>, and <InlineCode>{`{ enabled: true, inheritToChildren: true }`}</InlineCode>.</li>
           <li>When a parent group inherits a lock to descendants, child lock controls render disabled because descendants cannot override that inherited state.</li>
+          <li>When <InlineCode>cloneable</InlineCode> is also enabled, the clone button renders immediately to the left of the lock button.</li>
         </List>
         <SectionTitle>How each level behaves</SectionTitle>
         <List>
@@ -581,11 +612,18 @@ export const documentationPages: IDocumentationPage[] = [
           <InlineCode>components.LockToggle</InlineCode>.
         </p>
         <CodeBlock code={lockToggleSnippet} language="tsx" label="LockToggle override" />
+        <SectionTitle>Custom Clone Control</SectionTitle>
+        <p>
+          The default clone button can be replaced through{' '}
+          <InlineCode>components.CloneButton</InlineCode>.
+        </p>
+        <CodeBlock code={cloneButtonSnippet} language="tsx" label="CloneButton override" />
         <SectionTitle>What &quot;locked&quot; means in the UI</SectionTitle>
         <List>
           <li>Locked rules cannot change field, operator, or value, and cannot be deleted.</li>
           <li>Locked groups cannot change their group operator, negation, add actions, or delete action.</li>
           <li>Locked rules and groups are removed from drag-and-drop interactions.</li>
+          <li>Clone controls render only for editable rules and groups.</li>
           <li>
             A locked group without inheritance still renders editable descendants
             when those descendants are not otherwise locked.

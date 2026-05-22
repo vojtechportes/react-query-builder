@@ -2,6 +2,7 @@ import React, { FC, useCallback, useContext } from 'react';
 import styled from 'styled-components';
 import { BuilderFieldOperator, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
+import { CloneButton as DefaultCloneButton } from '../clone-button';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Rule as DefaultRuleContainer } from './rule-container';
 import { SecondaryButton } from '../secondary-button';
@@ -23,6 +24,7 @@ import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
+import { cloneItem } from '../utils/clone-item.util';
 import { QueryRuleValue } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
 import { updateItem } from '../utils/update-item.util';
@@ -98,12 +100,14 @@ export const Rule: FC<IRuleProps> = ({
     components,
     strings,
     readOnly,
+    cloneable,
     lockable,
     validation,
     showValidation,
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const RuleContainer = components.Rule || DefaultRuleContainer;
+  const CloneButton = components.CloneButton || DefaultCloneButton;
   const LockToggle = components.LockToggle || DefaultLockToggle;
   const Remove = components.Remove || SecondaryButton;
   const validationIssues =
@@ -143,6 +147,25 @@ export const Rule: FC<IRuleProps> = ({
     [data, id, onChange, setData, updateData]
   );
 
+  const handleClone = useCallback(() => {
+    applyDataUpdate(
+      data,
+      setData,
+      onChange,
+      currentData => cloneItem(currentData, id),
+      updateData
+    );
+  }, [data, id, onChange, setData, updateData]);
+
+  const cloneControl =
+    cloneable && !isReadOnly ? (
+      <CloneButton
+        nodeType="rule"
+        onClick={handleClone}
+        data-test="CloneButton[rule]"
+      />
+    ) : null;
+
   const lockControl =
     lockable && !readOnly ? (
       <LockToggle
@@ -162,6 +185,7 @@ export const Rule: FC<IRuleProps> = ({
     !isReadOnly || lockControl ? (
       <>
         {!isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>}
+        {cloneControl}
         {lockControl}
       </>
     ) : null;

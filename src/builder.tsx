@@ -40,6 +40,7 @@ import { Option as GroupHeaderOption } from './group/option';
 import { IOptionProps as IGroupHeaderOptionProps } from './group/option';
 import { Iterator } from './iterator';
 import { LockToggle, ILockToggleProps } from './lock-toggle';
+import { CloneButton, ICloneButtonProps } from './clone-button';
 import { Popover, IPopoverProps } from './popover';
 import { PopoverItem, IPopoverItemProps } from './popover-item';
 import { SecondaryButton } from './secondary-button';
@@ -356,6 +357,7 @@ export interface IBuilderComponentsProps {
   };
   Remove?: React.ComponentType<IButtonProps>;
   Add?: React.ComponentType<IButtonProps>;
+  CloneButton?: React.ComponentType<ICloneButtonProps>;
   LockToggle?: React.ComponentType<ILockToggleProps>;
   Rule?: React.ComponentType<IRuleContainerProps>;
   Group?: React.ComponentType<IGroupContainerProps>;
@@ -376,6 +378,7 @@ export interface IResolvedBuilderComponentsProps {
   };
   Remove: React.ComponentType<IButtonProps>;
   Add: React.ComponentType<IButtonProps>;
+  CloneButton: React.ComponentType<ICloneButtonProps>;
   LockToggle: React.ComponentType<ILockToggleProps>;
   Rule: React.ComponentType<IRuleContainerProps>;
   Group: React.ComponentType<IGroupContainerProps>;
@@ -394,6 +397,7 @@ export interface IBuilderProps {
   strings?: IStrings;
   readOnly?: boolean;
   lockable?: boolean;
+  cloneable?: boolean;
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
@@ -412,6 +416,7 @@ export const defaultComponents: IResolvedBuilderComponentsProps = {
   },
   Remove: SecondaryButton,
   Add: Button,
+  CloneButton,
   LockToggle,
   Rule,
   Group,
@@ -430,6 +435,7 @@ export const Builder: FC<IBuilderProps> = ({
   strings = defaultStrings,
   readOnly = false,
   lockable = false,
+  cloneable = false,
   draggable = false,
   singleRootGroup = true,
   groupTypes = 'with-modifiers',
@@ -815,6 +821,7 @@ export const Builder: FC<IBuilderProps> = ({
       strings={strings}
       readOnly={readOnly}
       lockable={lockable}
+      cloneable={cloneable}
       draggable={draggable}
       singleRootGroup={singleRootGroup}
       groupTypes={groupTypes}

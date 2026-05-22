@@ -2,6 +2,7 @@ import React, { FC, useContext } from 'react';
 import { BuilderGroupValues, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Button } from '../button';
+import { CloneButton as DefaultCloneButton } from '../clone-button';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Popover as DefaultPopover } from '../popover';
 import { PopoverItem as DefaultPopoverItem } from '../popover-item';
@@ -12,6 +13,7 @@ import { appendToGroup } from '../utils/append-to-group.util';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createGroupNode } from '../utils/create-group-node.util';
 import { createId } from '../utils/create-id.util';
+import { cloneItem } from '../utils/clone-item.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { NormalizedNode, INormalizedRuleNode } from '../utils/query-tree';
 import { removeItem } from '../utils/remove-item.util';
@@ -50,12 +52,14 @@ export const Group: FC<IGroupProps> = ({
     updateData,
     strings,
     readOnly,
+    cloneable,
     lockable,
     groupTypes,
     singleRootGroup,
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const Add = components.Add || Button;
+  const CloneButton = components.CloneButton || DefaultCloneButton;
   const GroupContainer = components.Group || DefaultGroupContainer;
   const LockToggle = components.LockToggle || DefaultLockToggle;
   const Option = components.GroupHeaderOption || DefaultOption;
@@ -64,6 +68,7 @@ export const Group: FC<IGroupProps> = ({
   const Remove = components.Remove || SecondaryButton;
   const resolvedGroupTypes = groupTypes || 'with-modifiers';
   const canDeleteGroup = !(singleRootGroup && isRoot) && !isReadOnly;
+  const canCloneGroup = !(singleRootGroup && isRoot) && !isReadOnly;
 
   const addItem = (payload: NormalizedNode) => {
     applyDataUpdate(
@@ -129,6 +134,16 @@ export const Group: FC<IGroupProps> = ({
       setData,
       onChange,
       (currentData) => removeItem(currentData, id),
+      updateData
+    );
+  };
+
+  const handleCloneGroup = () => {
+    applyDataUpdate(
+      data,
+      setData,
+      onChange,
+      currentData => cloneItem(currentData, id),
       updateData
     );
   };
@@ -205,6 +220,15 @@ export const Group: FC<IGroupProps> = ({
       />
     ) : null;
 
+  const cloneControl =
+    cloneable && canCloneGroup ? (
+      <CloneButton
+        nodeType="group"
+        onClick={handleCloneGroup}
+        data-test="CloneButton[group]"
+      />
+    ) : null;
+
   return (
     <GroupContainer
       dragHandle={dragHandle}
@@ -257,6 +281,7 @@ export const Group: FC<IGroupProps> = ({
               {strings.group.delete}
             </Remove>
           ) : null}
+          {cloneControl}
           {lockControl}
         </>
       }
