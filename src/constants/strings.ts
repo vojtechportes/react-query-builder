@@ -1,4 +1,8 @@
 export interface IStrings {
+  history?: {
+    undo?: string;
+    redo?: string;
+  };
   group?: {
     not?: string;
     or?: string;
@@ -74,6 +78,10 @@ export interface IStrings {
 }
 
 export const strings: IStrings = {
+  history: {
+    undo: 'Undo',
+    redo: 'Redo',
+  },
   group: {
     not: 'Not',
     or: 'Or',

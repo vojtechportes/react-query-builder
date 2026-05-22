@@ -2,6 +2,8 @@ import React, { FC, useContext } from 'react';
 import { BuilderFieldOperator } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { Select as DefaultSelect } from '../form/select';
+import { createReplaceNodeAction } from '../history/create-replace-node-action';
+import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
@@ -33,48 +35,79 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
     setData,
     onChange,
     updateData,
+    dispatchAction,
     components,
     strings,
     readOnly,
-  } = useContext(BuilderContext);
+  } =
+    useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
 
   const handleChange = (value: BuilderFieldOperator) => {
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
-          if (isNormalizedGroupNode(item)) {
-            return;
-          }
+    const currentRule = findNodeById(data, id);
 
-          const fieldIndex = fields.findIndex(
-            fieldItem => item.field === fieldItem.field
-          );
-          const nextField = fields[fieldIndex];
+    if (!currentRule || isNormalizedGroupNode(currentRule)) {
+      return;
+    }
 
-          if (!nextField) {
-            return;
-          }
-
-          const nextRequiresValue = operatorRequiresValue(value);
-          const currentRequiresValue = operatorRequiresValue(item.operator);
-
-          if (!nextRequiresValue) {
-            delete item.value;
-          } else if (
-            !currentRequiresValue ||
-            isRangeOperator(item.operator) !== isRangeOperator(value)
-          ) {
-            item.value = createRuleValueForFieldOperator(nextField, value);
-          }
-
-          item.operator = value;
-        }),
-      updateData
+    const nextField = fields.find(
+      fieldItem => currentRule.field === fieldItem.field
     );
+
+    if (!nextField) {
+      return;
+    }
+
+    if (!dispatchAction && setData && onChange) {
+      applyDataUpdate(
+        data,
+        setData,
+        onChange,
+        currentData =>
+          updateItem(currentData, id, item => {
+            if (isNormalizedGroupNode(item)) {
+              return;
+            }
+
+            const nextRequiresValue = operatorRequiresValue(value);
+            const currentRequiresValue = operatorRequiresValue(item.operator);
+
+            if (!nextRequiresValue) {
+              delete item.value;
+            } else if (
+              !currentRequiresValue ||
+              isRangeOperator(item.operator) !== isRangeOperator(value)
+            ) {
+              item.value = createRuleValueForFieldOperator(nextField, value);
+            }
+
+            item.operator = value;
+          }),
+        updateData
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    const nextRule = { ...currentRule };
+    const nextRequiresValue = operatorRequiresValue(value);
+    const currentRequiresValue = operatorRequiresValue(currentRule.operator);
+
+    if (!nextRequiresValue) {
+      delete nextRule.value;
+    } else if (
+      !currentRequiresValue ||
+      isRangeOperator(currentRule.operator) !== isRangeOperator(value)
+    ) {
+      nextRule.value = createRuleValueForFieldOperator(nextField, value);
+    }
+
+    nextRule.operator = value;
+
+    dispatchAction(createReplaceNodeAction(id, nextRule));
   };
 
   if (!strings.form) {

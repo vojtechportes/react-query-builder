@@ -45,14 +45,10 @@ export const createSummary = (
       return;
     }
 
-    const remainingLength = maxLength - summary.length - prefix.length;
-
-    if (remainingLength > ELLIPSIS.length) {
-      summary = `${summary}${prefix}${trimLabel(label, remainingLength)}`;
-      visibleCount += 1;
-    } else if (!summary) {
+    if (!summary) {
       summary = trimLabel(label, maxLength);
       visibleCount += 1;
+      return;
     }
   });
 

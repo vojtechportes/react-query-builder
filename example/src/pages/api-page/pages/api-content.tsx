@@ -23,7 +23,13 @@ const builderSignature = `export interface IBuilderProps {
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
   showValidation?: boolean;
+  history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
+}`;
+
+const historyConfigSignature = `export interface IBuilderHistoryConfig {
+  maxEntries?: number;
+  controls?: boolean;
 }`;
 
 const fieldTypesSignature = `export type BuilderFieldType =
@@ -268,6 +274,7 @@ export const apiPages: IApiPage[] = [
       <>
         <List>
           <li><ItemTitle>Core API:</ItemTitle> <InlineCode>Builder</InlineCode>, <InlineCode>Fields</InlineCode>, and <InlineCode>Data</InlineCode>.</li>
+          <li><ItemTitle>Editing state:</ItemTitle> <InlineCode>Builder</InlineCode> also exposes history-related state such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> through <InlineCode>onStateChange</InlineCode>.</li>
           <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode> and <InlineCode>Theming</InlineCode>.</li>
           <li><ItemTitle>Query Conversion:</ItemTitle> <InlineCode>formatQuery</InlineCode> and <InlineCode>parseQuery</InlineCode>.</li>
         </List>
@@ -289,10 +296,11 @@ export const apiPages: IApiPage[] = [
     description:
       'Builder component API reference for IBuilderProps, controlled data flow, validation, and editing options.',
     searchText:
-      'Builder component IBuilderProps onChange controlled component defaults strings components validator state change',
+      'Builder component IBuilderProps onChange controlled component defaults strings components validator history state change undo redo canUndo canRedo',
     content: (
       <>
         <CodeBlock code={builderSignature} language="ts" label="IBuilderProps" />
+        <CodeBlock code={historyConfigSignature} language="ts" label="IBuilderHistoryConfig" />
         <SectionTitle>Props</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>fields</InlineCode>:</ItemTitle> Required. Defines the available fields, their types, allowed operators, and optional validation metadata.</li>
@@ -306,12 +314,19 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group.</li>
           <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both.</li>
           <li><ItemTitle><InlineCode>validator</InlineCode>:</ItemTitle> Optional function that receives the denormalized query plus validation context and returns a validation result synchronously or asynchronously.</li>
-          <li><ItemTitle><InlineCode>onStateChange</InlineCode>:</ItemTitle> Optional callback fired with <InlineCode>data</InlineCode>, <InlineCode>isValid</InlineCode>, and the full validation object after internal state changes.</li>
+          <li><ItemTitle><InlineCode>onStateChange</InlineCode>:</ItemTitle> Optional callback fired with <InlineCode>data</InlineCode>, <InlineCode>isValid</InlineCode>, the full validation object, and history state flags such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode>.</li>
           <li><ItemTitle><InlineCode>showValidation</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Controls whether validation issues are rendered in the built-in UI.</li>
+          <li><ItemTitle><InlineCode>history</InlineCode>:</ItemTitle> Optional. Set to <InlineCode>true</InlineCode> to enable undo and redo with default settings, or pass <InlineCode>IBuilderHistoryConfig</InlineCode> to customize retention and built-in controls.</li>
           <li><ItemTitle><InlineCode>onChange</InlineCode>:</ItemTitle> Optional callback fired with the denormalized query tree after changes are emitted.</li>
         </List>
+        <SectionTitle>History config</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>maxEntries</InlineCode>:</ItemTitle> Optional limit for how many undo steps are retained.</li>
+          <li><ItemTitle><InlineCode>controls</InlineCode>:</ItemTitle> Optional toggle for rendering the built-in Undo and Redo buttons inside the builder UI.</li>
+        </List>
         <AlertBox title="Documentation" variant="info">
-          <TextLink to="/documentation/usage">Usage</TextLink>.
+          <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
+          <TextLink to="/documentation/history">Undo and Redo</TextLink>.
         </AlertBox>
       </>
     ),

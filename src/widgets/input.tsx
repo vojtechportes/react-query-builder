@@ -2,6 +2,8 @@ import React, { FC, useContext } from 'react';
 import styled from 'styled-components';
 import { BuilderContext } from '../builder-context';
 import { Input as DefaultInput } from '../form/input';
+import { createReplaceNodeAction } from '../history/create-replace-node-action';
+import { findNodeById } from '../history/find-node-by-id';
 import { compactBuilderMedia } from '../styles/responsive.styles';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { coerceNumberInputValue } from '../utils/coerce-number-input-value.util';
@@ -40,6 +42,7 @@ export const Input: FC<IInputProps> = ({
     setData,
     onChange,
     updateData,
+    dispatchAction,
     components,
     readOnly,
   } = useContext(BuilderContext);
@@ -48,26 +51,53 @@ export const Input: FC<IInputProps> = ({
   const handleChange = (selectedValue: string, index = 0) => {
     const nextValue =
       type === 'number' ? coerceNumberInputValue(selectedValue) : selectedValue;
+    const currentRule = findNodeById(data, id);
 
-    applyDataUpdate(
-      data,
-      setData,
-      onChange,
-      currentData =>
-        updateItem(currentData, id, item => {
-          if (isNormalizedGroupNode(item)) {
-            return;
-          }
+    if (!currentRule || isNormalizedGroupNode(currentRule)) {
+      return;
+    }
 
-          if (isStringOrNumberArray(item.value)) {
-            item.value[index] = nextValue;
-            return;
-          }
+    if (!dispatchAction && setData && onChange) {
+      applyDataUpdate(
+        data,
+        setData,
+        onChange,
+        currentData =>
+          updateItem(currentData, id, item => {
+            if (isNormalizedGroupNode(item)) {
+              return;
+            }
 
-          item.value = nextValue;
-        }),
-      updateData
-    );
+            if (isStringOrNumberArray(item.value)) {
+              const nextRangeValue = item.value.slice() as typeof item.value;
+              nextRangeValue[index] = nextValue;
+              item.value = nextRangeValue;
+              return;
+            }
+
+            item.value = nextValue;
+          }),
+        updateData
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    const nextRule = { ...currentRule };
+
+    if (isStringOrNumberArray(currentRule.value)) {
+      const nextRangeValue =
+        currentRule.value.slice() as typeof currentRule.value;
+      nextRangeValue[index] = nextValue;
+      nextRule.value = nextRangeValue;
+    } else {
+      nextRule.value = nextValue;
+    }
+
+    dispatchAction(createReplaceNodeAction(id, nextRule));
   };
 
   if (isStringOrNumberArray(value)) {

@@ -217,6 +217,44 @@ const builderBehaviorSnippet = `<Builder
 // groupTypes="both":
 // Lets users choose between groups with AND/OR/NOT controls and groups without modifiers.`;
 
+const historySnippet = `import React, { useState } from 'react';
+import {
+  Builder,
+  type DenormalizedQuery,
+  type IBuilderStateChange,
+} from '@vojtechportes/react-query-builder';
+
+export const MyBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+  const [historyState, setHistoryState] = useState({
+    canUndo: false,
+    canRedo: false,
+  });
+
+  const handleStateChange = (state: IBuilderStateChange) => {
+    setHistoryState({
+      canUndo: state.canUndo,
+      canRedo: state.canRedo,
+    });
+  };
+
+  return (
+    <>
+      <Builder
+        fields={fields}
+        data={data}
+        draggable
+        cloneable
+        history={{ maxEntries: 30, controls: true }}
+        onStateChange={handleStateChange}
+        onChange={setData}
+      />
+      <p>Undo available: {String(historyState.canUndo)}</p>
+      <p>Redo available: {String(historyState.canRedo)}</p>
+    </>
+  );
+};`;
+
 const lockingSnippet = `const data: DenormalizedQuery = [
   {
     type: 'GROUP',
@@ -433,7 +471,8 @@ export const documentationPages: IDocumentationPage[] = [
         <AlertBox title="Next step" variant="tip">
           Continue with{' '}
           <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>{' '}
-          for editing model choices, or{' '}
+          or <TextLink to="/documentation/history">Undo and Redo</TextLink>{' '}
+          for editing workflows, or{' '}
           <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
           for partial locking.
         </AlertBox>
@@ -478,6 +517,54 @@ export const documentationPages: IDocumentationPage[] = [
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink> and{' '}
           <TextLink to="/api/fields">Fields</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/history',
+    title: 'Undo and Redo',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Documentation for enabling inverse-history undo and redo, built-in controls, state callbacks, and drag-and-drop coverage.',
+    searchText:
+      'undo redo history inverse history maxEntries controls canUndo canRedo onStateChange drag and drop clone delete edit builder',
+    content: (
+      <>
+        <p>
+          Set <InlineCode>history</InlineCode> on <TextLink to="/api/builder">Builder</TextLink>{' '}
+          to enable built-in undo and redo support for structural edits and value
+          changes. The builder records inverse actions internally, so history stays
+          smaller than full-query snapshots and still works with drag-and-drop,
+          cloning, deletes, and inline edits.
+        </p>
+        <CodeBlock code={historySnippet} language="tsx" label="History support" />
+        <SectionTitle>How to enable it</SectionTitle>
+        <List>
+          <li><InlineCode>history={true}</InlineCode> enables history with default behavior.</li>
+          <li><InlineCode>history={`{{ maxEntries, controls }}`}</InlineCode> enables history with custom configuration.</li>
+          <li><InlineCode>maxEntries</InlineCode> limits how many undo steps are kept in memory.</li>
+          <li><InlineCode>controls</InlineCode> controls whether the built-in Undo and Redo buttons are rendered.</li>
+        </List>
+        <SectionTitle>What gets tracked</SectionTitle>
+        <List>
+          <li>Adding, removing, cloning, and editing rules.</li>
+          <li>Adding, removing, cloning, and editing groups.</li>
+          <li>Drag-and-drop reordering and movement between groups.</li>
+          <li>Changes driven through the builder UI that emit through <InlineCode>onChange</InlineCode>.</li>
+        </List>
+        <SectionTitle>State callbacks</SectionTitle>
+        <List>
+          <li><InlineCode>onStateChange</InlineCode> includes <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> so custom toolbars can stay in sync.</li>
+          <li>The built-in controls already use those flags and render disabled when no action is available.</li>
+          <li>Redo history is cleared after a new forward edit, which matches standard editor behavior.</li>
+        </List>
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>,{' '}
+          <TextLink to="/demo">Demo</TextLink>, and{' '}
+          <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
       </>
     ),
@@ -547,6 +634,7 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/history">Undo and Redo</TextLink>,{' '}
           <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
           and <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>

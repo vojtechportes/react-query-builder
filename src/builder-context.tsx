@@ -7,6 +7,10 @@ import {
   defaultComponents,
 } from './builder';
 import { IStrings, strings as defaultStrings } from './constants/strings';
+import {
+  BuilderHistoryAction,
+  IBuilderHistoryState,
+} from './history/types';
 import { NormalizedQuery } from './utils/query-tree';
 
 export interface IBuilderContextProps {
@@ -22,11 +26,18 @@ export interface IBuilderContextProps {
   validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
   strings: IStrings;
-  setData: React.Dispatch<NormalizedQuery>;
-  onChange: (data: NormalizedQuery) => void;
+  setData?: React.Dispatch<NormalizedQuery>;
+  onChange?: (data: NormalizedQuery) => void;
   updateData?: (
     updater: (currentData: NormalizedQuery) => NormalizedQuery
   ) => void;
+  dispatchAction?: (action: BuilderHistoryAction) => void;
+  history?: IBuilderHistoryState & {
+    canUndo: boolean;
+    canRedo: boolean;
+    undo: () => void;
+    redo: () => void;
+  };
 }
 
 export const BuilderContext = createContext<IBuilderContextProps>(
@@ -46,11 +57,13 @@ export interface IBuilderContextProviderProps {
   validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
   strings: IStrings;
-  setData: React.Dispatch<NormalizedQuery>;
-  onChange: (data: NormalizedQuery) => void;
+  setData?: React.Dispatch<NormalizedQuery>;
+  onChange?: (data: NormalizedQuery) => void;
   updateData?: (
     updater: (currentData: NormalizedQuery) => NormalizedQuery
   ) => void;
+  dispatchAction?: (action: BuilderHistoryAction) => void;
+  history?: IBuilderContextProps['history'];
   children: React.ReactNode;
 }
 
@@ -70,6 +83,8 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   setData,
   onChange,
   updateData,
+  dispatchAction,
+  history,
   children,
 }) => {
   const resolvedComponents = {
@@ -97,6 +112,10 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
       ...defaultStrings.operators,
       ...strings.operators,
     },
+    history: {
+      ...defaultStrings.history,
+      ...strings.history,
+    },
     validation: {
       ...defaultStrings.validation,
       ...strings.validation,
@@ -121,6 +140,8 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         setData,
         onChange,
         updateData,
+        dispatchAction,
+        history,
       }}
     >
       {children}
