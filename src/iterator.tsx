@@ -122,7 +122,7 @@ export const Iterator: FC<IIteratorProps> = ({
             isOverlay={isOverlay}
             disableDropZoneTransition={disableDropZoneTransition}
             inheritedReadOnly={nextInheritedReadOnly}
-            containerReadOnly={isGroupReadOnly}
+            containerReadOnly={nextInheritedReadOnly}
           />
         </Group>
       );

@@ -656,7 +656,7 @@ describe('#components/Builder', () => {
       wrapper.find('button').filterWhere((node) => node.text() === 'Delete').hostNodes()
         .length
     ).toEqual(1);
-    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
+    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(1);
   });
 
   it('Inherits read-only state to descendants when configured on a group', () => {
