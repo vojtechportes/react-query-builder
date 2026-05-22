@@ -1,0 +1,42 @@
+import { IBuilderComponentsProps } from '../../../builder';
+import {
+  AntdAddButton,
+  AntdCloneButton,
+  AntdDropZone,
+  AntdEmptyGroupDropZone,
+  AntdGroup,
+  AntdGroupHeaderOption,
+  AntdHistoryControls,
+  AntdInput,
+  AntdLockToggle,
+  AntdPopover,
+  AntdPopoverItem,
+  AntdRemoveButton,
+  AntdRule,
+  AntdSelect,
+  AntdSelectMulti,
+  AntdSwitch,
+  AntdText,
+} from './index';
+
+export const createAntdComponentSet = (): IBuilderComponentsProps => ({
+  form: {
+    Input: AntdInput,
+    Select: AntdSelect,
+    SelectMulti: AntdSelectMulti,
+    Switch: AntdSwitch,
+  },
+  Add: AntdAddButton,
+  Remove: AntdRemoveButton,
+  CloneButton: AntdCloneButton,
+  LockToggle: AntdLockToggle,
+  HistoryControls: AntdHistoryControls,
+  Rule: AntdRule,
+  Group: AntdGroup,
+  GroupHeaderOption: AntdGroupHeaderOption,
+  Text: AntdText,
+  DropZone: AntdDropZone,
+  EmptyGroupDropZone: AntdEmptyGroupDropZone,
+  Popover: AntdPopover,
+  PopoverItem: AntdPopoverItem,
+});

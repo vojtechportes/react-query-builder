@@ -132,6 +132,25 @@ export const MyMuiBuilder = () => {
   );
 };`;
 
+const antdSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/antd/v6';
+
+export const MyAntdBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
 const muiOverrideSnippet = `import {
   components as muiComponents,
   MuiSelect,
@@ -146,6 +165,8 @@ const components = {
 };`;
 
 const adaptersInstallSnippet = `npm install @mui/material@^9.0.1 @mui/icons-material@^9.0.1 @emotion/react @emotion/styled`;
+
+const antdAdaptersInstallSnippet = `npm install antd@^6.0.0 @ant-design/icons@^6.0.0`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -164,6 +185,35 @@ const components = createMuiComponents(muiComponents, {
 });
 
 export const MyMuiBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const antdCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import {
+  createAntdComponents,
+  components as antdComponents,
+} from '@vojtechportes/react-query-builder/antd/v6';
+
+const components = createAntdComponents(antdComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyAntdBuilder = () => {
   const [data, setData] = useState<DenormalizedQuery>(initialData);
 
   return (
@@ -1041,7 +1091,7 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation for packaged UI adapters such as Material UI mappings, versioned adapter entrypoints, and partial override patterns.',
     searchText:
-      'Adapters customization mui material ui v7 v9 components mapping adapter packages ready made overrides antd future',
+      'Adapters customization mui material ui v7 v9 antd ant design v5 v6 components mapping adapter packages ready made overrides',
     content: (
       <>
         <p>
@@ -1053,8 +1103,10 @@ export const documentationPages: IDocumentationPage[] = [
         <List>
           <li><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode> is the recommended Material UI adapter for new projects and the one showcased in the demo.</li>
           <li><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode> is available for applications that are still on Material UI 7.</li>
+          <li><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode> is the recommended Ant Design adapter for new projects and is available in the demo.</li>
+          <li><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode> is available for applications that are still on Ant Design 5.</li>
         </List>
-        <SectionTitle>Installation</SectionTitle>
+        <SectionTitle>Installing MUI</SectionTitle>
         <p>
           Install the MUI peer dependencies that match the adapter version you want
           to use. For new setups, prefer <InlineCode>mui/v9</InlineCode>.
@@ -1072,17 +1124,27 @@ export const documentationPages: IDocumentationPage[] = [
           language="tsx"
           label="Starting from the MUI v7 mapping"
         />
+        <SectionTitle>Installing ANTD</SectionTitle>
+        <p>
+          Install the Ant Design peer dependencies that match the adapter version
+          you want to use. For new setups, prefer <InlineCode>antd/v6</InlineCode>.
+        </p>
+        <CodeBlock code={antdAdaptersInstallSnippet} language="bash" label="ANTD v6 peers" />
+        <SectionTitle>Using ANTD v6</SectionTitle>
+        <CodeBlock code={antdSnippet} language="tsx" label="ANTD v6 adapter" />
+        <SectionTitle>Supporting ANTD v5</SectionTitle>
+        <p>
+          If your application is still on Ant Design 5, switch the import path to{' '}
+          <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>.
+        </p>
         <SectionTitle>Extending an adapter</SectionTitle>
         <List>
           <li>Start with the exported adapter <InlineCode>components</InlineCode> object.</li>
           <li>Override only the pieces you want to replace, such as a single select or button component.</li>
           <li>This keeps your app aligned with future adapter updates while still allowing local customization.</li>
         </List>
-        <CodeBlock
-          code={muiCreateComponentsSnippet}
-          language="tsx"
-          label="Merging adapter defaults"
-        />
+        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="Merging MUI defaults" />
+        <CodeBlock code={antdCreateComponentsSnippet} language="tsx" label="Merging ANTD defaults" />
         <AlertBox title="Related docs" variant="info">
           <TextLink to="/documentation/components">Components</TextLink>,{' '}
           <TextLink to="/documentation/theming">Theming</TextLink>, and{' '}
@@ -1112,7 +1174,8 @@ export const documentationPages: IDocumentationPage[] = [
           <InlineCode>ThemeProvider</InlineCode> customizes the built-in default
           component set. If you use an adapter from{' '}
           <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
-          <InlineCode>mui/v7</InlineCode> or <InlineCode>mui/v9</InlineCode>,
+          <InlineCode>mui/v7</InlineCode>, <InlineCode>mui/v9</InlineCode>,{' '}
+          <InlineCode>antd/v5</InlineCode>, or <InlineCode>antd/v6</InlineCode>,
           these theme tokens do not affect the adapter UI.
         </AlertBox>
         <AlertBox title="API reference" variant="info">

@@ -122,7 +122,18 @@ const muiAdapterSnippet = `import { components } from '@vojtechportes/react-quer
   onChange={setData}
 />;`;
 
+const antdAdapterSnippet = `import { components } from '@vojtechportes/react-query-builder/antd/v6';
+
+<Builder
+  fields={fields}
+  data={data}
+  components={components}
+  onChange={setData}
+/>;`;
+
 const muiV7Snippet = `import { components } from '@vojtechportes/react-query-builder/mui/v7';`;
+
+const antdV5Snippet = `import { components } from '@vojtechportes/react-query-builder/antd/v5';`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -141,6 +152,35 @@ const components = createMuiComponents(muiComponents, {
 });
 
 export const MyMuiBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const antdCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import {
+  createAntdComponents,
+  components as antdComponents,
+} from '@vojtechportes/react-query-builder/antd/v6';
+
+const components = createAntdComponents(antdComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyAntdBuilder = () => {
   const [data, setData] = useState<DenormalizedQuery>(initialData);
 
   return (
@@ -519,32 +559,33 @@ export const apiPages: IApiPage[] = [
     description:
       'API reference for packaged UI adapter entrypoints such as Material UI v7 and v9 and how they map onto the components override surface.',
     searchText:
-      'Adapters API mui material ui v7 v9 components object adapter entrypoints customization antd future',
+      'Adapters API mui material ui v7 v9 antd ant design v5 v6 components object adapter entrypoints customization',
     content: (
       <>
         <CodeBlock code={muiAdapterSnippet} language="tsx" label="MUI v9 adapter usage" />
+        <CodeBlock code={antdAdapterSnippet} language="tsx" label="ANTD v6 adapter usage" />
         <CodeBlock code={muiV7Snippet} language="tsx" label="MUI v7 import" />
-        <CodeBlock
-          code={muiCreateComponentsSnippet}
-          language="tsx"
-          label="createMuiComponents"
-        />
+        <CodeBlock code={antdV5Snippet} language="tsx" label="ANTD v5 import" />
+        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="createMuiComponents" />
+        <CodeBlock code={antdCreateComponentsSnippet} language="tsx" label="createAntdComponents" />
         <SectionTitle>Available adapter entrypoints</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode>:</ItemTitle> Recommended Material UI adapter for new projects.</li>
           <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>:</ItemTitle> Material UI adapter for applications still on MUI 7.</li>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode>:</ItemTitle> Recommended Ant Design adapter for new projects.</li>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>:</ItemTitle> Ant Design adapter for applications still on Ant Design 5.</li>
         </List>
         <SectionTitle>What adapters export</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> A ready-to-pass object that matches <InlineCode>IBuilderComponentsProps</InlineCode>.</li>
-          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode> and <InlineCode>MuiInput</InlineCode> for partial customization.</li>
-          <li><ItemTitle><InlineCode>createMuiComponents</InlineCode>:</ItemTitle> Helper for merging the adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>MuiInput</InlineCode>, <InlineCode>AntdSelect</InlineCode>, and <InlineCode>AntdInput</InlineCode> for partial customization.</li>
+          <li><ItemTitle><InlineCode>createMuiComponents</InlineCode> and <InlineCode>createAntdComponents</InlineCode>:</ItemTitle> Helpers for merging adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
         </List>
         <SectionTitle>Relationship to the Components API</SectionTitle>
         <List>
           <li>Adapters are built on top of the same override surface documented in <TextLink to="/api/components">Components</TextLink>.</li>
           <li>They are a convenience layer, not a separate rendering engine.</li>
-          <li><InlineCode>createMuiComponents(base, overrides)</InlineCode> returns a merged <InlineCode>IBuilderComponentsProps</InlineCode> object and handles shallow top-level merging plus nested <InlineCode>form</InlineCode> merging for you.</li>
+          <li><InlineCode>createMuiComponents(base, overrides)</InlineCode> and <InlineCode>createAntdComponents(base, overrides)</InlineCode> return merged <InlineCode>IBuilderComponentsProps</InlineCode> objects and handle shallow top-level merging plus nested <InlineCode>form</InlineCode> merging for you.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
