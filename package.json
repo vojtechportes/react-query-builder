@@ -1,6 +1,6 @@
 {
   "name": "@vojtechportes/react-query-builder",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "license": "MIT",
   "description": "Simple, highly configurable query builder for react",
   "keywords": [
