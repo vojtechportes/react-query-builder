@@ -1,6 +1,17 @@
-import { mount } from 'enzyme';
 import React from 'react';
-import { Builder, defaultComponents, IBuilderFieldProps } from './builder';
+import '@testing-library/jest-dom';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
+import {
+  Builder,
+  defaultComponents,
+  IBuilderFieldProps,
+  IBuilderProps,
+} from './index';
 
 export const fields: IBuilderFieldProps[] = [
   {
@@ -17,23 +28,65 @@ export const fields: IBuilderFieldProps[] = [
   },
 ];
 
+const queryByDataTest = (
+  container: HTMLElement,
+  value: string
+): HTMLElement | null =>
+  container.querySelector(`[data-test="${value}"]`);
+
+const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
+  const element = queryByDataTest(container, value);
+
+  if (!element) {
+    throw new Error(`Unable to find element with data-test="${value}"`);
+  }
+
+  return element;
+};
+
+const getAllByDataTest = (
+  container: HTMLElement,
+  value: string
+): HTMLElement[] =>
+  Array.from(container.querySelectorAll(`[data-test="${value}"]`));
+
 describe('#components/Builder', () => {
   it('Test full functionality', () => {
     const onChange = jest.fn();
 
-    mount(<Builder fields={fields} data={[]} onChange={onChange} />);
+    render(<Builder fields={fields} data={[]} onChange={onChange} />);
 
     expect(onChange).not.toHaveBeenCalled();
   });
 
   it('Updates rendered criteria when data prop changes', () => {
-    const wrapper = mount(
+    const { container, rerender } = render(
       <Builder fields={fields} data={[]} onChange={jest.fn()} />
     );
 
-    expect(wrapper.find('[data-test="IteratorRule"]').hostNodes().length).toEqual(0);
+    expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(0);
 
-    wrapper.setProps({
+    rerender(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }],
+          },
+        ]}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(1);
+  });
+
+  it('Only renders drag handles when draggable is enabled', () => {
+    const props: IBuilderProps = {
+      fields,
       data: [
         {
           type: 'GROUP',
@@ -42,38 +95,19 @@ describe('#components/Builder', () => {
           children: [{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }],
         },
       ],
-    });
-    wrapper.update();
+      onChange: jest.fn(),
+    };
+    const { container, rerender } = render(<Builder {...props} />);
 
-    expect(wrapper.find('[data-test="IteratorRule"]').hostNodes().length).toEqual(1);
-  });
+    expect(getAllByDataTest(container, 'DragHandle')).toHaveLength(0);
 
-  it('Only renders drag handles when draggable is enabled', () => {
-    const wrapper = mount(
-      <Builder
-        fields={fields}
-        data={[
-          {
-            type: 'GROUP',
-            value: 'AND',
-            isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }],
-          },
-        ]}
-        onChange={jest.fn()}
-      />
-    );
+    rerender(<Builder {...props} draggable />);
 
-    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
-
-    wrapper.setProps({ draggable: true });
-    wrapper.update();
-
-    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toBeGreaterThan(0);
+    expect(getAllByDataTest(container, 'DragHandle').length).toBeGreaterThan(0);
   });
 
   it('Does not render clone controls when cloneable is disabled', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[
@@ -88,12 +122,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="CloneButton[group]"]').hostNodes().length).toEqual(0);
-    expect(wrapper.find('[data-test="CloneButton[rule]"]').hostNodes().length).toEqual(0);
+    expect(getAllByDataTest(container, 'CloneButton[group]')).toHaveLength(0);
+    expect(getAllByDataTest(container, 'CloneButton[rule]')).toHaveLength(0);
   });
 
   it('Does not render history controls unless history is enabled', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -102,13 +136,44 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="Undo"]').hostNodes().length).toEqual(0);
-    expect(wrapper.find('[data-test="Redo"]').hostNodes().length).toEqual(0);
+    expect(queryByDataTest(container, 'Undo')).toBeNull();
+    expect(queryByDataTest(container, 'Redo')).toBeNull();
+  });
+
+  it('Uses a custom HistoryControls component while preserving built-in undo and redo buttons', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        history
+        components={{
+          ...defaultComponents,
+          HistoryControls: ({ undoButton, redoButton }) => (
+            <div data-test="CustomHistoryControls">
+              {redoButton}
+              {undoButton}
+            </div>
+          ),
+        }}
+        onChange={onChange}
+      />
+    );
+
+    expect(queryByDataTest(container, 'CustomHistoryControls')).not.toBeNull();
+
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
+    fireEvent.click(getByDataTest(container, 'Undo'));
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ type: 'GROUP' }),
+    ]);
   });
 
   it('Undoes and redoes root-level edits when history is enabled', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -118,28 +183,24 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="Undo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Undo'));
 
     expect(onChange).not.toHaveBeenCalled();
 
-    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ type: 'GROUP' }),
       expect.objectContaining({ field: '' }),
     ]);
 
-    wrapper.find('[data-test="Undo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Undo'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ type: 'GROUP' }),
     ]);
 
-    wrapper.find('[data-test="Redo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Redo'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ type: 'GROUP' }),
@@ -148,7 +209,7 @@ describe('#components/Builder', () => {
   });
 
   it('Clears redo history after a new edit', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -158,22 +219,19 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
-    wrapper.update();
-    wrapper.find('[data-test="Undo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
+    fireEvent.click(getByDataTest(container, 'Undo'));
 
-    expect(wrapper.find('[data-test="Redo"]').first().prop('disabled')).toEqual(false);
+    expect(getByDataTest(container, 'Redo')).not.toBeDisabled();
 
-    wrapper.find('[data-test="AddRootGroup"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootGroup'));
 
-    expect(wrapper.find('[data-test="Redo"]').first().prop('disabled')).toEqual(true);
+    expect(getByDataTest(container, 'Redo')).toBeDisabled();
   });
 
   it('Undoes and redoes rule value edits when history is enabled', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         history
@@ -189,10 +247,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('input[type="text"]').first().simulate('change', {
-      target: { value: 'beta' },
-    });
-    wrapper.update();
+    fireEvent.change(
+      container.querySelector('input[type="text"]') as HTMLInputElement,
+      {
+        target: { value: 'beta' },
+      }
+    );
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -203,8 +263,7 @@ describe('#components/Builder', () => {
       },
     ]);
 
-    wrapper.find('[data-test="Undo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Undo'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -215,8 +274,7 @@ describe('#components/Builder', () => {
       },
     ]);
 
-    wrapper.find('[data-test="Redo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Redo'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -230,7 +288,7 @@ describe('#components/Builder', () => {
 
   it('Undoes deletes when history is enabled', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         history
@@ -249,8 +307,7 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('button').filterWhere((node) => node.text() === 'Delete').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Delete' })[0]);
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -261,8 +318,7 @@ describe('#components/Builder', () => {
       },
     ]);
 
-    wrapper.find('[data-test="Undo"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Undo'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -279,7 +335,7 @@ describe('#components/Builder', () => {
 
   it('Emits history state through onStateChange', async () => {
     const onStateChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -290,38 +346,43 @@ describe('#components/Builder', () => {
       />
     );
 
-    await Promise.resolve();
-    wrapper.update();
+    await waitFor(() => {
+      expect(onStateChange).toHaveBeenCalled();
+    });
 
-    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
+    expect(
+      onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]
+    ).toMatchObject({
       canUndo: false,
       canRedo: false,
     });
 
-    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
-    wrapper.update();
-    await Promise.resolve();
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
 
-    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
-      canUndo: true,
-      canRedo: false,
+    await waitFor(() => {
+      expect(
+        onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]
+      ).toMatchObject({
+        canUndo: true,
+        canRedo: false,
+      });
     });
 
-    wrapper.find('[data-test="Undo"]').first().simulate('click');
-    wrapper.update();
-    await Promise.resolve();
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Undo'));
 
-    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
-      canUndo: false,
-      canRedo: true,
+    await waitFor(() => {
+      expect(
+        onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]
+      ).toMatchObject({
+        canUndo: false,
+        canRedo: true,
+      });
     });
   });
 
   it('Clones a rule directly below the original rule', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         cloneable
@@ -340,8 +401,7 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="CloneButton[rule]"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getAllByDataTest(container, 'CloneButton[rule]')[0]);
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -371,7 +431,7 @@ describe('#components/Builder', () => {
 
   it('Clones a group subtree directly below the original group', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         cloneable
@@ -405,8 +465,8 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="CloneButton[group]"]').last().simulate('click');
-    wrapper.update();
+    const cloneButtons = getAllByDataTest(container, 'CloneButton[group]');
+    fireEvent.click(cloneButtons[cloneButtons.length - 1]);
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -449,7 +509,7 @@ describe('#components/Builder', () => {
   });
 
   it('Does not render a clone control for the single root group', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         cloneable
@@ -465,12 +525,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="CloneButton[group]"]').hostNodes().length).toEqual(0);
+    expect(getAllByDataTest(container, 'CloneButton[group]')).toHaveLength(0);
   });
 
   it('Adds a group at the root level', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -479,8 +539,7 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="AddRootGroup"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootGroup'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ type: 'GROUP' }),
@@ -490,7 +549,7 @@ describe('#components/Builder', () => {
 
   it('Adds a rule at the root level', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -499,8 +558,7 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="AddRootRule"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
 
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ type: 'GROUP' }),
@@ -510,7 +568,7 @@ describe('#components/Builder', () => {
 
   it('Allows deleting a group at the root level', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[
@@ -526,17 +584,16 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="Remove"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'Remove'));
 
     expect(onChange).toHaveBeenLastCalledWith([]);
-    expect(wrapper.find('[data-test="Remove"]').hostNodes().length).toEqual(0);
-    expect(wrapper.find('[data-test="AddRootGroup"]').hostNodes().length).toEqual(1);
+    expect(queryByDataTest(container, 'Remove')).toBeNull();
+    expect(queryByDataTest(container, 'AddRootGroup')).not.toBeNull();
   });
 
   it('Omits modifiers from groups when groupTypes is without-modifiers', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -546,8 +603,7 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="AddRootGroup"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootGroup'));
 
     const emittedData = onChange.mock.calls[onChange.mock.calls.length - 1][0];
 
@@ -567,7 +623,7 @@ describe('#components/Builder', () => {
   });
 
   it('Renders a group-type popover when groupTypes is both', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[]}
@@ -577,29 +633,22 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="AddRootGroup"]').length).toBeGreaterThan(0);
-    expect(wrapper.find('[data-test="AddRootGroupWithModifiers"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="AddRootGroupWithoutModifiers"]').length).toEqual(0);
+    expect(queryByDataTest(container, 'AddRootGroup')).not.toBeNull();
+    expect(queryByDataTest(container, 'AddRootGroupWithModifiers')).toBeNull();
+    expect(queryByDataTest(container, 'AddRootGroupWithoutModifiers')).toBeNull();
 
-    wrapper
-      .find('button')
-      .filterWhere(node => node.text() === 'Add Group')
-      .first()
-      .simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'AddRootGroup'));
 
     expect(
-      wrapper.find('button').filterWhere(node => node.text() === 'With Modifiers')
-        .length
-    ).toBeGreaterThan(0);
+      screen.getByRole('button', { name: 'With Modifiers' })
+    ).toBeInTheDocument();
     expect(
-      wrapper.find('button').filterWhere(node => node.text() === 'Without Modifiers')
-        .length
-    ).toBeGreaterThan(0);
+      screen.getByRole('button', { name: 'Without Modifiers' })
+    ).toBeInTheDocument();
   });
 
   it('Does not render modifier controls for modifierless groups', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[
@@ -613,13 +662,13 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="Option[not]"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="Option[and]"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="Option[or]"]').length).toEqual(0);
+    expect(queryByDataTest(container, 'Option[not]')).toBeNull();
+    expect(queryByDataTest(container, 'Option[and]')).toBeNull();
+    expect(queryByDataTest(container, 'Option[or]')).toBeNull();
   });
 
   it('Locks the builder to a single undeletable root group', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }]}
@@ -629,18 +678,18 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="AddRootRule"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="AddRootGroup"]').length).toEqual(0);
-    expect(wrapper.find('[data-test="IteratorRule"]').hostNodes().length).toEqual(1);
+    expect(queryByDataTest(container, 'AddRootRule')).toBeNull();
+    expect(queryByDataTest(container, 'AddRootGroup')).toBeNull();
+    expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(1);
     expect(
-      wrapper.find('button').filterWhere((node) => node.text() === 'Delete').length
-    ).toEqual(1);
-    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(1);
+      screen.getAllByRole('button', { name: 'Delete' })
+    ).toHaveLength(1);
+    expect(getAllByDataTest(container, 'DragHandle')).toHaveLength(1);
   });
 
   it('Emits numeric values for number fields', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         data={[
@@ -655,10 +704,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('input[type="number"]').first().simulate('change', {
-      target: { value: '42.5' },
-    });
-    wrapper.update();
+    fireEvent.change(
+      container.querySelector('input[type="number"]') as HTMLInputElement,
+      {
+        target: { value: '42.5' },
+      }
+    );
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -672,7 +723,7 @@ describe('#components/Builder', () => {
 
   it('Emits validation state and renders validation issues when enabled', async () => {
     const onStateChange = jest.fn();
-    const wrapper = mount(
+    render(
       <Builder
         fields={[
           {
@@ -698,21 +749,23 @@ describe('#components/Builder', () => {
       />
     );
 
-    await Promise.resolve();
-    wrapper.update();
+    await waitFor(() => {
+      expect(onStateChange).toHaveBeenCalled();
+    });
 
-    expect(onStateChange).toHaveBeenCalled();
-    expect(onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]).toMatchObject({
+    expect(
+      onStateChange.mock.calls[onStateChange.mock.calls.length - 1][0]
+    ).toMatchObject({
       isValid: false,
       validation: {
         isValid: false,
       },
     });
-    expect(wrapper.text()).toContain('This value is required');
+    expect(screen.getByText('This value is required')).toBeInTheDocument();
   });
 
   it('Does not render field validation errors for placeholder rules without a selected field', async () => {
-    const wrapper = mount(
+    render(
       <Builder
         fields={fields}
         data={[
@@ -727,14 +780,13 @@ describe('#components/Builder', () => {
       />
     );
 
-    await Promise.resolve();
-    wrapper.update();
-
-    expect(wrapper.text()).not.toContain('Field "" is not defined');
+    await waitFor(() => {
+      expect(screen.queryByText('Field "" is not defined')).not.toBeInTheDocument();
+    });
   });
 
   it('Does not render field validation errors for placeholder rules with missing field values', async () => {
-    const wrapper = mount(
+    render(
       <Builder
         fields={fields}
         data={[
@@ -749,14 +801,13 @@ describe('#components/Builder', () => {
       />
     );
 
-    await Promise.resolve();
-    wrapper.update();
-
-    expect(wrapper.text()).not.toContain('is not defined');
+    await waitFor(() => {
+      expect(screen.queryByText(/is not defined/)).not.toBeInTheDocument();
+    });
   });
 
   it('Disables editing and dragging for locally read-only rules', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         draggable
@@ -778,17 +829,19 @@ describe('#components/Builder', () => {
       />
     );
 
+    const rule = getByDataTest(container, 'IteratorRule');
+
     expect(
-      wrapper.find('[data-test="IteratorRule"]').find('[data-test="DragHandle"]').length
-    ).toEqual(0);
+      rule.querySelector('[data-test="DragHandle"]')
+    ).toBeNull();
     expect(
-      wrapper.find('[data-test="IteratorRule"]').find('button').filterWhere((node) => node.text() === 'Delete').length
-    ).toEqual(0);
+      screen.queryByRole('button', { name: 'Delete' })
+    ).not.toBeInTheDocument();
   });
 
   it('Allows locking and unlocking rules through the GUI when lockable is enabled', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         lockable
@@ -810,8 +863,7 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="LockToggle[rule]"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -829,8 +881,7 @@ describe('#components/Builder', () => {
       },
     ]);
 
-    wrapper.find('[data-test="LockToggle[rule]"]').first().simulate('click');
-    wrapper.update();
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -849,7 +900,7 @@ describe('#components/Builder', () => {
   });
 
   it('Locks group controls without inheriting read-only to descendants by default', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         draggable
@@ -878,16 +929,15 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="AddRule"]').hostNodes().length).toEqual(1);
+    expect(getAllByDataTest(container, 'AddRule')).toHaveLength(1);
     expect(
-      wrapper.find('button').filterWhere((node) => node.text() === 'Delete').hostNodes()
-        .length
-    ).toEqual(1);
-    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(1);
+      screen.getAllByRole('button', { name: 'Delete' })
+    ).toHaveLength(1);
+    expect(getAllByDataTest(container, 'DragHandle')).toHaveLength(1);
   });
 
   it('Inherits read-only state to descendants when configured on a group', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         draggable
@@ -920,15 +970,14 @@ describe('#components/Builder', () => {
     );
 
     expect(
-      wrapper.find('button').filterWhere((node) => node.text() === 'Delete').hostNodes()
-        .length
-    ).toEqual(0);
-    expect(wrapper.find('[data-test="DragHandle"]').hostNodes().length).toEqual(0);
+      screen.queryByRole('button', { name: 'Delete' })
+    ).not.toBeInTheDocument();
+    expect(getAllByDataTest(container, 'DragHandle')).toHaveLength(0);
   });
 
   it('Cycles group lock state through self, inherited, and unlocked states', () => {
     const onChange = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         lockable
@@ -951,8 +1000,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    wrapper.find('[data-test="LockToggle[group]"]').last().simulate('click');
-    wrapper.update();
+    const getLastGroupToggle = () => {
+      const toggles = getAllByDataTest(container, 'LockToggle[group]');
+      return toggles[toggles.length - 1];
+    };
+
+    fireEvent.click(getLastGroupToggle());
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -971,8 +1024,7 @@ describe('#components/Builder', () => {
       },
     ]);
 
-    wrapper.find('[data-test="LockToggle[group]"]').last().simulate('click');
-    wrapper.update();
+    fireEvent.click(getLastGroupToggle());
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -994,8 +1046,7 @@ describe('#components/Builder', () => {
       },
     ]);
 
-    wrapper.find('[data-test="LockToggle[group]"]').last().simulate('click');
-    wrapper.update();
+    fireEvent.click(getLastGroupToggle());
 
     expect(onChange).toHaveBeenLastCalledWith([
       {
@@ -1015,7 +1066,8 @@ describe('#components/Builder', () => {
   });
 
   it('Disables descendant lock toggles when read-only is inherited from a parent group', () => {
-    const wrapper = mount(
+    const onChange = jest.fn();
+    const { container } = render(
       <Builder
         fields={fields}
         lockable
@@ -1037,16 +1089,17 @@ describe('#components/Builder', () => {
             ],
           },
         ]}
+        onChange={onChange}
       />
     );
 
-    expect(
-      wrapper.find('[data-test="LockToggle[rule]"]').first().prop('disabled')
-    ).toEqual(true);
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
+
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('Uses a custom LockToggle component when provided', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         lockable
@@ -1080,12 +1133,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(wrapper.find('[data-test="CustomLockToggle[group]"]').length).toEqual(1);
-    expect(wrapper.find('[data-test="CustomLockToggle[rule]"]').length).toEqual(1);
+    expect(getAllByDataTest(container, 'CustomLockToggle[group]')).toHaveLength(1);
+    expect(getAllByDataTest(container, 'CustomLockToggle[rule]')).toHaveLength(1);
   });
 
   it('Keeps the boundary drop zone before a locked sibling group', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Builder
         fields={fields}
         draggable
@@ -1125,10 +1178,9 @@ describe('#components/Builder', () => {
     );
 
     expect(
-      wrapper
-        .find('[data-test="DropZone"]')
-        .hostNodes()
-        .filterWhere((node) => node.prop('data-index') === 1).length
-    ).toEqual(1);
+      getAllByDataTest(container, 'DropZone').filter(
+        (node) => node.getAttribute('data-index') === '1'
+      )
+    ).toHaveLength(1);
   });
 });

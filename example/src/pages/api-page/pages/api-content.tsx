@@ -102,6 +102,7 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   Add?: React.ComponentType<IButtonProps>;
   CloneButton?: React.ComponentType<ICloneButtonProps>;
   LockToggle?: React.ComponentType<ILockToggleProps>;
+  HistoryControls?: React.ComponentType<IHistoryControlsProps>;
   Rule?: React.ComponentType<IRuleContainerProps>;
   Group?: React.ComponentType<IGroupContainerProps>;
   GroupHeaderOption?: React.ComponentType<IGroupHeaderOptionProps>;
@@ -110,6 +111,16 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   EmptyGroupDropZone?: React.ComponentType<IEmptyGroupDropZoneProps>;
   Popover?: React.ComponentType<IPopoverProps>;
   PopoverItem?: React.ComponentType<IPopoverItemProps>;
+}`;
+
+const historyControlsSignature = `export interface IHistoryControlsProps {
+  undoButton: React.ReactNode;
+  redoButton: React.ReactNode;
+  canUndo: boolean;
+  canRedo: boolean;
+  onUndo: () => void;
+  onRedo: () => void;
+  className?: string;
 }`;
 
 const lockToggleSignature = `export type BuilderLockState = 'unlocked' | 'self' | 'all';
@@ -424,12 +435,14 @@ export const apiPages: IApiPage[] = [
         <CodeBlock code={componentsSignature} language="ts" label="Component overrides" />
         <CodeBlock code={cloneButtonSignature} language="ts" label="CloneButton props" />
         <CodeBlock code={lockToggleSignature} language="ts" label="LockToggle props" />
+        <CodeBlock code={historyControlsSignature} language="ts" label="HistoryControls props" />
         <SectionTitle>Props</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>form.Select</InlineCode> / <InlineCode>form.SelectMulti</InlineCode> / <InlineCode>form.Switch</InlineCode> / <InlineCode>form.Input</InlineCode>:</ItemTitle> Replace the built-in form controls used by rules and groups.</li>
           <li><ItemTitle><InlineCode>Remove</InlineCode> and <InlineCode>Add</InlineCode>:</ItemTitle> Replace action buttons used for structural editing.</li>
           <li><ItemTitle><InlineCode>CloneButton</InlineCode>:</ItemTitle> Replaces the built-in clone control used when <InlineCode>cloneable</InlineCode> is enabled.</li>
           <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Replaces the built-in lock control used when <InlineCode>lockable</InlineCode> is enabled.</li>
+          <li><ItemTitle><InlineCode>HistoryControls</InlineCode>:</ItemTitle> Replaces the layout wrapper around the built-in undo and redo controls used when history controls are enabled.</li>
           <li><ItemTitle><InlineCode>Rule</InlineCode> and <InlineCode>Group</InlineCode>:</ItemTitle> Replace the main structural containers.</li>
           <li><ItemTitle><InlineCode>GroupHeaderOption</InlineCode>:</ItemTitle> Replaces the header option control used in group UIs.</li>
           <li><ItemTitle><InlineCode>Text</InlineCode>:</ItemTitle> Replaces the built-in text rendering component.</li>
@@ -444,6 +457,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>form.Switch</InlineCode>:</ItemTitle> Receives <InlineCode>switched</InlineCode>, optional <InlineCode>onChange(value)</InlineCode>, and optional <InlineCode>disabled</InlineCode>.</li>
           <li><ItemTitle><InlineCode>CloneButton</InlineCode>:</ItemTitle> Receives <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onClick()</InlineCode>.</li>
           <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Receives <InlineCode>state</InlineCode>, <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onChange(nextState)</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>HistoryControls</InlineCode>:</ItemTitle> Receives built-in <InlineCode>undoButton</InlineCode> and <InlineCode>redoButton</InlineCode> nodes plus <InlineCode>canUndo</InlineCode>, <InlineCode>canRedo</InlineCode>, <InlineCode>onUndo()</InlineCode>, and <InlineCode>onRedo()</InlineCode>.</li>
           <li><ItemTitle><InlineCode>Rule</InlineCode>:</ItemTitle> Receives already-built <InlineCode>children</InlineCode>, <InlineCode>controls</InlineCode>, and optional <InlineCode>dragHandle</InlineCode>.</li>
           <li><ItemTitle><InlineCode>Group</InlineCode>:</ItemTitle> Receives <InlineCode>controlsLeft</InlineCode>, <InlineCode>controlsRight</InlineCode>, <InlineCode>children</InlineCode>, and optional overlays or drag handles.</li>
           <li><ItemTitle><InlineCode>DropZone</InlineCode>:</ItemTitle> Receives <InlineCode>id</InlineCode>, <InlineCode>index</InlineCode>, optional <InlineCode>parentId</InlineCode>, and drag-state flags.</li>

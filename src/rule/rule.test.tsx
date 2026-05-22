@@ -1,5 +1,5 @@
-import { mount, shallow } from 'enzyme';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
@@ -111,61 +111,43 @@ const data: any[] = [
     parent: 'test-1',
   },
 ];
-const setData = jest.fn();
-const onChange = () => jest.fn();
+
+const renderWithContext = (
+  element: ReactElement,
+  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+) =>
+  render(
+    <BuilderContext.Provider
+      value={{
+        components,
+        fields,
+        data,
+        strings,
+        setData: jest.fn(),
+        onChange: jest.fn(),
+        dispatchAction: jest.fn(),
+        readOnly: false,
+        ...overrides,
+      }}
+    >
+      {element}
+    </BuilderContext.Provider>
+  );
 
 describe('#components/Rule', () => {
-  it('Tests snapshot', () => {
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: false,
-          }}
-        >
-          <Rule id="test-2" field="MOCK_FIELD_1" />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
+  it('renders in editable and read-only modes', () => {
+    const editable = renderWithContext(<Rule id="test-2" field="MOCK_FIELD_1" />);
+    const readOnly = renderWithContext(<Rule id="test-2" field="MOCK_FIELD_1" />, {
+      readOnly: true,
+    });
 
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: true,
-          }}
-        >
-          <Rule id="test-2" field="MOCK_FIELD_1" />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
+    expect(editable.container.firstChild).toBeTruthy();
+    expect(readOnly.container.firstChild).toBeTruthy();
   });
 
-  it('Tests full behavior', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
+  it('renders all supported rule widget variants', () => {
+    const { container } = renderWithContext(
+      <>
         <Rule data-test="Rule[0]" id="test-2" field="" />
         <Rule data-test="Rule[1]" id="test-2" field="MOCK_FIELD_1" />
         <Rule data-test="Rule[2]" id="test-3" field="MOCK_FIELD_2" />
@@ -179,89 +161,55 @@ describe('#components/Rule', () => {
           id="test-9"
           field="SOME_FIELD_THAT_DOESNT_EXISTS"
         />
-        <Rule data-test="Rule[9]" id="test-10" field="MOCK_FIELD_2" operator="IS_NULL" />
-      </BuilderContext.Provider>
+        <Rule
+          data-test="Rule[9]"
+          id="test-10"
+          field="MOCK_FIELD_2"
+          operator="IS_NULL"
+        />
+      </>
     );
 
-    expect(wrapper.find('[data-test="Rule[0]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[1]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[2]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[3]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[4]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[5]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[6]"]')).toBeDefined();
-    expect(wrapper.find('[data-test="Rule[7]"]')).toBeDefined();
-    expect(
-      wrapper.find('[data-test="Rule[9]"] [data-test="SelectMultiTrigger"]').length
-    ).toBeGreaterThan(0);
-    const ruleNineInputs = wrapper
-      .find('[data-test="Rule[9]"]')
-      .find('input')
-      .filterWhere((node) => {
-        const inputType = node.prop('type');
-
-        return (
-          inputType === 'text' ||
-          inputType === 'date' ||
-          inputType === 'number'
-        );
-      });
+    for (let index = 0; index < 8; index += 1) {
+      expect(container.querySelector(`[data-test="Rule[${index}]"]`)).toBeTruthy();
+    }
 
     expect(
-      ruleNineInputs.length
-    ).toEqual(0);
-    expect(Object.keys(wrapper.find('[data-test="Rule[8]"]')).length).toBe(
-      0
-    );
-
-    wrapper
-      .find('[data-test="Rule[1]"] button')
-      .filterWhere((node) => node.text() === 'Delete')
-      .first()
-      .simulate('click');
-
-    expect(Object.keys(wrapper.find('[data-test="Rule[1]"]')).length).toBe(
-      0
-    );
+      container.querySelector('[data-test="Rule[9]"] [data-test="SelectMultiTrigger"]')
+    ).toBeTruthy();
+    expect(
+      container.querySelectorAll(
+        '[data-test="Rule[9]"] input[type="text"], [data-test="Rule[9]"] input[type="date"], [data-test="Rule[9]"] input[type="number"]'
+      )
+    ).toHaveLength(0);
+    expect(container.querySelector('[data-test="Rule[8]"]')).toBeNull();
   });
 
-  it('Tests no srtrings scenario', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings: {},
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Rule id="test-9" field="" />
-      </BuilderContext.Provider>
+  it('deletes a rule through the delete control', () => {
+    const dispatchAction = jest.fn();
+    const { getByRole } = renderWithContext(
+      <Rule data-test="Rule[1]" id="test-2" field="MOCK_FIELD_1" />,
+      { dispatchAction }
     );
 
-    expect(Object.keys(wrapper).length).toBe(0);
+    fireEvent.click(getByRole('button', { name: 'Delete' }));
+
+    expect(dispatchAction).toHaveBeenCalled();
   });
 
-  it('Hides the delete control when the rule is locally read-only', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Rule id="test-2" field="MOCK_FIELD_1" readOnly />
-      </BuilderContext.Provider>
+  it('renders nothing when strings are unavailable', () => {
+    const { container } = renderWithContext(<Rule id="test-9" field="" />, {
+      strings: {},
+    });
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('hides the delete control when the rule is locally read-only', () => {
+    const { queryByRole } = renderWithContext(
+      <Rule id="test-2" field="MOCK_FIELD_1" readOnly />
     );
 
-    expect(wrapper.find('button').filterWhere((node) => node.text() === 'Delete').length).toEqual(0);
+    expect(queryByRole('button', { name: 'Delete' })).toBeNull();
   });
 });

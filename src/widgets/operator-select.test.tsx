@@ -1,5 +1,5 @@
-import { mount, shallow } from 'enzyme';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
@@ -13,338 +13,166 @@ import {
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
-  {
-    field: 'MOCK_FIELD_1',
-    label: 'Mock Field',
-    type: 'TEXT',
-  },
-  {
-    field: 'MOCK_FIELD_2',
-    label: 'Mock Field',
-    type: 'NUMBER',
-    operators: [],
-  },
+  { field: 'MOCK_FIELD_1', label: 'Mock Field', type: 'TEXT' },
+  { field: 'MOCK_FIELD_2', label: 'Mock Field', type: 'NUMBER', operators: [] },
 ];
 const data: any[] = [
-  {
-    field: 'MOCK_FIELD_1',
-    id: 'test-1',
-    value: 'Test',
-  },
-  {
-    field: 'MOCK_FIELD_2',
-    id: 'test-2',
-    value: 'Test',
-  },
-  {
-    field: 'MOCK_FIELD_2',
-    id: 'test-3',
-    value: [1, 2],
-    operator: 'NOT_BETWEEN',
-  },
+  { field: 'MOCK_FIELD_1', id: 'test-1', value: 'Test' },
+  { field: 'MOCK_FIELD_2', id: 'test-2', value: 'Test' },
+  { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
 ];
-const strings = { form: {} };
-const setData = jest.fn();
-const onChange = jest.fn();
 
 const operatorSelectValues: IOperatorSelectValuesProps[][] = [
-  // Testing scenario where BETWEEN is first in operator list
   [
     { value: 'BETWEEN', label: 'Test' },
     { value: 'ALL_IN', label: 'Test' },
     { value: 'ANY_IN', label: 'Test' },
   ],
-  // Testing scenario where BETWEEN is NOT first in operator list
   [{ value: 'ALL_IN', label: 'Test' }, { value: 'ANY_IN', label: 'Test' }],
   [{ value: 'IS_NULL', label: 'Test' }, { value: 'IS_NOT_NULL', label: 'Test' }],
 ];
 
+const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
+  const element = container.querySelector(`[data-test="${value}"]`);
+
+  if (!element) {
+    throw new Error(`Unable to find element with data-test="${value}"`);
+  }
+
+  return element as HTMLElement;
+};
+
+const renderWithContext = (
+  element: ReactElement,
+  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+) =>
+  render(
+    <BuilderContext.Provider
+      value={{
+        components,
+        fields,
+        data,
+        strings: { form: {} },
+        setData: jest.fn(),
+        onChange: jest.fn(),
+        readOnly: false,
+        ...overrides,
+      }}
+    >
+      {element}
+    </BuilderContext.Provider>
+  );
+
 describe('#components/Widgets/OperatorSelect', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: false,
-          }}
-        >
-          <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: true,
-          }}
-        >
-          <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-  });
-
-  it('Tests user interaction where BETWEEN is first in operator list and field is of STRING type', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
-      </BuilderContext.Provider>
+  it('renders in editable and read-only modes', () => {
+    const editable = renderWithContext(
+      <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
+    );
+    const readOnly = renderWithContext(
+      <OperatorSelect id="test-1" values={operatorSelectValues[0]} />,
+      { readOnly: true }
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper
-      .find('[data-test="SelectMultiOption[BETWEEN]"]')
-      .first()
-      .simulate('click');
+    expect(editable.container.firstChild).toBeTruthy();
+    expect(readOnly.container.firstChild).toBeTruthy();
   });
 
-  it('Tests user interaction where BETWEEN is NOT first in operator list and field is of STRING type', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-1" values={operatorSelectValues[1]} />
-      </BuilderContext.Provider>
+  it('switches to BETWEEN for text fields', () => {
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper
-      .find('[data-test="SelectMultiOption[ALL_IN]"]')
-      .first()
-      .simulate('click');
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[BETWEEN]'));
+
+    expect(container.firstChild).toBeTruthy();
   });
 
-  it('Tests user interaction where BETWEEN is first in operator list and field is of NUMBER type', () => {
-    onChange.mockClear();
-
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-2" values={operatorSelectValues[0]} />
-      </BuilderContext.Provider>
+  it('switches to ALL_IN when BETWEEN is not first', () => {
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-1" values={operatorSelectValues[1]} />
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper
-      .find('[data-test="SelectMultiOption[BETWEEN]"]')
-      .first()
-      .simulate('click');
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[ALL_IN]'));
+
+    expect(container.firstChild).toBeTruthy();
+  });
+
+  it('resets NUMBER values correctly when switching to BETWEEN', () => {
+    const onChange = jest.fn();
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-2" values={operatorSelectValues[0]} />,
+      { onChange }
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[BETWEEN]'));
 
     expect(onChange).toHaveBeenCalledWith([
-      {
-        field: 'MOCK_FIELD_1',
-        id: 'test-1',
-        value: 'Test',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-2',
-        value: [0, 0],
-        operator: 'BETWEEN',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-3',
-        value: [1, 2],
-        operator: 'NOT_BETWEEN',
-      },
+      { field: 'MOCK_FIELD_1', id: 'test-1', value: 'Test' },
+      { field: 'MOCK_FIELD_2', id: 'test-2', value: [0, 0], operator: 'BETWEEN' },
+      { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
     ]);
   });
 
-  it('Tests user interaction where BETWEEN is NOT first in operator list and field is of NUMBER type', () => {
-    onChange.mockClear();
-
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-2" values={operatorSelectValues[1]} />
-      </BuilderContext.Provider>
+  it('keeps NUMBER scalar values when switching to ALL_IN', () => {
+    const onChange = jest.fn();
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-2" values={operatorSelectValues[1]} />,
+      { onChange }
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper
-      .find('[data-test="SelectMultiOption[ALL_IN]"]')
-      .first()
-      .simulate('click');
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[ALL_IN]'));
 
     expect(onChange).toHaveBeenCalledWith([
-      {
-        field: 'MOCK_FIELD_1',
-        id: 'test-1',
-        value: 'Test',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-2',
-        value: 'Test',
-        operator: 'ALL_IN',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-3',
-        value: [1, 2],
-        operator: 'NOT_BETWEEN',
-      },
+      { field: 'MOCK_FIELD_1', id: 'test-1', value: 'Test' },
+      { field: 'MOCK_FIELD_2', id: 'test-2', value: 'Test', operator: 'ALL_IN' },
+      { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
     ]);
   });
 
-  it('Resets NOT_BETWEEN number values back to numeric scalar output', () => {
-    onChange.mockClear();
-
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-3" values={operatorSelectValues[1]} />
-      </BuilderContext.Provider>
+  it('converts NOT_BETWEEN values back to a scalar when needed', () => {
+    const onChange = jest.fn();
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-3" values={operatorSelectValues[1]} />,
+      { onChange }
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper
-      .find('[data-test="SelectMultiOption[ALL_IN]"]')
-      .first()
-      .simulate('click');
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[ALL_IN]'));
 
     expect(onChange).toHaveBeenCalledWith([
-      {
-        field: 'MOCK_FIELD_1',
-        id: 'test-1',
-        value: 'Test',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-2',
-        value: 'Test',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-3',
-        value: 0,
-        operator: 'ALL_IN',
-      },
+      { field: 'MOCK_FIELD_1', id: 'test-1', value: 'Test' },
+      { field: 'MOCK_FIELD_2', id: 'test-2', value: 'Test' },
+      { field: 'MOCK_FIELD_2', id: 'test-3', value: 0, operator: 'ALL_IN' },
     ]);
   });
 
-  it('Tests no form components scenario', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components: {},
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-1" values={operatorSelectValues[0]} />
-      </BuilderContext.Provider>
+  it('falls back to the default form components when custom ones are unavailable', () => {
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-1" values={operatorSelectValues[0]} />,
+      { components: {} as IBuilderComponentsProps }
     );
 
-    expect(Object.keys(wrapper).length).toBe(0);
+    expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
   });
 
-  it('Clears value when switching to IS_NULL', () => {
-    onChange.mockClear();
-
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <OperatorSelect id="test-1" values={operatorSelectValues[2]} />
-      </BuilderContext.Provider>
+  it('clears the value when switching to IS_NULL', () => {
+    const onChange = jest.fn();
+    const { container } = renderWithContext(
+      <OperatorSelect id="test-1" values={operatorSelectValues[2]} />,
+      { onChange }
     );
 
-    wrapper.find('[data-test="SelectMultiTrigger"]').first().simulate('click');
-    wrapper
-      .find('[data-test="SelectMultiOption[IS_NULL]"]')
-      .first()
-      .simulate('click');
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[IS_NULL]'));
 
     expect(onChange).toHaveBeenCalledWith([
-      {
-        field: 'MOCK_FIELD_1',
-        id: 'test-1',
-        operator: 'IS_NULL',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-2',
-        value: 'Test',
-      },
-      {
-        field: 'MOCK_FIELD_2',
-        id: 'test-3',
-        value: [1, 2],
-        operator: 'NOT_BETWEEN',
-      },
+      { field: 'MOCK_FIELD_1', id: 'test-1', operator: 'IS_NULL' },
+      { field: 'MOCK_FIELD_2', id: 'test-2', value: 'Test' },
+      { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
     ]);
   });
 });

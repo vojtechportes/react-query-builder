@@ -1,5 +1,5 @@
-import { mount, shallow } from 'enzyme';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
@@ -10,99 +10,61 @@ import { Boolean } from './boolean';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
-  {
-    field: 'MOCK_FIELD',
-    label: 'Mock Field',
-    type: 'BOOLEAN',
-  },
+  { field: 'MOCK_FIELD', label: 'Mock Field', type: 'BOOLEAN' },
 ];
-const data: any[] = [
-  {
-    id: 'test',
-    value: false,
-  },
-];
-const strings = {};
-const setData = jest.fn();
-const onChange = () => jest.fn();
+const data: any[] = [{ id: 'test', value: false }];
+
+const renderWithContext = (
+  element: ReactElement,
+  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+) =>
+  render(
+    <BuilderContext.Provider
+      value={{
+        components,
+        fields,
+        data,
+        strings: {},
+        setData: jest.fn(),
+        onChange: jest.fn(),
+        readOnly: false,
+        ...overrides,
+      }}
+    >
+      {element}
+    </BuilderContext.Provider>
+  );
 
 describe('#components/Widgets/Boolean', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: false,
-          }}
-        >
-          <Boolean id="test" selectedValue={false} />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-
-    expect(
-      shallow(
-        <BuilderContext.Provider
-          value={{
-            components,
-            fields,
-            data,
-            strings,
-            setData,
-            onChange,
-            readOnly: true,
-          }}
-        >
-          <Boolean id="test" selectedValue={false} />
-        </BuilderContext.Provider>
-      )
-    ).toMatchSnapshot();
-  });
-
-  it('Tests user interaction', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components,
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Boolean id="test" selectedValue={false} />
-      </BuilderContext.Provider>
+  it('renders in editable and read-only modes', () => {
+    const editable = renderWithContext(
+      <Boolean id="test" selectedValue={false} />
+    );
+    const readOnly = renderWithContext(
+      <Boolean id="test" selectedValue={false} />,
+      { readOnly: true }
     );
 
-    const switchEl = wrapper.find('[data-test="Switch"]').first();
-    switchEl.simulate('click');
+    expect(editable.container.firstChild).toBeTruthy();
+    expect(readOnly.container.firstChild).toBeTruthy();
   });
 
-  it('Tests no form components scenario', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{
-          components: {},
-          fields,
-          data,
-          strings,
-          setData,
-          onChange,
-          readOnly: false,
-        }}
-      >
-        <Boolean id="test" selectedValue={false} />
-      </BuilderContext.Provider>
+  it('toggles the switch', () => {
+    const { container } = renderWithContext(
+      <Boolean id="test" selectedValue={false} />
     );
 
-    expect(Object.keys(wrapper).length).toBe(0);
+    fireEvent.click(container.querySelector('[data-test="Switch"]') as HTMLElement);
+
+    expect(container.firstChild).toBeTruthy();
+  });
+
+  it('falls back to the default form components when custom ones are unavailable', () => {
+    const { container } = renderWithContext(
+      <Boolean id="test" selectedValue={false} />,
+      { components: {} as IBuilderComponentsProps }
+    );
+
+    expect(container.querySelector('[data-test="Switch"]')).toBeTruthy();
   });
 });

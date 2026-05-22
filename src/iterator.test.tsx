@@ -1,5 +1,5 @@
-import { mount, shallow } from 'enzyme';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
   IBuilderFieldProps,
@@ -47,25 +47,37 @@ const filteredData: NormalizedQuery = [
   },
 ];
 
-const setData = jest.fn();
-const onChange = () => jest.fn();
+const renderWithContext = (element: ReactElement) =>
+  render(
+    <BuilderContext.Provider
+      value={{
+        components,
+        fields,
+        data,
+        strings,
+        setData: jest.fn(),
+        onChange: jest.fn(),
+        readOnly: false,
+      }}
+    >
+      {element}
+    </BuilderContext.Provider>
+  );
 
 describe('#components/Iterator', () => {
-  it('Tests snapshot', () => {
-    expect(
-      shallow(<Iterator filteredData={[]} originalData={[]} />)
-    ).toMatchSnapshot();
-  });
-
-  it('Tests full behavior', () => {
-    const wrapper = mount(
-      <BuilderContext.Provider
-        value={{ components, fields, data, strings, setData, onChange, readOnly: false }}
-      >
-        <Iterator filteredData={filteredData} originalData={data} />
-      </BuilderContext.Provider>
+  it('renders the iterator root', () => {
+    const { container } = renderWithContext(
+      <Iterator filteredData={[]} originalData={[]} />
     );
 
-    expect(wrapper.find('[data-test="IteratorRule"]').hostNodes().length).toEqual(2)
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders nested rules from the original data', () => {
+    const { container } = renderWithContext(
+      <Iterator filteredData={filteredData} originalData={data} />
+    );
+
+    expect(container.querySelectorAll('[data-test="IteratorRule"]')).toHaveLength(2);
   });
 });

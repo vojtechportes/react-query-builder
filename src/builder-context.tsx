@@ -1,11 +1,11 @@
 import React, { FC, createContext } from 'react';
 import {
+  BuilderGroupMode,
   IBuilderComponentsProps,
   IBuilderFieldProps,
   IBuilderValidationResult,
-  BuilderGroupMode,
-  defaultComponents,
-} from './builder';
+} from './builder/types';
+import { defaultComponents } from './builder/constants/default-components';
 import { IStrings, strings as defaultStrings } from './constants/strings';
 import {
   BuilderHistoryAction,

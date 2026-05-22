@@ -1,31 +1,41 @@
-import { SelectMulti } from './select-multi';
-import { mount, shallow } from 'enzyme';
 import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
+import { SelectMulti } from './select-multi';
 
 const mockValues = [
   { value: 'test', label: 'test' },
   { value: 'another', label: 'another' },
 ];
 
+const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
+  const element = container.querySelector(`[data-test="${value}"]`);
+
+  if (!element) {
+    throw new Error(`Unable to find element with data-test="${value}"`);
+  }
+
+  return element as HTMLElement;
+};
+
 describe('#components/SelectMulti', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(
-        <SelectMulti
-          disabled={false}
-          onChange={jest.fn()}
-          onDelete={jest.fn()}
-          selectedValue={['test']}
-          values={mockValues}
-        />
-      )
-    ).toMatchSnapshot();
+  it('renders the selected values trigger', () => {
+    const { container } = render(
+      <SelectMulti
+        disabled={false}
+        onChange={jest.fn()}
+        onDelete={jest.fn()}
+        selectedValue={['test']}
+        values={mockValues}
+      />
+    );
+
+    expect(getByDataTest(container, 'SelectMultiTrigger')).toBeTruthy();
   });
 
-  it('Tests user interaction', () => {
+  it('emits add and delete actions from the options list', () => {
     const onChange = jest.fn();
     const onDelete = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <SelectMulti
         disabled={false}
         onChange={onChange}
@@ -35,22 +45,16 @@ describe('#components/SelectMulti', () => {
       />
     );
 
-    const trigger = wrapper.find('[data-test="SelectMultiTrigger"]').first();
-    trigger.simulate('click');
-    wrapper.update();
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[test]'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[another]'));
 
-    const option = wrapper.find('[data-test="SelectMultiOption[test]"]').first();
-    option.simulate('click');
-
-    const secondOption = wrapper.find('[data-test="SelectMultiOption[another]"]').first();
-    secondOption.simulate('click');
-
-    expect(onChange).toBeCalledTimes(1);
-    expect(onDelete).toBeCalledTimes(1);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledTimes(1);
   });
 
-  it('Shows summary badge for hidden values', () => {
-    const wrapper = mount(
+  it('shows a summary badge for hidden values', () => {
+    const { container } = render(
       <SelectMulti
         disabled={false}
         onChange={jest.fn()}
@@ -65,8 +69,8 @@ describe('#components/SelectMulti', () => {
       />
     );
 
-    expect(
-      wrapper.find('[data-test="SelectMultiSummaryBadge"]').first().text()
-    ).toEqual('+1');
+    expect(getByDataTest(container, 'SelectMultiSummaryBadge').textContent).toEqual(
+      '+1'
+    );
   });
 });

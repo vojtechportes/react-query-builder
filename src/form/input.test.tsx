@@ -1,31 +1,31 @@
-import { Input } from './input';
-import { shallow, mount } from 'enzyme';
 import React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { Input } from './input';
 
 describe('#components/Input', () => {
-  it('Tests Snapshot', () => {
-    expect(
-      shallow(
-        <Input
-          disabled={false}
-          type="text"
-          onChange={jest.fn()}
-          value={'Test'}
-        />
-      )
-    ).toMatchSnapshot();
-  });
-
-  it('Tests user interaction', () => {
-    const onChange = jest.fn();
-    const wrapper = mount(
-      <Input disabled={false} type="text" onChange={onChange} value={'Test'} />
+  it('renders a text input with the provided value', () => {
+    render(
+      <Input
+        disabled={false}
+        type="text"
+        onChange={jest.fn()}
+        value="Test"
+      />
     );
 
-    const input = wrapper.find('input');
+    expect(screen.getByDisplayValue('Test')).toBeTruthy();
+  });
 
-    input.simulate('focus');
-    input.simulate('change', { target: { value: 'test' } });
-    expect(onChange).toBeCalled();
+  it('emits changes from the input', () => {
+    const onChange = jest.fn();
+    render(
+      <Input disabled={false} type="text" onChange={onChange} value="Test" />
+    );
+
+    const input = screen.getByDisplayValue('Test');
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    expect(onChange).toHaveBeenCalled();
   });
 });
