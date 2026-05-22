@@ -105,3 +105,5 @@ export const inferCodeLanguage = (format: OutputFormat) => {
       return 'tsx';
   }
 };
+
+export { formatBuilderSource, type CustomizationMode } from './builder-source';
