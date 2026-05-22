@@ -12,9 +12,11 @@ import { demoFields, defaultTheme, initialQueryTree } from '../constants/demo-da
 import { siteTheme } from '../constants/site-theme';
 import {
   formatLabels,
+  formatBuilderSource,
   formatQueryText,
   inferCodeLanguage,
   serializeNativeQuery,
+  type CustomizationMode,
   type OutputFormat,
 } from '../utils/query-formatters';
 import { CodeBlock } from './code-block';
@@ -117,11 +119,28 @@ const OutputCard = styled.section`
   gap: 1rem;
 `;
 
+const SourceActions = styled.div`
+  display: flex;
+  justify-content: flex-start;
+`;
+
+const SourceButton = styled.button`
+  padding: 0.65rem 0.95rem;
+  border: 1px solid ${siteTheme.primaryBorder};
+  border-radius: 999px;
+  background: ${siteTheme.primarySurface};
+  color: ${siteTheme.primaryDark};
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: ${siteTheme.primarySurfaceStrong};
+  }
+`;
+
 export interface IDemoPlaygroundProps {
   initialData?: DenormalizedQuery;
 }
-
-type CustomizationMode = 'default' | 'mui' | 'antd';
 
 export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   initialData = initialQueryTree,
@@ -140,6 +159,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [themeColors, setThemeColors] = React.useState<IColors>(
     defaultTheme.colors
   );
+  const [showSourceCode, setShowSourceCode] = React.useState(false);
   const isMuiMode = customizationMode === 'mui';
   const isAntdMode = customizationMode === 'antd';
   const usesAdapterMode = isMuiMode || isAntdMode;
@@ -165,6 +185,33 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
 
     return formatQueryText(data, outputFormat, demoFields);
   }, [data, outputFormat]);
+
+  const builderSource = React.useMemo(
+    () =>
+      formatBuilderSource({
+        readOnly,
+        lockable,
+        cloneable,
+        draggable,
+        history,
+        singleRootGroup,
+        showValidation,
+        customizationMode,
+        themeColors,
+        defaultThemeColors: defaultTheme.colors,
+      }),
+    [
+      readOnly,
+      lockable,
+      cloneable,
+      draggable,
+      history,
+      singleRootGroup,
+      showValidation,
+      customizationMode,
+      themeColors,
+    ]
+  );
 
   return (
     <Layout>
@@ -289,6 +336,22 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       </Sidebar>
 
       <Main>
+        <OutputCard>
+          <SourceActions>
+            <SourceButton onClick={() => setShowSourceCode(current => !current)}>
+              {showSourceCode ? 'Hide Builder source' : 'Show Builder source'}
+            </SourceButton>
+          </SourceActions>
+
+          {showSourceCode ? (
+            <CodeBlock
+              code={builderSource}
+              label="Builder source"
+              language="tsx"
+            />
+          ) : null}
+        </OutputCard>
+
         <BuilderCard>
           <BuilderSurface>
             {isMuiMode ? (
