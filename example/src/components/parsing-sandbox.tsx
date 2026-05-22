@@ -26,6 +26,10 @@ const Root = styled.section`
   border: 1px solid #dbe4f0;
   border-radius: 16px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+
+  @media (max-width: 540px) {
+    padding: 1.25rem;
+  }
 `;
 
 const Header = styled.div`
