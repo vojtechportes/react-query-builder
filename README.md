@@ -40,16 +40,20 @@ npm install @vojtechportes/react-query-builder
 
 React Query Builder supports React `18+`.
 
-## MUI Adapters
+## UI Adapters
 
-The package also exposes Material UI component mappings through versioned
+The package also exposes ready-made component mappings through versioned
 subpath exports:
 
-- `@vojtechportes/react-query-builder/mui/v9` for new projects
+- `@vojtechportes/react-query-builder/mui/v9` for new Material UI projects
 - `@vojtechportes/react-query-builder/mui/v7` for applications still on MUI 7
+- `@vojtechportes/react-query-builder/antd/v6` for new Ant Design projects
+- `@vojtechportes/react-query-builder/antd/v5` for applications still on Ant Design 5
 
-Install the matching MUI peer dependencies in your app and pass the exported
-`components` object to `Builder`:
+Install the peer dependencies that match the adapter you want to use and pass
+the exported `components` object to `Builder`.
+
+Material UI example:
 
 ```bash
 npm install @mui/material@^9.0.1 @mui/icons-material@^9.0.1 @emotion/react @emotion/styled
@@ -72,8 +76,32 @@ export const MyMuiBuilder = () => {
 };
 ```
 
+Ant Design example:
+
+```bash
+npm install antd@^6.0.0 @ant-design/icons@^6.0.0
+```
+
+```tsx
+import React from 'react';
+import { Builder } from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/antd/v6';
+
+export const MyAntdBuilder = () => {
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};
+```
+
 `ThemeProvider` customizes the built-in default component set. It does not
-theme the Material UI adapters, which keep their styling in MUI.
+theme the MUI or ANTD adapters, which keep their styling in their host UI
+libraries.
 
 More adapter details:
 

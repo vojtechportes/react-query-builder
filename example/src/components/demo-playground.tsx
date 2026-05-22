@@ -4,6 +4,7 @@ import {
   Builder,
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
+import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import type { IColors } from '../../../src/constants/colors';
 import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
@@ -120,7 +121,7 @@ export interface IDemoPlaygroundProps {
   initialData?: DenormalizedQuery;
 }
 
-type CustomizationMode = 'default' | 'mui';
+type CustomizationMode = 'default' | 'mui' | 'antd';
 
 export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   initialData = initialQueryTree,
@@ -140,6 +141,22 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     defaultTheme.colors
   );
   const isMuiMode = customizationMode === 'mui';
+  const isAntdMode = customizationMode === 'antd';
+  const usesAdapterMode = isMuiMode || isAntdMode;
+
+  const builderProps = {
+    data,
+    fields: demoFields,
+    readOnly,
+    lockable,
+    cloneable,
+    onChange: setData,
+    draggable,
+    history,
+    groupTypes: 'both' as const,
+    singleRootGroup,
+    showValidation,
+  };
 
   const outputText = React.useMemo(() => {
     if (outputFormat === 'Native') {
@@ -242,6 +259,16 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               />
               <span>MUI adapter</span>
             </ToggleRow>
+
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'antd'}
+                onChange={() => setCustomizationMode('antd')}
+              />
+              <span>ANTD v6 adapter</span>
+            </ToggleRow>
           </ChoiceGroup>
         </Panel>
 
@@ -249,10 +276,12 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           <ThemeEditor
             value={themeColors}
             onChange={setThemeColors}
-            disabled={isMuiMode}
+            disabled={usesAdapterMode}
             disabledMessage={
-              isMuiMode
-                ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
+              usesAdapterMode
+                ? isMuiMode
+                  ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
+                  : 'ThemeProvider colors style the default builder components only. The ANTD v6 adapter uses Ant Design styling instead.'
                 : undefined
             }
           />
@@ -264,34 +293,17 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           <BuilderSurface>
             {isMuiMode ? (
               <Builder
-                data={data}
-                fields={demoFields}
-                readOnly={readOnly}
-                lockable={lockable}
-                cloneable={cloneable}
-                onChange={setData}
-                draggable={draggable}
-                history={history}
-                groupTypes="both"
-                singleRootGroup={singleRootGroup}
-                showValidation={showValidation}
+                {...builderProps}
                 components={muiComponents}
+              />
+            ) : isAntdMode ? (
+              <Builder
+                {...builderProps}
+                components={antdComponents}
               />
             ) : (
               <ThemeProvider colors={themeColors}>
-                <Builder
-                  data={data}
-                  fields={demoFields}
-                  readOnly={readOnly}
-                  lockable={lockable}
-                  cloneable={cloneable}
-                  onChange={setData}
-                  draggable={draggable}
-                  history={history}
-                  groupTypes="both"
-                  singleRootGroup={singleRootGroup}
-                  showValidation={showValidation}
-                />
+                <Builder {...builderProps} />
               </ThemeProvider>
             )}
           </BuilderSurface>
