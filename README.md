@@ -40,6 +40,46 @@ npm install @vojtechportes/react-query-builder
 
 React Query Builder supports React `18+`.
 
+## MUI Adapters
+
+The package also exposes Material UI component mappings through versioned
+subpath exports:
+
+- `@vojtechportes/react-query-builder/mui/v9` for new projects
+- `@vojtechportes/react-query-builder/mui/v7` for applications still on MUI 7
+
+Install the matching MUI peer dependencies in your app and pass the exported
+`components` object to `Builder`:
+
+```bash
+npm install @mui/material@^9.0.1 @mui/icons-material@^9.0.1 @emotion/react @emotion/styled
+```
+
+```tsx
+import React from 'react';
+import { Builder } from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/mui/v9';
+
+export const MyMuiBuilder = () => {
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};
+```
+
+`ThemeProvider` customizes the built-in default component set. It does not
+theme the Material UI adapters, which keep their styling in MUI.
+
+More adapter details:
+
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/adapters" target="_blank" rel="noopener noreferrer">Documentation: Adapters</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/adapters" target="_blank" rel="noopener noreferrer">API: Adapters</a>
+
 ## Example
 
 ```tsx

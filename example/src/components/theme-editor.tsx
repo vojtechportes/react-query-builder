@@ -8,26 +8,34 @@ const Root = styled.section`
   gap: 1rem;
 `;
 
+const DisabledNote = styled.p`
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #64748b;
+`;
+
 const Title = styled.h3`
   margin: 0;
   font-size: 0.95rem;
   color: #0f172a;
 `;
 
-const Grid = styled.div`
+const Grid = styled.div<{ $disabled?: boolean }>`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem 0.9rem;
+  opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
 `;
 
-const Row = styled.label`
+const Row = styled.label<{ $disabled?: boolean }>`
   display: grid;
   grid-template-columns: 26px minmax(0, 1fr);
   align-items: center;
   gap: 0.7rem;
   font-size: 0.82rem;
   color: #475569;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 `;
 
 const Input = styled.input`
@@ -130,25 +138,31 @@ const setColorValue = (
 export interface IThemeEditorProps {
   value: IColors;
   onChange: (colors: IColors) => void;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
 export const ThemeEditor: React.FC<IThemeEditorProps> = ({
   value,
   onChange,
+  disabled = false,
+  disabledMessage,
 }) => (
   <Root>
     <Title>Theme</Title>
-    <Grid>
+    {disabled && disabledMessage ? <DisabledNote>{disabledMessage}</DisabledNote> : null}
+    <Grid $disabled={disabled}>
       {controls.map(control => {
         const colorValue = getColorValue(value, control.name);
 
         return (
-          <Row htmlFor={control.name} key={control.name}>
+          <Row htmlFor={control.name} key={control.name} $disabled={disabled}>
             <Swatch $color={String(colorValue)} />
             <Input
               id={control.name}
               type="color"
               value={String(colorValue)}
+              disabled={disabled}
               onChange={event =>
                 onChange(setColorValue(value, control.name, event.target.value))
               }

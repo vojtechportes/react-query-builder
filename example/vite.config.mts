@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@vojtechportes/react-query-builder': fileURLToPath(
-        new URL('../src/index.tsx', import.meta.url)
+        new URL('../src', import.meta.url)
       ),
     },
   },

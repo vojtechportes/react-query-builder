@@ -7,6 +7,7 @@ import {
   getNextGroupLockState,
   getNextRuleLockState,
 } from './utils/lock-state';
+import { getLockToggleTitle } from './utils/get-lock-toggle-title.util';
 
 export interface ILockToggleProps {
   state: BuilderLockState;
@@ -138,25 +139,6 @@ const LockIcon: FC<{ state: BuilderLockState }> = ({ state }) => {
   );
 };
 
-const getDefaultTitle = (
-  nodeType: 'rule' | 'group',
-  state: BuilderLockState
-) => {
-  if (nodeType === 'rule') {
-    return state === 'self' ? 'Unlock rule' : 'Lock rule';
-  }
-
-  if (state === 'unlocked') {
-    return 'Lock group';
-  }
-
-  if (state === 'self') {
-    return 'Lock group and descendants';
-  }
-
-  return 'Unlock group and descendants';
-};
-
 export const LockToggle: FC<ILockToggleProps> = ({
   state,
   nodeType,
@@ -180,7 +162,8 @@ export const LockToggle: FC<ILockToggleProps> = ({
     );
   }, [disabled, nodeType, onChange, state]);
 
-  const resolvedTitle = title || getDefaultTitle(nodeType, state);
+  const resolvedTitle =
+    title || getLockToggleTitle(undefined, nodeType, state);
 
   return (
     <StyledLockToggle

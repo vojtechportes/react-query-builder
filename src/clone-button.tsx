@@ -2,6 +2,7 @@ import React, { FC, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { IThemeProps } from './theme-provider/theme-provider';
 import { useTheme } from './theme-provider/hooks/use-theme';
+import { getCloneButtonTitle } from './utils/get-clone-button-title.util';
 
 export interface ICloneButtonProps {
   nodeType: 'rule' | 'group';
@@ -62,9 +63,6 @@ const CloneIcon: FC = () => (
   </svg>
 );
 
-const getDefaultTitle = (nodeType: 'rule' | 'group') =>
-  nodeType === 'group' ? 'Clone group' : 'Clone rule';
-
 export const CloneButton: FC<ICloneButtonProps> = ({
   nodeType,
   disabled = false,
@@ -83,7 +81,7 @@ export const CloneButton: FC<ICloneButtonProps> = ({
     onClick?.();
   }, [disabled, onClick]);
 
-  const resolvedTitle = title || getDefaultTitle(nodeType);
+  const resolvedTitle = title || getCloneButtonTitle(undefined, nodeType);
 
   return (
     <StyledCloneButton

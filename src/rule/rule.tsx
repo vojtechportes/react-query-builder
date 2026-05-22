@@ -28,6 +28,8 @@ import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { QueryRuleValue } from '../utils/query-tree';
+import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
+import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 
 const BooleanContainer = styled.div`
   display: flex;
@@ -159,6 +161,7 @@ export const Rule: FC<IRuleProps> = ({
       <CloneButton
         nodeType="rule"
         onClick={handleClone}
+        title={getCloneButtonTitle(strings, 'rule')}
         data-test="CloneButton[rule]"
       />
     ) : null;
@@ -170,6 +173,7 @@ export const Rule: FC<IRuleProps> = ({
         nodeType="rule"
         disabled={lockDisabled}
         onChange={handleChangeLockState}
+        title={getLockToggleTitle(strings, 'rule', lockState)}
         data-test="LockToggle[rule]"
       />
     ) : null;
