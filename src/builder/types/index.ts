@@ -359,3 +359,5 @@ export interface IBuilderProps {
   history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
 }
+
+export type { BuilderRef, IBuilderRef } from '../../hooks/use-builder-ref/types';

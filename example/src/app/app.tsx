@@ -37,6 +37,7 @@ export const App: React.FC = () => (
           <Route path="/demo" element={<DemoPage />} />
           <Route path="/api" element={<ApiPage />} />
           <Route path="/api/builder" element={<ApiPage />} />
+          <Route path="/api/builder-ref" element={<ApiPage />} />
           <Route path="/api/fields" element={<ApiPage />} />
           <Route path="/api/data" element={<ApiPage />} />
           <Route path="/api/builder-props" element={<Navigate to="/api/builder" replace />} />
@@ -48,6 +49,7 @@ export const App: React.FC = () => (
           <Route path="/documentation" element={<DocumentationPage />} />
           <Route path="/documentation/installation" element={<DocumentationPage />} />
           <Route path="/documentation/usage" element={<DocumentationPage />} />
+          <Route path="/documentation/builder-ref" element={<DocumentationPage />} />
           <Route path="/documentation/validation" element={<DocumentationPage />} />
           <Route path="/documentation/history" element={<DocumentationPage />} />
           <Route path="/documentation/builder-behavior" element={<DocumentationPage />} />
