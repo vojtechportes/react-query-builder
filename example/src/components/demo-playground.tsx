@@ -267,7 +267,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 checked={customizationMode === 'antd'}
                 onChange={() => setCustomizationMode('antd')}
               />
-              <span>ANTD v6 adapter</span>
+              <span>ANTD adapter</span>
             </ToggleRow>
           </ChoiceGroup>
         </Panel>
@@ -281,7 +281,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               usesAdapterMode
                 ? isMuiMode
                   ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
-                  : 'ThemeProvider colors style the default builder components only. The ANTD v6 adapter uses Ant Design styling instead.'
+                  : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
                 : undefined
             }
           />
