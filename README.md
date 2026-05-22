@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <a href="https://vojtechportes.github.io/react-query-builder/documentation">Documentation</a>
+  <a href="https://vojtechportes.github.io/react-query-builder/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
   ·
-  <a href="https://vojtechportes.github.io/react-query-builder/demo">Demo</a>
+  <a href="https://vojtechportes.github.io/react-query-builder/demo" target="_blank" rel="noopener noreferrer">Demo</a>
 </p>
 
 ![React Query Builder](https://github.com/vojtechportes/react-query-builder/blob/master/example.png)
@@ -28,9 +28,9 @@ back into builder state.
 Full documentation, API reference, and the interactive demo are available on
 the project website:
 
-- [Documentation](https://vojtechportes.github.io/react-query-builder/documentation)
-- [API](https://vojtechportes.github.io/react-query-builder/api)
-- [Demo](https://vojtechportes.github.io/react-query-builder/demo)
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api" target="_blank" rel="noopener noreferrer">API</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/demo" target="_blank" rel="noopener noreferrer">Demo</a>
 
 ## Installation
 
@@ -105,10 +105,10 @@ The library also provides parser and formatter helpers through subpath exports:
 
 Supported formats are documented on the website:
 
-- [Parsing and Formatting](https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting)
-- [Supported Formats](https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats)
-- [formatQuery API](https://vojtechportes.github.io/react-query-builder/api/format-query)
-- [parseQuery API](https://vojtechportes.github.io/react-query-builder/api/parse-query)
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting" target="_blank" rel="noopener noreferrer">Parsing and Formatting</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats" target="_blank" rel="noopener noreferrer">Supported Formats</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/format-query" target="_blank" rel="noopener noreferrer">formatQuery API</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/parse-query" target="_blank" rel="noopener noreferrer">parseQuery API</a>
 
 ## Responsive Behavior
 
@@ -121,5 +121,5 @@ The default builder components include a compact responsive layout for medium-wi
 
 Responsive behavior is documented in more detail on the website:
 
-- [Components](https://vojtechportes.github.io/react-query-builder/documentation/components)
-- [API: Components](https://vojtechportes.github.io/react-query-builder/api/components)
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/components" target="_blank" rel="noopener noreferrer">Components</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
