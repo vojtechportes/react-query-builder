@@ -96,6 +96,10 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   const resolvedStrings = {
     ...defaultStrings,
     ...strings,
+    textMode: {
+      ...defaultStrings.textMode,
+      ...strings.textMode,
+    },
     rule: {
       ...defaultStrings.rule,
       ...strings.rule,

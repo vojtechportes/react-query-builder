@@ -1,4 +1,44 @@
 export interface IStrings {
+  textMode?: {
+    toggleToBuilder?: string;
+    toggleToText?: string;
+    syntaxError?: string;
+    locksUnsupported?: string;
+    lockedRangesHover?: string;
+    sql?: {
+      possibleMissingQuote?: string;
+      missingClosingQuote?: string;
+      missingClosingIdentifierQuote?: string;
+      unexpectedTokenInExpression?: string;
+      missingClosingParenthesis?: string;
+      missingOpeningParenthesis?: string;
+      missingComma?: string;
+      missingSqlOperator?: string;
+      missingFieldIdentifier?: string;
+      missingStringValue?: string;
+      missingNumericValue?: string;
+      missingToken?: string;
+      missingAndKeyword?: string;
+      missingOrKeyword?: string;
+      missingNotKeyword?: string;
+      missingInKeyword?: string;
+      missingLikeKeyword?: string;
+      missingIsKeyword?: string;
+      missingNullKeyword?: string;
+      missingBetweenKeyword?: string;
+      missingKeyword?: string;
+      expectedToken?: string;
+      expectedKeyword?: string;
+      unexpectedTokenAfterNot?: string;
+      sqlInListsSupportOnlyStringAndNumberValues?: string;
+      sqlBetweenSupportsOnlyStringAndNumberValues?: string;
+      sqlArraysMustContainSameScalarType?: string;
+      expectedScalarValue?: string;
+      expectedFieldIdentifier?: string;
+      unsupportedSqlOperator?: string;
+      unknownSqlParseError?: string;
+    };
+  };
   history?: {
     undo?: string;
     redo?: string;
@@ -85,6 +125,50 @@ export interface IStrings {
 }
 
 export const strings: IStrings = {
+  textMode: {
+    toggleToBuilder: 'Switch to builder mode',
+    toggleToText: 'Switch to text mode',
+    syntaxError: 'Syntax error',
+    locksUnsupported:
+      'Locked rules or groups are not supported in the text editor under this configuration.',
+    lockedRangesHover: 'This SQL fragment is locked and cannot be edited.',
+    sql: {
+      possibleMissingQuote: 'Possible missing quote before this string boundary.',
+      missingClosingQuote: 'Missing closing quote.',
+      missingClosingIdentifierQuote: 'Missing closing identifier quote.',
+      unexpectedTokenInExpression: 'Unexpected token "{token}" in SQL expression.',
+      missingClosingParenthesis: 'Missing closing parenthesis.',
+      missingOpeningParenthesis: 'Missing opening parenthesis.',
+      missingComma: 'Missing comma.',
+      missingSqlOperator: 'Missing SQL operator.',
+      missingFieldIdentifier: 'Missing field identifier.',
+      missingStringValue: 'Missing string value.',
+      missingNumericValue: 'Missing numeric value.',
+      missingToken: 'Missing token "{token}".',
+      missingAndKeyword: 'Missing AND keyword.',
+      missingOrKeyword: 'Missing OR keyword.',
+      missingNotKeyword: 'Missing NOT keyword.',
+      missingInKeyword: 'Missing IN keyword.',
+      missingLikeKeyword: 'Missing LIKE keyword.',
+      missingIsKeyword: 'Missing IS keyword.',
+      missingNullKeyword: 'Missing NULL keyword.',
+      missingBetweenKeyword: 'Missing BETWEEN keyword.',
+      missingKeyword: 'Missing keyword "{keyword}".',
+      expectedToken: 'Expected token "{token}" but found "{value}".',
+      expectedKeyword: 'Expected keyword "{keyword}" but found "{value}".',
+      unexpectedTokenAfterNot: 'Unexpected token "{value}" after NOT.',
+      sqlInListsSupportOnlyStringAndNumberValues:
+        'SQL IN lists currently support only string and number values.',
+      sqlBetweenSupportsOnlyStringAndNumberValues:
+        'SQL BETWEEN currently supports only string and number values.',
+      sqlArraysMustContainSameScalarType:
+        'SQL arrays must contain values of the same scalar type.',
+      expectedScalarValue: 'Expected a scalar value but found "{value}".',
+      expectedFieldIdentifier: 'Expected a field identifier but found "{value}".',
+      unsupportedSqlOperator: 'Unsupported SQL operator "{operator}".',
+      unknownSqlParseError: 'Unknown SQL parse error.',
+    },
+  },
   history: {
     undo: 'Undo',
     redo: 'Redo',

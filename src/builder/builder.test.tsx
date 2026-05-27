@@ -9,10 +9,10 @@ import {
 } from '@testing-library/react';
 import {
   Builder,
-  BuilderRef,
   defaultComponents,
   IBuilderFieldProps,
   IBuilderProps,
+  IBuilderRef,
   useBuilderRef,
 } from './index';
 
@@ -28,6 +28,19 @@ export const fields: IBuilderFieldProps[] = [
     label: 'Mock Number',
     type: 'NUMBER',
     operators: ['EQUAL', 'NOT_EQUAL'],
+  },
+];
+
+const listFields: IBuilderFieldProps[] = [
+  {
+    field: 'STATUS',
+    label: 'Status',
+    type: 'LIST',
+    value: [
+      { value: 'OPEN', label: 'Open' },
+      { value: 'CLOSED', label: 'Closed' },
+    ],
+    operators: ['IN', 'NOT_IN', 'EQUAL'],
   },
 ];
 
@@ -52,6 +65,30 @@ const getAllByDataTest = (
   value: string
 ): HTMLElement[] =>
   Array.from(container.querySelectorAll(`[data-test="${value}"]`));
+
+const CustomTextModeEditor = ({
+  value,
+  errorMessage,
+  protectedRanges = [],
+  onChange,
+}: {
+  value: string;
+  errorMessage: string | null;
+  protectedRanges?: Array<{ start: number; end: number }>;
+  onChange: (value: string) => void;
+}) => (
+  <div data-test="CustomTextModeEditor">
+    <textarea
+      data-test="CustomTextModeEditorInput"
+      value={value}
+      onChange={event => onChange(event.target.value)}
+    />
+    <div data-test="CustomTextModeEditorProtectedRangeCount">
+      {protectedRanges.length}
+    </div>
+    {errorMessage ? <div data-test="CustomTextModeEditorError">{errorMessage}</div> : null}
+  </div>
+);
 
 describe('#components/Builder', () => {
   it('Test full functionality', () => {
@@ -141,6 +178,791 @@ describe('#components/Builder', () => {
 
     expect(queryByDataTest(container, 'Undo')).toBeNull();
     expect(queryByDataTest(container, 'Redo')).toBeNull();
+  });
+
+  it('Switches the builder into SQL text mode', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+
+    expect(
+      (getByDataTest(container, 'TextModeEditor') as HTMLTextAreaElement).value
+    ).toContain("MOCK_FIELD = 'alpha'");
+
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+
+    expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(1);
+  });
+
+  it('Does not crash when switching to text mode with an IN operator from the builder', () => {
+    const listField: IBuilderFieldProps = {
+      field: 'STATUS',
+      label: 'Status',
+      type: 'LIST',
+      value: [
+        { value: 'OPEN', label: 'Open' },
+        { value: 'CLOSED', label: 'Closed' },
+      ],
+      operators: ['IN', 'NOT_IN', 'EQUAL'],
+    };
+    const { container } = render(
+      <Builder
+        fields={[listField]}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'STATUS', value: 'OPEN', operator: 'IN' }],
+          },
+        ]}
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+
+    expect(
+      (getByDataTest(container, 'TextModeEditor') as HTMLTextAreaElement).value
+    ).toContain("STATUS IN ('OPEN')");
+  });
+
+  it('Does not crash when adding a placeholder rule while text mode is enabled', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        textMode
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'AddRule'));
+
+    expect(onChange).toHaveBeenCalled();
+    expect(queryByDataTest(container, 'TextModeToggle')).not.toBeNull();
+  });
+
+  it('Preserves a nested single-rule group when round-tripping through text mode', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_NUMBER', value: 1, operator: 'EQUAL' },
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+              },
+            ],
+          },
+        ]}
+        textMode
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "(MOCK_NUMBER = 1 AND (MOCK_FIELD = 'beta'))" },
+    });
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_NUMBER', value: 1, operator: 'EQUAL' },
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('Does not enable text mode when singleRootGroup is false', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        singleRootGroup={false}
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'TextModeToggle')).toBeNull();
+    expect(queryByDataTest(container, 'TextModeEditor')).toBeNull();
+  });
+
+  it('Ignores defaultMode when text mode is not enabled', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        defaultMode="text"
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'TextModeEditor')).toBeNull();
+    expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(1);
+  });
+
+  it('Blocks the basic text editor when the query contains locked nodes', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+            ],
+          },
+        ]}
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(getByDataTest(container, 'TextModeToggle')).toBeDisabled();
+    expect(queryByDataTest(container, 'TextModeEditor')).toBeNull();
+    expect(getByDataTest(container, 'TextModeBlockedAlert').textContent).toContain(
+      'not supported in the text editor'
+    );
+  });
+
+  it('Allows a custom TextModeEditor when the query contains locked nodes', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+              { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'TextModeBlockedAlert')).toBeNull();
+    expect(queryByDataTest(container, 'CustomTextModeEditor')).not.toBeNull();
+    expect(
+      Number(getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount').textContent)
+    ).toBeGreaterThan(0);
+  });
+
+  it('Preserves locked rules after valid text edits in a custom TextModeEditor', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+              { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: "(MOCK_FIELD = 'alpha' AND MOCK_NUMBER = 3)" },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+            { field: 'MOCK_NUMBER', value: 3, operator: 'EQUAL' },
+          ],
+        },
+      ])
+    );
+  });
+
+  it('Preserves self-locked groups after valid child edits in a custom TextModeEditor', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                readOnly: true,
+                children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+              },
+              { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: "((MOCK_FIELD = 'beta') AND MOCK_NUMBER = 2)" },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              readOnly: true,
+              children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+            },
+            { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+          ],
+        },
+      ])
+    );
+  });
+
+  it('Preserves inherited locked groups after valid edits outside the locked SQL fragment', async () => {
+    const onChange = jest.fn();
+    const inheritedLockFields: IBuilderFieldProps[] = [
+      {
+        field: 'COUNTRY',
+        label: 'Country',
+        type: 'TEXT',
+        operators: ['EQUAL'],
+      },
+      {
+        field: 'SEGMENTS',
+        label: 'Segments',
+        type: 'MULTI_LIST',
+        operators: ['ALL_IN', 'IN'],
+        value: [
+          { value: 'B2B', label: 'B2B' },
+          { value: 'Priority', label: 'Priority' },
+        ],
+      },
+    ];
+    const { container } = render(
+      <Builder
+        fields={inheritedLockFields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'COUNTRY', value: 'CZ', operator: 'EQUAL' },
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                readOnly: {
+                  enabled: true,
+                  inheritToChildren: true,
+                },
+                children: [
+                  {
+                    field: 'SEGMENTS',
+                    value: ['B2B', 'Priority'],
+                    operator: 'ALL_IN',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: "(COUNTRY = 'SK' AND (SEGMENTS IN ('B2B', 'Priority')))" },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            { field: 'COUNTRY', value: 'SK', operator: 'EQUAL' },
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              readOnly: {
+                enabled: true,
+                inheritToChildren: true,
+              },
+              children: [
+                {
+                  field: 'SEGMENTS',
+                  value: ['B2B', 'Priority'],
+                  operator: 'IN',
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+  });
+
+  it('Normalizes existing modifierless groups to AND when text mode is enabled', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                children: [
+                  { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+                  { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+                ],
+              },
+            ],
+          },
+        ]}
+        textMode
+        groupTypes="both"
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'AddGroupWithoutModifiers')).toBeNull();
+
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+
+    expect(
+      (getByDataTest(container, 'TextModeEditor') as HTMLTextAreaElement).value
+    ).toContain("(MOCK_FIELD = 'alpha' AND MOCK_NUMBER = 2)");
+  });
+
+  it('Keeps invalid SQL text local and shows a syntax error', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "MOCK_FIELD IN ('alpha' 'beta')" },
+    });
+
+    expect(queryByDataTest(container, 'TextModeError')).not.toBeNull();
+    expect(queryByDataTest(container, 'TextModeDiagnostic[0]')).not.toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('Reports a missing quote near the broken string boundary instead of a later token', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: {
+        value:
+          "(MOCK_FIELD = 'CZ AND MOCK_NUMBER = 4 AND MOCK_FIELD LIKE '%beta%')",
+      },
+    });
+
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'missing quote'
+    );
+  });
+
+  it('Shows a missing-token marker for a closing parenthesis at end of input', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "(MOCK_FIELD = 'alpha'" },
+    });
+
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'Missing closing parenthesis'
+    );
+    expect(
+      queryByDataTest(container, 'TextModeDiagnosticMarker[0]')
+    ).not.toBeNull();
+  });
+
+  it('Uses localized SQL parser messages in text mode diagnostics', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        strings={{
+          textMode: {
+            syntaxError: 'Chyba syntaxe',
+            sql: {
+              missingClosingParenthesis: 'Chybi uzaviraci zavorka.',
+            },
+          },
+        }}
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "(MOCK_FIELD = 'alpha'" },
+    });
+
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'Chyba syntaxe: Chybi uzaviraci zavorka.'
+    );
+  });
+
+  it('Parses valid SQL text back into builder data', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "MOCK_FIELD = 'beta' AND MOCK_NUMBER = 4" },
+    });
+
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({
+        type: 'GROUP',
+        children: [
+          expect.objectContaining({
+            field: 'MOCK_FIELD',
+            operator: 'EQUAL',
+            value: 'beta',
+          }),
+          expect.objectContaining({
+            field: 'MOCK_NUMBER',
+            operator: 'EQUAL',
+            value: 4,
+          }),
+        ],
+      }),
+    ]);
+  });
+
+  it('Renders SQL syntax highlighting in text mode', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "MOCK_FIELD = 'beta' AND MOCK_NUMBER = 4" },
+    });
+
+    expect(getByDataTest(container, 'TextModeSyntaxLayer').innerHTML).toContain(
+      'token '
+    );
+  });
+
+  it('Tracks valid SQL text edits in history so they can be undone', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        history
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "MOCK_FIELD = 'beta'" },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+        },
+      ])
+    );
+
+    fireEvent.click(getByDataTest(container, 'Undo'));
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+        },
+      ])
+    );
+  });
+
+  it('Uses a custom TextModeInput component when provided', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeInput: ({
+            value,
+            onChange,
+            className,
+            inputClassName,
+            inputDataTest,
+          }) => (
+            <div className={className} data-test="CustomTextModeInput">
+              <textarea
+                value={value}
+                onChange={event => onChange(event.target.value)}
+                className={inputClassName}
+                data-test={inputDataTest}
+              />
+            </div>
+          ),
+        }}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'CustomTextModeInput')).not.toBeNull();
+    expect(queryByDataTest(container, 'TextModeEditor')).not.toBeNull();
+  });
+
+  it('Uses a custom TextModeEditor component when provided', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: ({ value, errorMessage, onChange }) => (
+            <div data-test="CustomTextModeEditor">
+              <textarea
+                data-test="CustomTextModeEditorInput"
+                value={value}
+                onChange={event => onChange(event.target.value)}
+              />
+              {errorMessage ? <div data-test="CustomTextModeEditorError">{errorMessage}</div> : null}
+            </div>
+          ),
+        }}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'CustomTextModeEditor')).not.toBeNull();
+    expect(queryByDataTest(container, 'TextModeEditor')).toBeNull();
+  });
+
+  it('Keeps SQL text local when the field does not exist', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "UNKNOWN_FIELD = 'beta'" },
+    });
+
+    expect(queryByDataTest(container, 'TextModeError')).not.toBeNull();
+    expect(queryByDataTest(container, 'TextModeDiagnostic[0]')).not.toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('Keeps SQL text local when the operator is not supported for the field', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "MOCK_FIELD LIKE 'beta'" },
+    });
+
+    expect(queryByDataTest(container, 'TextModeError')).not.toBeNull();
+    expect(queryByDataTest(container, 'TextModeDiagnostic[0]')).not.toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('Keeps SQL text local when list values are outside the allowed options', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={listFields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "STATUS IN ('OPEN', 'INVALID')" },
+    });
+
+    expect(queryByDataTest(container, 'TextModeError')).not.toBeNull();
+    expect(queryByDataTest(container, 'TextModeDiagnostic[0]')).not.toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('Uses a custom HistoryControls component while preserving built-in undo and redo buttons', () => {
@@ -1189,7 +2011,7 @@ describe('#components/Builder', () => {
 
   it('Exposes imperative builderRef methods for reads, mutations, and history', () => {
     const onChange = jest.fn();
-    let builderRefObject: BuilderRef | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -1221,8 +2043,9 @@ describe('#components/Builder', () => {
     render(<TestComponent />);
 
     const getBuilderRef = () => {
-      expect(builderRefObject?.current).toBeDefined();
-      return builderRefObject?.current!;
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
     };
     const initialNodes = getBuilderRef().getNodes();
     const rootGroupId = initialNodes.find((node) => 'type' in node)?.id as string;

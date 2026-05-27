@@ -8,12 +8,14 @@ import React, {
 } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { BuilderContextProvider } from '../builder-context';
+import { Alert as DefaultAlert } from '../alert';
 import { Button } from '../button';
 import { strings as defaultStrings } from '../constants/strings';
 import { DragPreview } from '../drag-preview';
 import { createClonedSubtree } from '../history/create-cloned-subtree';
 import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
 import { createMoveNodeAction } from '../history/create-move-node-action';
+import { createReplaceQueryAction } from '../history/create-replace-query-action';
 import { createRemoveSubtreeAction } from '../history/create-remove-subtree-action';
 import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
@@ -36,9 +38,17 @@ import {
 import { defaultComponents } from './constants/default-components';
 import { BuilderRootActions } from './components/builder-root-actions';
 import { StyledBuilder } from './components/styled-builder';
+import { TextModeBlockedAlertContainer } from './components/text-mode-blocked-alert-container';
 import { useBuilderDragAndDrop } from './hooks/use-builder-drag-and-drop';
 import { useBuilderHistory } from './hooks/use-builder-history';
 import { useBuilderValidation } from './hooks/use-builder-validation';
+import { TextModeEditor as DefaultTextModeEditor } from './text-mode/components/text-mode-editor';
+import { formatBuilderSqlState } from './text-mode/utils/format-builder-sql-state';
+import { hasBuilderTextModeLocks } from './text-mode/utils/has-builder-text-mode-locks';
+import { normalizeBuilderTextModeQuery } from './text-mode/utils/normalize-builder-text-mode-query';
+import { parseBuilderSqlText } from './text-mode/utils/parse-builder-sql-text';
+import { reapplyBuilderTextModeLocks } from './text-mode/utils/reapply-builder-text-mode-locks';
+import { resolveBuilderTextModeConfig } from './text-mode/utils/resolve-builder-text-mode-config';
 import {
   IBuilderRef,
   IBuilderProps,
@@ -63,17 +73,61 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   showValidation = false,
   history = false,
   onChange,
+  textMode,
+  defaultMode = 'builder',
 }, ref) => {
-  const rootGroupType =
-    groupTypes === 'without-modifiers' ? 'without-modifiers' : 'with-modifiers';
+  const textModeConfig = resolveBuilderTextModeConfig(textMode);
+  const textModeConfigured = Boolean(textModeConfig) && singleRootGroup;
+  const supportsLockedTextMode =
+    (components.TextModeEditor || defaultComponents.TextModeEditor) !==
+    defaultComponents.TextModeEditor;
+  const initialTextModeBlockedByLocks =
+    textModeConfigured && !supportsLockedTextMode && hasBuilderTextModeLocks(originalData);
+  const initialTextModeEnabled =
+    textModeConfigured && !initialTextModeBlockedByLocks;
+  const initialEffectiveGroupTypes = initialTextModeEnabled
+    ? 'with-modifiers'
+    : groupTypes;
+  const initialRootGroupType =
+    initialEffectiveGroupTypes === 'without-modifiers'
+      ? 'without-modifiers'
+      : 'with-modifiers';
+  const resolvedDefaultMode = defaultMode ?? textModeConfig?.defaultMode ?? 'builder';
   const theme = useTheme();
+  const initialData = initialTextModeEnabled
+    ? normalizeBuilderTextModeQuery(originalData)
+    : originalData;
   const [data, setData] = useState<NormalizedQuery>(() =>
-    ingestQuery(originalData, rootGroupType, singleRootGroup)
+    ingestQuery(initialData, initialRootGroupType, singleRootGroup)
   );
+  const [mode, setMode] = useState<'builder' | 'text'>(resolvedDefaultMode);
+  const [textValue, setTextValue] = useState<string>(() => {
+    if (!initialTextModeEnabled) {
+      return '';
+    }
+
+    return formatBuilderSqlState(initialData, fields).value;
+  });
+  const [textProtectedRanges, setTextProtectedRanges] = useState<
+    ReturnType<typeof formatBuilderSqlState>['protectedRanges']
+  >(() => (initialTextModeEnabled ? formatBuilderSqlState(initialData, fields).protectedRanges : []));
+  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
+  const [textDiagnostics, setTextDiagnostics] = useState<
+    ReturnType<typeof parseBuilderSqlText>['diagnostics']
+  >([]);
   const lastEmittedData = useRef<DenormalizedQuery | null>(null);
   const pendingChangeData = useRef<NormalizedQuery | null>(null);
   const filteredData = data.filter((item) => !item.parent);
   const AddComponent = components.Add || Button;
+  const AlertComponent = components.Alert || defaultComponents.Alert || DefaultAlert;
+  const OutlinedButtonComponent =
+    components.OutlinedButton || defaultComponents.OutlinedButton;
+  const TextModeToggleContentComponent =
+    components.TextModeToggleContent || defaultComponents.TextModeToggleContent;
+  const TextModeEditorComponent =
+    components.TextModeEditor || defaultComponents.TextModeEditor;
+  const TextModeInputComponent =
+    components.TextModeInput || defaultComponents.TextModeInput;
   const PopoverComponent = components.Popover || Popover;
   const PopoverItemComponent = components.PopoverItem || PopoverItem;
   const HistoryControlsComponent =
@@ -102,12 +156,21 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     history,
   });
 
+  const textModeBlockedByLocks =
+    textModeConfigured && !supportsLockedTextMode && hasBuilderTextModeLocks(data);
+  const textModeEnabled = textModeConfigured && !textModeBlockedByLocks;
+  const effectiveGroupTypes = textModeEnabled ? 'with-modifiers' : groupTypes;
+  const rootGroupType =
+    effectiveGroupTypes === 'without-modifiers'
+      ? 'without-modifiers'
+      : 'with-modifiers';
+
   const validation = useBuilderValidation({
     data,
     originalData,
     fields,
     singleRootGroup,
-    groupTypes,
+    groupTypes: effectiveGroupTypes,
     strings,
     validator,
     onStateChange,
@@ -279,6 +342,36 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   );
 
   useEffect(() => {
+    if (!textModeEnabled) {
+      setMode('builder');
+      setTextProtectedRanges([]);
+      setTextDiagnostics([]);
+      setTextErrorMessage(null);
+      return;
+    }
+
+    setMode(resolvedDefaultMode);
+  }, [resolvedDefaultMode, textModeEnabled]);
+
+  useEffect(() => {
+    if (!textModeEnabled) {
+      return;
+    }
+
+    const currentQuery = emitQuery(data);
+    const normalizedQuery = normalizeBuilderTextModeQuery(currentQuery);
+
+    if (isSameQuery(currentQuery, normalizedQuery)) {
+      return;
+    }
+
+    pendingChangeData.current = null;
+    lastEmittedData.current = null;
+    resetHistory();
+    setData(ingestQuery(normalizedQuery, rootGroupType, singleRootGroup));
+  }, [data, resetHistory, rootGroupType, singleRootGroup, textModeEnabled]);
+
+  useEffect(() => {
     if (!pendingChangeData.current || pendingChangeData.current !== data) {
       return;
     }
@@ -289,9 +382,13 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   }, [data, emitChange]);
 
   useEffect(() => {
+    const compatibleOriginalData = textModeEnabled
+      ? normalizeBuilderTextModeQuery(originalData)
+      : originalData;
+
     if (
       lastEmittedData.current &&
-      isSameQuery(lastEmittedData.current, originalData)
+      isSameQuery(lastEmittedData.current, compatibleOriginalData)
     ) {
       lastEmittedData.current = null;
       pendingChangeData.current = null;
@@ -300,8 +397,24 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
     pendingChangeData.current = null;
     resetHistory();
-    setData(ingestQuery(originalData, rootGroupType, singleRootGroup));
-  }, [originalData, resetHistory, rootGroupType, singleRootGroup]);
+    setData(ingestQuery(compatibleOriginalData, rootGroupType, singleRootGroup));
+  }, [originalData, resetHistory, rootGroupType, singleRootGroup, textModeEnabled]);
+
+  useEffect(() => {
+    if (!textModeEnabled) {
+      return;
+    }
+
+    const nextTextState = formatBuilderSqlState(
+      normalizeBuilderTextModeQuery(emitQuery(data)),
+      fields
+    );
+
+    setTextValue(nextTextState.value);
+    setTextProtectedRanges(nextTextState.protectedRanges);
+    setTextDiagnostics([]);
+    setTextErrorMessage(null);
+  }, [data, fields, textModeEnabled]);
 
   const handleAddRootGroup = useCallback(() => {
     dispatchAction(
@@ -330,7 +443,63 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     dispatchAction(createInsertSubtreeAction([emptyRule], filteredData.length));
   }, [dispatchAction, filteredData.length]);
 
-  const content = (
+  const handleSwitchToBuilderMode = useCallback(() => {
+    setMode('builder');
+  }, []);
+
+  const handleSwitchToTextMode = useCallback(() => {
+    const nextTextState = formatBuilderSqlState(
+      normalizeBuilderTextModeQuery(emitQuery(data)),
+      fields
+    );
+
+    setTextValue(nextTextState.value);
+    setTextProtectedRanges(nextTextState.protectedRanges);
+    setTextDiagnostics([]);
+    setTextErrorMessage(null);
+    setMode('text');
+  }, [data, fields]);
+
+  const handleTextChange = useCallback(
+    (nextText: string) => {
+      setTextValue(nextText);
+
+      const parseResult = parseBuilderSqlText(nextText, fields, strings);
+
+      if (!parseResult.data || parseResult.diagnostics.length > 0) {
+        setTextDiagnostics(parseResult.diagnostics);
+        setTextErrorMessage(
+          parseResult.diagnostics[0]
+            ? `${
+                strings.textMode?.syntaxError || 'Syntax error'
+              }: ${parseResult.diagnostics[0].message}`
+            : null
+        );
+        return;
+      }
+
+      setTextDiagnostics([]);
+      setTextErrorMessage(null);
+
+      if (isSameQuery(parseResult.data, emitQuery(data))) {
+        return;
+      }
+
+      const currentQuery = normalizeBuilderTextModeQuery(emitQuery(data));
+      const nextQuery = hasBuilderTextModeLocks(currentQuery)
+        ? reapplyBuilderTextModeLocks(currentQuery, parseResult.data)
+        : parseResult.data;
+      const nextData = ingestQuery(
+        normalizeBuilderTextModeQuery(nextQuery),
+        rootGroupType,
+        singleRootGroup
+      );
+      commitData(createReplaceQueryAction(nextData));
+    },
+    [commitData, data, rootGroupType, singleRootGroup, strings.textMode]
+  );
+
+  const builderContent = (
     <Iterator
       originalData={data}
       filteredData={filteredData}
@@ -340,6 +509,34 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       disableDropZoneTransition={isDropSettling}
     />
   );
+
+  const content =
+    textModeEnabled && mode === 'text' ? (
+      TextModeEditorComponent === defaultComponents.TextModeEditor ? (
+        <DefaultTextModeEditor
+          value={textValue}
+          diagnostics={textDiagnostics}
+          protectedRanges={textProtectedRanges}
+          protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
+          errorMessage={textErrorMessage}
+          TextModeInputComponent={TextModeInputComponent}
+          readOnly={readOnly}
+          onChange={handleTextChange}
+        />
+      ) : (
+        <TextModeEditorComponent
+          value={textValue}
+          diagnostics={textDiagnostics}
+          protectedRanges={textProtectedRanges}
+          protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
+          errorMessage={textErrorMessage}
+          readOnly={readOnly}
+          onChange={handleTextChange}
+        />
+      )
+    ) : (
+      builderContent
+    );
 
   return (
     <BuilderContextProvider
@@ -351,7 +548,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       cloneable={cloneable}
       draggable={draggable}
       singleRootGroup={singleRootGroup}
-      groupTypes={groupTypes}
+      groupTypes={effectiveGroupTypes}
       showValidation={showValidation}
       validation={validation as IBuilderValidationResult}
       data={data}
@@ -365,27 +562,45 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       }}
     >
       <StyledBuilder $theme={theme}>
+        {textModeBlockedByLocks && strings.textMode?.locksUnsupported ? (
+          <TextModeBlockedAlertContainer>
+            <AlertComponent
+              severity="warning"
+              variant="outlined"
+              data-test="TextModeBlockedAlert"
+            >
+              {strings.textMode.locksUnsupported}
+            </AlertComponent>
+          </TextModeBlockedAlertContainer>
+        ) : null}
         <BuilderRootActions
           readOnly={readOnly}
           singleRootGroup={singleRootGroup}
-          groupTypes={groupTypes}
+          groupTypes={effectiveGroupTypes}
           strings={strings}
+          isTextModeConfigured={textModeConfigured}
+          isTextModeBlocked={textModeBlockedByLocks}
+          mode={mode}
           showHistoryControls={showHistoryControls}
           canUndo={canUndo}
           canRedo={canRedo}
           onUndo={undo}
           onRedo={redo}
+          onSwitchToBuilderMode={handleSwitchToBuilderMode}
+          onSwitchToTextMode={handleSwitchToTextMode}
           onAddRootRule={handleAddRootRule}
           onAddRootGroup={handleAddRootGroup}
           onAddRootGroupWithoutModifiers={handleAddRootGroupWithoutModifiers}
           AddComponent={AddComponent}
+          OutlinedButtonComponent={OutlinedButtonComponent}
+          TextModeToggleContentComponent={TextModeToggleContentComponent}
           PopoverComponent={PopoverComponent}
           PopoverItemComponent={PopoverItemComponent}
           HistoryControlsComponent={HistoryControlsComponent}
         />
-        {draggable && !readOnly ? (
+        {draggable && !readOnly && (!textModeEnabled || mode !== 'text') ? (
           <DndContext {...dndContextProps}>
-            {content}
+            {builderContent}
             <DragOverlay dropAnimation={null}>
               {activeDragId ? (
                 <DragPreview activeId={activeDragId} data={data} />

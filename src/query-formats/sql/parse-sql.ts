@@ -1,16 +1,16 @@
 import type { IParseQueryResult } from '../types';
-import { inferSqlFields } from './infer-sql-fields';
-import { SqlParser } from './sql-parser';
-import { toDenormalizedSqlQuery } from './to-denormalized-sql-node';
+import { tryParseSql } from './try-parse-sql';
 
 export const parseSql = (value: string): IParseQueryResult => {
-  const parser = new SqlParser(value);
-  const parsedNodes = parser.parse();
-  const data = toDenormalizedSqlQuery(parsedNodes);
+  const result = tryParseSql(value);
+
+  if (!result.data || !result.fields) {
+    throw new Error(result.diagnostics[0]?.message || 'Unknown SQL parse error.');
+  }
 
   return {
-    data,
-    fields: inferSqlFields(data),
+    data: result.data,
+    fields: result.fields,
   };
 };
 

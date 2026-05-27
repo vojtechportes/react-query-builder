@@ -10,6 +10,7 @@ export {
   AntdHistoryControls,
   AntdInput,
   AntdLockToggle,
+  AntdOutlinedButton,
   AntdPopover,
   AntdPopoverItem,
   AntdRemoveButton,
@@ -18,4 +19,5 @@ export {
   AntdSelectMulti,
   AntdSwitch,
   AntdText,
+  AntdTextModeInput,
 } from '../shared/components';

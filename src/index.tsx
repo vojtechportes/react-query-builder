@@ -4,6 +4,8 @@ export type {
   BuilderRef,
   BuilderValidationMessage,
   BuilderValidationSeverity,
+  BuilderDefaultMode,
+  IBuilderTextModeConfig,
   BuilderFieldOperator,
   BuilderFieldType,
   BuilderFieldValue,
@@ -29,6 +31,10 @@ export type {
   IBuilderProps,
   IBuilderRangeValidation,
   IResolvedBuilderComponentsProps,
+  ITextModeEditorProps,
+  ITextModeInputProps,
+  ITextModeProtectedRange,
+  ITextModeToggleContentProps,
   IDateFieldProps,
   IDateFieldValidation,
   IDateFieldValidationRule,
@@ -79,12 +85,18 @@ export type { ISwitchProps } from './form/switch';
 
 export { Button } from './button';
 export type { IButtonProps } from './button';
+export { Alert } from './alert';
+export type { IAlertProps, AlertSeverity, AlertVariant } from './alert';
 export { CloneButton } from './clone-button';
 export type { ICloneButtonProps } from './clone-button';
 export { LockToggle } from './lock-toggle';
 export type { ILockToggleProps } from './lock-toggle';
 
 export { SecondaryButton } from './secondary-button';
+export { OutlinedButton } from './outlined-button';
+export { TextModeEditor } from './builder/text-mode/components/text-mode-editor';
+export { TextModeInput } from './builder/text-mode/components/text-mode-input';
+export { TextModeToggleContent } from './builder/components/text-mode-toggle-content';
 export { Popover } from './popover';
 export type { IPopoverProps } from './popover';
 export { PopoverItem } from './popover-item';
@@ -100,7 +112,12 @@ export { Option as GroupHeaderOption } from './group/option';
 export type { IOptionProps as IGroupHeaderOptionProps } from './group/option';
 
 export { colors } from './constants/colors';
-export type { IColors, IColorVariant, IGreyColorVariant } from './constants/colors';
+export type {
+  IAlertColorVariant,
+  IColors,
+  IColorVariant,
+  IGreyColorVariant,
+} from './constants/colors';
 export { strings } from './constants/strings';
 export type { IStrings } from './constants/strings';
 export { queryOperators } from './utils/query-operators';

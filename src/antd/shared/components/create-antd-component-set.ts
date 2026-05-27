@@ -1,5 +1,6 @@
 import { IBuilderComponentsProps } from '../../../builder';
 import {
+  AntdAlert,
   AntdAddButton,
   AntdCloneButton,
   AntdDropZone,
@@ -9,6 +10,7 @@ import {
   AntdHistoryControls,
   AntdInput,
   AntdLockToggle,
+  AntdOutlinedButton,
   AntdPopover,
   AntdPopoverItem,
   AntdRemoveButton,
@@ -17,9 +19,12 @@ import {
   AntdSelectMulti,
   AntdSwitch,
   AntdText,
+  AntdTextModeInput,
+  AntdTextModeToggleContent,
 } from './index';
 
 export const createAntdComponentSet = (): IBuilderComponentsProps => ({
+  Alert: AntdAlert,
   form: {
     Input: AntdInput,
     Select: AntdSelect,
@@ -29,6 +34,9 @@ export const createAntdComponentSet = (): IBuilderComponentsProps => ({
   Add: AntdAddButton,
   Remove: AntdRemoveButton,
   CloneButton: AntdCloneButton,
+  OutlinedButton: AntdOutlinedButton,
+  TextModeToggleContent: AntdTextModeToggleContent,
+  TextModeInput: AntdTextModeInput,
   LockToggle: AntdLockToggle,
   HistoryControls: AntdHistoryControls,
   Rule: AntdRule,

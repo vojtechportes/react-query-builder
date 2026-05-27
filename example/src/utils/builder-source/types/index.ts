@@ -8,6 +8,9 @@ export interface IBuilderSourceOptions {
   cloneable: boolean;
   draggable: boolean;
   history: boolean;
+  textMode: boolean;
+  defaultMode: 'builder' | 'text';
+  useMonacoTextEditor: boolean;
   singleRootGroup: boolean;
   showValidation: boolean;
   customizationMode: CustomizationMode;

@@ -129,7 +129,7 @@ const Code = styled.code`
 export const HomePage: React.FC = () => {
   usePageMetadata(
     'Home',
-    'Highly configurable TypeScript library for building nested filter editors, formatting queries, and parsing supported expressions back into a visual editor.'
+    'Highly configurable TypeScript library for visual and text-based query editing, validation, theming, UI customization, and query parsing and formatting.'
   );
 
   return (
@@ -137,9 +137,9 @@ export const HomePage: React.FC = () => {
       <HeroContent>
         <Heading>React Query Builder</Heading>
         <Lead>
-          Highly configurable TypeScript library for building nested filter editors,
-          formatting them into external query syntaxes, and parsing supported
-          expressions back into a visual editor.
+          Highly configurable TypeScript library for visual and text-based query
+          editing, built-in validation, theming, full UI customization, and
+          parsing and formatting across supported query syntaxes.
         </Lead>
         <Actions>
           <PrimaryLink to="/documentation">Documentation</PrimaryLink>

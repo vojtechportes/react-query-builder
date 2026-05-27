@@ -4,23 +4,30 @@ import { IStrings } from '../../constants/strings';
 import { IPopoverItemProps } from '../../popover-item';
 import { IPopoverProps } from '../../popover';
 import { BuilderGroupMode, IHistoryControlsProps } from '../types';
-import { HistoryButton } from './history-button';
 import { RootControls } from './root-controls';
+import { ITextModeToggleContentProps, TextModeToggleContent } from './text-mode-toggle-content';
 
 export interface IBuilderRootActionsProps {
   readOnly: boolean;
   singleRootGroup: boolean;
   groupTypes: BuilderGroupMode;
   strings: IStrings;
+  isTextModeConfigured?: boolean;
+  isTextModeBlocked?: boolean;
+  mode?: 'builder' | 'text';
   showHistoryControls: boolean;
   canUndo: boolean;
   canRedo: boolean;
   onUndo: () => void;
   onRedo: () => void;
+  onSwitchToBuilderMode?: () => void;
+  onSwitchToTextMode?: () => void;
   onAddRootRule: () => void;
   onAddRootGroup: () => void;
   onAddRootGroupWithoutModifiers: () => void;
   AddComponent: React.ComponentType<IButtonProps>;
+  OutlinedButtonComponent: React.ComponentType<IButtonProps>;
+  TextModeToggleContentComponent?: React.ComponentType<ITextModeToggleContentProps>;
   PopoverComponent: React.ComponentType<IPopoverProps>;
   PopoverItemComponent: React.ComponentType<IPopoverItemProps>;
   HistoryControlsComponent: React.ComponentType<IHistoryControlsProps>;
@@ -31,21 +38,30 @@ export const BuilderRootActions: FC<IBuilderRootActionsProps> = ({
   singleRootGroup,
   groupTypes,
   strings,
+  isTextModeConfigured = false,
+  isTextModeBlocked = false,
+  mode = 'builder',
   showHistoryControls,
   canUndo,
   canRedo,
   onUndo,
   onRedo,
+  onSwitchToBuilderMode,
+  onSwitchToTextMode,
   onAddRootRule,
   onAddRootGroup,
   onAddRootGroupWithoutModifiers,
   AddComponent,
+  OutlinedButtonComponent,
+  TextModeToggleContentComponent = TextModeToggleContent,
   PopoverComponent,
   PopoverItemComponent,
   HistoryControlsComponent,
 }) => {
   const shouldRender =
-    ((!readOnly && strings.group && !singleRootGroup) || showHistoryControls);
+    ((!readOnly && strings.group && !singleRootGroup) ||
+      showHistoryControls ||
+      isTextModeConfigured);
 
   if (!shouldRender) {
     return null;
@@ -53,28 +69,49 @@ export const BuilderRootActions: FC<IBuilderRootActionsProps> = ({
 
   const undoButton =
     showHistoryControls && strings.history ? (
-      <HistoryButton
+      <OutlinedButtonComponent
         onClick={onUndo}
         disabled={!canUndo}
         data-test="Undo"
       >
         {strings.history.undo}
-      </HistoryButton>
+      </OutlinedButtonComponent>
     ) : null;
 
   const redoButton =
     showHistoryControls && strings.history ? (
-      <HistoryButton
+      <OutlinedButtonComponent
         onClick={onRedo}
         disabled={!canRedo}
         data-test="Redo"
       >
         {strings.history.redo}
-      </HistoryButton>
+      </OutlinedButtonComponent>
     ) : null;
+
+  const handleModeToggle =
+    mode === 'text'
+      ? onSwitchToBuilderMode || (() => {})
+      : onSwitchToTextMode || (() => {});
+
+  const modeToggleLabel =
+    mode === 'text'
+      ? strings.textMode?.toggleToBuilder
+      : strings.textMode?.toggleToText;
+  const textModeBlockedMessage = strings.textMode?.locksUnsupported;
 
   return (
     <RootControls>
+      {isTextModeConfigured && modeToggleLabel ? (
+        <OutlinedButtonComponent
+          onClick={handleModeToggle}
+          disabled={isTextModeBlocked}
+          title={isTextModeBlocked ? textModeBlockedMessage : undefined}
+          data-test="TextModeToggle"
+        >
+          <TextModeToggleContentComponent mode={mode} label={modeToggleLabel} />
+        </OutlinedButtonComponent>
+      ) : null}
       {undoButton && redoButton ? (
         <HistoryControlsComponent
           undoButton={undoButton}

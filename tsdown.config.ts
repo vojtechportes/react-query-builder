@@ -11,6 +11,7 @@ export default defineConfig({
     'antd/v6/index': 'src/antd/v6/index.ts',
     'mui/v7/index': 'src/mui/v7/index.ts',
     'mui/v9/index': 'src/mui/v9/index.ts',
+    'monaco/index': 'src/monaco/index.ts',
   },
   format: ['esm', 'cjs'],
   sourcemap: true,
