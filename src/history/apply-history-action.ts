@@ -4,6 +4,7 @@ import { createInsertSubtreeAction } from './create-insert-subtree-action';
 import { createMoveNodeAction } from './create-move-node-action';
 import { createRemoveSubtreeAction } from './create-remove-subtree-action';
 import { createReplaceNodeAction } from './create-replace-node-action';
+import { createReplaceQueryAction } from './create-replace-query-action';
 import { findNodeById } from './find-node-by-id';
 import { getNodePosition } from './get-node-position';
 import { getSubtree } from './get-subtree';
@@ -81,6 +82,13 @@ export const applyHistoryAction = (
       return {
         data: nextData,
         inverse: createReplaceNodeAction(action.nodeId, clone(currentNode)),
+      };
+    }
+
+    case 'replace-query': {
+      return {
+        data: clone(action.data),
+        inverse: createReplaceQueryAction(clone(data)),
       };
     }
 

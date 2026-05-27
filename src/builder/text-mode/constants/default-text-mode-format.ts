@@ -1,0 +1,1 @@
+export const DEFAULT_TEXT_MODE_FORMAT = 'SQL';

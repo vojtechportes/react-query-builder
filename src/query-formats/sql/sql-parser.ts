@@ -1,18 +1,24 @@
-import type {
-  IDenormalizedRuleNode,
-  QueryGroupValue,
-  QueryOperator,
-} from '../../utils/query-tree';
+import { IStrings } from '../../constants/strings';
+import type { QueryGroupValue, QueryOperator } from '../../utils/query-tree';
 import type { IParsedGroup, IToken, ParsedNode, TokenType } from './sql-token.types';
 import { tokenizeSql } from './tokenize-sql';
+import { IParsedSqlArrayValue } from './types/parsed-sql-array-value';
+import { IParsedSqlRuleNode } from './types/parsed-sql-rule-node';
+import { IParsedSqlScalarValue } from './types/parsed-sql-scalar-value';
+import { getMissingSqlKeywordMessage } from './utils/get-missing-sql-keyword-message';
+import { getMissingSqlTokenMessage } from './utils/get-missing-sql-token-message';
+import { createSqlParseError } from './utils/create-sql-parse-error';
+import { getSqlParserString } from './utils/get-sql-parser-string';
 
 export class SqlParser {
   private readonly tokens: IToken[];
+  private readonly textModeStrings?: IStrings['textMode'];
 
   private index = 0;
 
-  constructor(input: string) {
-    this.tokens = tokenizeSql(input);
+  constructor(input: string, textModeStrings?: IStrings['textMode']) {
+    this.textModeStrings = textModeStrings;
+    this.tokens = tokenizeSql(input, textModeStrings);
   }
 
   public parse(): ParsedNode[] {
@@ -80,7 +86,10 @@ export class SqlParser {
       this.expect('RPAREN');
 
       if (this.isParsedGroup(expression)) {
-        return expression;
+        return {
+          ...expression,
+          preserveBoundary: true,
+        };
       }
 
       return {
@@ -88,78 +97,154 @@ export class SqlParser {
         combinator: 'AND',
         isNegated: false,
         children: [expression],
+        preserveBoundary: true,
       };
     }
 
     return this.parseComparison();
   }
 
-  private parseComparison(): IDenormalizedRuleNode {
-    const field = this.parseIdentifier();
+  private parseComparison(): IParsedSqlRuleNode {
+    const fieldToken = this.parseIdentifier();
+    const field = fieldToken.value;
 
     if (this.isKeyword('IS')) {
-      this.consume();
+      const isToken = this.expectKeyword('IS');
 
       if (this.isKeyword('NOT')) {
-        this.consume();
-        this.expectKeyword('NULL');
+        const notToken = this.expectKeyword('NOT');
+        const nullToken = this.expectKeyword('NULL');
 
-        return { field, operator: 'IS_NOT_NULL' };
+        return {
+          field,
+          operator: 'IS_NOT_NULL',
+          source: {
+            field: this.toTokenRange(fieldToken),
+            operator: {
+              start: isToken.start,
+              end: nullToken.end,
+            },
+            value: this.toTokenRange(notToken),
+          },
+        };
       }
 
-      this.expectKeyword('NULL');
-      return { field, operator: 'IS_NULL' };
+      const nullToken = this.expectKeyword('NULL');
+      return {
+        field,
+        operator: 'IS_NULL',
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: {
+            start: isToken.start,
+            end: nullToken.end,
+          },
+        },
+      };
     }
 
     if (this.isKeyword('NOT')) {
-      this.consume();
+      const notToken = this.expectKeyword('NOT');
 
       if (this.isKeyword('IN')) {
-        this.consume();
-        return { field, operator: 'NOT_IN', value: this.parseValueList() };
+        const inToken = this.expectKeyword('IN');
+        const values = this.parseValueList();
+        return {
+          field,
+          operator: 'NOT_IN',
+          value: values.value,
+          source: {
+            field: this.toTokenRange(fieldToken),
+            operator: {
+              start: notToken.start,
+              end: inToken.end,
+            },
+            value: values.range,
+            values: values.values,
+          },
+        };
       }
 
       if (this.isKeyword('LIKE')) {
-        this.consume();
-        return this.createLikeRule(field, true, this.parseScalarValue());
+        const likeToken = this.expectKeyword('LIKE');
+        return this.createLikeRule(fieldToken, true, likeToken, this.parseScalarValue());
       }
 
       if (this.isKeyword('BETWEEN')) {
-        this.consume();
+        const betweenToken = this.expectKeyword('BETWEEN');
         const start = this.parseScalarValue();
         this.expectKeyword('AND');
         const end = this.parseScalarValue();
+        const value = this.createRangeValue(start, end);
 
         return {
           field,
           operator: 'NOT_BETWEEN',
-          value: this.createRangeValue(start, end),
+          value: value.value,
+          source: {
+            field: this.toTokenRange(fieldToken),
+            operator: {
+              start: notToken.start,
+              end: betweenToken.end,
+            },
+            value: value.range,
+            values: value.values,
+          },
         };
       }
 
-      throw new Error(`Unexpected token "${this.peek().value}" after NOT.`);
+      const token = this.peek();
+      throw createSqlParseError(
+        'unexpected_token',
+        getSqlParserString(
+          this.textModeStrings,
+          'unexpectedTokenAfterNot',
+          `Unexpected token "${token.value}" after NOT.`,
+          { value: token.value }
+        ),
+        token.start,
+        token.end
+      );
     }
 
     if (this.isKeyword('IN')) {
-      this.consume();
-      return { field, operator: 'IN', value: this.parseValueList() };
+      const inToken = this.expectKeyword('IN');
+      const values = this.parseValueList();
+      return {
+        field,
+        operator: 'IN',
+        value: values.value,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(inToken),
+          value: values.range,
+          values: values.values,
+        },
+      };
     }
 
     if (this.isKeyword('LIKE')) {
-      this.consume();
-      return this.createLikeRule(field, false, this.parseScalarValue());
+      const likeToken = this.expectKeyword('LIKE');
+      return this.createLikeRule(fieldToken, false, likeToken, this.parseScalarValue());
     }
 
     if (this.isKeyword('BETWEEN')) {
-      this.consume();
+      const betweenToken = this.expectKeyword('BETWEEN');
       const start = this.parseScalarValue();
       this.expectKeyword('AND');
       const end = this.parseScalarValue();
+      const value = this.createRangeValue(start, end);
 
       return {
         field,
         operator: 'BETWEEN',
-        value: this.createRangeValue(start, end),
+        value: value.value,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(betweenToken),
+          value: value.range,
+          values: value.values,
+        },
       };
     }
 
@@ -169,32 +254,53 @@ export class SqlParser {
     return {
       field,
       operator: this.mapOperator(operatorToken.value),
-      value,
+      value: value.value,
+      source: {
+        field: this.toTokenRange(fieldToken),
+        operator: this.toTokenRange(operatorToken),
+        value: value.range,
+        values: [value.range],
+      },
     };
   }
 
   private createLikeRule(
-    field: string,
+    fieldToken: IToken,
     negated: boolean,
-    value: string | number | boolean
-  ): IDenormalizedRuleNode {
-    if (typeof value !== 'string') {
+    operatorToken: IToken,
+    value: IParsedSqlScalarValue
+  ): IParsedSqlRuleNode {
+    const field = fieldToken.value;
+
+    if (typeof value.value !== 'string') {
       return {
         field,
         operator: negated ? 'NOT_LIKE' : 'LIKE',
-        value,
+        value: value.value,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(operatorToken),
+          value: value.range,
+          values: [value.range],
+        },
       };
     }
 
-    const startsWithWildcard = value.startsWith('%');
-    const endsWithWildcard = value.endsWith('%');
-    const normalizedValue = value.replace(/^%/, '').replace(/%$/, '');
+    const startsWithWildcard = value.value.startsWith('%');
+    const endsWithWildcard = value.value.endsWith('%');
+    const normalizedValue = value.value.replace(/^%/, '').replace(/%$/, '');
 
     if (startsWithWildcard && endsWithWildcard) {
       return {
         field,
         operator: negated ? 'NOT_CONTAINS' : 'CONTAINS',
         value: normalizedValue,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(operatorToken),
+          value: value.range,
+          values: [value.range],
+        },
       };
     }
 
@@ -203,6 +309,12 @@ export class SqlParser {
         field,
         operator: 'STARTS_WITH',
         value: normalizedValue,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(operatorToken),
+          value: value.range,
+          values: [value.range],
+        },
       };
     }
 
@@ -211,28 +323,51 @@ export class SqlParser {
         field,
         operator: 'ENDS_WITH',
         value: normalizedValue,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(operatorToken),
+          value: value.range,
+          values: [value.range],
+        },
       };
     }
 
     return {
       field,
       operator: negated ? 'NOT_LIKE' : 'LIKE',
-      value,
+      value: value.value,
+      source: {
+        field: this.toTokenRange(fieldToken),
+        operator: this.toTokenRange(operatorToken),
+        value: value.range,
+        values: [value.range],
+      },
     };
   }
 
-  private parseValueList(): string[] | number[] {
-    this.expect('LPAREN');
+  private parseValueList(): IParsedSqlArrayValue {
+    const startToken = this.expect('LPAREN');
     const values: Array<string | number> = [];
+    const valueRanges = [];
 
     while (this.peek().type !== 'RPAREN') {
       const value = this.parseScalarValue();
 
-      if (typeof value === 'boolean') {
-        throw new Error('SQL IN lists currently support only string and number values.');
+      if (typeof value.value === 'boolean') {
+        throw createSqlParseError(
+          'invalid_in_value',
+          getSqlParserString(
+            this.textModeStrings,
+            'sqlInListsSupportOnlyStringAndNumberValues',
+            'SQL IN lists currently support only string and number values.'
+          ),
+          value.range.start,
+          value.range.end
+        );
       }
 
-      values.push(value);
+      values.push(value.value);
+      valueRanges.push(value.range);
 
       if (this.peek().type === 'COMMA') {
         this.consume();
@@ -241,19 +376,42 @@ export class SqlParser {
       }
     }
 
-    this.expect('RPAREN');
-    return this.normalizeArrayValue(values);
+    const endToken = this.expect('RPAREN');
+    return {
+      value: this.normalizeArrayValue(values),
+      range: {
+        start: startToken.start,
+        end: endToken.end,
+      },
+      values: valueRanges,
+    };
   }
 
   private createRangeValue(
-    start: string | number | boolean,
-    end: string | number | boolean
-  ): string[] | number[] {
-    if (typeof start === 'boolean' || typeof end === 'boolean') {
-      throw new Error('SQL BETWEEN currently supports only string and number values.');
+    start: IParsedSqlScalarValue,
+    end: IParsedSqlScalarValue
+  ): IParsedSqlArrayValue {
+    if (typeof start.value === 'boolean' || typeof end.value === 'boolean') {
+      throw createSqlParseError(
+        'invalid_between_value',
+        getSqlParserString(
+          this.textModeStrings,
+          'sqlBetweenSupportsOnlyStringAndNumberValues',
+          'SQL BETWEEN currently supports only string and number values.'
+        ),
+        start.range.start,
+        end.range.end
+      );
     }
 
-    return this.normalizeArrayValue([start, end]);
+    return {
+      value: this.normalizeArrayValue([start.value, end.value]),
+      range: {
+        start: start.range.start,
+        end: end.range.end,
+      },
+      values: [start.range, end.range],
+    };
   }
 
   private normalizeArrayValue(values: Array<string | number>): string[] | number[] {
@@ -265,39 +423,81 @@ export class SqlParser {
       return values as number[];
     }
 
-    throw new Error('SQL arrays must contain values of the same scalar type.');
+    const token = this.peek();
+    throw createSqlParseError(
+      'mixed_array_types',
+      getSqlParserString(
+        this.textModeStrings,
+        'sqlArraysMustContainSameScalarType',
+        'SQL arrays must contain values of the same scalar type.'
+      ),
+      token.start,
+      token.end
+    );
   }
 
-  private parseScalarValue(): string | number | boolean {
+  private parseScalarValue(): IParsedSqlScalarValue {
     const token = this.consume();
 
     if (token.type === 'STRING') {
-      return token.value;
+      return {
+        value: token.value,
+        range: this.toTokenRange(token),
+      };
     }
 
     if (token.type === 'NUMBER') {
-      return Number(token.value);
+      return {
+        value: Number(token.value),
+        range: this.toTokenRange(token),
+      };
     }
 
     if (token.type === 'KEYWORD' && token.value === 'TRUE') {
-      return true;
+      return {
+        value: true,
+        range: this.toTokenRange(token),
+      };
     }
 
     if (token.type === 'KEYWORD' && token.value === 'FALSE') {
-      return false;
+      return {
+        value: false,
+        range: this.toTokenRange(token),
+      };
     }
 
-    throw new Error(`Expected a scalar value but found "${token.value}".`);
+    throw createSqlParseError(
+      'expected_scalar',
+      getSqlParserString(
+        this.textModeStrings,
+        'expectedScalarValue',
+        `Expected a scalar value but found "${token.value}".`,
+        { value: token.value }
+      ),
+      token.start,
+      token.end
+    );
   }
 
-  private parseIdentifier(): string {
+  private parseIdentifier(): IToken {
     const token = this.consume();
 
     if (token.type !== 'IDENTIFIER') {
-      throw new Error(`Expected a field identifier but found "${token.value}".`);
+      throw createSqlParseError(
+        'expected_identifier',
+        getSqlParserString(
+          this.textModeStrings,
+          'expectedFieldIdentifier',
+          `Expected a field identifier but found "${token.value}".`,
+          { value: token.value }
+        ),
+        token.start,
+        token.end
+      );
     }
 
-    return token.value;
+    return token;
   }
 
   private mapOperator(value: string): QueryOperator {
@@ -315,8 +515,20 @@ export class SqlParser {
         return 'SMALLER';
       case '<=':
         return 'SMALLER_EQUAL';
-      default:
-        throw new Error(`Unsupported SQL operator "${value}".`);
+      default: {
+        const token = this.peek();
+        throw createSqlParseError(
+          'unsupported_operator',
+          getSqlParserString(
+            this.textModeStrings,
+            'unsupportedSqlOperator',
+            `Unsupported SQL operator "${value}".`,
+            { operator: value }
+          ),
+          token.start,
+          token.end
+        );
+      }
     }
   }
 
@@ -327,7 +539,12 @@ export class SqlParser {
   ): IParsedGroup {
     const children: ParsedNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      !left.preserveBoundary &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
@@ -336,6 +553,7 @@ export class SqlParser {
     if (
       this.isParsedGroup(right) &&
       !right.isNegated &&
+      !right.preserveBoundary &&
       right.combinator === combinator
     ) {
       children.push(...right.children);
@@ -364,18 +582,58 @@ export class SqlParser {
     const token = this.consume();
 
     if (token.type !== type) {
-      throw new Error(`Expected token "${type}" but found "${token.value}".`);
+      if (token.type === 'EOF') {
+        throw createSqlParseError(
+          'missing_token',
+          getMissingSqlTokenMessage(type, this.textModeStrings),
+          token.start,
+          token.end
+        );
+      }
+
+      throw createSqlParseError(
+        'expected_token',
+        getSqlParserString(
+          this.textModeStrings,
+          'expectedToken',
+          `Expected token "${type}" but found "${token.value}".`,
+          { token: type, value: token.value }
+        ),
+        token.start,
+        token.end
+      );
     }
 
     return token;
   }
 
-  private expectKeyword(value: string): void {
+  private expectKeyword(value: string): IToken {
     const token = this.consume();
 
     if (token.type !== 'KEYWORD' || token.value !== value) {
-      throw new Error(`Expected keyword "${value}" but found "${token.value}".`);
+      if (token.type === 'EOF') {
+        throw createSqlParseError(
+          'missing_keyword',
+          getMissingSqlKeywordMessage(value, this.textModeStrings),
+          token.start,
+          token.end
+        );
+      }
+
+      throw createSqlParseError(
+        'expected_keyword',
+        getSqlParserString(
+          this.textModeStrings,
+          'expectedKeyword',
+          `Expected keyword "${value}" but found "${token.value}".`,
+          { keyword: value, value: token.value }
+        ),
+        token.start,
+        token.end
+      );
     }
+
+    return token;
   }
 
   private consume(): IToken {
@@ -386,5 +644,12 @@ export class SqlParser {
 
   private peek(): IToken {
     return this.tokens[this.index];
+  }
+
+  private toTokenRange(token: IToken) {
+    return {
+      start: token.start,
+      end: token.end,
+    };
   }
 }

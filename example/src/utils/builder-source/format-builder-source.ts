@@ -9,6 +9,9 @@ export const formatBuilderSource = ({
   cloneable,
   draggable,
   history,
+  textMode,
+  defaultMode,
+  useMonacoTextEditor,
   singleRootGroup,
   showValidation,
   customizationMode,
@@ -34,6 +37,9 @@ export const formatBuilderSource = ({
     usesThemeProvider
       ? `import { ThemeProvider } from '@vojtechportes/react-query-builder/theme-provider';`
       : null,
+    useMonacoTextEditor
+      ? `import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';`
+      : null,
     usesMuiAdapter
       ? `import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';`
       : null,
@@ -54,12 +60,34 @@ export const formatBuilderSource = ({
     cloneable ? 'cloneable' : null,
     draggable ? 'draggable' : null,
     history ? 'history' : null,
+    textMode ? 'textMode' : null,
+    textMode && defaultMode === 'text' ? 'defaultMode="text"' : null,
     'groupTypes="both"',
     singleRootGroup ? 'singleRootGroup' : 'singleRootGroup={false}',
     showValidation ? 'showValidation' : null,
     usesMuiAdapter ? 'components={muiComponents}' : null,
     usesAntdAdapter ? 'components={antdComponents}' : null,
   ].filter(Boolean);
+
+  const componentExpression = useMonacoTextEditor
+    ? usesMuiAdapter
+      ? 'createMonacoComponents(muiComponents)'
+      : usesAntdAdapter
+        ? 'createMonacoComponents(antdComponents)'
+        : 'createMonacoComponents({})'
+    : null;
+
+  if (componentExpression) {
+    const existingComponentPropIndex = builderProps.findIndex(prop =>
+      prop.startsWith('components=')
+    );
+
+    if (existingComponentPropIndex >= 0) {
+      builderProps[existingComponentPropIndex] = 'components={components}';
+    } else {
+      builderProps.push('components={components}');
+    }
+  }
 
   const builderMarkup = [
     '    <Builder',
@@ -87,6 +115,7 @@ export const formatBuilderSource = ({
     '',
     'export const DemoBuilderExample = () => {',
     '  const [data, setData] = useState<DenormalizedQuery>(initialQueryTree);',
+    componentExpression ? `  const components = ${componentExpression};` : null,
     '',
     '  return (',
     wrappedBuilderMarkup,

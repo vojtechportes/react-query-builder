@@ -1,29 +1,11 @@
-import type {
-  DenormalizedGroupNode,
-  DenormalizedNode,
-  DenormalizedQuery,
-} from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../utils/query-tree';
 import type { ParsedNode } from './sql-token.types';
-
-const toDenormalizedSqlNode = (node: ParsedNode): DenormalizedNode => {
-  if (!('kind' in node)) {
-    return node;
-  }
-
-  const group: DenormalizedGroupNode = {
-    type: 'GROUP',
-    value: node.combinator,
-    isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedSqlNode(child)),
-  };
-
-  return group;
-};
+import { stripParsedSqlSource } from './utils/strip-parsed-sql-source';
 
 export const toDenormalizedSqlQuery = (
   nodes: ParsedNode[]
 ): DenormalizedQuery => {
-  const denormalizedNodes = nodes.map(node => toDenormalizedSqlNode(node));
+  const denormalizedNodes = stripParsedSqlSource(nodes);
 
   if (denormalizedNodes.length !== 1) {
     return denormalizedNodes;

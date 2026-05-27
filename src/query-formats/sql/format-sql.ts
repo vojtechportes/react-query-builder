@@ -14,6 +14,8 @@ import {
   isGroupNode,
   quoteIdentifier,
 } from './shared';
+import { coerceSqlArrayValue } from './utils/coerce-sql-array-value';
+import { isSqlRuleFormattable } from './utils/is-sql-rule-formattable';
 
 const resolveFieldConfig = (
   rule: IDenormalizedRuleNode,
@@ -93,6 +95,10 @@ const formatRule = (
   rule: IDenormalizedRuleNode,
   fields?: IBuilderFieldProps[]
 ): string => {
+  if (!isSqlRuleFormattable(rule)) {
+    return '';
+  }
+
   const field = quoteIdentifier(rule.field);
   const fieldConfig = resolveFieldConfig(rule, fields);
 
@@ -130,21 +136,21 @@ const formatRule = (
     case 'ALL_IN':
     case 'ANY_IN':
     case 'IN':
-      if (!Array.isArray(rule.value)) {
+      if (!coerceSqlArrayValue(rule.value)) {
         throw new Error(`Operator "${rule.operator}" requires an array value.`);
       }
 
       return `${field} IN ${formatArrayValueWithField(
-        rule.value as Array<string | number>,
+        coerceSqlArrayValue(rule.value) as Array<string | number>,
         fieldConfig
       )}`;
     case 'NOT_IN':
-      if (!Array.isArray(rule.value)) {
+      if (!coerceSqlArrayValue(rule.value)) {
         throw new Error(`Operator "${rule.operator}" requires an array value.`);
       }
 
       return `${field} NOT IN ${formatArrayValueWithField(
-        rule.value as Array<string | number>,
+        coerceSqlArrayValue(rule.value) as Array<string | number>,
         fieldConfig
       )}`;
     case 'BETWEEN':
@@ -220,13 +226,14 @@ const formatNode = (
     | 'modifierlessGroupCombinator'
     | 'wrapWhereClause'
     | 'fields'
-  >>
+  >>,
+  isRoot = false
 ): string => {
   if (!isGroupNode(node)) {
     return formatRule(node, options.fields);
   }
 
-  return formatGroup(node, options);
+  return formatGroup(node, options, isRoot);
 };
 
 const formatGroup = (
@@ -237,14 +244,15 @@ const formatGroup = (
     | 'modifierlessGroupCombinator'
     | 'wrapWhereClause'
     | 'fields'
-  >>
+  >>,
+  isRoot = false
 ): string => {
   const combinator = 'value' in group && group.value
     ? group.value
     : options.modifierlessGroupCombinator;
   const inner = joinFragments(
     group.children
-      .map(child => formatNode(child, options))
+      .map(child => formatNode(child, options, false))
       .filter(fragment => fragment.trim().length > 0),
     combinator
   );
@@ -253,11 +261,19 @@ const formatGroup = (
     return '';
   }
 
+  const wrappedInner = inner.startsWith('(') && inner.endsWith(')')
+    ? inner
+    : `(${inner})`;
+
   if ('isNegated' in group && group.isNegated) {
-    return `NOT ${inner}`;
+    return `NOT ${wrappedInner}`;
   }
 
-  return inner;
+  if (isRoot) {
+    return inner;
+  }
+
+  return wrappedInner;
 };
 
 export const formatSql = (
@@ -276,7 +292,7 @@ export const formatSql = (
 
   const sql = joinFragments(
     value
-      .map(node => formatNode(node, normalizedOptions))
+      .map(node => formatNode(node, normalizedOptions, true))
       .filter(fragment => fragment.trim().length > 0),
     normalizedOptions.rootlessCombinator
   );

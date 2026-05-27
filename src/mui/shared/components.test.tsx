@@ -73,6 +73,77 @@ describe('#mui/components', () => {
     expect(screen.getByRole('button', { name: 'Redo' })).toBeInTheDocument();
   });
 
+  it('renders history and text-mode toolbar actions with the MUI button adapter', () => {
+    render(
+      <Builder
+        fields={fields}
+        data={data}
+        components={muiV9Components}
+        history
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    const textModeToggle = screen.getByRole('button', {
+      name: 'Switch to text mode',
+    });
+
+    expect(textModeToggle).toHaveClass('MuiButton-root');
+    expect(textModeToggle.querySelector('.MuiSvgIcon-root')).not.toBeNull();
+    expect(screen.getByRole('button', { name: 'Undo' })).toHaveClass(
+      'MuiButton-root'
+    );
+    expect(screen.getByRole('button', { name: 'Redo' })).toHaveClass(
+      'MuiButton-root'
+    );
+  });
+
+  it('renders the SQL text editor with the MUI text-mode input adapter', () => {
+    render(
+      <Builder
+        fields={fields}
+        data={data}
+        components={muiV9Components}
+        textMode
+        defaultMode="text"
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(screen.getByRole('textbox')).toHaveClass('builder-text-mode-input-field');
+  });
+
+  it('renders the locked text-mode warning with the MUI alert adapter', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'status',
+                operator: 'EQUAL',
+                value: 'active',
+                readOnly: true,
+              },
+            ],
+          },
+        ]}
+        components={muiV9Components}
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(
+      container.querySelector('[data-test="TextModeBlockedAlert"]')
+    ).toHaveClass('MuiAlert-root');
+  });
+
   it('uses builder strings for adapter copy', () => {
     const strings: IStrings = {
       form: {

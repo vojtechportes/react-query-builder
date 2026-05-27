@@ -25,6 +25,10 @@ React Query Builder is a TypeScript library for building nested filter editors,
 formatting them into external query syntaxes, and parsing supported expressions
 back into builder state.
 
+It also supports an optional SQL text mode for `Builder`, with built-in syntax
+and semantic validation, plus an optional Monaco-based advanced editor
+integration for protected locked ranges.
+
 Full documentation, API reference, and the interactive demo are available on
 the project website:
 
@@ -163,6 +167,30 @@ export const MyBuilder = () => {
   return <Builder fields={fields} data={data} onChange={setData} />;
 };
 ```
+
+## Text Mode
+
+`Builder` can optionally switch between the visual query UI and a SQL text
+editor view.
+
+```tsx
+<Builder
+  fields={fields}
+  data={data}
+  textMode
+  defaultMode="text"
+  onChange={setData}
+/>;
+```
+
+For advanced text editing, the package also exposes
+`@vojtechportes/react-query-builder/monaco`. The built-in editor is lightweight
+and works without extra dependencies, while the Monaco integration is the
+recommended path when locked query segments must stay protected in text mode.
+
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
 
 ## Query Conversion
 

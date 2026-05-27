@@ -14,6 +14,8 @@ const builderSignature = `export interface IBuilderProps {
   data: DenormalizedQuery;
   components?: IBuilderComponentsProps;
   strings?: IStrings;
+  textMode?: boolean | IBuilderTextModeConfig;
+  defaultMode?: BuilderDefaultMode;
   readOnly?: boolean;
   lockable?: boolean;
   cloneable?: boolean;
@@ -136,6 +138,7 @@ export interface IDenormalizedGroupNodeBase {
 export type DenormalizedQuery = DenormalizedNode[];`;
 
 const componentsSignature = `export interface IBuilderComponentsProps {
+  Alert?: React.ComponentType<IAlertProps>;
   form?: {
     Select?: React.ComponentType<ISelectProps>;
     SelectMulti?: React.ComponentType<ISelectMultiProps>;
@@ -144,6 +147,10 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   };
   Remove?: React.ComponentType<IButtonProps>;
   Add?: React.ComponentType<IButtonProps>;
+  OutlinedButton?: React.ComponentType<IButtonProps>;
+  TextModeToggleContent?: React.ComponentType<ITextModeToggleContentProps>;
+  TextModeEditor?: React.ComponentType<ITextModeEditorProps>;
+  TextModeInput?: React.ComponentType<ITextModeInputProps>;
   CloneButton?: React.ComponentType<ICloneButtonProps>;
   LockToggle?: React.ComponentType<ILockToggleProps>;
   HistoryControls?: React.ComponentType<IHistoryControlsProps>;
@@ -155,6 +162,35 @@ const componentsSignature = `export interface IBuilderComponentsProps {
   EmptyGroupDropZone?: React.ComponentType<IEmptyGroupDropZoneProps>;
   Popover?: React.ComponentType<IPopoverProps>;
   PopoverItem?: React.ComponentType<IPopoverItemProps>;
+}`;
+
+const textModeConfigSignature = `export interface IBuilderTextModeConfig {
+  format?: 'SQL';
+  defaultMode?: BuilderDefaultMode;
+}
+
+export type BuilderDefaultMode = 'builder' | 'text';`;
+
+const textModeEditorSignature = `export interface ITextModeEditorProps {
+  value: string;
+  diagnostics: ITextModeDiagnostic[];
+  protectedRanges?: ITextModeProtectedRange[];
+  protectedRangesMessage?: string | null;
+  protectedRangeHoverMessage?: string | null;
+  errorMessage: string | null;
+  readOnly?: boolean;
+  onChange: (value: string) => void;
+}
+
+export interface ITextModeInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+  inputClassName?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  spellCheck?: boolean;
+  inputDataTest?: string;
 }`;
 
 const muiAdapterSnippet = `import { components } from '@vojtechportes/react-query-builder/mui/v9';
@@ -236,6 +272,19 @@ export const MyAntdBuilder = () => {
     />
   );
 };`;
+
+const monacoComponentsSnippet = `import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
+import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
+
+const components = createMonacoComponents(muiComponents);
+
+<Builder
+  fields={fields}
+  data={data}
+  textMode
+  components={components}
+  onChange={setData}
+/>;`;
 
 const historyControlsSignature = `export interface IHistoryControlsProps {
   undoButton: React.ReactNode;
@@ -444,17 +493,32 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle>Ref support:</ItemTitle> <InlineCode>Builder</InlineCode> supports React refs and can be paired with <InlineCode>useBuilderRef()</InlineCode> for imperative access.</li>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Optional overrides for internal UI pieces. Omitted entries fall back to default components.</li>
           <li><ItemTitle><InlineCode>strings</InlineCode>:</ItemTitle> Optional localized UI strings used by the built-in controls.</li>
+          <li><ItemTitle><InlineCode>textMode</InlineCode>:</ItemTitle> Optional. Enables SQL text mode. Pass <InlineCode>true</InlineCode> for the default configuration or <InlineCode>IBuilderTextModeConfig</InlineCode> for explicit SQL text-mode settings.</li>
+          <li><ItemTitle><InlineCode>defaultMode</InlineCode>:</ItemTitle> Optional. Controls whether the builder initially opens in <InlineCode>'builder'</InlineCode> or <InlineCode>'text'</InlineCode> mode. This only takes effect when text mode is enabled.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Disables editing actions when enabled.</li>
           <li><ItemTitle><InlineCode>lockable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders lock controls for rules and groups and writes the resulting lock state back into emitted query data.</li>
           <li><ItemTitle><InlineCode>cloneable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders clone controls for rules and groups and inserts the cloned node directly below the original.</li>
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
-          <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group.</li>
-          <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both.</li>
+          <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group. Text mode requires this to stay enabled.</li>
+          <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both. When text mode is active, builder-compatible SQL round-tripping uses groups with modifiers.</li>
           <li><ItemTitle><InlineCode>validator</InlineCode>:</ItemTitle> Optional function that receives the denormalized query plus validation context and returns a validation result synchronously or asynchronously.</li>
           <li><ItemTitle><InlineCode>onStateChange</InlineCode>:</ItemTitle> Optional callback fired with <InlineCode>data</InlineCode>, <InlineCode>isValid</InlineCode>, the full validation object, and history state flags such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode>.</li>
           <li><ItemTitle><InlineCode>showValidation</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Controls whether validation issues are rendered in the built-in UI.</li>
           <li><ItemTitle><InlineCode>history</InlineCode>:</ItemTitle> Optional. Set to <InlineCode>true</InlineCode> to enable undo and redo with default settings, or pass <InlineCode>IBuilderHistoryConfig</InlineCode> to customize retention and built-in controls.</li>
           <li><ItemTitle><InlineCode>onChange</InlineCode>:</ItemTitle> Optional callback fired with the denormalized query tree after changes are emitted.</li>
+        </List>
+        <SectionTitle>Text mode behavior</SectionTitle>
+        <CodeBlock code={textModeConfigSignature} language="ts" label="Text mode types" />
+        <List>
+          <li><ItemTitle>Format:</ItemTitle> The current text-mode implementation edits SQL.</li>
+          <li><ItemTitle>Config shape:</ItemTitle> <InlineCode>textMode</InlineCode> accepts either <InlineCode>true</InlineCode> or <InlineCode>{`{ format?: 'SQL'; defaultMode?: 'builder' | 'text' }`}</InlineCode>.</li>
+          <li><ItemTitle>Default-mode precedence:</ItemTitle> If both <InlineCode>textMode.defaultMode</InlineCode> and the top-level <InlineCode>defaultMode</InlineCode> prop are provided, the top-level prop wins.</li>
+          <li><ItemTitle>Syntax and semantic validation:</ItemTitle> The built-in editor highlights invalid SQL syntax plus builder-specific issues such as unknown fields, unsupported operators, and invalid select values.</li>
+          <li><ItemTitle>Invalid text flow:</ItemTitle> Invalid text stays local to text mode, the last valid builder query is preserved, and <InlineCode>onChange</InlineCode> is fired only after a valid parse and semantic validation.</li>
+          <li><ItemTitle>History:</ItemTitle> Valid text edits are committed into builder history. Invalid intermediate text is not committed into builder state or history.</li>
+          <li><ItemTitle>Built-in editor:</ItemTitle> Included in the main package and suitable for freely editable SQL text mode.</li>
+          <li><ItemTitle>Locked queries:</ItemTitle> The built-in text editor blocks locked rules and groups because it cannot preserve protected text ranges safely after freeform edits.</li>
+          <li><ItemTitle>Monaco path:</ItemTitle> Use the optional <InlineCode>@vojtechportes/react-query-builder/monaco</InlineCode> subpackage when you need a protected-range editor that can preserve locked query segments.</li>
         </List>
         <SectionTitle>History config</SectionTitle>
         <List>
@@ -463,6 +527,7 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
+          <TextLink to="/documentation/text-mode">Text Mode</TextLink>, and{' '}
           <TextLink to="/documentation/history">Undo and Redo</TextLink>, and{' '}
           <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>.
         </AlertBox>
@@ -613,13 +678,19 @@ export const apiPages: IApiPage[] = [
     content: (
       <>
         <CodeBlock code={componentsSignature} language="ts" label="Component overrides" />
+        <CodeBlock code={textModeEditorSignature} language="ts" label="Text mode editor props" />
         <CodeBlock code={cloneButtonSignature} language="ts" label="CloneButton props" />
         <CodeBlock code={lockToggleSignature} language="ts" label="LockToggle props" />
         <CodeBlock code={historyControlsSignature} language="ts" label="HistoryControls props" />
         <SectionTitle>Props</SectionTitle>
         <List>
+          <li><ItemTitle><InlineCode>Alert</InlineCode>:</ItemTitle> Replaces the built-in alert component used for builder-level notices such as blocked text mode.</li>
           <li><ItemTitle><InlineCode>form.Select</InlineCode> / <InlineCode>form.SelectMulti</InlineCode> / <InlineCode>form.Switch</InlineCode> / <InlineCode>form.Input</InlineCode>:</ItemTitle> Replace the built-in form controls used by rules and groups.</li>
           <li><ItemTitle><InlineCode>Remove</InlineCode> and <InlineCode>Add</InlineCode>:</ItemTitle> Replace action buttons used for structural editing.</li>
+          <li><ItemTitle><InlineCode>OutlinedButton</InlineCode>:</ItemTitle> Replaces the built-in outlined action button used by undo, redo, and the builder/text mode toggle.</li>
+          <li><ItemTitle><InlineCode>TextModeToggleContent</InlineCode>:</ItemTitle> Replaces the label-and-icon content rendered inside the builder/text mode toggle button.</li>
+          <li><ItemTitle><InlineCode>TextModeEditor</InlineCode>:</ItemTitle> Replaces the whole text-mode editor surface. This is the integration point for Monaco and other advanced editors.</li>
+          <li><ItemTitle><InlineCode>TextModeInput</InlineCode>:</ItemTitle> Replaces only the input layer used by the built-in text editor.</li>
           <li><ItemTitle><InlineCode>CloneButton</InlineCode>:</ItemTitle> Replaces the built-in clone control used when <InlineCode>cloneable</InlineCode> is enabled.</li>
           <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Replaces the built-in lock control used when <InlineCode>lockable</InlineCode> is enabled.</li>
           <li><ItemTitle><InlineCode>HistoryControls</InlineCode>:</ItemTitle> Replaces the layout wrapper around the built-in undo and redo controls used when history controls are enabled.</li>
@@ -635,6 +706,8 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>form.Select</InlineCode>:</ItemTitle> Receives <InlineCode>values</InlineCode>, <InlineCode>selectedValue</InlineCode>, <InlineCode>emptyValue</InlineCode>, and <InlineCode>onChange(value)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>form.SelectMulti</InlineCode>:</ItemTitle> Receives <InlineCode>selectedValue</InlineCode>, <InlineCode>values</InlineCode>, <InlineCode>onChange(value)</InlineCode>, and <InlineCode>onDelete(value)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>form.Switch</InlineCode>:</ItemTitle> Receives <InlineCode>switched</InlineCode>, optional <InlineCode>onChange(value)</InlineCode>, and optional <InlineCode>disabled</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>TextModeEditor</InlineCode>:</ItemTitle> Receives the current SQL text, diagnostics, optional protected ranges, an optional hover message for protected ranges, and <InlineCode>onChange(value)</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>TextModeInput</InlineCode>:</ItemTitle> Receives the current text value plus controlled input props such as <InlineCode>disabled</InlineCode>, <InlineCode>readOnly</InlineCode>, and class names used by the built-in text-mode layout.</li>
           <li><ItemTitle><InlineCode>CloneButton</InlineCode>:</ItemTitle> Receives <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onClick()</InlineCode>.</li>
           <li><ItemTitle><InlineCode>LockToggle</InlineCode>:</ItemTitle> Receives <InlineCode>state</InlineCode>, <InlineCode>nodeType</InlineCode>, optional <InlineCode>disabled</InlineCode>, and <InlineCode>onChange(nextState)</InlineCode>.</li>
           <li><ItemTitle><InlineCode>HistoryControls</InlineCode>:</ItemTitle> Receives built-in <InlineCode>undoButton</InlineCode> and <InlineCode>redoButton</InlineCode> nodes plus <InlineCode>canUndo</InlineCode>, <InlineCode>canRedo</InlineCode>, <InlineCode>onUndo()</InlineCode>, and <InlineCode>onRedo()</InlineCode>.</li>
@@ -643,8 +716,17 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>DropZone</InlineCode>:</ItemTitle> Receives <InlineCode>id</InlineCode>, <InlineCode>index</InlineCode>, optional <InlineCode>parentId</InlineCode>, and drag-state flags.</li>
           <li><ItemTitle><InlineCode>EmptyGroupDropZone</InlineCode>:</ItemTitle> Receives the target group id plus drag-state flags for empty containers.</li>
         </List>
+        <SectionTitle>Monaco subpackage</SectionTitle>
+        <CodeBlock code={monacoComponentsSnippet} language="tsx" label="createMonacoComponents" />
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/monaco</InlineCode>:</ItemTitle> Exports <InlineCode>createMonacoComponents</InlineCode>, <InlineCode>createMonacoComponentSet</InlineCode>, and <InlineCode>MonacoTextModeEditor</InlineCode>.</li>
+          <li><ItemTitle>Peer dependency:</ItemTitle> <InlineCode>monaco-editor</InlineCode> is optional and only required when you use that subpackage.</li>
+          <li><ItemTitle>When to use it:</ItemTitle> Prefer it when text mode must preserve locked rules or groups through protected editor ranges.</li>
+          <li><ItemTitle>Protected ranges:</ItemTitle> Monaco text mode can render locked SQL fragments as dimmed protected ranges with hover messaging while still allowing edits around them.</li>
+        </List>
         <AlertBox title="Documentation" variant="info">
-          <TextLink to="/documentation/components">Components</TextLink> and{' '}
+          <TextLink to="/documentation/components">Components</TextLink>,{' '}
+          <TextLink to="/documentation/text-mode">Text Mode</TextLink>, and{' '}
           <TextLink to="/documentation/adapters">Adapters</TextLink>.
         </AlertBox>
       </>

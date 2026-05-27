@@ -1,8 +1,8 @@
 import type {
-  IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
 } from '../../utils/query-tree';
+import { IParsedSqlRuleNode } from './types/parsed-sql-rule-node';
 
 export type TokenType =
   | 'LPAREN'
@@ -18,6 +18,8 @@ export type TokenType =
 export interface IToken {
   type: TokenType;
   value: string;
+  start: number;
+  end: number;
 }
 
 export interface IParsedGroup {
@@ -25,9 +27,10 @@ export interface IParsedGroup {
   combinator: QueryGroupValue;
   isNegated: boolean;
   children: ParsedNode[];
+  preserveBoundary?: boolean;
 }
 
-export type ParsedNode = IDenormalizedRuleNode | IParsedGroup;
+export type ParsedNode = IParsedSqlRuleNode | IParsedGroup;
 
 export const SQL_KEYWORDS = new Set([
   'AND',

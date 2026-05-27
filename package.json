@@ -79,6 +79,11 @@
       "types": "./dist/antd/v6/index.d.ts",
       "import": "./dist/antd/v6/index.mjs",
       "require": "./dist/antd/v6/index.cjs"
+    },
+    "./monaco": {
+      "types": "./dist/monaco/index.d.ts",
+      "import": "./dist/monaco/index.mjs",
+      "require": "./dist/monaco/index.cjs"
     }
   },
   "publishConfig": {
@@ -113,6 +118,7 @@
     "@mui/icons-material": "^7.3.10 || ^9.0.1",
     "@mui/material": "^7.3.10 || ^9.0.1",
     "antd": "^5.0.0 || ^6.0.0",
+    "monaco-editor": "^0.52.2",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
@@ -132,6 +138,9 @@
     "@mui/material": {
       "optional": true
     },
+    "monaco-editor": {
+      "optional": true
+    },
     "antd": {
       "optional": true
     }
@@ -139,6 +148,7 @@
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
+    "prismjs": "^1.30.0",
     "styled-components": "^4.4.1",
     "tslib": "^2.8.1"
   },
@@ -149,7 +159,6 @@
     "@eslint/js": "^9.15.0",
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.1",
-    "antd": "^6.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -157,6 +166,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/styled-components": "^5.1.34",
+    "antd": "^6.0.0",
     "eslint": "^9.15.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
@@ -165,6 +175,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-util": "^29.7.0",
+    "monaco-editor": "^0.52.2",
     "prettier": "^3.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

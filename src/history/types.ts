@@ -18,6 +18,11 @@ export interface IReplaceNodeAction {
   node: NormalizedNode;
 }
 
+export interface IReplaceQueryAction {
+  type: 'replace-query';
+  data: NormalizedQuery;
+}
+
 export interface IMoveNodeAction {
   type: 'move-node';
   nodeId: string;
@@ -29,6 +34,7 @@ export type BuilderHistoryAction =
   | IInsertSubtreeAction
   | IRemoveSubtreeAction
   | IReplaceNodeAction
+  | IReplaceQueryAction
   | IMoveNodeAction;
 
 export interface IBuilderHistoryEntry {

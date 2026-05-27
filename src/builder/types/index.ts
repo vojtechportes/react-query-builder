@@ -1,4 +1,5 @@
 import React from 'react';
+import { IAlertProps } from '../../alert';
 import { IButtonProps } from '../../button';
 import { ICloneButtonProps } from '../../clone-button';
 import { IDropZoneProps } from '../../drop-zone';
@@ -17,6 +18,11 @@ import { IRuleProps as IRuleContainerProps } from '../../rule/rule-container';
 import { Text } from '../../text';
 import { IStrings } from '../../constants/strings';
 import { BuilderLockState } from '../../utils/lock-state';
+import { BuilderDefaultMode } from './builder-default-mode';
+import { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
+import { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
+import { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';
+import { ITextModeToggleContentProps } from '../components/text-mode-toggle-content';
 import {
   DenormalizedQuery,
   QueryGroupValue,
@@ -24,6 +30,7 @@ import {
 } from '../../utils/query-tree';
 
 export type BuilderGroupMode = 'with-modifiers' | 'without-modifiers' | 'both';
+export type { BuilderDefaultMode } from './builder-default-mode';
 
 export type BuilderFieldType =
   | 'BOOLEAN'
@@ -38,6 +45,12 @@ export type BuilderFieldType =
 export type BuilderFieldOperator = QueryOperator;
 export type BuilderGroupValues = QueryGroupValue;
 export type { BuilderLockState };
+export type { IAlertProps, AlertSeverity, AlertVariant } from '../../alert';
+export type { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
+export type { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
+export type { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';
+export type { ITextModeProtectedRange } from '../text-mode/types/text-mode-protected-range';
+export type { ITextModeToggleContentProps } from '../components/text-mode-toggle-content';
 export type {
   BuilderHistoryAction as IBuilderHistoryAction,
   IBuilderHistoryConfig,
@@ -299,6 +312,7 @@ export interface IHistoryControlsProps {
 }
 
 export interface IBuilderComponentsProps {
+  Alert?: React.ComponentType<IAlertProps>;
   form?: {
     Select?: React.ComponentType<ISelectProps>;
     SelectMulti?: React.ComponentType<ISelectMultiProps>;
@@ -307,6 +321,10 @@ export interface IBuilderComponentsProps {
   };
   Remove?: React.ComponentType<IButtonProps>;
   Add?: React.ComponentType<IButtonProps>;
+  OutlinedButton?: React.ComponentType<IButtonProps>;
+  TextModeToggleContent?: React.ComponentType<ITextModeToggleContentProps>;
+  TextModeEditor?: React.ComponentType<ITextModeEditorProps>;
+  TextModeInput?: React.ComponentType<ITextModeInputProps>;
   CloneButton?: React.ComponentType<ICloneButtonProps>;
   LockToggle?: React.ComponentType<ILockToggleProps>;
   HistoryControls?: React.ComponentType<IHistoryControlsProps>;
@@ -321,6 +339,7 @@ export interface IBuilderComponentsProps {
 }
 
 export interface IResolvedBuilderComponentsProps {
+  Alert: React.ComponentType<IAlertProps>;
   form: {
     Select: React.ComponentType<ISelectProps>;
     SelectMulti: React.ComponentType<ISelectMultiProps>;
@@ -329,6 +348,10 @@ export interface IResolvedBuilderComponentsProps {
   };
   Remove: React.ComponentType<IButtonProps>;
   Add: React.ComponentType<IButtonProps>;
+  OutlinedButton: React.ComponentType<IButtonProps>;
+  TextModeToggleContent: React.ComponentType<ITextModeToggleContentProps>;
+  TextModeEditor: React.ComponentType<ITextModeEditorProps>;
+  TextModeInput: React.ComponentType<ITextModeInputProps>;
   CloneButton: React.ComponentType<ICloneButtonProps>;
   LockToggle: React.ComponentType<ILockToggleProps>;
   HistoryControls: React.ComponentType<IHistoryControlsProps>;
@@ -347,6 +370,8 @@ export interface IBuilderProps {
   data: DenormalizedQuery;
   components?: IBuilderComponentsProps;
   strings?: IStrings;
+  textMode?: boolean | IBuilderTextModeConfig;
+  defaultMode?: BuilderDefaultMode;
   readOnly?: boolean;
   lockable?: boolean;
   cloneable?: boolean;

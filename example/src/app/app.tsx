@@ -53,6 +53,7 @@ export const App: React.FC = () => (
           <Route path="/documentation/validation" element={<DocumentationPage />} />
           <Route path="/documentation/history" element={<DocumentationPage />} />
           <Route path="/documentation/builder-behavior" element={<DocumentationPage />} />
+          <Route path="/documentation/text-mode" element={<DocumentationPage />} />
           <Route
             path="/documentation/locking-and-read-only"
             element={<DocumentationPage />}

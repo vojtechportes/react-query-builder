@@ -5,6 +5,7 @@ import {
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
 import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';
+import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import type { IColors } from '../../../src/constants/colors';
 import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
@@ -54,17 +55,26 @@ const PanelTitle = styled.h3`
   color: #0f172a;
 `;
 
-const ToggleRow = styled.label`
+const ToggleRow = styled.label<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 0.95rem;
   color: #334155;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 `;
 
-const Toggle = styled.input`
+const Toggle = styled.input<{ $disabled?: boolean }>`
   width: 18px;
   height: 18px;
+  margin: 0;
+  accent-color: #2563eb;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  flex: 0 0 18px;
+
+  &:disabled {
+    opacity: 1;
+  }
 `;
 
 const ChoiceGroup = styled.div`
@@ -152,6 +162,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [history, setHistory] = React.useState(false);
+  const [textMode, setTextMode] = React.useState(false);
+  const [defaultMode, setDefaultMode] = React.useState<'builder' | 'text'>('builder');
+  const [useMonacoTextEditor, setUseMonacoTextEditor] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidation, setShowValidation] = React.useState(true);
   const [customizationMode, setCustomizationMode] =
@@ -164,6 +177,27 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const isAntdMode = customizationMode === 'antd';
   const usesAdapterMode = isMuiMode || isAntdMode;
 
+  React.useEffect(() => {
+    if (!singleRootGroup && textMode) {
+      setTextMode(false);
+    }
+  }, [singleRootGroup, textMode]);
+
+  const builderComponents = React.useMemo(() => {
+    const baseComponents =
+      customizationMode === 'mui'
+        ? muiComponents
+        : customizationMode === 'antd'
+          ? antdComponents
+          : undefined;
+
+    if (!useMonacoTextEditor) {
+      return baseComponents;
+    }
+
+    return createMonacoComponents(baseComponents || {});
+  }, [customizationMode, useMonacoTextEditor]);
+
   const builderProps = {
     data,
     fields: demoFields,
@@ -173,9 +207,12 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     onChange: setData,
     draggable,
     history,
+    textMode,
+    defaultMode,
     groupTypes: 'both' as const,
     singleRootGroup,
     showValidation,
+    ...(builderComponents ? { components: builderComponents } : {}),
   };
 
   const outputText = React.useMemo(() => {
@@ -194,6 +231,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         cloneable,
         draggable,
         history,
+        textMode,
+        defaultMode,
+        useMonacoTextEditor,
         singleRootGroup,
         showValidation,
         customizationMode,
@@ -206,6 +246,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       cloneable,
       draggable,
       history,
+      textMode,
+      defaultMode,
+      useMonacoTextEditor,
       singleRootGroup,
       showValidation,
       customizationMode,
@@ -262,6 +305,50 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               onChange={event => setHistory(event.target.checked)}
             />
             <span>Undo / redo history</span>
+          </ToggleRow>
+
+          <ToggleRow $disabled={!singleRootGroup}>
+            <Toggle
+              type="checkbox"
+              checked={textMode}
+              disabled={!singleRootGroup}
+              $disabled={!singleRootGroup}
+              onChange={event => setTextMode(event.target.checked)}
+            />
+            <span>
+              Text editor mode
+              {!singleRootGroup ? ' (requires single root group)' : ''}
+            </span>
+          </ToggleRow>
+
+          <ToggleRow $disabled={!textMode}>
+            <Toggle
+              type="checkbox"
+              checked={defaultMode === 'text'}
+              disabled={!textMode}
+              $disabled={!textMode}
+              onChange={event =>
+                setDefaultMode(event.target.checked ? 'text' : 'builder')
+              }
+            />
+            <span>
+              Open in text mode
+              {!textMode ? ' (requires text editor mode)' : ''}
+            </span>
+          </ToggleRow>
+
+          <ToggleRow $disabled={!textMode}>
+            <Toggle
+              type="checkbox"
+              checked={useMonacoTextEditor}
+              disabled={!textMode}
+              $disabled={!textMode}
+              onChange={event => setUseMonacoTextEditor(event.target.checked)}
+            />
+            <span>
+              Monaco text editor
+              {!textMode ? ' (requires text editor mode)' : ''}
+            </span>
           </ToggleRow>
 
           <ToggleRow>
@@ -355,15 +442,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         <BuilderCard>
           <BuilderSurface>
             {isMuiMode ? (
-              <Builder
-                {...builderProps}
-                components={muiComponents}
-              />
+              <Builder {...builderProps} />
             ) : isAntdMode ? (
-              <Builder
-                {...builderProps}
-                components={antdComponents}
-              />
+              <Builder {...builderProps} />
             ) : (
               <ThemeProvider colors={themeColors}>
                 <Builder {...builderProps} />

@@ -10,6 +10,7 @@ export {
   MuiHistoryControls,
   MuiInput,
   MuiLockToggle,
+  MuiOutlinedButton,
   MuiPopover,
   MuiPopoverItem,
   MuiRemoveButton,
@@ -18,4 +19,5 @@ export {
   MuiSelectMulti,
   MuiSwitch,
   MuiText,
+  MuiTextModeInput,
 } from '../shared/components';

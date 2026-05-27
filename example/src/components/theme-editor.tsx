@@ -76,6 +76,14 @@ type ColorPath =
   | 'grey.700'
   | 'grey.800'
   | 'grey.900'
+  | 'info.primary'
+  | 'info.light'
+  | 'success.primary'
+  | 'success.light'
+  | 'warning.primary'
+  | 'warning.light'
+  | 'error.primary'
+  | 'error.light'
   | 'white';
 
 const controls: { label: string; name: ColorPath }[] = [
@@ -96,6 +104,14 @@ const controls: { label: string; name: ColorPath }[] = [
   { label: 'Grey 700', name: 'grey.700' },
   { label: 'Grey 800', name: 'grey.800' },
   { label: 'Grey 900', name: 'grey.900' },
+  { label: 'Info primary', name: 'info.primary' },
+  { label: 'Info light', name: 'info.light' },
+  { label: 'Success primary', name: 'success.primary' },
+  { label: 'Success light', name: 'success.light' },
+  { label: 'Warning primary', name: 'warning.primary' },
+  { label: 'Warning light', name: 'warning.light' },
+  { label: 'Error primary', name: 'error.primary' },
+  { label: 'Error light', name: 'error.light' },
   { label: 'White', name: 'white' },
 ];
 
@@ -104,7 +120,18 @@ const getColorValue = (themeColors: IColors, path: ColorPath) => {
     return themeColors.white;
   }
 
-  const [group, key] = path.split('.') as [
+  const keys = path.split('.');
+
+  if (keys[0] === 'info' || keys[0] === 'success' || keys[0] === 'warning' || keys[0] === 'error') {
+    const [group, key] = keys as [
+      keyof Pick<IColors, 'info' | 'success' | 'warning' | 'error'>,
+      keyof IColors['info'],
+    ];
+
+    return themeColors[group][key];
+  }
+
+  const [group, key] = keys as [
     'primary' | 'secondary' | 'grey',
     keyof IColors['primary'] & keyof IColors['grey'],
   ];
@@ -121,7 +148,24 @@ const setColorValue = (
     return { ...themeColors, white: nextValue };
   }
 
-  const [group, key] = path.split('.') as [
+  const keys = path.split('.');
+
+  if (keys[0] === 'info' || keys[0] === 'success' || keys[0] === 'warning' || keys[0] === 'error') {
+    const [group, key] = keys as [
+      keyof Pick<IColors, 'info' | 'success' | 'warning' | 'error'>,
+      keyof IColors['info'],
+    ];
+
+    return {
+      ...themeColors,
+      [group]: {
+        ...themeColors[group],
+        [key]: nextValue,
+      },
+    };
+  }
+
+  const [group, key] = keys as [
     'primary' | 'secondary' | 'grey',
     keyof IColors['primary'] & keyof IColors['grey'],
   ];
