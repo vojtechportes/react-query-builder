@@ -54,7 +54,7 @@ import {
   IBuilderProps,
   IBuilderValidationResult,
 } from './types';
-import { createAppendNodeIndex } from '../hooks/use-builder-ref/utils/create-append-node-index.util';
+import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
 import { resolveLockedNode } from '../hooks/use-builder-ref/utils/resolve-locked-node.util';
 
 export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
@@ -68,6 +68,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   draggable = false,
   singleRootGroup = true,
   groupTypes = 'with-modifiers',
+  newNodePlacement = 'append',
   validator,
   onStateChange,
   showValidation = false,
@@ -237,7 +238,8 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       insertNodes: (nodes, index, parentId) =>
         commitData(createInsertSubtreeAction(clone(nodes), index, parentId)),
       addNode: (node, parentId, index) => {
-        const resolvedIndex = index ?? createAppendNodeIndex(data, parentId);
+        const resolvedIndex =
+          index ?? createDefaultNodeIndex(data, parentId, newNodePlacement);
 
         if (resolvedIndex === null) {
           return false;
@@ -252,7 +254,8 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         );
       },
       addGroup: (groupType = 'with-modifiers', parentId, index) => {
-        const resolvedIndex = index ?? createAppendNodeIndex(data, parentId);
+        const resolvedIndex =
+          index ?? createDefaultNodeIndex(data, parentId, newNodePlacement);
 
         if (resolvedIndex === null) {
           return false;
@@ -267,7 +270,8 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         );
       },
       addRule: (rule = {}, parentId, index) => {
-        const resolvedIndex = index ?? createAppendNodeIndex(data, parentId);
+        const resolvedIndex =
+          index ?? createDefaultNodeIndex(data, parentId, newNodePlacement);
 
         if (resolvedIndex === null) {
           return false;
@@ -338,7 +342,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       undo,
       redo,
     }),
-    [commitData, data, historyState, redo, setHistory, undo]
+    [commitData, data, historyState, newNodePlacement, redo, setHistory, undo]
   );
 
   useEffect(() => {
@@ -420,19 +424,19 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     dispatchAction(
       createInsertSubtreeAction(
         [createGroupNode('with-modifiers')],
-        filteredData.length
+        createDefaultNodeIndex(data, undefined, newNodePlacement) ?? filteredData.length
       )
     );
-  }, [dispatchAction, filteredData.length]);
+  }, [data, dispatchAction, filteredData.length, newNodePlacement]);
 
   const handleAddRootGroupWithoutModifiers = useCallback(() => {
     dispatchAction(
       createInsertSubtreeAction(
         [createGroupNode('without-modifiers')],
-        filteredData.length
+        createDefaultNodeIndex(data, undefined, newNodePlacement) ?? filteredData.length
       )
     );
-  }, [dispatchAction, filteredData.length]);
+  }, [data, dispatchAction, filteredData.length, newNodePlacement]);
 
   const handleAddRootRule = useCallback(() => {
     const emptyRule: INormalizedRuleNode = {
@@ -440,8 +444,13 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       id: createId(),
     };
 
-    dispatchAction(createInsertSubtreeAction([emptyRule], filteredData.length));
-  }, [dispatchAction, filteredData.length]);
+    dispatchAction(
+      createInsertSubtreeAction(
+        [emptyRule],
+        createDefaultNodeIndex(data, undefined, newNodePlacement) ?? filteredData.length
+      )
+    );
+  }, [data, dispatchAction, filteredData.length, newNodePlacement]);
 
   const handleSwitchToBuilderMode = useCallback(() => {
     setMode('builder');
@@ -549,6 +558,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       draggable={draggable}
       singleRootGroup={singleRootGroup}
       groupTypes={effectiveGroupTypes}
+      newNodePlacement={newNodePlacement}
       showValidation={showValidation}
       validation={validation as IBuilderValidationResult}
       data={data}

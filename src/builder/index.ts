@@ -19,6 +19,7 @@ export type {
   BuilderFieldType,
   BuilderFieldValue,
   BuilderGroupMode,
+  BuilderNewNodePlacement,
   BuilderGroupValues,
   IBuilderHistoryAction,
   IBuilderHistoryConfig,

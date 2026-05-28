@@ -1054,6 +1054,39 @@ describe('#components/Builder', () => {
     expect(getByDataTest(container, 'Redo')).toBeDisabled();
   });
 
+  it('Prepends new root nodes when newNodePlacement is set to prepend', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+        ]}
+        singleRootGroup={false}
+        newNodePlacement="prepend"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ field: '' }),
+      expect.objectContaining({ field: 'MOCK_FIELD', value: 'alpha' }),
+      expect.objectContaining({ field: 'MOCK_NUMBER', value: 5 }),
+    ]);
+
+    fireEvent.click(getByDataTest(container, 'AddRootGroup'));
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ type: 'GROUP' }),
+      expect.objectContaining({ field: '' }),
+      expect.objectContaining({ field: 'MOCK_FIELD', value: 'alpha' }),
+      expect.objectContaining({ field: 'MOCK_NUMBER', value: 5 }),
+    ]);
+  });
+
   it('Undoes and redoes rule value edits when history is enabled', () => {
     const onChange = jest.fn();
     const { container } = render(
@@ -2232,6 +2265,69 @@ describe('#components/Builder', () => {
           { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+        ],
+      },
+    ]);
+  });
+
+  it('Uses newNodePlacement for imperative add methods when index is omitted', () => {
+    const onChange = jest.fn();
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={fields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+                { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
+              ],
+            },
+          ]}
+          newNodePlacement="prepend"
+          onChange={onChange}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const rootGroupId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'type' in node)?.id as string;
+
+    act(() => {
+      expect(
+        getBuilderRef().addRule(
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          rootGroupId
+        )
+      ).toBe(true);
+    });
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
         ],
       },
     ]);

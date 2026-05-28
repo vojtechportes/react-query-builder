@@ -309,6 +309,7 @@ const builderBehaviorSnippet = `<Builder
   lockable
   cloneable
   draggable
+  newNodePlacement="prepend"
   singleRootGroup={false}
   groupTypes="both"
   onChange={setData}
@@ -324,6 +325,10 @@ const builderBehaviorSnippet = `<Builder
 //
 // draggable:
 // Enables drag-and-drop for editable rules and groups.
+//
+// newNodePlacement="prepend":
+// Inserts newly added rules and groups at the beginning of their parent instead
+// of appending them to the end. The default is "append".
 //
 // singleRootGroup={false}:
 // Allows multiple root-level nodes instead of wrapping everything into one root group.
@@ -1047,9 +1052,9 @@ export const documentationPages: IDocumentationPage[] = [
     sectionTitle: 'Getting Started',
     summary: '',
     description:
-      'Documentation for clone controls, drag-and-drop, root-group behavior, and group mode configuration.',
+      'Documentation for clone controls, drag-and-drop, insertion placement, root-group behavior, and group mode configuration.',
     searchText:
-      'builder behavior cloneable clone controls draggable drag and drop singleRootGroup groupTypes with modifiers without modifiers both root group',
+      'builder behavior cloneable clone controls draggable drag and drop newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
     content: (
       <>
         <p>
@@ -1087,6 +1092,26 @@ export const documentationPages: IDocumentationPage[] = [
           <li>
             Set it to <InlineCode>false</InlineCode> when your application
             wants multiple top-level nodes instead of one wrapped root group.
+          </li>
+        </List>
+        <SectionTitle>newNodePlacement</SectionTitle>
+        <List>
+          <li>
+            Defaults to <InlineCode>'append'</InlineCode>, which inserts newly
+            added rules and groups at the end of their parent.
+          </li>
+          <li>
+            Set it to <InlineCode>'prepend'</InlineCode> to insert new rules
+            and groups at the beginning of their parent instead.
+          </li>
+          <li>
+            This affects built-in Add Rule and Add Group controls, root-level
+            add controls, and imperative ref methods when no explicit index is
+            provided.
+          </li>
+          <li>
+            It does not change cloning or drag-and-drop behavior, since those
+            actions already use explicit target positions.
           </li>
         </List>
         <SectionTitle>groupTypes</SectionTitle>

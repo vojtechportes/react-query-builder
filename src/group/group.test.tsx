@@ -114,6 +114,34 @@ describe('#components/Group', () => {
     expect(dispatchAction).toHaveBeenCalled();
   });
 
+  it('prepends new nodes when newNodePlacement is set to prepend', () => {
+    const dispatchAction = jest.fn();
+    const { container } = renderWithContext(
+      <Group id="test-1" isRoot value="AND" isNegated={false} />,
+      { dispatchAction, newNodePlacement: 'prepend' }
+    );
+
+    fireEvent.click(getByDataTest(container, 'AddRule'));
+    fireEvent.click(getByDataTest(container, 'AddGroup'));
+
+    expect(dispatchAction).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        type: 'insert-subtree',
+        parentId: 'test-1',
+        index: 0,
+      })
+    );
+    expect(dispatchAction).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        type: 'insert-subtree',
+        parentId: 'test-1',
+        index: 0,
+      })
+    );
+  });
+
   it('hides group controls when the group is locally read-only', () => {
     const { container } = renderWithContext(
       <Group id="test-2" isRoot={false} value="AND" isNegated={false} readOnly />
