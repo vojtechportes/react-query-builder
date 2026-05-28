@@ -77,6 +77,37 @@ const Toggle = styled.input<{ $disabled?: boolean }>`
   }
 `;
 
+const SelectField = styled.label`
+  display: grid;
+  gap: 0.35rem;
+`;
+
+const SelectFieldLabel = styled.span`
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #334155;
+`;
+
+const SelectControl = styled.select`
+  width: 100%;
+  padding: 0.68rem 2.2rem 0.68rem 0.85rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.92rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+
+  &:focus {
+    outline: none;
+    border-color: ${siteTheme.primaryLight};
+    box-shadow: 0 0 0 3px ${siteTheme.primaryGlow};
+  }
+`;
+
 const ChoiceGroup = styled.div`
   display: grid;
   gap: 0.7rem;
@@ -161,6 +192,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [lockable, setLockable] = React.useState(false);
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
+  const [newNodePlacement, setNewNodePlacement] = React.useState<
+    'append' | 'prepend'
+  >('append');
   const [history, setHistory] = React.useState(false);
   const [textMode, setTextMode] = React.useState(false);
   const [defaultMode, setDefaultMode] = React.useState<'builder' | 'text'>('builder');
@@ -206,6 +240,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     cloneable,
     onChange: setData,
     draggable,
+    newNodePlacement,
     history,
     textMode,
     defaultMode,
@@ -230,6 +265,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         lockable,
         cloneable,
         draggable,
+        newNodePlacement,
         history,
         textMode,
         defaultMode,
@@ -245,6 +281,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       lockable,
       cloneable,
       draggable,
+      newNodePlacement,
       history,
       textMode,
       defaultMode,
@@ -368,6 +405,19 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             />
             <span>Show validation errors</span>
           </ToggleRow>
+
+          <SelectField>
+            <SelectFieldLabel>New node placement</SelectFieldLabel>
+            <SelectControl
+              value={newNodePlacement}
+              onChange={event =>
+                setNewNodePlacement(event.target.value as 'append' | 'prepend')
+              }
+            >
+              <option value="append">Append to end</option>
+              <option value="prepend">Prepend to start</option>
+            </SelectControl>
+          </SelectField>
         </Panel>
 
         <Panel>

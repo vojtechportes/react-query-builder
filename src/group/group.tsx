@@ -18,6 +18,7 @@ import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { INormalizedRuleNode, NormalizedNode } from '../utils/query-tree';
+import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
 import { Group as DefaultGroupContainer } from './group-container';
 import { Option as DefaultOption } from './option';
 
@@ -56,6 +57,7 @@ export const Group: FC<IGroupProps> = ({
     lockable,
     groupTypes,
     singleRootGroup,
+    newNodePlacement = 'append',
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const Add = components.Add || Button;
@@ -78,7 +80,12 @@ export const Group: FC<IGroupProps> = ({
     }
 
     dispatchAction(
-      createInsertSubtreeAction([payload], currentGroup.children.length, id)
+      createInsertSubtreeAction(
+        [payload],
+        createDefaultNodeIndex(data, id, newNodePlacement) ??
+          currentGroup.children.length,
+        id
+      )
     );
   };
 

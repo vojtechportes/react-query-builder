@@ -22,6 +22,7 @@ const builderSignature = `export interface IBuilderProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both';
+  newNodePlacement?: 'append' | 'prepend';
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
   showValidation?: boolean;
@@ -481,7 +482,7 @@ export const apiPages: IApiPage[] = [
     description:
       'Builder component API reference for IBuilderProps, controlled data flow, validation, and editing options.',
     searchText:
-      'Builder component IBuilderProps onChange controlled component defaults strings components validator history state change undo redo canUndo canRedo',
+      'Builder component IBuilderProps onChange controlled component defaults strings components validator history state change undo redo canUndo canRedo newNodePlacement append prepend',
     content: (
       <>
         <CodeBlock code={builderSignature} language="ts" label="IBuilderProps" />
@@ -501,6 +502,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group. Text mode requires this to stay enabled.</li>
           <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both. When text mode is active, builder-compatible SQL round-tripping uses groups with modifiers.</li>
+          <li><ItemTitle><InlineCode>newNodePlacement</InlineCode>:</ItemTitle> Defaults to <InlineCode>'append'</InlineCode>. Controls whether newly added rules and groups are inserted at the end or the beginning of their parent when built-in add actions or imperative add methods omit an explicit index.</li>
           <li><ItemTitle><InlineCode>validator</InlineCode>:</ItemTitle> Optional function that receives the denormalized query plus validation context and returns a validation result synchronously or asynchronously.</li>
           <li><ItemTitle><InlineCode>onStateChange</InlineCode>:</ItemTitle> Optional callback fired with <InlineCode>data</InlineCode>, <InlineCode>isValid</InlineCode>, the full validation object, and history state flags such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode>.</li>
           <li><ItemTitle><InlineCode>showValidation</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Controls whether validation issues are rendered in the built-in UI.</li>

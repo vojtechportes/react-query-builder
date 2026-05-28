@@ -8,6 +8,7 @@ export const formatBuilderSource = ({
   lockable,
   cloneable,
   draggable,
+  newNodePlacement,
   history,
   textMode,
   defaultMode,
@@ -59,6 +60,9 @@ export const formatBuilderSource = ({
     lockable ? 'lockable' : null,
     cloneable ? 'cloneable' : null,
     draggable ? 'draggable' : null,
+    newNodePlacement === 'prepend'
+      ? 'newNodePlacement="prepend"'
+      : null,
     history ? 'history' : null,
     textMode ? 'textMode' : null,
     textMode && defaultMode === 'text' ? 'defaultMode="text"' : null,

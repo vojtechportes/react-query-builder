@@ -30,6 +30,7 @@ import {
 } from '../../utils/query-tree';
 
 export type BuilderGroupMode = 'with-modifiers' | 'without-modifiers' | 'both';
+export type BuilderNewNodePlacement = 'append' | 'prepend';
 export type { BuilderDefaultMode } from './builder-default-mode';
 
 export type BuilderFieldType =
@@ -378,6 +379,7 @@ export interface IBuilderProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
+  newNodePlacement?: BuilderNewNodePlacement;
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
   showValidation?: boolean;

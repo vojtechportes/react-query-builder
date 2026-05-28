@@ -1,6 +1,7 @@
 import React, { FC, createContext } from 'react';
 import {
   BuilderGroupMode,
+  BuilderNewNodePlacement,
   IBuilderComponentsProps,
   IBuilderFieldProps,
   IBuilderValidationResult,
@@ -22,6 +23,7 @@ export interface IBuilderContextProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
+  newNodePlacement?: BuilderNewNodePlacement;
   showValidation?: boolean;
   validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
@@ -53,6 +55,7 @@ export interface IBuilderContextProviderProps {
   draggable?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
+  newNodePlacement?: BuilderNewNodePlacement;
   showValidation?: boolean;
   validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
@@ -78,6 +81,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   draggable,
   singleRootGroup,
   groupTypes,
+  newNodePlacement,
   showValidation,
   validation,
   setData,
@@ -139,6 +143,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         draggable,
         singleRootGroup,
         groupTypes,
+        newNodePlacement,
         showValidation,
         validation,
         setData,
