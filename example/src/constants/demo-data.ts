@@ -136,7 +136,7 @@ export const initialQueryTree: DenormalizedQuery = [
         value: 'CZ',
         readOnly: {
           enabled: true,
-          targets: ['operator', 'field']
+          targets: ['operator', 'field'],
         },
       },
       {
@@ -148,6 +148,24 @@ export const initialQueryTree: DenormalizedQuery = [
             field: 'CUSTOMER_CITY',
             operator: 'EQUAL',
             value: 'Prague',
+          },
+          {
+            field: 'ORDER_TOTAL',
+            operator: 'BETWEEN',
+            value: [2500, 12000],
+          },
+        ],
+      },
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'CUSTOMER_CITY',
+            operator: 'EQUAL',
+            value: 'Prague',
+            readOnly: true,
           },
           {
             field: 'ORDER_TOTAL',
@@ -199,4 +217,3 @@ export const initialQueryTree: DenormalizedQuery = [
 ];
 
 export const defaultTheme = { colors };
-

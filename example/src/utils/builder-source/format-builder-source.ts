@@ -5,6 +5,7 @@ import { formatThemeOverrides } from './utils/format-theme-overrides.util';
 
 export const formatBuilderSource = ({
   readOnly,
+  readOnlyProtectsDelete,
   lockable,
   cloneable,
   draggable,
@@ -57,6 +58,9 @@ export const formatBuilderSource = ({
     'fields={demoFields}',
     'onChange={setData}',
     readOnly ? 'readOnly' : null,
+    readOnlyProtectsDelete
+      ? null
+      : 'readOnlyProtectsDelete={false}',
     lockable ? 'lockable' : null,
     cloneable ? 'cloneable' : null,
     draggable ? 'draggable' : null,

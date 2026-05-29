@@ -4,6 +4,7 @@ export type CustomizationMode = 'default' | 'mui' | 'antd';
 
 export interface IBuilderSourceOptions {
   readOnly: boolean;
+  readOnlyProtectsDelete: boolean;
   lockable: boolean;
   cloneable: boolean;
   draggable: boolean;

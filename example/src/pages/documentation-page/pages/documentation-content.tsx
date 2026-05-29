@@ -307,6 +307,7 @@ const builderBehaviorSnippet = `<Builder
   fields={fields}
   data={data}
   lockable
+  readOnlyProtectsDelete
   cloneable
   draggable
   newNodePlacement="prepend"
@@ -318,6 +319,10 @@ const builderBehaviorSnippet = `<Builder
 // lockable:
 // Renders built-in lock controls for rules and groups and writes the resulting
 // lock state back into the emitted query via rule/group readOnly values.
+//
+// readOnlyProtectsDelete:
+// Prevents deleting parent groups when that delete would indirectly remove
+// read-only protected descendants. Defaults to true.
 //
 // cloneable:
 // Renders built-in clone controls for rules and groups and inserts the cloned
@@ -1095,7 +1100,7 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation for clone controls, drag-and-drop, insertion placement, root-group behavior, and group mode configuration.',
     searchText:
-      'builder behavior cloneable clone controls draggable drag and drop newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
+      'builder behavior cloneable clone controls draggable drag and drop readOnlyProtectsDelete newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
     content: (
       <>
         <p>
@@ -1119,6 +1124,12 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Read-only rules and groups are excluded from dragging.</li>
           <li>When the entire builder is read-only, drag-and-drop is disabled as well.</li>
           <li>Empty groups expose a dedicated drop zone so items can be moved into them.</li>
+        </List>
+        <SectionTitle>readOnlyProtectsDelete</SectionTitle>
+        <List>
+          <li>Defaults to <InlineCode>true</InlineCode>.</li>
+          <li>When enabled, deleting a group is blocked if that would indirectly remove read-only protected descendants.</li>
+          <li>Set it to <InlineCode>false</InlineCode> when your product wants only directly protected nodes to be non-deletable, while still allowing parent-group deletes around them.</li>
         </List>
         <SectionTitle>singleRootGroup</SectionTitle>
         <List>
@@ -1278,7 +1289,8 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Locked rules cannot change field, operator, or value, and cannot be deleted.</li>
           <li>Targeted rule read-only also blocks deleting that rule, even if only one target such as <InlineCode>field</InlineCode> is protected.</li>
           <li>Locked groups cannot change their group operator, negation, add actions, or delete action.</li>
-          <li>Groups cannot be deleted when that would remove protected descendants indirectly.</li>
+          <li>By default, groups also cannot be deleted when that would remove protected descendants indirectly.</li>
+          <li>Set <InlineCode>Builder.readOnlyProtectsDelete={false}</InlineCode> to disable that subtree delete protection while keeping direct node-level read-only deletion rules.</li>
           <li>Locked rules and groups are removed from drag-and-drop interactions.</li>
           <li>Clone controls render only for editable rules and groups. Cloned nodes preserve their read-only configuration.</li>
           <li>
