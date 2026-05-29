@@ -411,6 +411,41 @@ describe('#components/Builder', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('Protects the full text editor range when the Builder is read-only', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+              { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        readOnly
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'CustomTextModeEditor')).not.toBeNull();
+    expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
+      "(MOCK_FIELD = 'alpha' AND MOCK_NUMBER = 2)"
+    );
+    expect(getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')).toHaveTextContent(
+      '1'
+    );
+  });
+
   it('Preserves locked rules after valid text edits in a custom TextModeEditor', async () => {
     const onChange = jest.fn();
     const { container } = render(
