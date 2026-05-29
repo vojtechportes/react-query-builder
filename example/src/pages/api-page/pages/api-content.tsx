@@ -659,8 +659,9 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>operator</InlineCode>:</ItemTitle> Optional operator for the rule. Some field and operator combinations imply different value shapes.</li>
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional rule value. Supported scalar/array forms are defined by <InlineCode>QueryRuleValue</InlineCode>.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional rule-level operator override list.</li>
-          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock definition. Use <InlineCode>true</InlineCode> for a full rule lock or an object config for targeted rule read-only behavior.</li>
-          <li><ItemTitle><InlineCode>targets</InlineCode>:</ItemTitle> Rule targets are <InlineCode>'field'</InlineCode>, <InlineCode>'operator'</InlineCode>, and <InlineCode>'value'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
+          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock definition. Supported shapes are <InlineCode>false</InlineCode> or omitted, <InlineCode>true</InlineCode>, or <InlineCode>{`{ enabled: boolean; targets?: ('field' | 'operator' | 'value')[] }`}</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>readOnly.targets</InlineCode>:</ItemTitle> Part of the <InlineCode>readOnly</InlineCode> object config. Rule targets are <InlineCode>'field'</InlineCode>, <InlineCode>'operator'</InlineCode>, and <InlineCode>'value'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
+          <li><ItemTitle><InlineCode>readOnly.enabled</InlineCode>:</ItemTitle> Part of the <InlineCode>readOnly</InlineCode> object config. When <InlineCode>true</InlineCode>, the listed targets are protected. When <InlineCode>readOnly.targets</InlineCode> is omitted, the whole rule is read-only.</li>
           <li><ItemTitle>Delete behavior:</ItemTitle> A rule with any effective read-only target is also non-deletable, and cloned rules preserve the same read-only configuration.</li>
           <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, rules cycle between unlocked and locked. Object-based <InlineCode>readOnly.targets</InlineCode> are preserved when the user unlocks and re-locks the same rule.</li>
           <li><ItemTitle><InlineCode>id</InlineCode> and <InlineCode>parent</InlineCode>:</ItemTitle> Optional in denormalized input. The builder can ingest data without them.</li>
@@ -671,12 +672,14 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>children</InlineCode>:</ItemTitle> Required nested nodes.</li>
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Present only for groups with modifiers and must be <InlineCode>'AND'</InlineCode> or <InlineCode>'OR'</InlineCode>.</li>
           <li><ItemTitle><InlineCode>isNegated</InlineCode>:</ItemTitle> Present only for groups with modifiers.</li>
-          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Can be a boolean or an object with <InlineCode>enabled</InlineCode>, optional <InlineCode>targets</InlineCode>, and optional <InlineCode>inheritToChildren</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Can be <InlineCode>false</InlineCode> or omitted, <InlineCode>true</InlineCode>, or <InlineCode>{`{ enabled: boolean; targets?: ('negation' | 'combinator')[]; inheritToChildren?: boolean }`}</InlineCode>.</li>
           <li><ItemTitle><InlineCode>readOnly: true</InlineCode>:</ItemTitle> Locks only the group&apos;s own controls by default. Descendant rules and groups remain editable unless inheritance is enabled.</li>
-          <li><ItemTitle><InlineCode>targets</InlineCode>:</ItemTitle> Group targets are <InlineCode>'negation'</InlineCode> and <InlineCode>'combinator'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
+          <li><ItemTitle><InlineCode>readOnly.targets</InlineCode>:</ItemTitle> Part of the <InlineCode>readOnly</InlineCode> object config. Group targets are <InlineCode>'negation'</InlineCode> and <InlineCode>'combinator'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
+          <li><ItemTitle><InlineCode>readOnly.enabled</InlineCode>:</ItemTitle> Part of the <InlineCode>readOnly</InlineCode> object config. When <InlineCode>true</InlineCode>, the listed targets are protected. When <InlineCode>readOnly.targets</InlineCode> is omitted, the whole group is read-only.</li>
+          <li><ItemTitle><InlineCode>readOnly.inheritToChildren</InlineCode>:</ItemTitle> Part of the <InlineCode>readOnly</InlineCode> object config. Applies the group lock to descendant groups and their children when the group is enabled.</li>
           <li><ItemTitle>Delete behavior:</ItemTitle> A group cannot be deleted when it has effective read-only targets or contains descendants protected by read-only state.</li>
-          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, groups cycle through unlocked, locked group only, and locked group with descendants while preserving object-based <InlineCode>targets</InlineCode>.</li>
-          <li><ItemTitle><InlineCode>inheritToChildren</InlineCode>:</ItemTitle> Applies the group lock to descendant groups and their children when the group is enabled. Descendants cannot override an inherited lock from an ancestor.</li>
+          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, groups cycle through unlocked, locked group only, and locked group with descendants while preserving object-based <InlineCode>readOnly.targets</InlineCode>.</li>
+          <li><ItemTitle>Inheritance behavior:</ItemTitle> Descendants cannot override an inherited lock from an ancestor.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
