@@ -204,8 +204,13 @@ Targeted read-only controls stay visible but become non-editable. When using
 the Monaco text editor integration, protected SQL fragments remain locked while
 users can still edit the unlocked parts of the query.
 
+By default, deleting a group is also blocked when that delete would indirectly
+remove read-only protected descendants. Set `readOnlyProtectsDelete={false}` on
+`Builder` if you want to disable that subtree delete protection.
+
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/locking-and-read-only" target="_blank" rel="noopener noreferrer">Documentation: Locking and Read-only</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/data" target="_blank" rel="noopener noreferrer">API: Data</a>
 
 ## Query Conversion

@@ -18,6 +18,7 @@ export interface IBuilderContextProps {
   fields: IBuilderFieldProps[];
   data: NormalizedQuery;
   readOnly: boolean;
+  readOnlyProtectsDelete?: boolean;
   lockable?: boolean;
   cloneable?: boolean;
   draggable?: boolean;
@@ -50,6 +51,7 @@ export interface IBuilderContextProviderProps {
   fields: IBuilderFieldProps[];
   data: NormalizedQuery;
   readOnly: boolean;
+  readOnlyProtectsDelete?: boolean;
   lockable?: boolean;
   cloneable?: boolean;
   draggable?: boolean;
@@ -76,6 +78,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   strings,
   data,
   readOnly,
+  readOnlyProtectsDelete,
   lockable,
   cloneable,
   draggable,
@@ -138,6 +141,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         strings: resolvedStrings,
         data,
         readOnly,
+        readOnlyProtectsDelete,
         lockable,
         cloneable,
         draggable,

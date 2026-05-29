@@ -104,6 +104,7 @@ export const Rule: FC<IRuleProps> = ({
     components,
     strings,
     readOnly,
+    readOnlyProtectsDelete = true,
     cloneable,
     lockable,
     validation,
@@ -124,7 +125,9 @@ export const Rule: FC<IRuleProps> = ({
       : [];
   const hasReadOnlyTargets = readOnlyTargets.length > 0;
   const canDeleteRule =
-    !isReadOnly && !hasReadOnlyTargets && !isNodeDeletionProtected(data, id);
+    !isReadOnly &&
+    !hasReadOnlyTargets &&
+    (!readOnlyProtectsDelete || !isNodeDeletionProtected(data, id));
 
   const handleDelete = useCallback(() => {
     if (!canDeleteRule) {

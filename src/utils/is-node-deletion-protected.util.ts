@@ -6,7 +6,7 @@ import {
   resolveEffectiveRuleReadOnly,
 } from './resolve-effective-read-only.util';
 import { isNormalizedGroupNode } from './is-normalized-group-node.util';
-import { NormalizedNode, NormalizedQuery } from './query-tree';
+import { NormalizedGroupNode, NormalizedNode, NormalizedQuery } from './query-tree';
 
 const isNodeOwnReadOnlyProtected = (
   node: NormalizedNode,
@@ -75,6 +75,63 @@ const populateDeletionProtection = (
   return isProtected;
 };
 
+const resolveInheritedReadOnlyForNode = (
+  data: NormalizedQuery,
+  node: NormalizedNode
+): IInheritedReadOnlyState => {
+  const ancestorGroups: NormalizedGroupNode[] = [];
+  let currentParentId = node.parent;
+
+  while (currentParentId) {
+    const parentNode = findNodeById(data, currentParentId);
+
+    if (!parentNode || !isNormalizedGroupNode(parentNode)) {
+      break;
+    }
+
+    ancestorGroups.unshift(parentNode);
+    currentParentId = parentNode.parent;
+  }
+
+  return ancestorGroups.reduce<IInheritedReadOnlyState>(
+    (inheritedReadOnly, ancestorGroup) =>
+      resolveEffectiveGroupReadOnly(ancestorGroup.readOnly, inheritedReadOnly)
+        .inherited,
+    createInheritedReadOnlyState()
+  );
+};
+
+const hasProtectedNodeInSubtree = (
+  data: NormalizedQuery,
+  node: NormalizedNode,
+  inheritedReadOnly: IInheritedReadOnlyState
+): boolean => {
+  const { protected: isOwnProtected, nextInheritedReadOnly } =
+    isNodeOwnReadOnlyProtected(node, inheritedReadOnly);
+
+  if (isOwnProtected) {
+    return true;
+  }
+
+  if (!isNormalizedGroupNode(node)) {
+    return false;
+  }
+
+  return node.children.some((childId) => {
+    const childNode = findNodeById(data, childId);
+
+    if (!childNode) {
+      return false;
+    }
+
+    return hasProtectedNodeInSubtree(
+      data,
+      childNode,
+      nextInheritedReadOnly
+    );
+  });
+};
+
 export const createDeletionProtectionSet = (
   data: NormalizedQuery
 ): Set<string> => {
@@ -98,4 +155,16 @@ export const createDeletionProtectionSet = (
 export const isNodeDeletionProtected = (
   data: NormalizedQuery,
   nodeId: string
-): boolean => createDeletionProtectionSet(data).has(nodeId);
+): boolean => {
+  const node = findNodeById(data, nodeId);
+
+  if (!node) {
+    return false;
+  }
+
+  return hasProtectedNodeInSubtree(
+    data,
+    node,
+    resolveInheritedReadOnlyForNode(data, node)
+  );
+};

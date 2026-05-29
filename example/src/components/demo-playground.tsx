@@ -189,6 +189,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [data, setData] = React.useState<DenormalizedQuery>(initialData);
   const [outputFormat, setOutputFormat] = React.useState<OutputFormat>('Native');
   const [readOnly, setReadOnly] = React.useState(false);
+  const [readOnlyProtectsDelete, setReadOnlyProtectsDelete] =
+    React.useState(true);
   const [lockable, setLockable] = React.useState(false);
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
@@ -236,6 +238,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     data,
     fields: demoFields,
     readOnly,
+    readOnlyProtectsDelete,
     lockable,
     cloneable,
     onChange: setData,
@@ -262,6 +265,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     () =>
       formatBuilderSource({
         readOnly,
+        readOnlyProtectsDelete,
         lockable,
         cloneable,
         draggable,
@@ -278,6 +282,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       }),
     [
       readOnly,
+      readOnlyProtectsDelete,
       lockable,
       cloneable,
       draggable,
@@ -315,6 +320,17 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               onChange={event => setLockable(event.target.checked)}
             />
             <span>Lock controls</span>
+          </ToggleRow>
+
+          <ToggleRow>
+            <Toggle
+              type="checkbox"
+              checked={readOnlyProtectsDelete}
+              onChange={event =>
+                setReadOnlyProtectsDelete(event.target.checked)
+              }
+            />
+            <span>Read-only protects group delete</span>
           </ToggleRow>
 
           <ToggleRow>

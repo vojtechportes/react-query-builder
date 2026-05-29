@@ -377,6 +377,7 @@ export interface IBuilderProps {
   textMode?: boolean | IBuilderTextModeConfig;
   defaultMode?: BuilderDefaultMode;
   readOnly?: boolean;
+  readOnlyProtectsDelete?: boolean;
   lockable?: boolean;
   cloneable?: boolean;
   draggable?: boolean;

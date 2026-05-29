@@ -50,6 +50,7 @@ import { parseBuilderSqlText } from './text-mode/utils/parse-builder-sql-text';
 import { reapplyBuilderTextModeLocks } from './text-mode/utils/reapply-builder-text-mode-locks';
 import { resolveBuilderTextModeConfig } from './text-mode/utils/resolve-builder-text-mode-config';
 import { findReadOnlyNegationDiagnostic } from './text-mode/utils/find-read-only-negation-diagnostic.util';
+import { findReadOnlyTargetDiagnostic } from './text-mode/utils/find-read-only-target-diagnostic.util';
 import {
   IBuilderRef,
   IBuilderProps,
@@ -65,6 +66,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   components = defaultComponents,
   strings = defaultStrings,
   readOnly = false,
+  readOnlyProtectsDelete = true,
   lockable = false,
   cloneable = false,
   draggable = false,
@@ -113,7 +115,13 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   });
   const [textProtectedRanges, setTextProtectedRanges] = useState<
     ReturnType<typeof formatBuilderSqlState>['protectedRanges']
-  >(() => (initialTextModeEnabled ? formatBuilderSqlState(initialData, fields).protectedRanges : []));
+  >(() =>
+    initialTextModeEnabled
+      ? formatBuilderSqlState(initialData, fields, {
+          protectGroupDeletionBoundaries: readOnlyProtectsDelete,
+        }).protectedRanges
+      : []
+  );
   const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [textDiagnostics, setTextDiagnostics] = useState<
     ReturnType<typeof parseBuilderSqlText>['diagnostics']
@@ -224,7 +232,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         );
       },
       deleteNode: (nodeId) =>
-        isNodeDeletionProtected(data, nodeId)
+        readOnlyProtectsDelete && isNodeDeletionProtected(data, nodeId)
           ? false
           : commitData(createRemoveSubtreeAction(nodeId)),
       replaceNode: (nodeId, node) =>
@@ -416,7 +424,10 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
     const nextTextState = formatBuilderSqlState(
       normalizeBuilderTextModeQuery(emitQuery(data)),
-      fields
+      fields,
+      {
+        protectGroupDeletionBoundaries: readOnlyProtectsDelete,
+      }
     );
 
     setTextValue(nextTextState.value);
@@ -464,7 +475,10 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   const handleSwitchToTextMode = useCallback(() => {
     const nextTextState = formatBuilderSqlState(
       normalizeBuilderTextModeQuery(emitQuery(data)),
-      fields
+      fields,
+      {
+        protectGroupDeletionBoundaries: readOnlyProtectsDelete,
+      }
     );
 
     setTextValue(nextTextState.value);
@@ -479,18 +493,33 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       setTextValue(nextText);
 
       const parseResult = parseBuilderSqlText(nextText, fields, strings);
-      const readOnlyNegationDiagnostic =
+      const currentQuery = emitQuery(data);
+      const readOnlyTargetDiagnostic =
         parseResult.data && parseResult.diagnostics.length === 0
-          ? findReadOnlyNegationDiagnostic(emitQuery(data), parseResult.data)
+          ? findReadOnlyTargetDiagnostic(currentQuery, parseResult.data, {
+              allowProtectedClauseRemoval: !readOnlyProtectsDelete,
+            })
+          : null;
+      const readOnlyNegationDiagnostic =
+        parseResult.data &&
+        parseResult.diagnostics.length === 0 &&
+        !readOnlyTargetDiagnostic
+          ? findReadOnlyNegationDiagnostic(currentQuery, parseResult.data)
           : null;
 
       if (
         !parseResult.data ||
         parseResult.diagnostics.length > 0 ||
+        readOnlyTargetDiagnostic ||
         readOnlyNegationDiagnostic
       ) {
-        const diagnostics = readOnlyNegationDiagnostic
-          ? [...parseResult.diagnostics, readOnlyNegationDiagnostic]
+        const diagnostics =
+          readOnlyTargetDiagnostic || readOnlyNegationDiagnostic
+            ? [
+                ...parseResult.diagnostics,
+                ...(readOnlyTargetDiagnostic ? [readOnlyTargetDiagnostic] : []),
+                ...(readOnlyNegationDiagnostic ? [readOnlyNegationDiagnostic] : []),
+              ]
           : parseResult.diagnostics;
 
         setTextDiagnostics(diagnostics);
@@ -501,6 +530,20 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
               }: ${diagnostics[0].message}`
             : null
         );
+
+        if (readOnlyTargetDiagnostic) {
+          setTextValue(textValue);
+          setTextProtectedRanges((currentProtectedRanges) => [
+            ...currentProtectedRanges,
+          ]);
+        }
+
+        if (readOnlyNegationDiagnostic) {
+          setTextProtectedRanges((currentProtectedRanges) => [
+            ...currentProtectedRanges,
+          ]);
+        }
+
         return;
       }
 
@@ -511,9 +554,9 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         return;
       }
 
-      const currentQuery = normalizeBuilderTextModeQuery(emitQuery(data));
-      const nextQuery = hasBuilderTextModeLocks(currentQuery)
-        ? reapplyBuilderTextModeLocks(currentQuery, parseResult.data)
+      const normalizedCurrentQuery = normalizeBuilderTextModeQuery(currentQuery);
+      const nextQuery = hasBuilderTextModeLocks(normalizedCurrentQuery)
+        ? reapplyBuilderTextModeLocks(normalizedCurrentQuery, parseResult.data)
         : parseResult.data;
       const nextData = ingestQuery(
         normalizeBuilderTextModeQuery(nextQuery),
@@ -522,7 +565,15 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       );
       commitData(createReplaceQueryAction(nextData));
     },
-    [commitData, data, rootGroupType, singleRootGroup, strings.textMode]
+    [
+      commitData,
+      data,
+      readOnlyProtectsDelete,
+      rootGroupType,
+      singleRootGroup,
+      strings.textMode,
+      textValue,
+    ]
   );
 
   const builderContent = (
@@ -547,6 +598,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
           errorMessage={textErrorMessage}
           TextModeInputComponent={TextModeInputComponent}
           readOnly={readOnly}
+          allowProtectedRangeDeletion={!readOnlyProtectsDelete}
           onChange={handleTextChange}
         />
       ) : (
@@ -557,6 +609,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
           protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
           errorMessage={textErrorMessage}
           readOnly={readOnly}
+          allowProtectedRangeDeletion={!readOnlyProtectsDelete}
           onChange={handleTextChange}
         />
       )
@@ -570,6 +623,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       components={components}
       strings={strings}
       readOnly={readOnly}
+      readOnlyProtectsDelete={readOnlyProtectsDelete}
       lockable={lockable}
       cloneable={cloneable}
       draggable={draggable}

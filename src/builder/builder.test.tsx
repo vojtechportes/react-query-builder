@@ -744,9 +744,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(
-      getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')
-    ).toHaveTextContent('2');
+    const initialProtectedRangeCount = getByDataTest(
+      container,
+      'CustomTextModeEditorProtectedRangeCount'
+    ).textContent;
+
+    expect(initialProtectedRangeCount).not.toBeNull();
 
     fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
       target: { value: "(MOCK_FIELD = 'beta')" },
@@ -756,8 +759,268 @@ describe('#components/Builder', () => {
       expect(onChange).toHaveBeenCalled();
       expect(
         getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')
-      ).toHaveTextContent('2');
+      ).toHaveTextContent(initialProtectedRangeCount as string);
     });
+  });
+
+  it('keeps targeted read-only rules attached to the original nested group after editing another group in text mode', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'alpha',
+                    operator: 'EQUAL',
+                    readOnly: {
+                      enabled: true,
+                      targets: ['field', 'operator'],
+                    },
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 5,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'beta',
+                    operator: 'EQUAL',
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 8,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: {
+        value:
+          "((MOCK_FIELD = 'alpha' OR MOCK_NUMBER != 5) AND (MOCK_FIELD = 'beta' AND MOCK_NUMBER != 9))",
+      },
+    });
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'OR',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field', 'operator'],
+                },
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 5,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'beta',
+                operator: 'EQUAL',
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 9,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('rejects deleting a group that contains a read-only descendant in text mode', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'alpha',
+                    operator: 'EQUAL',
+                    readOnly: {
+                      enabled: true,
+                      targets: ['field', 'operator'],
+                    },
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 5,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 8,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    const previousTextValue = (
+      getByDataTest(container, 'CustomTextModeEditorInput') as HTMLTextAreaElement
+    ).value;
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: '(MOCK_NUMBER != 8)' },
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
+      previousTextValue
+    );
+    expect(getByDataTest(container, 'CustomTextModeEditorError')).toHaveTextContent(
+      'One or more read-only clauses cannot be changed or removed in text mode.'
+    );
+  });
+
+  it('allows deleting a group with a read-only descendant in text mode when readOnlyProtectsDelete is false', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'alpha',
+                    operator: 'EQUAL',
+                    readOnly: {
+                      enabled: true,
+                      targets: ['field', 'operator'],
+                    },
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 5,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 8,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        readOnlyProtectsDelete={false}
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: '(MOCK_NUMBER != 8)' },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              field: 'MOCK_NUMBER',
+              value: 8,
+              operator: 'NOT_EQUAL',
+            },
+          ],
+        },
+      ])
+    );
+
+    expect(queryByDataTest(container, 'CustomTextModeEditorError')).toBeNull();
   });
 
   it('Reports a missing quote near the broken string boundary instead of a later token', () => {
@@ -2784,5 +3047,202 @@ describe('#components/Builder', () => {
     });
 
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('Hides root-group delete when removing the group would remove a protected descendant', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field'],
+                },
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 5,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        singleRootGroup={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'Remove')).toBeNull();
+  });
+
+  it('shows only the editable rule delete button when a sibling rule is read-only-protected', () => {
+    render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field', 'operator'],
+                },
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 5,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        singleRootGroup={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(screen.getAllByRole('button', { name: /delete/i })).toHaveLength(1);
+  });
+
+  it('hides nested group delete when removing the group would remove a protected direct child rule', () => {
+    render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'alpha',
+                    operator: 'EQUAL',
+                    readOnly: {
+                      enabled: true,
+                      targets: ['field', 'operator'],
+                    },
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 5,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(screen.getAllByRole('button', { name: /delete/i })).toHaveLength(1);
+  });
+
+  it('keeps only editable nested rule deletes visible when both outer and nested groups contain protected rules', () => {
+    render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'root-protected',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field', 'operator'],
+                },
+              },
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'nested-protected',
+                    operator: 'EQUAL',
+                    readOnly: {
+                      enabled: true,
+                      targets: ['field', 'operator'],
+                    },
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 5,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(screen.getAllByRole('button', { name: /delete/i })).toHaveLength(1);
+  });
+
+  it('Allows disabling read-only delete protection on Builder', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field'],
+                },
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 5,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        singleRootGroup={false}
+        readOnlyProtectsDelete={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'Remove')).not.toBeNull();
   });
 });

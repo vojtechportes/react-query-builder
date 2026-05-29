@@ -61,6 +61,7 @@ export const Group: FC<IGroupProps> = ({
     dispatchAction,
     strings,
     readOnly,
+    readOnlyProtectsDelete = true,
     cloneable,
     lockable,
     groupTypes,
@@ -81,7 +82,7 @@ export const Group: FC<IGroupProps> = ({
     !(singleRootGroup && isRoot) &&
     !isReadOnly &&
     readOnlyTargets.length === 0 &&
-    !isNodeDeletionProtected(data, id);
+    (!readOnlyProtectsDelete || !isNodeDeletionProtected(data, id));
   const canCloneGroup = !(singleRootGroup && isRoot) && !isReadOnly;
   const isNegationReadOnly =
     isReadOnly || readOnlyTargets.includes('negation');
