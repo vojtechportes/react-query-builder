@@ -27,9 +27,11 @@ import { isStringArray } from '../utils/is-string-array.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { QueryRuleValue } from '../utils/query-tree';
+import { QueryRuleValue, RuleReadOnlyTarget } from '../utils/query-tree';
 import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
+import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
+import { updateRuleLockState } from '../utils/read-only/update-rule-lock-state.util';
 
 const BooleanContainer = styled.div`
   display: flex;
@@ -76,6 +78,7 @@ export interface IRuleProps {
   operator?: BuilderFieldOperator;
   id: string;
   readOnly?: boolean;
+  readOnlyTargets?: RuleReadOnlyTarget[];
   lockState?: BuilderLockState;
   lockDisabled?: boolean;
   dragHandle?: React.ReactNode;
@@ -88,6 +91,7 @@ export const Rule: FC<IRuleProps> = ({
   operator,
   id,
   readOnly: localReadOnly = false,
+  readOnlyTargets = [],
   lockState = localReadOnly ? 'self' : 'unlocked',
   lockDisabled = false,
   dragHandle,
@@ -106,6 +110,10 @@ export const Rule: FC<IRuleProps> = ({
     showValidation,
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
+  const isFieldReadOnly = isReadOnly || readOnlyTargets.includes('field');
+  const isOperatorReadOnly =
+    isReadOnly || readOnlyTargets.includes('operator');
+  const isValueReadOnly = isReadOnly || readOnlyTargets.includes('value');
   const RuleContainer = components.Rule || DefaultRuleContainer;
   const CloneButton = components.CloneButton || DefaultCloneButton;
   const LockToggle = components.LockToggle || DefaultLockToggle;
@@ -114,10 +122,17 @@ export const Rule: FC<IRuleProps> = ({
     showValidation && validation?.issuesByRuleId[id]
       ? validation.issuesByRuleId[id]
       : [];
+  const hasReadOnlyTargets = readOnlyTargets.length > 0;
+  const canDeleteRule =
+    !isReadOnly && !hasReadOnlyTargets && !isNodeDeletionProtected(data, id);
 
   const handleDelete = useCallback(() => {
+    if (!canDeleteRule) {
+      return;
+    }
+
     dispatchAction?.(createRemoveSubtreeAction(id));
-  }, [dispatchAction, id]);
+  }, [canDeleteRule, dispatchAction, id]);
 
   const handleChangeLockState = useCallback(
     (nextState: BuilderLockState) => {
@@ -128,11 +143,15 @@ export const Rule: FC<IRuleProps> = ({
       }
 
       const nextRule = { ...currentRule };
+      const nextReadOnly = updateRuleLockState(
+        currentRule.readOnly,
+        nextState === 'self' ? 'self' : 'unlocked'
+      );
 
-      if (nextState === 'self') {
-        nextRule.readOnly = true;
-      } else {
+      if (typeof nextReadOnly === 'undefined') {
         delete nextRule.readOnly;
+      } else {
+        nextRule.readOnly = nextReadOnly;
       }
 
       dispatchAction(createReplaceNodeAction(id, nextRule));
@@ -185,7 +204,7 @@ export const Rule: FC<IRuleProps> = ({
   const controls =
     !isReadOnly || lockControl ? (
       <>
-        {!isReadOnly && <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>}
+        {canDeleteRule ? <Remove onClick={handleDelete}>{strings.rule.delete}</Remove> : null}
         {cloneControl}
         {lockControl}
       </>
@@ -201,7 +220,11 @@ export const Rule: FC<IRuleProps> = ({
         <div>
           <FieldsContent>
             <LayoutItem>
-              <FieldSelect selectedValue="" id={id} disabled={isReadOnly} />
+              <FieldSelect
+                selectedValue=""
+                id={id}
+                disabled={isFieldReadOnly}
+              />
             </LayoutItem>
           </FieldsContent>
           {validationIssues.length > 0 && (
@@ -238,7 +261,11 @@ export const Rule: FC<IRuleProps> = ({
         <div>
           <FieldsContent>
             <LayoutItem>
-              <FieldSelect selectedValue={field} id={id} disabled={isReadOnly} />
+              <FieldSelect
+                selectedValue={field}
+                id={id}
+                disabled={isFieldReadOnly}
+              />
             </LayoutItem>
 
             {type === 'BOOLEAN' && (
@@ -249,7 +276,7 @@ export const Rule: FC<IRuleProps> = ({
                       id={id}
                       values={operatorsOptionList}
                       selectedValue={operator}
-                      disabled={isReadOnly}
+                      disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
                 )}
@@ -259,7 +286,7 @@ export const Rule: FC<IRuleProps> = ({
                       <Boolean
                         id={id}
                         selectedValue={selectedValue}
-                        disabled={isReadOnly}
+                        disabled={isValueReadOnly}
                       />
                     </BooleanContainer>
                   </ValueContent>
@@ -276,7 +303,7 @@ export const Rule: FC<IRuleProps> = ({
                       id={id}
                       values={operatorsOptionList}
                       selectedValue={operator}
-                      disabled={isReadOnly}
+                      disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
                   {operator &&
@@ -287,7 +314,7 @@ export const Rule: FC<IRuleProps> = ({
                           id={id}
                           selectedValue={selectedValue}
                           values={fieldValue}
-                          disabled={isReadOnly}
+                          disabled={isValueReadOnly}
                         />
                       </ValueContent>
                     )}
@@ -303,7 +330,7 @@ export const Rule: FC<IRuleProps> = ({
                       id={id}
                       values={operatorsOptionList}
                       selectedValue={operator}
-                      disabled={isReadOnly}
+                      disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
                   {operator &&
@@ -314,7 +341,7 @@ export const Rule: FC<IRuleProps> = ({
                           id={id}
                           values={fieldValue}
                           selectedValue={selectedValue}
-                          disabled={isReadOnly}
+                          disabled={isValueReadOnly}
                         />
                       </ValueContent>
                     )}
@@ -331,7 +358,7 @@ export const Rule: FC<IRuleProps> = ({
                       id={id}
                       values={operatorsOptionList}
                       selectedValue={operator}
-                      disabled={isReadOnly}
+                      disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
                   {shouldRenderValueInput && (
@@ -340,7 +367,7 @@ export const Rule: FC<IRuleProps> = ({
                         id={id}
                         type="text"
                         value={selectedValue}
-                        disabled={isReadOnly}
+                        disabled={isValueReadOnly}
                       />
                     </ValueContent>
                   )}
@@ -357,7 +384,7 @@ export const Rule: FC<IRuleProps> = ({
                       id={id}
                       values={operatorsOptionList}
                       selectedValue={operator}
-                      disabled={isReadOnly}
+                      disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
                   {shouldRenderValueInput && (
@@ -366,7 +393,7 @@ export const Rule: FC<IRuleProps> = ({
                         id={id}
                         type="date"
                         value={selectedValue}
-                        disabled={isReadOnly}
+                        disabled={isValueReadOnly}
                       />
                     </ValueContent>
                   )}
@@ -383,7 +410,7 @@ export const Rule: FC<IRuleProps> = ({
                       id={id}
                       values={operatorsOptionList}
                       selectedValue={operator}
-                      disabled={isReadOnly}
+                      disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
                   {shouldRenderValueInput && (
@@ -392,7 +419,7 @@ export const Rule: FC<IRuleProps> = ({
                         id={id}
                         type="number"
                         value={selectedValue}
-                        disabled={isReadOnly}
+                        disabled={isValueReadOnly}
                       />
                     </ValueContent>
                   )}

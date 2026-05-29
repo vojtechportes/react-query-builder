@@ -1,30 +1,28 @@
-import { GroupReadOnly } from './query-tree';
-import { isGroupReadOnlyConfig } from './is-group-read-only-config.util';
-
-export interface IResolvedGroupReadOnly {
-  enabled: boolean;
-  inheritToChildren: boolean;
-}
+import { GroupReadOnly, GroupReadOnlyTarget } from './query-tree';
+import {
+  IResolvedGroupReadOnly,
+  normalizeGroupReadOnlyConfig,
+} from './normalize-group-read-only-config.util';
 
 export const resolveGroupReadOnly = (
   value?: GroupReadOnly
-): IResolvedGroupReadOnly => {
-  if (typeof value === 'boolean') {
-    return {
-      enabled: value,
-      inheritToChildren: false,
-    };
+): IResolvedGroupReadOnly => normalizeGroupReadOnlyConfig(value);
+
+export const getGroupReadOnlyTargets = (
+  value?: GroupReadOnly
+): GroupReadOnlyTarget[] => {
+  const resolvedReadOnly = resolveGroupReadOnly(value);
+
+  if (!resolvedReadOnly.enabled) {
+    return [];
   }
 
-  if (isGroupReadOnlyConfig(value)) {
-    return {
-      enabled: value.enabled,
-      inheritToChildren: value.enabled && Boolean(value.inheritToChildren),
-    };
-  }
+  return resolvedReadOnly.targets?.length
+    ? [...resolvedReadOnly.targets]
+    : ['negation', 'combinator'];
+};
 
-  return {
-    enabled: false,
-    inheritToChildren: false,
-  };
+export const isGroupFullyReadOnly = (value?: GroupReadOnly): boolean => {
+  const resolvedReadOnly = resolveGroupReadOnly(value);
+  return resolvedReadOnly.enabled && !resolvedReadOnly.targets?.length;
 };

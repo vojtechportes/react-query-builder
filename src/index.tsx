@@ -125,8 +125,10 @@ export type {
   DenormalizedNode,
   DenormalizedQuery,
   GroupReadOnly,
-  IDenormalizedGroupNodeBase,
+  GroupReadOnlyTarget,
   IGroupReadOnlyConfig,
+  IRuleReadOnlyConfig,
+  IDenormalizedGroupNodeBase,
   IDenormalizedGroupNodeWithModifiers,
   IDenormalizedGroupNodeWithoutModifiers,
   IDenormalizedRuleNode,
@@ -141,4 +143,6 @@ export type {
   QueryGroupValue,
   QueryOperator,
   QueryRuleValue,
+  RuleReadOnly,
+  RuleReadOnlyTarget,
 } from './utils/query-tree';

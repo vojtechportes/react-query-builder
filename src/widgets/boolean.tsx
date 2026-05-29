@@ -26,10 +26,15 @@ export const Boolean: FC<IBooleanProps> = ({
     components,
     readOnly,
   } = useContext(BuilderContext);
+  const isDisabled = !!(readOnly || disabled);
 
   const Switch = components.form?.Switch || DefaultSwitch;
 
   const handleChange = (value: boolean) => {
+    if (isDisabled) {
+      return;
+    }
+
     const currentRule = findNodeById(data, id);
 
     if (!currentRule || 'children' in currentRule) {
@@ -70,7 +75,7 @@ export const Boolean: FC<IBooleanProps> = ({
     <Switch
       onChange={handleChange}
       switched={selectedValue}
-      disabled={readOnly || disabled}
+      disabled={isDisabled}
     />
   );
 };

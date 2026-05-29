@@ -6,15 +6,17 @@ import {
   IDenormalizedRuleNode,
   QueryGroupValue,
 } from '../../../utils/query-tree';
-import { resolveGroupReadOnly } from '../../../utils/resolve-group-read-only.util';
+import {
+  getGroupReadOnlyTargets,
+  isGroupFullyReadOnly,
+  resolveGroupReadOnly,
+} from '../../../utils/resolve-group-read-only.util';
 import { isGroupNode } from '../../../query-formats/sql/shared';
-import { formatSql } from '../../../query-formats/sql/format-sql';
 import { IBuilderTextModeSqlState } from '../types/builder-text-mode-sql-state';
-
-interface ILocalProtectedRange {
-  start: number;
-  end: number;
-}
+import {
+  createRuleReadOnlyProtectedRanges,
+  ILocalProtectedRange,
+} from './create-rule-read-only-protected-ranges.util';
 
 interface IFragmentResult {
   text: string;
@@ -33,21 +35,7 @@ const shiftRanges = (
 const formatRuleFragment = (
   rule: IDenormalizedRuleNode,
   fields: IBuilderFieldProps[]
-): IFragmentResult => {
-  const text = formatSql([rule], { fields });
-
-  return {
-    text,
-    protectedRanges: rule.readOnly
-      ? [
-          {
-            start: 0,
-            end: text.length,
-          },
-        ]
-      : [],
-  };
-};
+): IFragmentResult => createRuleReadOnlyProtectedRanges(rule, fields);
 
 const formatGroupFragment = (
   group: DenormalizedGroupNode,
@@ -60,6 +48,7 @@ const formatGroupFragment = (
     .map(child => formatNodeFragment(child, fields, false))
     .filter(fragment => fragment.text.trim().length > 0);
   const groupReadOnly = resolveGroupReadOnly(group.readOnly);
+  const groupReadOnlyTargets = getGroupReadOnlyTargets(group.readOnly);
 
   if (childFragments.length === 0) {
     return {
@@ -104,28 +93,21 @@ const formatGroupFragment = (
   let text = wrappedInner;
   let protectedRanges = shiftRanges(innerRanges, wrappingOffset);
 
-  if (groupReadOnly.enabled && !groupReadOnly.inheritToChildren) {
-    protectedRanges.push(
-      ...shiftRanges(combinatorRanges, wrappingOffset)
-    );
-
-    if (wrappedInner.length >= 2) {
-      protectedRanges.push({
-        start: 0,
-        end: 1,
-      });
-      protectedRanges.push({
-        start: wrappedInner.length - 1,
-        end: wrappedInner.length,
-      });
-    }
+  if (
+    groupReadOnlyTargets.includes('combinator') &&
+    !groupReadOnly.inheritToChildren
+  ) {
+    protectedRanges.push(...shiftRanges(combinatorRanges, wrappingOffset));
   }
 
   if ('isNegated' in group && group.isNegated) {
     text = `NOT ${wrappedInner}`;
     protectedRanges = shiftRanges(protectedRanges, 4);
 
-    if (groupReadOnly.enabled && !groupReadOnly.inheritToChildren) {
+    if (
+      groupReadOnlyTargets.includes('negation') &&
+      !groupReadOnly.inheritToChildren
+    ) {
       protectedRanges.push({
         start: 0,
         end: 4,
@@ -133,7 +115,7 @@ const formatGroupFragment = (
     }
   }
 
-  if (groupReadOnly.enabled && groupReadOnly.inheritToChildren) {
+  if (groupReadOnly.inheritToChildren && isGroupFullyReadOnly(group.readOnly)) {
     protectedRanges = [
       {
         start: 0,

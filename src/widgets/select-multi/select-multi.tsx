@@ -34,8 +34,13 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     useContext(BuilderContext);
   const SelectMultiComponent =
     components.form?.SelectMulti || DefaultSelectMulti;
+  const isDisabled = Boolean(readOnly || disabled);
 
   const handleChange = (value: string) => {
+    if (isDisabled) {
+      return;
+    }
+
     const currentRule = findNodeById(data, id);
 
     if (
@@ -85,6 +90,10 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
   };
 
   const handleDelete = (value: string) => {
+    if (isDisabled) {
+      return;
+    }
+
     const currentRule = findNodeById(data, id);
 
     if (
@@ -142,7 +151,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       values={values}
-      disabled={Boolean(readOnly || disabled)}
+      disabled={isDisabled}
     />
   );
 };

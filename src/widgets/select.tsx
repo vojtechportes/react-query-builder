@@ -30,8 +30,13 @@ export const Select: FC<ISelectProps> = ({
     readOnly,
   } = useContext(BuilderContext);
   const SelectComponent = components.form?.Select || DefaultSelect;
+  const isDisabled = Boolean(readOnly || disabled);
 
   const handleChange = (value: string) => {
+    if (isDisabled) {
+      return;
+    }
+
     const currentRule = findNodeById(data, id);
 
     if (!currentRule || 'children' in currentRule) {
@@ -80,7 +85,7 @@ export const Select: FC<ISelectProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       values={values}
-      disabled={readOnly || disabled}
+      disabled={isDisabled}
     />
   );
 };

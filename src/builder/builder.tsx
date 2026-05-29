@@ -49,6 +49,7 @@ import { normalizeBuilderTextModeQuery } from './text-mode/utils/normalize-build
 import { parseBuilderSqlText } from './text-mode/utils/parse-builder-sql-text';
 import { reapplyBuilderTextModeLocks } from './text-mode/utils/reapply-builder-text-mode-locks';
 import { resolveBuilderTextModeConfig } from './text-mode/utils/resolve-builder-text-mode-config';
+import { findReadOnlyNegationDiagnostic } from './text-mode/utils/find-read-only-negation-diagnostic.util';
 import {
   IBuilderRef,
   IBuilderProps,
@@ -56,6 +57,7 @@ import {
 } from './types';
 import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
 import { resolveLockedNode } from '../hooks/use-builder-ref/utils/resolve-locked-node.util';
+import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 
 export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   data: originalData = [],
@@ -221,7 +223,10 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
           )
         );
       },
-      deleteNode: (nodeId) => commitData(createRemoveSubtreeAction(nodeId)),
+      deleteNode: (nodeId) =>
+        isNodeDeletionProtected(data, nodeId)
+          ? false
+          : commitData(createRemoveSubtreeAction(nodeId)),
       replaceNode: (nodeId, node) =>
         commitData(createReplaceNodeAction(nodeId, clone(node))),
       updateNode: (nodeId, updater) => {
@@ -474,14 +479,26 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       setTextValue(nextText);
 
       const parseResult = parseBuilderSqlText(nextText, fields, strings);
+      const readOnlyNegationDiagnostic =
+        parseResult.data && parseResult.diagnostics.length === 0
+          ? findReadOnlyNegationDiagnostic(emitQuery(data), parseResult.data)
+          : null;
 
-      if (!parseResult.data || parseResult.diagnostics.length > 0) {
-        setTextDiagnostics(parseResult.diagnostics);
+      if (
+        !parseResult.data ||
+        parseResult.diagnostics.length > 0 ||
+        readOnlyNegationDiagnostic
+      ) {
+        const diagnostics = readOnlyNegationDiagnostic
+          ? [...parseResult.diagnostics, readOnlyNegationDiagnostic]
+          : parseResult.diagnostics;
+
+        setTextDiagnostics(diagnostics);
         setTextErrorMessage(
-          parseResult.diagnostics[0]
+          diagnostics[0]
             ? `${
                 strings.textMode?.syntaxError || 'Syntax error'
-              }: ${parseResult.diagnostics[0].message}`
+              }: ${diagnostics[0].message}`
             : null
         );
         return;

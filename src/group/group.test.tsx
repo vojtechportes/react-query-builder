@@ -152,6 +152,61 @@ describe('#components/Group', () => {
     expect(queryByDataTest(container, 'Remove')).toBeNull();
   });
 
+  it('hides the delete control when the group contains a protected descendant', () => {
+    const protectedData: any = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        id: 'test-1',
+        isNegated: false,
+        children: ['test-2'],
+      },
+      {
+        type: 'GROUP',
+        value: 'AND',
+        id: 'test-2',
+        isNegated: false,
+        parent: 'test-1',
+        children: ['test-3'],
+      },
+      {
+        field: 'MOCK_FIELD',
+        value: 'alpha',
+        operator: 'EQUAL',
+        id: 'test-3',
+        parent: 'test-2',
+        readOnly: { enabled: true, targets: ['field'] },
+      },
+    ];
+    const { container } = renderWithContext(
+      <Group id="test-2" isRoot={false} value="AND" isNegated={false} />,
+      { data: protectedData }
+    );
+
+    expect(queryByDataTest(container, 'Remove')).toBeNull();
+  });
+
+  it('keeps targeted group controls visible but blocks their actions', () => {
+    const dispatchAction = jest.fn();
+    const { container, getByText } = renderWithContext(
+      <Group
+        id="test-2"
+        isRoot={false}
+        value="AND"
+        isNegated={false}
+        readOnlyTargets={['negation', 'combinator']}
+      />,
+      { dispatchAction }
+    );
+
+    fireEvent.click(getByText(strings.group?.not || 'NOT'));
+    fireEvent.click(getByText(strings.group?.and || 'AND'));
+    fireEvent.click(getByText(strings.group?.or || 'OR'));
+
+    expect(queryByDataTest(container, 'AddRule')).not.toBeNull();
+    expect(dispatchAction).not.toHaveBeenCalled();
+  });
+
   it('renders nothing when strings are unavailable', () => {
     const { container } = renderWithContext(<Group id="test-1" isRoot />, {
       strings: {},

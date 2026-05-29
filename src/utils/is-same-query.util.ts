@@ -5,6 +5,9 @@ import {
 } from './query-tree';
 import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
 
+const isSameReadOnly = (leftReadOnly: unknown, rightReadOnly: unknown): boolean =>
+  JSON.stringify(leftReadOnly ?? null) === JSON.stringify(rightReadOnly ?? null);
+
 const isSameValue = (leftValue: any, rightValue: any) => {
   if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
     return (
@@ -25,6 +28,7 @@ const isSameNode = (left: DenormalizedNode, right: DenormalizedNode): boolean =>
     return (
       left.value === right.value &&
       left.isNegated === right.isNegated &&
+      isSameReadOnly(left.readOnly, right.readOnly) &&
       isSameQuery(left.children, right.children)
     );
   }
@@ -35,7 +39,8 @@ const isSameNode = (left: DenormalizedNode, right: DenormalizedNode): boolean =>
   return (
     leftRule.field === rightRule.field &&
     leftRule.operator === rightRule.operator &&
-    isSameValue(leftRule.value, rightRule.value)
+    isSameValue(leftRule.value, rightRule.value) &&
+    isSameReadOnly(leftRule.readOnly, rightRule.readOnly)
   );
 };
 
