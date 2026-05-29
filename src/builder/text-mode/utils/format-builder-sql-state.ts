@@ -23,6 +23,10 @@ interface IFragmentResult {
   protectedRanges: ILocalProtectedRange[];
 }
 
+interface IFormatBuilderSqlStateOptions {
+  protectGroupDeletionBoundaries?: boolean;
+}
+
 const shiftRanges = (
   ranges: ILocalProtectedRange[],
   offset: number
@@ -32,6 +36,34 @@ const shiftRanges = (
     end: range.end + offset,
   }));
 
+const addProtectedGroupBracketRanges = (
+  text: string,
+  ranges: ILocalProtectedRange[]
+): ILocalProtectedRange[] => {
+  if (text.length < 2) {
+    return ranges;
+  }
+
+  const openingIndex = text.indexOf('(');
+  const closingIndex = text.lastIndexOf(')');
+
+  if (openingIndex === -1 || closingIndex === -1 || closingIndex <= openingIndex) {
+    return ranges;
+  }
+
+  return [
+    ...ranges,
+    {
+      start: openingIndex,
+      end: openingIndex + 1,
+    },
+    {
+      start: closingIndex,
+      end: closingIndex + 1,
+    },
+  ];
+};
+
 const formatRuleFragment = (
   rule: IDenormalizedRuleNode,
   fields: IBuilderFieldProps[]
@@ -40,12 +72,13 @@ const formatRuleFragment = (
 const formatGroupFragment = (
   group: DenormalizedGroupNode,
   fields: IBuilderFieldProps[],
-  isRoot: boolean
+  isRoot: boolean,
+  options: IFormatBuilderSqlStateOptions
 ): IFragmentResult => {
   const combinator =
     'value' in group && group.value ? group.value : ('AND' as QueryGroupValue);
   const childFragments = group.children
-    .map(child => formatNodeFragment(child, fields, false))
+    .map(child => formatNodeFragment(child, fields, false, options))
     .filter(fragment => fragment.text.trim().length > 0);
   const groupReadOnly = resolveGroupReadOnly(group.readOnly);
   const groupReadOnlyTargets = getGroupReadOnlyTargets(group.readOnly);
@@ -115,6 +148,10 @@ const formatGroupFragment = (
     }
   }
 
+  if (options.protectGroupDeletionBoundaries !== false && protectedRanges.length > 0) {
+    protectedRanges = addProtectedGroupBracketRanges(text, protectedRanges);
+  }
+
   if (groupReadOnly.inheritToChildren && isGroupFullyReadOnly(group.readOnly)) {
     protectedRanges = [
       {
@@ -140,18 +177,20 @@ const formatGroupFragment = (
 const formatNodeFragment = (
   node: DenormalizedNode,
   fields: IBuilderFieldProps[],
-  isRoot: boolean
+  isRoot: boolean,
+  options: IFormatBuilderSqlStateOptions
 ): IFragmentResult =>
   isGroupNode(node)
-    ? formatGroupFragment(node, fields, isRoot)
+    ? formatGroupFragment(node, fields, isRoot, options)
     : formatRuleFragment(node, fields);
 
 export const formatBuilderSqlState = (
   data: DenormalizedQuery,
-  fields: IBuilderFieldProps[]
+  fields: IBuilderFieldProps[],
+  options: IFormatBuilderSqlStateOptions = {}
 ): IBuilderTextModeSqlState => {
   const fragments = data
-    .map(node => formatNodeFragment(node, fields, true))
+    .map(node => formatNodeFragment(node, fields, true, options))
     .filter(fragment => fragment.text.trim().length > 0);
 
   if (fragments.length === 0) {

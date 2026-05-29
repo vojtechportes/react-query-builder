@@ -97,6 +97,7 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   protectedRangeHoverMessage = null,
   errorMessage,
   readOnly = false,
+  allowProtectedRangeDeletion = false,
   onChange,
 }) => {
   const theme = useTheme();
@@ -109,6 +110,10 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   const isRevertingChangeRef = useRef(false);
   const decorationIdsRef = useRef<string[]>([]);
   const protectedRangesRef = useRef<ITextModeProtectedRange[]>(protectedRanges);
+  const acceptedValueRef = useRef(value);
+  const acceptedProtectedRangesRef = useRef<ITextModeProtectedRange[]>(
+    [...protectedRanges]
+  );
   const [editorReady, setEditorReady] = useState(false);
   const [renderedProtectedRanges, setRenderedProtectedRanges] =
     useState<ITextModeProtectedRange[]>(protectedRanges);
@@ -168,12 +173,21 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
         }
 
         const intersectsProtectedRange = event.changes.some(change =>
-          doesChangeIntersectProtectedRanges(change, protectedRangesRef.current)
+          doesChangeIntersectProtectedRanges(change, protectedRangesRef.current, {
+            allowPureDeletionOfProtectedRanges: allowProtectedRangeDeletion,
+            text: change.text,
+          })
         );
 
         if (intersectsProtectedRange) {
+          const restoredProtectedRanges = [
+            ...acceptedProtectedRangesRef.current,
+          ];
+
           isRevertingChangeRef.current = true;
-          editor.trigger('rqb-protected-range', 'undo', null);
+          editor.setValue(acceptedValueRef.current);
+          protectedRangesRef.current = restoredProtectedRanges;
+          setRenderedProtectedRanges(restoredProtectedRanges);
           isRevertingChangeRef.current = false;
           return;
         }
@@ -205,8 +219,11 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   }, []);
 
   useEffect(() => {
-    protectedRangesRef.current = protectedRanges;
-    setRenderedProtectedRanges(protectedRanges);
+    const nextProtectedRanges = [...protectedRanges];
+
+    protectedRangesRef.current = nextProtectedRanges;
+    acceptedProtectedRangesRef.current = nextProtectedRanges;
+    setRenderedProtectedRanges(nextProtectedRanges);
   }, [protectedRanges]);
 
   useEffect(() => {
@@ -225,12 +242,14 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
     const currentValue = editorRef.current.getValue();
 
     if (currentValue === value) {
+      acceptedValueRef.current = value;
       return;
     }
 
     isSyncingValueRef.current = true;
     editorRef.current.setValue(value);
     isSyncingValueRef.current = false;
+    acceptedValueRef.current = value;
   }, [value]);
 
   useEffect(() => {
