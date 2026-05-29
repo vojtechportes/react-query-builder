@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
@@ -211,5 +212,57 @@ describe('#components/Rule', () => {
     );
 
     expect(queryByRole('button', { name: 'Delete' })).toBeNull();
+  });
+
+  it('hides the delete control when the rule has targeted read-only fields', () => {
+    const { queryByRole } = renderWithContext(
+      <Rule id="test-2" field="MOCK_FIELD_1" operator="EQUAL" value={true} />,
+      {
+        data: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            id: 'test-1',
+            isNegated: false,
+            children: ['test-2'],
+          },
+          {
+            field: 'MOCK_FIELD_1',
+            value: true,
+            operator: 'EQUAL',
+            id: 'test-2',
+            parent: 'test-1',
+            readOnly: {
+              enabled: true,
+              targets: ['field'],
+            },
+          },
+        ] as any,
+      }
+    );
+
+    expect(queryByRole('button', { name: 'Delete' })).toBeNull();
+  });
+
+  it('keeps targeted rule controls visible but disables only the targeted inputs', () => {
+    const { container } = renderWithContext(
+      <Rule
+        id="test-2"
+        field="MOCK_FIELD_1"
+        operator="EQUAL"
+        value={true}
+        readOnlyTargets={['operator', 'value']}
+      />
+    );
+
+    expect(
+      container.querySelector('#query-builder-rule-test-2-field-trigger')
+    ).not.toHaveAttribute('disabled');
+    expect(
+      container.querySelector('#query-builder-rule-test-2-operator-trigger')
+    ).toHaveAttribute('disabled');
+    expect(
+      container.querySelector('[data-test="Switch"]')
+    ).toHaveAttribute('aria-disabled', 'true');
   });
 });

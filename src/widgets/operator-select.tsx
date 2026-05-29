@@ -42,8 +42,13 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
   } =
     useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
+  const isDisabled = Boolean(readOnly || disabled);
 
   const handleChange = (value: BuilderFieldOperator) => {
+    if (isDisabled) {
+      return;
+    }
+
     const currentRule = findNodeById(data, id);
 
     if (!currentRule || isNormalizedGroupNode(currentRule)) {
@@ -122,7 +127,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       onChange={handleChange}
-      disabled={readOnly || disabled}
+      disabled={isDisabled}
     />
   );
 };

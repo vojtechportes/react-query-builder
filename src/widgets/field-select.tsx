@@ -31,8 +31,13 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
     readOnly,
   } = useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
+  const isDisabled = Boolean(readOnly || disabled);
 
   const handleChange = (value: string) => {
+    if (isDisabled) {
+      return;
+    }
+
     const nextField = fields.find(item => item.field === value);
     const currentRule = findNodeById(data, id);
 
@@ -95,7 +100,7 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
       selectedValue={selectedValue}
       emptyValue={strings.form.selectYourValue}
       onChange={handleChange}
-      disabled={readOnly || disabled}
+      disabled={isDisabled}
     />
   );
 };

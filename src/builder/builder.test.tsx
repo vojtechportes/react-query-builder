@@ -15,6 +15,7 @@ import {
   IBuilderRef,
   useBuilderRef,
 } from './index';
+import { DenormalizedQuery } from '../utils/query-tree';
 
 export const fields: IBuilderFieldProps[] = [
   {
@@ -659,6 +660,104 @@ describe('#components/Builder', () => {
     expect(queryByDataTest(container, 'TextModeError')).not.toBeNull();
     expect(queryByDataTest(container, 'TextModeDiagnostic[0]')).not.toBeNull();
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('Rejects read-only negation changes in text mode and keeps the edited text visible', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: true,
+                readOnly: {
+                  enabled: true,
+                  targets: ['negation'],
+                },
+                children: [
+                  { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+                ],
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: "((MOCK_FIELD = 'alpha'))" },
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(
+      getByDataTest(container, 'CustomTextModeEditorInput')
+    ).toHaveValue("((MOCK_FIELD = 'alpha'))");
+    expect(
+      getByDataTest(container, 'CustomTextModeEditorError').textContent
+    ).toContain('Negation is read-only');
+  });
+
+  it('Preserves protected ranges after editing an unlocked value in text mode', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field', 'operator'],
+                },
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    expect(
+      getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')
+    ).toHaveTextContent('2');
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: "(MOCK_FIELD = 'beta')" },
+    });
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalled();
+      expect(
+        getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')
+      ).toHaveTextContent('2');
+    });
   });
 
   it('Reports a missing quote near the broken string boundary instead of a later token', () => {
@@ -1757,6 +1856,203 @@ describe('#components/Builder', () => {
     ]);
   });
 
+  it('Keeps identical targeted read-only siblings non-deletable after locking one in controlled mode', async () => {
+    const ControlledBuilder = () => {
+      const [value, setValue] = React.useState<DenormalizedQuery>([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL',
+            },
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL',
+              readOnly: {
+                enabled: true,
+                targets: ['field', 'operator'],
+              },
+            },
+          ],
+        },
+      ]);
+
+      return (
+        <Builder
+          fields={fields}
+          lockable
+          data={value}
+          onChange={setValue}
+        />
+      );
+    };
+
+    const { container } = render(<ControlledBuilder />);
+
+    expect(screen.getAllByRole('button', { name: 'Delete' })).toHaveLength(1);
+
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('button', { name: 'Delete' })
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it('Only toggles lock state for the targeted cloned rule in controlled mode', async () => {
+    let latestData: IBuilderProps['data'] | null = null;
+
+    const ControlledBuilder = () => {
+      const [value, setValue] = React.useState<DenormalizedQuery>([
+        {
+          type: 'GROUP' as const,
+          value: 'AND' as const,
+          isNegated: false,
+          children: [
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL' as const,
+              readOnly: {
+                enabled: true,
+                targets: ['field', 'operator'] as ('field' | 'operator')[],
+              },
+            },
+          ],
+        },
+      ]);
+
+      latestData = value;
+
+      return (
+        <Builder
+          fields={fields}
+          cloneable
+          lockable
+          data={value}
+          onChange={setValue}
+        />
+      );
+    };
+
+    const { container } = render(<ControlledBuilder />);
+
+    fireEvent.click(getAllByDataTest(container, 'CloneButton[rule]')[0]);
+
+    await waitFor(() => {
+      expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(2);
+    });
+
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
+
+    await waitFor(() => {
+      expect(latestData).toEqual([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL',
+              readOnly: {
+                enabled: false,
+                targets: ['field', 'operator'],
+              },
+            },
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL',
+              readOnly: {
+                enabled: true,
+                targets: ['field', 'operator'],
+              },
+            },
+          ],
+        },
+      ]);
+    });
+  });
+
+  it('Preserves rule read-only targets when toggling lock state through the GUI', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        lockable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: '',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field'],
+                },
+              },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: '',
+            operator: 'EQUAL',
+            readOnly: {
+              enabled: false,
+              targets: ['field'],
+            },
+          },
+        ],
+      },
+    ]);
+
+    fireEvent.click(getAllByDataTest(container, 'LockToggle[rule]')[0]);
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: '',
+            operator: 'EQUAL',
+            readOnly: {
+              enabled: true,
+              targets: ['field'],
+            },
+          },
+        ],
+      },
+    ]);
+  });
+
   it('Locks group controls without inheriting read-only to descendants by default', () => {
     const { container } = render(
       <Builder
@@ -1916,6 +2212,110 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
+            children: [],
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('Preserves group read-only targets when cycling lock state through the GUI', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        lockable
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                readOnly: {
+                  enabled: true,
+                  targets: ['combinator'],
+                },
+                children: [],
+              },
+            ],
+          },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    const getLastGroupToggle = () => {
+      const toggles = getAllByDataTest(container, 'LockToggle[group]');
+      return toggles[toggles.length - 1];
+    };
+
+    fireEvent.click(getLastGroupToggle());
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            readOnly: {
+              enabled: true,
+              targets: ['combinator'],
+              inheritToChildren: true,
+            },
+            children: [],
+          },
+        ],
+      },
+    ]);
+
+    fireEvent.click(getLastGroupToggle());
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            readOnly: {
+              enabled: false,
+              targets: ['combinator'],
+              inheritToChildren: false,
+            },
+            children: [],
+          },
+        ],
+      },
+    ]);
+
+    fireEvent.click(getLastGroupToggle());
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            readOnly: {
+              enabled: true,
+              targets: ['combinator'],
+              inheritToChildren: false,
+            },
             children: [],
           },
         ],
@@ -2331,5 +2731,58 @@ describe('#components/Builder', () => {
         ],
       },
     ]);
+  });
+
+  it('Blocks imperative deleteNode for read-only-targeted nodes', () => {
+    const onChange = jest.fn();
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={fields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                {
+                  field: 'MOCK_FIELD',
+                  value: 'alpha',
+                  operator: 'EQUAL',
+                  readOnly: {
+                    enabled: true,
+                    targets: ['field'],
+                  },
+                },
+              ],
+            },
+          ]}
+          onChange={onChange}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const builderRef = builderRefObject as React.MutableRefObject<IBuilderRef | null> | null;
+    const protectedRuleId = builderRef?.current
+      ?.getNodes()
+      .find((node: ReturnType<IBuilderRef['getNodes']>[number]) => 'field' in node)?.id;
+
+    expect(protectedRuleId).toBeDefined();
+
+    act(() => {
+      expect(
+        builderRef?.current?.deleteNode(protectedRuleId as string)
+      ).toBe(false);
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

@@ -17,10 +17,16 @@ import { createId } from '../utils/create-id.util';
 import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { INormalizedRuleNode, NormalizedNode } from '../utils/query-tree';
+import {
+  GroupReadOnlyTarget,
+  INormalizedRuleNode,
+  NormalizedNode,
+} from '../utils/query-tree';
 import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
 import { Group as DefaultGroupContainer } from './group-container';
 import { Option as DefaultOption } from './option';
+import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
+import { updateGroupLockState } from '../utils/read-only/update-group-lock-state.util';
 
 export interface IGroupProps {
   value?: BuilderGroupValues;
@@ -31,6 +37,7 @@ export interface IGroupProps {
   id: string;
   isRoot: boolean;
   readOnly?: boolean;
+  readOnlyTargets?: GroupReadOnlyTarget[];
   lockState?: BuilderLockState;
   lockDisabled?: boolean;
 }
@@ -44,6 +51,7 @@ export const Group: FC<IGroupProps> = ({
   id,
   isRoot,
   readOnly: localReadOnly = false,
+  readOnlyTargets = [],
   lockState = localReadOnly ? 'self' : 'unlocked',
   lockDisabled = false,
 }) => {
@@ -69,8 +77,16 @@ export const Group: FC<IGroupProps> = ({
   const PopoverItem = components.PopoverItem || DefaultPopoverItem;
   const Remove = components.Remove || SecondaryButton;
   const resolvedGroupTypes = groupTypes || 'with-modifiers';
-  const canDeleteGroup = !(singleRootGroup && isRoot) && !isReadOnly;
+  const canDeleteGroup =
+    !(singleRootGroup && isRoot) &&
+    !isReadOnly &&
+    readOnlyTargets.length === 0 &&
+    !isNodeDeletionProtected(data, id);
   const canCloneGroup = !(singleRootGroup && isRoot) && !isReadOnly;
+  const isNegationReadOnly =
+    isReadOnly || readOnlyTargets.includes('negation');
+  const isCombinatorReadOnly =
+    isReadOnly || readOnlyTargets.includes('combinator');
 
   const addItem = (payload: NormalizedNode) => {
     const currentGroup = data.find((item) => item.id === id);
@@ -114,6 +130,7 @@ export const Group: FC<IGroupProps> = ({
       !dispatchAction ||
       !currentGroup ||
       !isNormalizedGroupNode(currentGroup) ||
+      isCombinatorReadOnly ||
       typeof currentGroup.value === 'undefined' ||
       typeof currentGroup.isNegated === 'undefined'
     ) {
@@ -135,6 +152,7 @@ export const Group: FC<IGroupProps> = ({
       !dispatchAction ||
       !currentGroup ||
       !isNormalizedGroupNode(currentGroup) ||
+      isNegationReadOnly ||
       typeof currentGroup.value === 'undefined' ||
       typeof currentGroup.isNegated === 'undefined'
     ) {
@@ -150,6 +168,10 @@ export const Group: FC<IGroupProps> = ({
   };
 
   const handleDeleteGroup = () => {
+    if (!canDeleteGroup) {
+      return;
+    }
+
     dispatchAction?.(createRemoveSubtreeAction(id));
   };
 
@@ -176,19 +198,13 @@ export const Group: FC<IGroupProps> = ({
       return;
     }
 
-    const nextGroup = {
-      ...currentGroup,
-    };
+    const nextGroup = { ...currentGroup };
+    const nextReadOnly = updateGroupLockState(currentGroup.readOnly, nextState);
 
-    if (nextState === 'all') {
-      nextGroup.readOnly = {
-        enabled: true,
-        inheritToChildren: true,
-      };
-    } else if (nextState === 'self') {
-      nextGroup.readOnly = true;
-    } else {
+    if (typeof nextReadOnly === 'undefined') {
       delete nextGroup.readOnly;
+    } else {
+      nextGroup.readOnly = nextReadOnly;
     }
 
     dispatchAction(createReplaceNodeAction(id, nextGroup));
@@ -263,7 +279,7 @@ export const Group: FC<IGroupProps> = ({
             <Option
               isSelected={Boolean(isNegated)}
               value={!isNegated}
-              disabled={isReadOnly}
+              disabled={isNegationReadOnly}
               onClick={handleToggleNegateGroup}
               data-test="Option[not]"
             >
@@ -272,7 +288,7 @@ export const Group: FC<IGroupProps> = ({
             <Option
               isSelected={value === 'AND'}
               value="AND"
-              disabled={isReadOnly}
+              disabled={isCombinatorReadOnly}
               onClick={handleChangeGroupType}
               data-test="Option[and]"
             >
@@ -281,7 +297,7 @@ export const Group: FC<IGroupProps> = ({
             <Option
               isSelected={value === 'OR'}
               value="OR"
-              disabled={isReadOnly}
+              disabled={isCombinatorReadOnly}
               onClick={handleChangeGroupType}
               data-test="Option[or]"
             >
@@ -300,7 +316,7 @@ export const Group: FC<IGroupProps> = ({
               {addGroupControl}
             </>
           )}
-          {!isReadOnly && canDeleteGroup ? (
+          {canDeleteGroup ? (
             <Remove onClick={handleDeleteGroup} data-test="Remove">
               {strings.group.delete}
             </Remove>

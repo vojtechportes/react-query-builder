@@ -25,8 +25,10 @@ import { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';
 import { ITextModeToggleContentProps } from '../components/text-mode-toggle-content';
 import {
   DenormalizedQuery,
+  GroupReadOnlyTarget,
   QueryGroupValue,
   QueryOperator,
+  RuleReadOnlyTarget,
 } from '../../utils/query-tree';
 
 export type BuilderGroupMode = 'with-modifiers' | 'without-modifiers' | 'both';
@@ -46,6 +48,7 @@ export type BuilderFieldType =
 export type BuilderFieldOperator = QueryOperator;
 export type BuilderGroupValues = QueryGroupValue;
 export type { BuilderLockState };
+export type { GroupReadOnlyTarget, RuleReadOnlyTarget };
 export type { IAlertProps, AlertSeverity, AlertVariant } from '../../alert';
 export type { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
 export type { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';

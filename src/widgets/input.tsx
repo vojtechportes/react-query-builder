@@ -47,8 +47,13 @@ export const Input: FC<IInputProps> = ({
     readOnly,
   } = useContext(BuilderContext);
   const InputComponent = components.form?.Input || DefaultInput;
+  const isDisabled = Boolean(readOnly || disabled);
 
   const handleChange = (selectedValue: string, index = 0) => {
+    if (isDisabled) {
+      return;
+    }
+
     const nextValue =
       type === 'number' ? coerceNumberInputValue(selectedValue) : selectedValue;
     const currentRule = findNodeById(data, id);
@@ -109,7 +114,7 @@ export const Input: FC<IInputProps> = ({
           type={type}
           value={value[0]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 0)}
-          disabled={readOnly || disabled}
+          disabled={isDisabled}
         />
         <InputComponent
           id={`query-builder-rule-${id}-value-end`}
@@ -117,7 +122,7 @@ export const Input: FC<IInputProps> = ({
           type={type}
           value={value[1]}
           onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
-          disabled={readOnly || disabled}
+          disabled={isDisabled}
         />
       </RangeInputs>
     );
@@ -134,7 +139,7 @@ export const Input: FC<IInputProps> = ({
       type={type}
       value={value}
       onChange={handleChange}
-      disabled={readOnly || disabled}
+      disabled={isDisabled}
     />
   );
 };

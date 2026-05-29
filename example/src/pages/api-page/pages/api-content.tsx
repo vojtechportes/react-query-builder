@@ -110,6 +110,19 @@ const fieldBaseSignature = `interface IBuilderFieldBase<TType, TValue, TValidati
 
 const queryTreeSignature = `export type QueryGroupValue = 'AND' | 'OR';
 export type QueryGroupType = 'with-modifiers' | 'without-modifiers';
+export type GroupReadOnlyTarget = 'negation' | 'combinator';
+export type RuleReadOnlyTarget = 'field' | 'operator' | 'value';
+
+export interface IGroupReadOnlyConfig {
+  enabled: boolean;
+  targets?: GroupReadOnlyTarget[];
+  inheritToChildren?: boolean;
+}
+
+export interface IRuleReadOnlyConfig {
+  enabled: boolean;
+  targets?: RuleReadOnlyTarget[];
+}
 
 export type QueryRuleValue =
   | string
@@ -125,7 +138,7 @@ export interface IDenormalizedRuleNode {
   value?: QueryRuleValue;
   operator?: QueryOperator;
   operators?: QueryOperator[];
-  readOnly?: boolean;
+  readOnly?: boolean | IRuleReadOnlyConfig;
 }
 
 export interface IDenormalizedGroupNodeBase {
@@ -496,8 +509,8 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>strings</InlineCode>:</ItemTitle> Optional localized UI strings used by the built-in controls.</li>
           <li><ItemTitle><InlineCode>textMode</InlineCode>:</ItemTitle> Optional. Enables SQL text mode. Pass <InlineCode>true</InlineCode> for the default configuration or <InlineCode>IBuilderTextModeConfig</InlineCode> for explicit SQL text-mode settings.</li>
           <li><ItemTitle><InlineCode>defaultMode</InlineCode>:</ItemTitle> Optional. Controls whether the builder initially opens in <InlineCode>'builder'</InlineCode> or <InlineCode>'text'</InlineCode> mode. This only takes effect when text mode is enabled.</li>
-          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Disables editing actions when enabled.</li>
-          <li><ItemTitle><InlineCode>lockable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders lock controls for rules and groups and writes the resulting lock state back into emitted query data.</li>
+          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Makes the whole builder non-editable.</li>
+          <li><ItemTitle><InlineCode>lockable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders lock controls for rules and groups and writes the resulting lock state back into emitted query data without discarding existing targeted <InlineCode>readOnly.targets</InlineCode> configurations.</li>
           <li><ItemTitle><InlineCode>cloneable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders clone controls for rules and groups and inserts the cloned node directly below the original.</li>
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group. Text mode requires this to stay enabled.</li>
@@ -519,8 +532,9 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle>Invalid text flow:</ItemTitle> Invalid text stays local to text mode, the last valid builder query is preserved, and <InlineCode>onChange</InlineCode> is fired only after a valid parse and semantic validation.</li>
           <li><ItemTitle>History:</ItemTitle> Valid text edits are committed into builder history. Invalid intermediate text is not committed into builder state or history.</li>
           <li><ItemTitle>Built-in editor:</ItemTitle> Included in the main package and suitable for freely editable SQL text mode.</li>
-          <li><ItemTitle>Locked queries:</ItemTitle> The built-in text editor blocks locked rules and groups because it cannot preserve protected text ranges safely after freeform edits.</li>
-          <li><ItemTitle>Monaco path:</ItemTitle> Use the optional <InlineCode>@vojtechportes/react-query-builder/monaco</InlineCode> subpackage when you need a protected-range editor that can preserve locked query segments.</li>
+          <li><ItemTitle>Locked queries:</ItemTitle> The built-in text editor blocks locked or targeted read-only queries because it cannot preserve protected text ranges safely after freeform edits.</li>
+          <li><ItemTitle>Custom editors:</ItemTitle> Custom text editors receive <InlineCode>protectedRanges</InlineCode> so localized read-only SQL fragments can stay visible while remaining non-editable.</li>
+          <li><ItemTitle>Monaco path:</ItemTitle> Use the optional <InlineCode>@vojtechportes/react-query-builder/monaco</InlineCode> subpackage when you need a protected-range editor that can preserve locked and targeted read-only query segments.</li>
         </List>
         <SectionTitle>History config</SectionTitle>
         <List>
@@ -563,8 +577,8 @@ export const apiPages: IApiPage[] = [
         </List>
         <SectionTitle>Mutation methods</SectionTitle>
         <List>
-          <li><ItemTitle><InlineCode>cloneNode(nodeId)</InlineCode>:</ItemTitle> Clones a rule or group subtree directly below the original node.</li>
-          <li><ItemTitle><InlineCode>deleteNode(nodeId)</InlineCode>:</ItemTitle> Removes a node subtree.</li>
+          <li><ItemTitle><InlineCode>cloneNode(nodeId)</InlineCode>:</ItemTitle> Clones a rule or group subtree directly below the original node and preserves its read-only configuration.</li>
+          <li><ItemTitle><InlineCode>deleteNode(nodeId)</InlineCode>:</ItemTitle> Removes a node subtree unless the node itself or one of its descendants is protected by effective read-only state.</li>
           <li><ItemTitle><InlineCode>replaceNode(nodeId, node)</InlineCode>:</ItemTitle> Replaces a normalized node directly.</li>
           <li><ItemTitle><InlineCode>updateNode(nodeId, updater)</InlineCode>:</ItemTitle> Reads the current normalized node, passes it to an updater, and replaces it with the updater result.</li>
           <li><ItemTitle><InlineCode>insertNodes(nodes, index, parentId?)</InlineCode>:</ItemTitle> Inserts one or more normalized nodes at the target index, either at the root or inside a group.</li>
@@ -577,7 +591,7 @@ export const apiPages: IApiPage[] = [
         <List>
           <li><ItemTitle><InlineCode>setNodeLock(nodeId, state)</InlineCode>:</ItemTitle> Sets the explicit lock state for a rule or group. Groups additionally support <InlineCode>'all'</InlineCode> for descendant inheritance.</li>
           <li><ItemTitle><InlineCode>lockNode(nodeId, state?)</InlineCode>:</ItemTitle> Convenience wrapper for locking a node. For rules, the effective lock state is always <InlineCode>'self'</InlineCode>.</li>
-          <li><ItemTitle><InlineCode>unlockNode(nodeId)</InlineCode>:</ItemTitle> Clears the node&apos;s lock state.</li>
+          <li><ItemTitle><InlineCode>unlockNode(nodeId)</InlineCode>:</ItemTitle> Clears the node&apos;s lock state while preserving object-based <InlineCode>readOnly.targets</InlineCode> metadata so it can be restored by later lock toggles.</li>
           <li><ItemTitle><InlineCode>undo()</InlineCode> and <InlineCode>redo()</InlineCode>:</ItemTitle> Replay history steps when history is enabled.</li>
           <li><ItemTitle><InlineCode>setHistory(history)</InlineCode>:</ItemTitle> Replaces the current history state. This is useful for clearing or restoring custom history snapshots.</li>
         </List>
@@ -645,8 +659,10 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>operator</InlineCode>:</ItemTitle> Optional operator for the rule. Some field and operator combinations imply different value shapes.</li>
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional rule value. Supported scalar/array forms are defined by <InlineCode>QueryRuleValue</InlineCode>.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional rule-level operator override list.</li>
-          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock flag. It locks only that rule and does not affect siblings, parents, or descendants.</li>
-          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, rules cycle between unlocked and locked, which maps to omitted <InlineCode>readOnly</InlineCode> and <InlineCode>readOnly: true</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock definition. Use <InlineCode>true</InlineCode> for a full rule lock or an object config for targeted rule read-only behavior.</li>
+          <li><ItemTitle><InlineCode>targets</InlineCode>:</ItemTitle> Rule targets are <InlineCode>'field'</InlineCode>, <InlineCode>'operator'</InlineCode>, and <InlineCode>'value'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
+          <li><ItemTitle>Delete behavior:</ItemTitle> A rule with any effective read-only target is also non-deletable, and cloned rules preserve the same read-only configuration.</li>
+          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, rules cycle between unlocked and locked. Object-based <InlineCode>readOnly.targets</InlineCode> are preserved when the user unlocks and re-locks the same rule.</li>
           <li><ItemTitle><InlineCode>id</InlineCode> and <InlineCode>parent</InlineCode>:</ItemTitle> Optional in denormalized input. The builder can ingest data without them.</li>
         </List>
         <SectionTitle>Group props</SectionTitle>
@@ -655,10 +671,12 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>children</InlineCode>:</ItemTitle> Required nested nodes.</li>
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Present only for groups with modifiers and must be <InlineCode>'AND'</InlineCode> or <InlineCode>'OR'</InlineCode>.</li>
           <li><ItemTitle><InlineCode>isNegated</InlineCode>:</ItemTitle> Present only for groups with modifiers.</li>
-          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Can be a boolean or an object with <InlineCode>enabled</InlineCode> and optional <InlineCode>inheritToChildren</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Can be a boolean or an object with <InlineCode>enabled</InlineCode>, optional <InlineCode>targets</InlineCode>, and optional <InlineCode>inheritToChildren</InlineCode>.</li>
           <li><ItemTitle><InlineCode>readOnly: true</InlineCode>:</ItemTitle> Locks only the group&apos;s own controls by default. Descendant rules and groups remain editable unless inheritance is enabled.</li>
-          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, groups cycle through unlocked, locked group only, and locked group with descendants.</li>
-          <li><ItemTitle><InlineCode>inheritToChildren</InlineCode>:</ItemTitle> Applies the group lock to all descendants when the group is enabled. Descendants cannot override an inherited lock from an ancestor.</li>
+          <li><ItemTitle><InlineCode>targets</InlineCode>:</ItemTitle> Group targets are <InlineCode>'negation'</InlineCode> and <InlineCode>'combinator'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
+          <li><ItemTitle>Delete behavior:</ItemTitle> A group cannot be deleted when it has effective read-only targets or contains descendants protected by read-only state.</li>
+          <li><ItemTitle>GUI cycle:</ItemTitle> When <InlineCode>lockable</InlineCode> is enabled, groups cycle through unlocked, locked group only, and locked group with descendants while preserving object-based <InlineCode>targets</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>inheritToChildren</InlineCode>:</ItemTitle> Applies the group lock to descendant groups and their children when the group is enabled. Descendants cannot override an inherited lock from an ancestor.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/usage">Usage</TextLink> and{' '}

@@ -2,14 +2,22 @@ import {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
+  GroupReadOnlyTarget,
+  IDenormalizedRuleNode,
+  RuleReadOnlyTarget,
 } from '../../../utils/query-tree';
 import { clone } from '../../../utils/clone.util';
 import { QueryOperator } from '../../../utils/query-operators';
 import { resolveGroupReadOnly } from '../../../utils/resolve-group-read-only.util';
+import {
+  getRuleReadOnlyTargets,
+  isRuleFullyReadOnly,
+} from '../../../utils/resolve-rule-read-only.util';
 
 interface ILockedNodeDescriptor {
   kind: 'rule' | 'group-all' | 'group-self';
   fingerprint: string;
+  relaxedFingerprint?: string;
   readOnly: DenormalizedNode['readOnly'];
 }
 
@@ -65,6 +73,47 @@ const createGroupShellFingerprint = (group: DenormalizedGroupNode): string =>
     childCount: group.children.length,
   });
 
+const createRuleReadOnlyFingerprint = (
+  node: DenormalizedNode,
+  targets: RuleReadOnlyTarget[]
+): string =>
+  JSON.stringify({
+    field: 'field' in node && targets.includes('field') ? node.field : undefined,
+    operator:
+      'operator' in node && targets.includes('operator')
+        ? normalizeLockFingerprintOperator(node.operator)
+        : undefined,
+    value: 'value' in node && targets.includes('value') ? node.value : undefined,
+  });
+
+const createGroupReadOnlyFingerprint = (
+  group: DenormalizedGroupNode,
+  targets: GroupReadOnlyTarget[]
+): string =>
+  JSON.stringify({
+    type: 'GROUP',
+    value: targets.includes('combinator') ? group.value : undefined,
+    isNegated: targets.includes('negation') ? group.isNegated : undefined,
+  });
+
+const getRuleCandidateRelaxedFingerprint = (
+  node: DenormalizedNode,
+  readOnly: DenormalizedNode['readOnly']
+): string =>
+  createRuleReadOnlyFingerprint(
+    node,
+    getRuleReadOnlyTargets(readOnly as never)
+  );
+
+const getGroupCandidateRelaxedFingerprint = (
+  node: DenormalizedGroupNode,
+  readOnly: DenormalizedNode['readOnly']
+): string =>
+  createGroupReadOnlyFingerprint(
+    node,
+    resolveGroupReadOnly(readOnly as never).targets || []
+  );
+
 const collectLockedNodeDescriptors = (
   query: DenormalizedQuery,
   target: ILockedNodeDescriptor[] = []
@@ -74,11 +123,18 @@ const collectLockedNodeDescriptors = (
       const groupReadOnly = resolveGroupReadOnly(node.readOnly);
 
       if (groupReadOnly.enabled) {
+        const isFullGroupLock =
+          !groupReadOnly.targets || groupReadOnly.targets.length === 0;
+
         target.push({
           kind: groupReadOnly.inheritToChildren ? 'group-all' : 'group-self',
           fingerprint: groupReadOnly.inheritToChildren
             ? createExactFingerprint(node)
             : createGroupShellFingerprint(node),
+          relaxedFingerprint:
+            groupReadOnly.inheritToChildren || isFullGroupLock || !groupReadOnly.targets
+              ? undefined
+              : createGroupReadOnlyFingerprint(node, groupReadOnly.targets),
           readOnly: node.readOnly,
         });
       }
@@ -88,10 +144,17 @@ const collectLockedNodeDescriptors = (
     }
 
     if (node.readOnly) {
+      const ruleNode = node as IDenormalizedRuleNode;
+      const ruleReadOnlyTargets = getRuleReadOnlyTargets(ruleNode.readOnly);
+
       target.push({
         kind: 'rule',
-        fingerprint: createExactFingerprint(node),
-        readOnly: node.readOnly,
+        fingerprint: createExactFingerprint(ruleNode),
+        relaxedFingerprint:
+          isRuleFullyReadOnly(ruleNode.readOnly) || ruleReadOnlyTargets.length === 0
+            ? undefined
+            : createRuleReadOnlyFingerprint(ruleNode, ruleReadOnlyTargets),
+        readOnly: ruleNode.readOnly,
       });
     }
   });
@@ -134,12 +197,7 @@ const applyReadOnlyValue = (
   node: DenormalizedNode,
   readOnly: DenormalizedNode['readOnly']
 ): void => {
-  if ('type' in node && node.type === 'GROUP') {
-    node.readOnly = readOnly;
-    return;
-  }
-
-  node.readOnly = Boolean(readOnly);
+  node.readOnly = readOnly as never;
 };
 
 export const reapplyBuilderTextModeLocks = (
@@ -157,10 +215,33 @@ export const reapplyBuilderTextModeLocks = (
   const usedCandidates = new WeakSet<DenormalizedNode>();
 
   lockedNodes.forEach(descriptor => {
-    const candidate = candidates[descriptor.kind].find(
-      entry =>
-        entry.fingerprint === descriptor.fingerprint && !usedCandidates.has(entry.node)
-    );
+    const candidatePool = candidates[descriptor.kind];
+    const candidate =
+      candidatePool.find(
+        entry =>
+          entry.fingerprint === descriptor.fingerprint &&
+          !usedCandidates.has(entry.node)
+      ) ??
+      (descriptor.relaxedFingerprint
+        ? candidatePool.find(entry => {
+            if (usedCandidates.has(entry.node)) {
+              return false;
+            }
+
+            const relaxedFingerprint =
+              descriptor.kind === 'rule'
+                ? getRuleCandidateRelaxedFingerprint(
+                    entry.node,
+                    descriptor.readOnly
+                  )
+                : getGroupCandidateRelaxedFingerprint(
+                    entry.node as DenormalizedGroupNode,
+                    descriptor.readOnly
+                  );
+
+            return relaxedFingerprint === descriptor.relaxedFingerprint;
+          })
+        : undefined);
 
     if (!candidate) {
       return;

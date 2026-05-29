@@ -10,7 +10,12 @@ import {
   resolveGroupLockState,
   resolveRuleLockState,
 } from './utils/lock-state';
-import { resolveGroupReadOnly } from './utils/resolve-group-read-only.util';
+import {
+  createInheritedReadOnlyState,
+  IInheritedReadOnlyState,
+  resolveEffectiveGroupReadOnly,
+  resolveEffectiveRuleReadOnly,
+} from './utils/resolve-effective-read-only.util';
 import { NormalizedQuery } from './utils/query-tree';
 
 export interface IIteratorProps {
@@ -23,7 +28,7 @@ export interface IIteratorProps {
   isDragging?: boolean;
   isOverlay?: boolean;
   disableDropZoneTransition?: boolean;
-  inheritedReadOnly?: boolean;
+  inheritedReadOnly?: IInheritedReadOnlyState;
   containerReadOnly?: boolean;
 }
 
@@ -37,7 +42,7 @@ export const Iterator: FC<IIteratorProps> = ({
   isDragging = false,
   isOverlay = false,
   disableDropZoneTransition = false,
-  inheritedReadOnly = false,
+  inheritedReadOnly = createInheritedReadOnlyState(),
   containerReadOnly = false,
 }) => {
   const { draggable, readOnly, components, singleRootGroup } =
@@ -74,10 +79,11 @@ export const Iterator: FC<IIteratorProps> = ({
       ) : null;
 
     if (isNormalizedGroupNode(item)) {
-      const groupReadOnly = resolveGroupReadOnly(item.readOnly);
-      const isGroupReadOnly = inheritedReadOnly || groupReadOnly.enabled;
-      const nextInheritedReadOnly =
-        inheritedReadOnly || groupReadOnly.inheritToChildren;
+      const groupReadOnly = resolveEffectiveGroupReadOnly(
+        item.readOnly,
+        inheritedReadOnly
+      );
+      const isGroupReadOnly = groupReadOnly.full;
       const items = item.children
         .map((childId) =>
           originalData.find((originalItem) => childId === originalItem.id)
@@ -106,8 +112,9 @@ export const Iterator: FC<IIteratorProps> = ({
           id={id}
           isRoot={isRoot}
           readOnly={isGroupReadOnly}
+          readOnlyTargets={groupReadOnly.targets}
           lockState={resolveGroupLockState(item.readOnly)}
-          lockDisabled={inheritedReadOnly}
+          lockDisabled={inheritedReadOnly.full}
           dragHandle={dragHandle}
           contentOverlay={emptyGroupDropZone}
         >
@@ -121,8 +128,8 @@ export const Iterator: FC<IIteratorProps> = ({
             isDragging={isDragging}
             isOverlay={isOverlay}
             disableDropZoneTransition={disableDropZoneTransition}
-            inheritedReadOnly={nextInheritedReadOnly}
-            containerReadOnly={nextInheritedReadOnly}
+            inheritedReadOnly={groupReadOnly.inherited}
+            containerReadOnly={groupReadOnly.inherited.full}
           />
         </Group>
       );
@@ -140,7 +147,11 @@ export const Iterator: FC<IIteratorProps> = ({
     }
 
     const { field, value, id, operator } = item as IRuleProps;
-    const isRuleReadOnly = inheritedReadOnly || Boolean(item.readOnly);
+    const ruleReadOnly = resolveEffectiveRuleReadOnly(
+      item.readOnly,
+      inheritedReadOnly
+    );
+    const isRuleReadOnly = ruleReadOnly.full;
 
     const rule = (dragHandle?: React.ReactNode) => (
       <Rule
@@ -150,8 +161,9 @@ export const Iterator: FC<IIteratorProps> = ({
         operator={operator}
         id={id}
         readOnly={isRuleReadOnly}
-        lockState={resolveRuleLockState(Boolean(item.readOnly))}
-        lockDisabled={inheritedReadOnly}
+        readOnlyTargets={ruleReadOnly.targets}
+        lockState={resolveRuleLockState(item.readOnly)}
+        lockDisabled={inheritedReadOnly.full}
         dragHandle={dragHandle}
         data-test="IteratorRule"
       />

@@ -192,6 +192,22 @@ recommended path when locked query segments must stay protected in text mode.
 - <a href="https://vojtechportes.github.io/react-query-builder/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
 
+## Read-only and Protected Editing
+
+Rules and groups can be fully read-only or partially read-only through
+`readOnly.targets`.
+
+- Rule targets: `field`, `operator`, `value`
+- Group targets: `combinator`, `negation`
+
+Targeted read-only controls stay visible but become non-editable. When using
+the Monaco text editor integration, protected SQL fragments remain locked while
+users can still edit the unlocked parts of the query.
+
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/locking-and-read-only" target="_blank" rel="noopener noreferrer">Documentation: Locking and Read-only</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/data" target="_blank" rel="noopener noreferrer">API: Data</a>
+
 ## Query Conversion
 
 The library also provides parser and formatter helpers through subpath exports:

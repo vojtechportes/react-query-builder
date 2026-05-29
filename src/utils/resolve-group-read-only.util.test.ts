@@ -1,4 +1,5 @@
 import { resolveGroupReadOnly } from './resolve-group-read-only.util';
+import { resolveRuleReadOnly } from './resolve-rule-read-only.util';
 
 describe('#utils/resolveGroupReadOnly', () => {
   it('Resolves boolean read-only values', () => {
@@ -24,6 +25,34 @@ describe('#utils/resolveGroupReadOnly', () => {
     ).toEqual({
       enabled: false,
       inheritToChildren: false,
+    });
+  });
+
+  it('Preserves configured group targets', () => {
+    expect(
+      resolveGroupReadOnly({
+        enabled: true,
+        targets: ['combinator'],
+        inheritToChildren: true,
+      })
+    ).toEqual({
+      enabled: true,
+      targets: ['combinator'],
+      inheritToChildren: true,
+    });
+  });
+});
+
+describe('#utils/resolveRuleReadOnly', () => {
+  it('Resolves rule read-only targets', () => {
+    expect(
+      resolveRuleReadOnly({
+        enabled: true,
+        targets: ['field', 'value'],
+      })
+    ).toEqual({
+      enabled: true,
+      targets: ['field', 'value'],
     });
   });
 });

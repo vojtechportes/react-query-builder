@@ -1,5 +1,7 @@
 import { isNormalizedGroupNode } from '../../../utils/is-normalized-group-node.util';
 import { NormalizedNode } from '../../../utils/query-tree';
+import { updateGroupLockState } from '../../../utils/read-only/update-group-lock-state.util';
+import { updateRuleLockState } from '../../../utils/read-only/update-rule-lock-state.util';
 
 export const resolveLockedNode = (
   node: NormalizedNode,
@@ -8,24 +10,26 @@ export const resolveLockedNode = (
   const nextNode = { ...node };
 
   if (isNormalizedGroupNode(nextNode)) {
-    if (state === 'all') {
-      nextNode.readOnly = {
-        enabled: true,
-        inheritToChildren: true,
-      };
-    } else if (state === 'self') {
-      nextNode.readOnly = true;
-    } else {
+    const nextReadOnly = updateGroupLockState(nextNode.readOnly, state);
+
+    if (typeof nextReadOnly === 'undefined') {
       delete nextNode.readOnly;
+    } else {
+      nextNode.readOnly = nextReadOnly;
     }
 
     return nextNode;
   }
 
-  if (state === 'self') {
-    nextNode.readOnly = true;
-  } else {
+  const nextReadOnly = updateRuleLockState(
+    nextNode.readOnly,
+    state === 'self' ? 'self' : 'unlocked'
+  );
+
+  if (typeof nextReadOnly === 'undefined') {
     delete nextNode.readOnly;
+  } else {
+    nextNode.readOnly = nextReadOnly;
   }
 
   return nextNode;

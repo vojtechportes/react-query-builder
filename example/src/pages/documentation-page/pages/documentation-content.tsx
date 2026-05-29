@@ -661,13 +661,19 @@ const lockingSnippet = `const data: DenormalizedQuery = [
         field: 'STATUS',
         operator: 'EQUAL',
         value: 'ACTIVE',
-        readOnly: true,
+        readOnly: {
+          enabled: true,
+          targets: ['field', 'operator'],
+        },
       },
       {
         type: 'GROUP',
         value: 'OR',
         isNegated: false,
-        readOnly: true,
+        readOnly: {
+          enabled: true,
+          targets: ['combinator'],
+        },
         children: [
           {
             field: 'COUNTRY',
@@ -698,6 +704,38 @@ const lockingSnippet = `const data: DenormalizedQuery = [
 
 <Builder fields={fields} data={data} onChange={setData} />;`;
 
+const targetedReadOnlySnippet = `const data: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    readOnly: {
+      enabled: true,
+      targets: ['combinator'],
+    },
+    children: [
+      {
+        field: 'CUSTOMER_COUNTRY',
+        operator: 'EQUAL',
+        value: 'CZ',
+        readOnly: {
+          enabled: true,
+          targets: ['field', 'operator'],
+        },
+      },
+      {
+        field: 'ORDER_TOTAL',
+        operator: 'BETWEEN',
+        value: [1000, 5000],
+        readOnly: {
+          enabled: true,
+          targets: ['value'],
+        },
+      },
+    ],
+  },
+];`;
+
 const lockingGuiSnippet = `<Builder
   fields={fields}
   data={data}
@@ -714,7 +752,10 @@ const lockingGuiSnippet = `<Builder
 // The emitted query stores those states in readOnly:
 // rule: readOnly: true
 // group: readOnly: true
-// group + descendants: readOnly: { enabled: true, inheritToChildren: true }`;
+// group + descendants: readOnly: { enabled: true, inheritToChildren: true }
+//
+// If a node already uses readOnly.targets, the lock toggle preserves those
+// targets and only changes enabled/inheritToChildren.`;
 
 const lockToggleSnippet = `const components = {
   LockToggle: MyLockToggle,
@@ -1145,15 +1186,17 @@ export const documentationPages: IDocumentationPage[] = [
     sectionTitle: 'Getting Started',
     summary: '',
     description:
-      'Documentation for builder-level, rule-level, and group-level read-only behavior, including group inheritance semantics.',
+      'Documentation for builder-level, rule-level, and group-level read-only behavior, including targeted read-only and group inheritance semantics.',
     searchText:
-      'readOnly locking locked rule group inheritToChildren inheritance read only builder rule group drag delete add controls',
+      'readOnly locking locked rule group targets field operator value combinator negation inheritToChildren inheritance read only builder rule group drag delete add controls',
     content: (
       <>
         <p>
           Locking can be applied at the builder, rule, or group level. The key
           distinction is that rules lock only themselves, while groups can lock
-          either just their own controls or their entire subtree.
+          either just their own controls or their entire subtree. Object-based{' '}
+          <InlineCode>readOnly</InlineCode> configs also support targeted
+          read-only for specific controls.
         </p>
         <SectionTitle>GUI Locking</SectionTitle>
         <p>
@@ -1161,6 +1204,9 @@ export const documentationPages: IDocumentationPage[] = [
           to render lock controls directly in the UI. The built-in controls update
           the same <InlineCode>readOnly</InlineCode> fields that are already part of
           the query data model, so the resulting lock state is preserved in output.
+          If a node already has <InlineCode>readOnly.targets</InlineCode>, the
+          lock toggle preserves those targets and only changes whether the lock
+          is enabled and, for groups, whether it inherits to descendants.
         </p>
         <CodeBlock code={lockingGuiSnippet} language="tsx" label="GUI locking" />
         <List>
@@ -1169,6 +1215,19 @@ export const documentationPages: IDocumentationPage[] = [
           <li>The default group cycle maps to <InlineCode>false</InlineCode>, <InlineCode>true</InlineCode>, and <InlineCode>{`{ enabled: true, inheritToChildren: true }`}</InlineCode>.</li>
           <li>When a parent group inherits a lock to descendants, child lock controls render disabled because descendants cannot override that inherited state.</li>
           <li>When <InlineCode>cloneable</InlineCode> is also enabled, the clone button renders immediately to the left of the lock button.</li>
+        </List>
+        <SectionTitle>Targeted read-only</SectionTitle>
+        <p>
+          Use object-based <InlineCode>readOnly</InlineCode> configs when you want
+          to keep specific controls visible but non-editable instead of locking
+          the entire rule or group.
+        </p>
+        <CodeBlock code={targetedReadOnlySnippet} language="tsx" label="Targeted read-only" />
+        <List>
+          <li>Rule targets are <InlineCode>field</InlineCode>, <InlineCode>operator</InlineCode>, and <InlineCode>value</InlineCode>.</li>
+          <li>Group targets are <InlineCode>combinator</InlineCode> and <InlineCode>negation</InlineCode>.</li>
+          <li>If <InlineCode>enabled</InlineCode> is <InlineCode>true</InlineCode> and <InlineCode>targets</InlineCode> is omitted, the whole node is read-only.</li>
+          <li>If <InlineCode>enabled</InlineCode> is <InlineCode>false</InlineCode>, the config stays dormant until the node is locked again.</li>
         </List>
         <SectionTitle>How each level behaves</SectionTitle>
         <List>
@@ -1181,9 +1240,19 @@ export const documentationPages: IDocumentationPage[] = [
             Siblings and parent groups are unaffected.
           </li>
           <li>
+            <InlineCode>{`rule.readOnly = { enabled: true, targets: ['field'] }`}</InlineCode>{' '}
+            keeps the field visible but non-editable, and also prevents deleting
+            that rule.
+          </li>
+          <li>
             <InlineCode>group.readOnly = true</InlineCode> locks only that
             group&apos;s own controls. Its child rules and child groups stay
             editable by default.
+          </li>
+          <li>
+            <InlineCode>{`group.readOnly = { enabled: true, targets: ['combinator'] }`}</InlineCode>{' '}
+            keeps the group combinator visible but non-editable without forcing
+            descendant rules to become read-only.
           </li>
           <li>
             <InlineCode>{`group.readOnly = { enabled: true, inheritToChildren: true }`}</InlineCode>{' '}
@@ -1205,10 +1274,13 @@ export const documentationPages: IDocumentationPage[] = [
         <CodeBlock code={cloneButtonSnippet} language="tsx" label="CloneButton override" />
         <SectionTitle>What &quot;locked&quot; means in the UI</SectionTitle>
         <List>
+          <li>Read-only targets stay visible. They become disabled, not hidden.</li>
           <li>Locked rules cannot change field, operator, or value, and cannot be deleted.</li>
+          <li>Targeted rule read-only also blocks deleting that rule, even if only one target such as <InlineCode>field</InlineCode> is protected.</li>
           <li>Locked groups cannot change their group operator, negation, add actions, or delete action.</li>
+          <li>Groups cannot be deleted when that would remove protected descendants indirectly.</li>
           <li>Locked rules and groups are removed from drag-and-drop interactions.</li>
-          <li>Clone controls render only for editable rules and groups.</li>
+          <li>Clone controls render only for editable rules and groups. Cloned nodes preserve their read-only configuration.</li>
           <li>
             A locked group without inheritance still renders editable descendants
             when those descendants are not otherwise locked.
@@ -1228,6 +1300,11 @@ export const documentationPages: IDocumentationPage[] = [
           <li>
             Descendants may still add their own local <InlineCode>readOnly</InlineCode>{' '}
             flags, but they cannot override an inherited lock from an ancestor.
+          </li>
+          <li>
+            Group target inheritance preserves only the group-level semantics of
+            the inherited lock. It does not turn rule-specific controls such as{' '}
+            <InlineCode>field</InlineCode> or <InlineCode>value</InlineCode> into inherited targets.
           </li>
         </List>
         <AlertBox title="API reference" variant="info">
@@ -1394,6 +1471,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Unsupported operators for a field are highlighted on the operator token.</li>
           <li>Invalid <InlineCode>LIST</InlineCode> values are highlighted on the invalid value token.</li>
           <li>Invalid <InlineCode>MULTI_LIST</InlineCode> values are highlighted on the invalid value token.</li>
+          <li>Read-only negation changes are rejected after parsing and shown as below-editor semantic errors.</li>
         </List>
         <SectionTitle>Invalid text behavior</SectionTitle>
         <List>
@@ -1409,7 +1487,7 @@ export const documentationPages: IDocumentationPage[] = [
         <SectionTitle>Choosing an editor</SectionTitle>
         <List>
           <li><ItemTitle>Choose the built-in editor:</ItemTitle> when you want lightweight SQL editing, built-in validation, and no extra dependencies.</li>
-          <li><ItemTitle>Choose Monaco:</ItemTitle> when locked rules or groups must stay protected in text mode, or when you want a more advanced editor experience.</li>
+          <li><ItemTitle>Choose Monaco:</ItemTitle> when locked or targeted read-only query segments must stay protected in text mode, or when you want a more advanced editor experience.</li>
         </List>
         <SectionTitle>Built-in editor vs Monaco</SectionTitle>
         <List>
@@ -1420,19 +1498,26 @@ export const documentationPages: IDocumentationPage[] = [
             validation without extra dependencies.
           </li>
           <li>
-            <ItemTitle>Built-in editor limitation:</ItemTitle> Locked rules and
-            locked groups are blocked before entering text mode there, because the
-            basic editor cannot preserve protected query segments safely after freeform text edits.
+            <ItemTitle>Built-in editor limitation:</ItemTitle> Locked rules,
+            locked groups, and targeted read-only queries are blocked before
+            entering text mode there, because the basic editor cannot preserve
+            protected query segments safely after freeform text edits.
           </li>
           <li>
             <ItemTitle>Monaco text mode:</ItemTitle> Optional advanced editor
             integration exposed from{' '}
             <InlineCode>@vojtechportes/react-query-builder/monaco</InlineCode>.
-            It preserves locked query segments by rendering them as protected ranges.
+            It preserves locked and targeted read-only query segments by rendering
+            them as protected ranges.
           </li>
           <li>
-            <ItemTitle>Monaco locked behavior:</ItemTitle> Locked SQL fragments are
-            dimmed, protected from edits, and expose their lock explanation on hover.
+            <ItemTitle>Monaco protected behavior:</ItemTitle> Protected SQL fragments
+            are dimmed, protected from edits, and expose their lock explanation on hover.
+          </li>
+          <li>
+            <ItemTitle>Localized read-only protection:</ItemTitle> Rule field,
+            operator, and value segments can be protected inline, while read-only
+            negation is additionally enforced semantically and reported below the editor when changed.
           </li>
           <li>
             <ItemTitle>Monaco packaging:</ItemTitle>{' '}
@@ -1470,15 +1555,16 @@ export const documentationPages: IDocumentationPage[] = [
           <li><InlineCode>strings.textMode.toggleToText</InlineCode> customizes the button label for entering text mode.</li>
           <li><InlineCode>strings.textMode.toggleToBuilder</InlineCode> customizes the button label for returning to the visual builder.</li>
           <li><InlineCode>strings.textMode.syntaxError</InlineCode> customizes the syntax error prefix.</li>
-          <li><InlineCode>strings.textMode.locksUnsupported</InlineCode> customizes the built-in alert shown when the basic editor cannot open a locked query.</li>
+          <li><InlineCode>strings.textMode.locksUnsupported</InlineCode> customizes the built-in alert shown when the basic editor cannot open a locked or targeted read-only query.</li>
           <li><InlineCode>strings.textMode.lockedRangesHover</InlineCode> customizes the hover message shown for protected Monaco ranges.</li>
           <li><InlineCode>strings.textMode.sql</InlineCode> customizes SQL parser and syntax-validation messages such as missing brackets, missing quotes, missing keywords, and unexpected tokens.</li>
         </List>
         <SectionTitle>Installing Monaco</SectionTitle>
         <CodeBlock code={monacoInstallSnippet} language="bash" label="Monaco peer dependency" />
         <AlertBox title="Locks and Monaco" variant="info">
-          The built-in text editor blocks locked queries. Monaco is the intended
-          path when locked rules or groups need to remain protected in text mode.
+          The built-in text editor blocks locked and targeted read-only queries.
+          Monaco is the intended path when protected query segments need to remain
+          editable only around their unlocked ranges.
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink> and{' '}
