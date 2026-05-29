@@ -589,30 +589,38 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
   const content =
     textModeEnabled && mode === 'text' ? (
-      TextModeEditorComponent === defaultComponents.TextModeEditor ? (
-        <DefaultTextModeEditor
-          value={textValue}
-          diagnostics={textDiagnostics}
-          protectedRanges={textProtectedRanges}
-          protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
-          errorMessage={textErrorMessage}
-          TextModeInputComponent={TextModeInputComponent}
-          readOnly={readOnly}
-          allowProtectedRangeDeletion={!readOnlyProtectsDelete}
-          onChange={handleTextChange}
-        />
-      ) : (
-        <TextModeEditorComponent
-          value={textValue}
-          diagnostics={textDiagnostics}
-          protectedRanges={textProtectedRanges}
-          protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
-          errorMessage={textErrorMessage}
-          readOnly={readOnly}
-          allowProtectedRangeDeletion={!readOnlyProtectsDelete}
-          onChange={handleTextChange}
-        />
-      )
+      (() => {
+        const textModeProtectedRanges = readOnly
+          ? textValue.length > 0
+            ? [{ start: 0, end: textValue.length }]
+            : []
+          : textProtectedRanges;
+
+        return TextModeEditorComponent === defaultComponents.TextModeEditor ? (
+          <DefaultTextModeEditor
+            value={textValue}
+            diagnostics={textDiagnostics}
+            protectedRanges={textModeProtectedRanges}
+            protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
+            errorMessage={textErrorMessage}
+            TextModeInputComponent={TextModeInputComponent}
+            readOnly={readOnly}
+            allowProtectedRangeDeletion={!readOnlyProtectsDelete}
+            onChange={handleTextChange}
+          />
+        ) : (
+          <TextModeEditorComponent
+            value={textValue}
+            diagnostics={textDiagnostics}
+            protectedRanges={textModeProtectedRanges}
+            protectedRangeHoverMessage={strings.textMode?.lockedRangesHover || null}
+            errorMessage={textErrorMessage}
+            readOnly={readOnly}
+            allowProtectedRangeDeletion={!readOnlyProtectsDelete}
+            onChange={handleTextChange}
+          />
+        );
+      })()
     ) : (
       builderContent
     );
