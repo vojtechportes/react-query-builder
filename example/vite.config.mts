@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 const srcRoot = fileURLToPath(new URL('../src', import.meta.url));
+const exampleMantineCoreRoot = fileURLToPath(
+  new URL('./node_modules/@mantine/core', import.meta.url)
+);
+const exampleMantineHooksRoot = fileURLToPath(
+  new URL('./node_modules/@mantine/hooks', import.meta.url)
+);
 
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
@@ -44,6 +50,14 @@ export default defineConfig({
       {
         find: '@vojtechportes/react-query-builder/fluentui/v8',
         replacement: `${srcRoot}/fluentui/v8`,
+      },
+      {
+        find: '@mantine/core',
+        replacement: exampleMantineCoreRoot,
+      },
+      {
+        find: '@mantine/hooks',
+        replacement: exampleMantineHooksRoot,
       },
       {
         find: '@vojtechportes/react-query-builder/mantine/v8',
