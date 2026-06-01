@@ -6,6 +6,9 @@ import {
 } from '@vojtechportes/react-query-builder';
 import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';
 import { components as fluentUiComponents } from '@vojtechportes/react-query-builder/fluentui/v8';
+import mantineStyles from '@mantine/core/styles.css?inline';
+import { MantineProvider } from '@mantine/core';
+import { components as mantineComponents } from '@vojtechportes/react-query-builder/mantine/v9';
 import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import type { IColors } from '../../../src/constants/colors';
@@ -180,6 +183,63 @@ const SourceButton = styled.button`
   }
 `;
 
+const mantineScopeClassName = 'mantine-demo-scope';
+
+const scopedMantineStyles = mantineStyles
+  .replace(
+    /:root,\s*:host/g,
+    `.${mantineScopeClassName}`
+  )
+  .replace(
+    /body,\s*:host/g,
+    `.${mantineScopeClassName}`
+  )
+  .replace(
+    /:root\[data-mantine-color-scheme='dark'\],\s*:host\(\[data-mantine-color-scheme='dark'\]\)/g,
+    `.${mantineScopeClassName}[data-mantine-color-scheme='dark']`
+  )
+  .replace(
+    /:root\[data-mantine-color-scheme='light'\],\s*:host\(\[data-mantine-color-scheme='light'\]\)/g,
+    `.${mantineScopeClassName}[data-mantine-color-scheme='light']`
+  )
+  .replace(
+    /\*,\s*\*::before,\s*\*::after/g,
+    `.${mantineScopeClassName}, .${mantineScopeClassName} *, .${mantineScopeClassName} *::before, .${mantineScopeClassName} *::after`
+  )
+  .replace(
+    /input,\s*button,\s*textarea,\s*select/g,
+    `.${mantineScopeClassName} input, .${mantineScopeClassName} button, .${mantineScopeClassName} textarea, .${mantineScopeClassName} select`
+  )
+  .replace(
+    /button,\s*select/g,
+    `.${mantineScopeClassName} button, .${mantineScopeClassName} select`
+  )
+  .replace(
+    /fieldset:disabled \.mantine-active:active/g,
+    `.${mantineScopeClassName} fieldset:disabled .mantine-active:active`
+  );
+
+const scopedMantineDemoOverrides = `
+  .${mantineScopeClassName} .mantine-Button-root,
+  .${mantineScopeClassName} .mantine-UnstyledButton-root,
+  .${mantineScopeClassName} .mantine-ActionIcon-root {
+    font-size: 14px !important;
+  }
+
+  .${mantineScopeClassName} .mantine-Button-root,
+  .${mantineScopeClassName} .mantine-UnstyledButton-root {
+    min-height: 34px;
+  }
+
+  .${mantineScopeClassName} .mantine-Input-input,
+  .${mantineScopeClassName} .mantine-Select-input,
+  .${mantineScopeClassName} .mantine-MultiSelect-input,
+  .${mantineScopeClassName} .mantine-Combobox-option,
+  .${mantineScopeClassName} .mantine-PillsInput-input {
+    font-size: 14px !important;
+  }
+`;
+
 export interface IDemoPlaygroundProps {
   initialData?: DenormalizedQuery;
 }
@@ -187,6 +247,7 @@ export interface IDemoPlaygroundProps {
 export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   initialData = initialQueryTree,
 }) => {
+  const mantineRootRef = React.useRef<HTMLDivElement>(null);
   const [data, setData] = React.useState<DenormalizedQuery>(initialData);
   const [outputFormat, setOutputFormat] = React.useState<OutputFormat>('Native');
   const [readOnly, setReadOnly] = React.useState(false);
@@ -212,8 +273,10 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [showSourceCode, setShowSourceCode] = React.useState(false);
   const isMuiMode = customizationMode === 'mui';
   const isAntdMode = customizationMode === 'antd';
+  const isMantineMode = customizationMode === 'mantine';
   const isFluentUiMode = customizationMode === 'fluentui';
-  const usesAdapterMode = isMuiMode || isAntdMode || isFluentUiMode;
+  const usesAdapterMode =
+    isMuiMode || isAntdMode || isMantineMode || isFluentUiMode;
 
   React.useEffect(() => {
     if (!singleRootGroup && textMode) {
@@ -227,6 +290,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         ? muiComponents
         : customizationMode === 'antd'
           ? antdComponents
+          : customizationMode === 'mantine'
+            ? mantineComponents
           : customizationMode === 'fluentui'
             ? fluentUiComponents
           : undefined;
@@ -483,6 +548,16 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               />
               <span>Fluent UI adapter</span>
             </ToggleRow>
+
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'mantine'}
+                onChange={() => setCustomizationMode('mantine')}
+              />
+              <span>Mantine adapter</span>
+            </ToggleRow>
           </ChoiceGroup>
         </Panel>
 
@@ -495,6 +570,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               usesAdapterMode
                 ? isMuiMode
                   ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
+                  : isMantineMode
+                    ? 'ThemeProvider colors style the default builder components only. The Mantine adapter uses Mantine styling instead.'
                   : isFluentUiMode
                     ? 'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.'
                   : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
@@ -522,19 +599,49 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         </OutputCard>
 
         <BuilderCard>
-          <BuilderSurface>
-            {isMuiMode ? (
-              <Builder {...builderProps} />
-            ) : isFluentUiMode ? (
-              <Builder {...builderProps} />
-            ) : isAntdMode ? (
-              <Builder {...builderProps} />
-            ) : (
-              <ThemeProvider colors={themeColors}>
+          {isMantineMode ? (
+            <>
+              <style>{scopedMantineStyles}</style>
+              <style>{scopedMantineDemoOverrides}</style>
+              <BuilderSurface
+                ref={mantineRootRef}
+                className={mantineScopeClassName}
+                style={
+                  {
+                    fontSize: '14px',
+                    lineHeight: 1.5,
+                    '--mantine-font-size-xs': '0.75rem',
+                    '--mantine-font-size-sm': '0.8125rem',
+                    '--mantine-font-size-md': '0.875rem',
+                    '--mantine-font-size-lg': '1rem',
+                    '--mantine-font-size-xl': '1.125rem',
+                  } as React.CSSProperties
+                }
+              >
+                <MantineProvider
+                  cssVariablesSelector={`.${mantineScopeClassName}`}
+                  getRootElement={() => mantineRootRef.current ?? undefined}
+                  withGlobalClasses={false}
+                >
+                  <Builder {...builderProps} />
+                </MantineProvider>
+              </BuilderSurface>
+            </>
+          ) : (
+            <BuilderSurface>
+              {isMuiMode ? (
                 <Builder {...builderProps} />
-              </ThemeProvider>
-            )}
-          </BuilderSurface>
+              ) : isFluentUiMode ? (
+                <Builder {...builderProps} />
+              ) : isAntdMode ? (
+                <Builder {...builderProps} />
+              ) : (
+                <ThemeProvider colors={themeColors}>
+                  <Builder {...builderProps} />
+                </ThemeProvider>
+              )}
+            </BuilderSurface>
+          )}
         </BuilderCard>
 
         <OutputCard>

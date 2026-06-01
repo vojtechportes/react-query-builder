@@ -6,7 +6,7 @@
     "jsx": "react",
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,

@@ -29,7 +29,12 @@ const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     min-width: 320px;
-    font: inherit;
+    font-family: "Segoe UI", "Inter", sans-serif;
+    line-height: 1.5;
+    color: #0f172a;
+    background:
+      radial-gradient(circle at top left, ${siteTheme.pageGlow}, transparent 32%),
+      linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
   }
 
   a {

@@ -153,6 +153,29 @@ export const MyAntdBuilder = () => {
   );
 };`;
 
+const mantineSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import { components } from '@vojtechportes/react-query-builder/mantine/v9';
+
+export const MyMantineBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <MantineProvider>
+      <Builder
+        data={data}
+        fields={fields}
+        components={components}
+        onChange={setData}
+      />
+    </MantineProvider>
+  );
+};`;
+
 const fluentUiSnippet = `import {
   Builder,
   type DenormalizedQuery,
@@ -188,6 +211,8 @@ const components = {
 const adaptersInstallSnippet = `npm install @mui/material@^9.0.1 @mui/icons-material@^9.0.1 @emotion/react @emotion/styled`;
 
 const antdAdaptersInstallSnippet = `npm install antd@^6.0.0 @ant-design/icons@^6.0.0`;
+
+const mantineAdaptersInstallSnippet = `npm install @mantine/core@^9.0.0 @mantine/hooks@^9.0.0 react@^19.2.0 react-dom@^19.2.0`;
 
 const fluentUiAdaptersInstallSnippet = `npm install @fluentui/react@^8.125.6`;
 
@@ -246,6 +271,39 @@ export const MyAntdBuilder = () => {
       components={components}
       onChange={setData}
     />
+  );
+};`;
+
+const mantineCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import {
+  createMantineComponents,
+  components as mantineComponents,
+} from '@vojtechportes/react-query-builder/mantine/v9';
+
+const components = createMantineComponents(mantineComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyMantineBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <MantineProvider>
+      <Builder
+        data={data}
+        fields={fields}
+        components={components}
+        onChange={setData}
+      />
+    </MantineProvider>
   );
 };`;
 
@@ -1739,7 +1797,7 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation overview for packaged UI adapters, versioned entrypoints, adapter-specific subpages, and shared customization patterns.',
     searchText:
-      'Adapters customization mui material ui antd ant design fluent ui versioned adapter entrypoints adapter overview create components pages ready made overrides',
+      'Adapters customization mui material ui antd ant design mantine fluent ui versioned adapter entrypoints adapter overview create components pages ready made overrides',
     content: (
       <>
         <p>
@@ -1752,6 +1810,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li><TextLink to="/documentation/adapters/mui">MUI</TextLink> covers <InlineCode>mui/v9</InlineCode>, legacy <InlineCode>mui/v7</InlineCode>, install steps, and merge patterns.</li>
           <li><TextLink to="/documentation/adapters/antd">ANTD</TextLink> covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, install steps, and merge patterns.</li>
           <li><TextLink to="/documentation/adapters/fluentui">Fluent UI</TextLink> covers <InlineCode>fluentui/v8</InlineCode>, install steps, and merge patterns.</li>
+          <li><TextLink to="/documentation/adapters/mantine">Mantine</TextLink> covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, install steps, provider usage, and merge patterns.</li>
         </List>
         <SectionTitle>Extending an adapter</SectionTitle>
         <List>
@@ -1767,7 +1826,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Choose the adapter subpage that matches your UI library for exact installation commands and code samples.</li>
         </List>
         <AlertBox title="Monaco text mode" variant="info">
-          When you want Monaco text mode together with MUI, ANTD, or Fluent UI, compose the
+          When you want Monaco text mode together with MUI, ANTD, Mantine, or Fluent UI, compose the
           adapter <InlineCode>components</InlineCode> object with{' '}
           <InlineCode>createMonacoComponents(...)</InlineCode>. See{' '}
           <TextLink to="/documentation/text-mode">Text Mode</TextLink> for examples.
@@ -1930,6 +1989,69 @@ export const documentationPages: IDocumentationPage[] = [
     ),
   },
   {
+    path: '/documentation/adapters/mantine',
+    title: 'Mantine',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for the Mantine adapter, including mantine/v9, legacy mantine/v8 support, installation, provider setup, and component merging.',
+    searchText:
+      'Mantine adapter mantine v9 mantine v8 adapter install MantineProvider createMantineComponents components',
+    content: (
+      <>
+        <p>
+          Use the Mantine adapter when your application already uses Mantine and
+          you want the builder controls to inherit that component language.
+        </p>
+        <SectionTitle>Available entrypoints</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/mantine/v9</InlineCode> is the recommended entrypoint for new Mantine projects and the one used in the demo.</li>
+          <li><InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode> is available for applications that are still on Mantine 8.</li>
+        </List>
+        <SectionTitle>Installing Mantine</SectionTitle>
+        <p>
+          Install the Mantine peer dependencies that match the adapter version
+          you want to use. For new setups, prefer <InlineCode>mantine/v9</InlineCode>.
+        </p>
+        <CodeBlock
+          code={mantineAdaptersInstallSnippet}
+          language="bash"
+          label="Mantine v9 peers"
+        />
+        <AlertBox title="React version note" variant="info">
+          Mantine 9 requires React 19. The library website runs on React 19 so it can
+          exercise <InlineCode>mantine/v9</InlineCode> directly, while the
+          library package itself keeps broad React 18 and 19 peer compatibility.
+        </AlertBox>
+        <AlertBox title="Stylesheet required" variant="info">
+          Import <InlineCode>@mantine/core/styles.css</InlineCode> once in your
+          application entrypoint. Without it, Mantine components render without
+          their expected styling.
+        </AlertBox>
+        <SectionTitle>Using Mantine v9</SectionTitle>
+        <CodeBlock code={mantineSnippet} language="tsx" label="Mantine v9 adapter" />
+        <SectionTitle>Supporting Mantine v8</SectionTitle>
+        <p>
+          If your application is still on Mantine 8, switch the import path to{' '}
+          <InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode>.
+        </p>
+        <SectionTitle>Extending the Mantine adapter</SectionTitle>
+        <CodeBlock
+          code={mantineCreateComponentsSnippet}
+          language="tsx"
+          label="Merging Mantine defaults"
+        />
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/adapters/mantine">Mantine adapter API</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
     path: '/documentation/theming',
     title: 'Theming',
     sectionKey: 'customization',
@@ -1951,7 +2073,8 @@ export const documentationPages: IDocumentationPage[] = [
           component set. If you use an adapter from{' '}
           <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
           <InlineCode>mui/v7</InlineCode>, <InlineCode>mui/v9</InlineCode>,{' '}
-          <InlineCode>antd/v5</InlineCode>, <InlineCode>antd/v6</InlineCode>, or{' '}
+          <InlineCode>antd/v5</InlineCode>, <InlineCode>antd/v6</InlineCode>,{' '}
+          <InlineCode>mantine/v8</InlineCode>, <InlineCode>mantine/v9</InlineCode>, or{' '}
           <InlineCode>fluentui/v8</InlineCode>, these theme tokens do not affect
           the adapter UI.
         </AlertBox>

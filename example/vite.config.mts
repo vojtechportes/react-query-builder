@@ -46,6 +46,14 @@ export default defineConfig({
         replacement: `${srcRoot}/fluentui/v8`,
       },
       {
+        find: '@vojtechportes/react-query-builder/mantine/v8',
+        replacement: `${srcRoot}/mantine/v8`,
+      },
+      {
+        find: '@vojtechportes/react-query-builder/mantine/v9',
+        replacement: `${srcRoot}/mantine/v9`,
+      },
+      {
         find: '@vojtechportes/react-query-builder',
         replacement: srcRoot,
       },

@@ -1,6 +1,11 @@
 import type { IColors } from '../../../../src/constants/colors';
 
-export type CustomizationMode = 'default' | 'mui' | 'antd' | 'fluentui';
+export type CustomizationMode =
+  | 'default'
+  | 'mui'
+  | 'antd'
+  | 'mantine'
+  | 'fluentui';
 
 export interface IBuilderSourceOptions {
   readOnly: boolean;
