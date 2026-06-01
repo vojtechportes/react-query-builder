@@ -6,6 +6,7 @@ import { siteTheme } from '../constants/site-theme';
 export interface INavigationPage {
   path: string;
   title: string;
+  depth?: number;
 }
 
 export interface INavigationGroup {
@@ -46,16 +47,17 @@ const GroupTitle = styled.h3`
   text-transform: uppercase;
 `;
 
-const LinkItem = styled(NavLink)`
+const LinkItem = styled(NavLink)<{ $depth?: number }>`
   display: block;
-  padding: 0.38rem 0.55rem;
+  padding: 0.38rem 0.55rem 0.38rem
+    ${({ $depth = 0 }) => `calc(0.55rem + ${$depth}rem)`};
   border-radius: 14px;
   color: #475569;
   line-height: 1.3;
 
   &.active {
     margin: 0 -4px;
-    padding-left: calc(0.55rem + 4px);
+    padding-left: ${({ $depth = 0 }) => `calc(0.55rem + 4px + ${$depth}rem)`};
     padding-right: calc(0.55rem + 4px);
     background: ${siteTheme.primarySurfaceStrong};
     color: ${siteTheme.primaryDark};
@@ -75,14 +77,14 @@ export const DocumentationSidebar: React.FC<IDocumentationSidebarProps> = ({
   groups,
 }) => (
   <Root>
-    <LinkItem to={overviewPage.path} end>
+    <LinkItem to={overviewPage.path} end $depth={overviewPage.depth}>
       {overviewPage.title}
     </LinkItem>
     {groups.map(group => (
       <Group key={group.key}>
         <GroupTitle>{group.title}</GroupTitle>
         {group.pages.map(page => (
-          <LinkItem key={page.path} to={page.path} end>
+          <LinkItem key={page.path} to={page.path} end $depth={page.depth}>
             {page.title}
           </LinkItem>
         ))}

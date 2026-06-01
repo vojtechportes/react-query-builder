@@ -12,6 +12,7 @@ import {
 export interface IDocumentationPage {
   path: string;
   title: string;
+  depth?: number;
   sectionKey: string;
   sectionTitle: string;
   summary: string;
@@ -152,6 +153,25 @@ export const MyAntdBuilder = () => {
   );
 };`;
 
+const fluentUiSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/fluentui/v8';
+
+export const MyFluentUiBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
 const muiOverrideSnippet = `import {
   components as muiComponents,
   MuiSelect,
@@ -168,6 +188,8 @@ const components = {
 const adaptersInstallSnippet = `npm install @mui/material@^9.0.1 @mui/icons-material@^9.0.1 @emotion/react @emotion/styled`;
 
 const antdAdaptersInstallSnippet = `npm install antd@^6.0.0 @ant-design/icons@^6.0.0`;
+
+const fluentUiAdaptersInstallSnippet = `npm install @fluentui/react@^8.125.6`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -215,6 +237,35 @@ const components = createAntdComponents(antdComponents, {
 });
 
 export const MyAntdBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const fluentUiCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import {
+  createFluentUiComponents,
+  components as fluentUiComponents,
+} from '@vojtechportes/react-query-builder/fluentui/v8';
+
+const components = createFluentUiComponents(fluentUiComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyFluentUiBuilder = () => {
   const [data, setData] = useState<DenormalizedQuery>(initialData);
 
   return (
@@ -1686,9 +1737,9 @@ export const documentationPages: IDocumentationPage[] = [
     sectionTitle: 'Customization',
     summary: '',
     description:
-      'Documentation for packaged UI adapters such as Material UI mappings, versioned adapter entrypoints, and partial override patterns.',
+      'Documentation overview for packaged UI adapters, versioned entrypoints, adapter-specific subpages, and shared customization patterns.',
     searchText:
-      'Adapters customization mui material ui v7 v9 antd ant design v5 v6 components mapping adapter packages ready made overrides',
+      'Adapters customization mui material ui antd ant design fluent ui versioned adapter entrypoints adapter overview create components pages ready made overrides',
     content: (
       <>
         <p>
@@ -1696,12 +1747,60 @@ export const documentationPages: IDocumentationPage[] = [
           for UI libraries so you do not need to implement every override in{' '}
           <TextLink to="/documentation/components">Components</TextLink> yourself.
         </p>
-        <SectionTitle>Available adapter entrypoints</SectionTitle>
+        <SectionTitle>Adapter guides</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode> is the recommended Material UI adapter for new projects and the one showcased in the demo.</li>
+          <li><TextLink to="/documentation/adapters/mui">MUI</TextLink> covers <InlineCode>mui/v9</InlineCode>, legacy <InlineCode>mui/v7</InlineCode>, install steps, and merge patterns.</li>
+          <li><TextLink to="/documentation/adapters/antd">ANTD</TextLink> covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, install steps, and merge patterns.</li>
+          <li><TextLink to="/documentation/adapters/fluentui">Fluent UI</TextLink> covers <InlineCode>fluentui/v8</InlineCode>, install steps, and merge patterns.</li>
+        </List>
+        <SectionTitle>Extending an adapter</SectionTitle>
+        <List>
+          <li>Start with the exported adapter <InlineCode>components</InlineCode> object.</li>
+          <li>Override only the pieces you want to replace, such as a single select or button component.</li>
+          <li>This keeps your app aligned with future adapter updates while still allowing local customization.</li>
+        </List>
+        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="Merging adapter defaults" />
+        <SectionTitle>Shared behavior</SectionTitle>
+        <List>
+          <li>Adapters are versioned entrypoints so the package can support multiple major UI-library versions in parallel.</li>
+          <li>Each adapter exports a ready-to-pass <InlineCode>components</InlineCode> object plus a merge helper that preserves nested <InlineCode>form</InlineCode> overrides.</li>
+          <li>Choose the adapter subpage that matches your UI library for exact installation commands and code samples.</li>
+        </List>
+        <AlertBox title="Monaco text mode" variant="info">
+          When you want Monaco text mode together with MUI, ANTD, or Fluent UI, compose the
+          adapter <InlineCode>components</InlineCode> object with{' '}
+          <InlineCode>createMonacoComponents(...)</InlineCode>. See{' '}
+          <TextLink to="/documentation/text-mode">Text Mode</TextLink> for examples.
+        </AlertBox>
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/components">Components</TextLink>,{' '}
+          <TextLink to="/documentation/theming">Theming</TextLink>, and{' '}
+          <TextLink to="/api/adapters">Adapters API</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/adapters/mui',
+    title: 'MUI',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for the Material UI adapter, including mui/v9, legacy mui/v7 support, installation, and component merging.',
+    searchText:
+      'MUI adapter material ui mui v9 mui v7 adapter install createMuiComponents components',
+    content: (
+      <>
+        <p>
+          Use the MUI adapter when your application already uses Material UI and
+          you want the builder to inherit that component language.
+        </p>
+        <SectionTitle>Available entrypoints</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode> is the recommended entrypoint for new Material UI projects and the one used in the demo.</li>
           <li><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode> is available for applications that are still on Material UI 7.</li>
-          <li><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode> is the recommended Ant Design adapter for new projects and is available in the demo.</li>
-          <li><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode> is available for applications that are still on Ant Design 5.</li>
         </List>
         <SectionTitle>Installing MUI</SectionTitle>
         <p>
@@ -1721,6 +1820,42 @@ export const documentationPages: IDocumentationPage[] = [
           language="tsx"
           label="Starting from the MUI v7 mapping"
         />
+        <SectionTitle>Extending the MUI adapter</SectionTitle>
+        <CodeBlock
+          code={muiCreateComponentsSnippet}
+          language="tsx"
+          label="Merging MUI defaults"
+        />
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/adapters/mui">MUI adapter API</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/adapters/antd',
+    title: 'ANTD',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for the Ant Design adapter, including antd/v6, legacy antd/v5 support, installation, and component merging.',
+    searchText:
+      'ANTD adapter ant design antd v6 antd v5 adapter install createAntdComponents components',
+    content: (
+      <>
+        <p>
+          Use the ANTD adapter when your application uses Ant Design and you want
+          the builder controls to match the surrounding system components.
+        </p>
+        <SectionTitle>Available entrypoints</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode> is the recommended entrypoint for new Ant Design projects and is available in the demo.</li>
+          <li><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode> is available for applications that are still on Ant Design 5.</li>
+        </List>
         <SectionTitle>Installing ANTD</SectionTitle>
         <p>
           Install the Ant Design peer dependencies that match the adapter version
@@ -1734,24 +1869,62 @@ export const documentationPages: IDocumentationPage[] = [
           If your application is still on Ant Design 5, switch the import path to{' '}
           <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>.
         </p>
-        <SectionTitle>Extending an adapter</SectionTitle>
-        <List>
-          <li>Start with the exported adapter <InlineCode>components</InlineCode> object.</li>
-          <li>Override only the pieces you want to replace, such as a single select or button component.</li>
-          <li>This keeps your app aligned with future adapter updates while still allowing local customization.</li>
-        </List>
-        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="Merging MUI defaults" />
-        <CodeBlock code={antdCreateComponentsSnippet} language="tsx" label="Merging ANTD defaults" />
-        <AlertBox title="Monaco text mode" variant="info">
-          When you want Monaco text mode together with MUI or ANTD, compose the
-          adapter <InlineCode>components</InlineCode> object with{' '}
-          <InlineCode>createMonacoComponents(...)</InlineCode>. See{' '}
-          <TextLink to="/documentation/text-mode">Text Mode</TextLink> for examples.
-        </AlertBox>
+        <SectionTitle>Extending the ANTD adapter</SectionTitle>
+        <CodeBlock
+          code={antdCreateComponentsSnippet}
+          language="tsx"
+          label="Merging ANTD defaults"
+        />
         <AlertBox title="Related docs" variant="info">
-          <TextLink to="/documentation/components">Components</TextLink>,{' '}
-          <TextLink to="/documentation/theming">Theming</TextLink>, and{' '}
-          <TextLink to="/api/adapters">Adapters API</TextLink>.
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/adapters/antd">ANTD adapter API</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/adapters/fluentui',
+    title: 'Fluent UI',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for the Fluent UI adapter, including fluentui/v8 installation, usage, and component merging.',
+    searchText:
+      'Fluent UI adapter fluentui v8 adapter install createFluentUiComponents components',
+    content: (
+      <>
+        <p>
+          Use the Fluent UI adapter when your application is built on Fluent UI
+          React 8 and you want builder controls mapped to that component set.
+        </p>
+        <SectionTitle>Available entrypoint</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/fluentui/v8</InlineCode> targets <InlineCode>@fluentui/react</InlineCode> 8.x and is available in the demo.</li>
+        </List>
+        <SectionTitle>Installing Fluent UI</SectionTitle>
+        <p>
+          Install the matching Fluent UI peer dependency before using the adapter.
+        </p>
+        <CodeBlock
+          code={fluentUiAdaptersInstallSnippet}
+          language="bash"
+          label="Fluent UI v8 peers"
+        />
+        <SectionTitle>Using Fluent UI v8</SectionTitle>
+        <CodeBlock code={fluentUiSnippet} language="tsx" label="Fluent UI v8 adapter" />
+        <SectionTitle>Extending the Fluent UI adapter</SectionTitle>
+        <CodeBlock
+          code={fluentUiCreateComponentsSnippet}
+          language="tsx"
+          label="Merging Fluent UI defaults"
+        />
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/adapters/fluentui">Fluent UI adapter API</TextLink>.
         </AlertBox>
       </>
     ),
@@ -1778,8 +1951,9 @@ export const documentationPages: IDocumentationPage[] = [
           component set. If you use an adapter from{' '}
           <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
           <InlineCode>mui/v7</InlineCode>, <InlineCode>mui/v9</InlineCode>,{' '}
-          <InlineCode>antd/v5</InlineCode>, or <InlineCode>antd/v6</InlineCode>,
-          these theme tokens do not affect the adapter UI.
+          <InlineCode>antd/v5</InlineCode>, <InlineCode>antd/v6</InlineCode>, or{' '}
+          <InlineCode>fluentui/v8</InlineCode>, these theme tokens do not affect
+          the adapter UI.
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/theming">Theming</TextLink> and{' '}

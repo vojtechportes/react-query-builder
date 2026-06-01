@@ -226,9 +226,20 @@ const antdAdapterSnippet = `import { components } from '@vojtechportes/react-que
   onChange={setData}
 />;`;
 
+const fluentUiAdapterSnippet = `import { components } from '@vojtechportes/react-query-builder/fluentui/v8';
+
+<Builder
+  fields={fields}
+  data={data}
+  components={components}
+  onChange={setData}
+/>;`;
+
 const muiV7Snippet = `import { components } from '@vojtechportes/react-query-builder/mui/v7';`;
 
 const antdV5Snippet = `import { components } from '@vojtechportes/react-query-builder/antd/v5';`;
+
+const fluentUiV8Snippet = `import { components } from '@vojtechportes/react-query-builder/fluentui/v8';`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -276,6 +287,35 @@ const components = createAntdComponents(antdComponents, {
 });
 
 export const MyAntdBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const fluentUiCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import {
+  createFluentUiComponents,
+  components as fluentUiComponents,
+} from '@vojtechportes/react-query-builder/fluentui/v8';
+
+const components = createFluentUiComponents(fluentUiComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyFluentUiBuilder = () => {
   const [data, setData] = useState<DenormalizedQuery>(initialData);
 
   return (
@@ -444,6 +484,7 @@ const queryFormatSignature = `export type QueryFormat =
 export interface IApiPage {
   path: string;
   title: string;
+  depth?: number;
   sectionKey: string;
   sectionTitle: string;
   summary: string;
@@ -764,40 +805,143 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Customization',
     summary: '',
     description:
-      'API reference for packaged UI adapter entrypoints such as Material UI v7 and v9 and how they map onto the components override surface.',
+      'API overview for packaged UI adapter entrypoints, shared exports, and how adapters map onto the components override surface.',
     searchText:
-      'Adapters API mui material ui v7 v9 antd ant design v5 v6 components object adapter entrypoints customization',
+      'Adapters API mui material ui antd ant design fluent ui components object adapter entrypoints customization shared exports',
     content: (
       <>
-        <CodeBlock code={muiAdapterSnippet} language="tsx" label="MUI v9 adapter usage" />
-        <CodeBlock code={antdAdapterSnippet} language="tsx" label="ANTD v6 adapter usage" />
-        <CodeBlock code={muiV7Snippet} language="tsx" label="MUI v7 import" />
-        <CodeBlock code={antdV5Snippet} language="tsx" label="ANTD v5 import" />
-        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="createMuiComponents" />
-        <CodeBlock code={antdCreateComponentsSnippet} language="tsx" label="createAntdComponents" />
         <SectionTitle>Available adapter entrypoints</SectionTitle>
         <List>
-          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode>:</ItemTitle> Recommended Material UI adapter for new projects.</li>
-          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>:</ItemTitle> Material UI adapter for applications still on MUI 7.</li>
-          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode>:</ItemTitle> Recommended Ant Design adapter for new projects.</li>
-          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>:</ItemTitle> Ant Design adapter for applications still on Ant Design 5.</li>
+          <li><ItemTitle><TextLink to="/api/adapters/mui">MUI</TextLink>:</ItemTitle> Covers <InlineCode>mui/v9</InlineCode>, legacy <InlineCode>mui/v7</InlineCode>, and the MUI-specific merge helper.</li>
+          <li><ItemTitle><TextLink to="/api/adapters/antd">ANTD</TextLink>:</ItemTitle> Covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, and the ANTD-specific merge helper.</li>
+          <li><ItemTitle><TextLink to="/api/adapters/fluentui">Fluent UI</TextLink>:</ItemTitle> Covers <InlineCode>fluentui/v8</InlineCode> and the Fluent-UI-specific merge helper.</li>
         </List>
         <SectionTitle>What adapters export</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> A ready-to-pass object that matches <InlineCode>IBuilderComponentsProps</InlineCode>.</li>
-          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>MuiInput</InlineCode>, <InlineCode>AntdSelect</InlineCode>, and <InlineCode>AntdInput</InlineCode> for partial customization.</li>
-          <li><ItemTitle><InlineCode>createMuiComponents</InlineCode> and <InlineCode>createAntdComponents</InlineCode>:</ItemTitle> Helpers for merging adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, or <InlineCode>FluentUiSelect</InlineCode> for partial customization.</li>
+          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, and <InlineCode>createFluentUiComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
         </List>
         <SectionTitle>Relationship to the Components API</SectionTitle>
         <List>
           <li>Adapters are built on top of the same override surface documented in <TextLink to="/api/components">Components</TextLink>.</li>
           <li>They are a convenience layer, not a separate rendering engine.</li>
-          <li><InlineCode>createMuiComponents(base, overrides)</InlineCode> and <InlineCode>createAntdComponents(base, overrides)</InlineCode> return merged <InlineCode>IBuilderComponentsProps</InlineCode> objects and handle shallow top-level merging plus nested <InlineCode>form</InlineCode> merging for you.</li>
+          <li>Each <InlineCode>create*Components(base, overrides)</InlineCode> helper returns a merged <InlineCode>IBuilderComponentsProps</InlineCode> object and handles shallow top-level merging plus nested <InlineCode>form</InlineCode> merging for you.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
           <TextLink to="/documentation/components">Components</TextLink>, and{' '}
           <TextLink to="/api/theming">Theming</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters/mui',
+    title: 'MUI',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for the Material UI adapter entrypoints, exports, and createMuiComponents helper.',
+    searchText:
+      'MUI adapter API material ui mui v9 mui v7 createMuiComponents components',
+    content: (
+      <>
+        <CodeBlock code={muiAdapterSnippet} language="tsx" label="MUI v9 adapter usage" />
+        <CodeBlock code={muiV7Snippet} language="tsx" label="MUI v7 import" />
+        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="createMuiComponents" />
+        <SectionTitle>Available entrypoints</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode>:</ItemTitle> Recommended Material UI adapter for new projects.</li>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>:</ItemTitle> Material UI adapter for applications still on MUI 7.</li>
+        </List>
+        <SectionTitle>Exports</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Ready-made MUI component mapping for <InlineCode>Builder</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>MuiInput</InlineCode>, and related MUI-backed controls for partial overrides.</li>
+          <li><ItemTitle><InlineCode>createMuiComponents</InlineCode>:</ItemTitle> Merges MUI defaults with local overrides while preserving nested <InlineCode>form</InlineCode> keys.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters/mui">MUI adapter guide</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters/antd',
+    title: 'ANTD',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for the Ant Design adapter entrypoints, exports, and createAntdComponents helper.',
+    searchText:
+      'ANTD adapter API ant design antd v6 antd v5 createAntdComponents components',
+    content: (
+      <>
+        <CodeBlock code={antdAdapterSnippet} language="tsx" label="ANTD v6 adapter usage" />
+        <CodeBlock code={antdV5Snippet} language="tsx" label="ANTD v5 import" />
+        <CodeBlock
+          code={antdCreateComponentsSnippet}
+          language="tsx"
+          label="createAntdComponents"
+        />
+        <SectionTitle>Available entrypoints</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode>:</ItemTitle> Recommended Ant Design adapter for new projects.</li>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>:</ItemTitle> Ant Design adapter for applications still on Ant Design 5.</li>
+        </List>
+        <SectionTitle>Exports</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Ready-made Ant Design component mapping for <InlineCode>Builder</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>AntdSelect</InlineCode>, <InlineCode>AntdInput</InlineCode>, and related ANTD-backed controls for partial overrides.</li>
+          <li><ItemTitle><InlineCode>createAntdComponents</InlineCode>:</ItemTitle> Merges ANTD defaults with local overrides while preserving nested <InlineCode>form</InlineCode> keys.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters/antd">ANTD adapter guide</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters/fluentui',
+    title: 'Fluent UI',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for the Fluent UI adapter entrypoint, exports, and createFluentUiComponents helper.',
+    searchText:
+      'Fluent UI adapter API fluentui v8 createFluentUiComponents components',
+    content: (
+      <>
+        <CodeBlock
+          code={fluentUiAdapterSnippet}
+          language="tsx"
+          label="Fluent UI v8 adapter usage"
+        />
+        <CodeBlock code={fluentUiV8Snippet} language="tsx" label="Fluent UI v8 import" />
+        <CodeBlock
+          code={fluentUiCreateComponentsSnippet}
+          language="tsx"
+          label="createFluentUiComponents"
+        />
+        <SectionTitle>Available entrypoint</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/fluentui/v8</InlineCode>:</ItemTitle> Fluent UI React 8 adapter.</li>
+        </List>
+        <SectionTitle>Exports</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Ready-made Fluent UI component mapping for <InlineCode>Builder</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>FluentUiSelect</InlineCode>, <InlineCode>FluentUiInput</InlineCode>, and related Fluent-backed controls for partial overrides.</li>
+          <li><ItemTitle><InlineCode>createFluentUiComponents</InlineCode>:</ItemTitle> Merges Fluent UI defaults with local overrides while preserving nested <InlineCode>form</InlineCode> keys.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters/fluentui">Fluent UI adapter guide</TextLink>.
         </AlertBox>
       </>
     ),

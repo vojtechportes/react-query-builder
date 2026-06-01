@@ -42,6 +42,10 @@ export default defineConfig({
         replacement: `${srcRoot}/antd/v6`,
       },
       {
+        find: '@vojtechportes/react-query-builder/fluentui/v8',
+        replacement: `${srcRoot}/fluentui/v8`,
+      },
+      {
         find: '@vojtechportes/react-query-builder',
         replacement: srcRoot,
       },
