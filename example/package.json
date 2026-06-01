@@ -11,6 +11,7 @@
     "@ant-design/icons": "^6.1.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@fluentui/react": "^8.125.6",
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.1",
     "antd": "^6.0.0",

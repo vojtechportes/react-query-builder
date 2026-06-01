@@ -80,6 +80,11 @@
       "import": "./dist/antd/v6/index.mjs",
       "require": "./dist/antd/v6/index.cjs"
     },
+    "./fluentui/v8": {
+      "types": "./dist/fluentui/v8/index.d.ts",
+      "import": "./dist/fluentui/v8/index.mjs",
+      "require": "./dist/fluentui/v8/index.cjs"
+    },
     "./monaco": {
       "types": "./dist/monaco/index.d.ts",
       "import": "./dist/monaco/index.mjs",
@@ -115,6 +120,7 @@
     "@ant-design/icons": "^5.0.0 || ^6.0.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
+    "@fluentui/react": "^8.125.6",
     "@mui/icons-material": "^7.3.10 || ^9.0.1",
     "@mui/material": "^7.3.10 || ^9.0.1",
     "antd": "^5.0.0 || ^6.0.0",
@@ -130,6 +136,9 @@
       "optional": true
     },
     "@emotion/styled": {
+      "optional": true
+    },
+    "@fluentui/react": {
       "optional": true
     },
     "@mui/icons-material": {
@@ -157,6 +166,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@eslint/js": "^9.15.0",
+    "@fluentui/react": "^8.125.6",
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.1",
     "@testing-library/jest-dom": "^6.9.1",

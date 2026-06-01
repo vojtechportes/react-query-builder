@@ -22,6 +22,7 @@ export const formatBuilderSource = ({
 }: IBuilderSourceOptions) => {
   const usesMuiAdapter = customizationMode === 'mui';
   const usesAntdAdapter = customizationMode === 'antd';
+  const usesFluentUiAdapter = customizationMode === 'fluentui';
   const themeOverrides =
     customizationMode === 'default'
       ? createThemeOverrides(themeColors, defaultThemeColors)
@@ -47,6 +48,9 @@ export const formatBuilderSource = ({
       : null,
     usesAntdAdapter
       ? `import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';`
+      : null,
+    usesFluentUiAdapter
+      ? `import { components as fluentUiComponents } from '@vojtechportes/react-query-builder/fluentui/v8';`
       : null,
     `import { demoFields, initialQueryTree } from '../constants/demo-data';`,
   ]
@@ -75,6 +79,7 @@ export const formatBuilderSource = ({
     showValidation ? 'showValidation' : null,
     usesMuiAdapter ? 'components={muiComponents}' : null,
     usesAntdAdapter ? 'components={antdComponents}' : null,
+    usesFluentUiAdapter ? 'components={fluentUiComponents}' : null,
   ].filter(Boolean);
 
   const componentExpression = useMonacoTextEditor
@@ -82,6 +87,8 @@ export const formatBuilderSource = ({
       ? 'createMonacoComponents(muiComponents)'
       : usesAntdAdapter
         ? 'createMonacoComponents(antdComponents)'
+        : usesFluentUiAdapter
+          ? 'createMonacoComponents(fluentUiComponents)'
         : 'createMonacoComponents({})'
     : null;
 

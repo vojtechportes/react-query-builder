@@ -53,6 +53,7 @@ subpath exports:
 - `@vojtechportes/react-query-builder/mui/v7` for applications still on MUI 7
 - `@vojtechportes/react-query-builder/antd/v6` for new Ant Design projects
 - `@vojtechportes/react-query-builder/antd/v5` for applications still on Ant Design 5
+- `@vojtechportes/react-query-builder/fluentui/v8` for Fluent UI React 8 projects
 
 Install the peer dependencies that match the adapter you want to use and pass
 the exported `components` object to `Builder`.
@@ -103,8 +104,31 @@ export const MyAntdBuilder = () => {
 };
 ```
 
+Fluent UI example:
+
+```bash
+npm install @fluentui/react@^8.125.6
+```
+
+```tsx
+import React from 'react';
+import { Builder } from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/fluentui/v8';
+
+export const MyFluentUiBuilder = () => {
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};
+```
+
 `ThemeProvider` customizes the built-in default component set. It does not
-theme the MUI or ANTD adapters, which keep their styling in their host UI
+theme the MUI, ANTD, or Fluent UI adapters, which keep their styling in their host UI
 libraries.
 
 More adapter details:

@@ -37,6 +37,15 @@
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters</loc>
   </url>
   <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/mui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/antd</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/fluentui</loc>
+  </url>
+  <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/theming</loc>
   </url>
   <url>
@@ -59,6 +68,15 @@
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/api/adapters</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/mui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/antd</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/fluentui</loc>
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/api/theming</loc>

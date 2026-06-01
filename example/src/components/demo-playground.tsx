@@ -5,6 +5,7 @@ import {
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
 import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';
+import { components as fluentUiComponents } from '@vojtechportes/react-query-builder/fluentui/v8';
 import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import type { IColors } from '../../../src/constants/colors';
@@ -211,7 +212,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [showSourceCode, setShowSourceCode] = React.useState(false);
   const isMuiMode = customizationMode === 'mui';
   const isAntdMode = customizationMode === 'antd';
-  const usesAdapterMode = isMuiMode || isAntdMode;
+  const isFluentUiMode = customizationMode === 'fluentui';
+  const usesAdapterMode = isMuiMode || isAntdMode || isFluentUiMode;
 
   React.useEffect(() => {
     if (!singleRootGroup && textMode) {
@@ -225,6 +227,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         ? muiComponents
         : customizationMode === 'antd'
           ? antdComponents
+          : customizationMode === 'fluentui'
+            ? fluentUiComponents
           : undefined;
 
     if (!useMonacoTextEditor) {
@@ -469,6 +473,16 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               />
               <span>ANTD adapter</span>
             </ToggleRow>
+
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'fluentui'}
+                onChange={() => setCustomizationMode('fluentui')}
+              />
+              <span>Fluent UI adapter</span>
+            </ToggleRow>
           </ChoiceGroup>
         </Panel>
 
@@ -481,6 +495,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               usesAdapterMode
                 ? isMuiMode
                   ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
+                  : isFluentUiMode
+                    ? 'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.'
                   : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
                 : undefined
             }
@@ -508,6 +524,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         <BuilderCard>
           <BuilderSurface>
             {isMuiMode ? (
+              <Builder {...builderProps} />
+            ) : isFluentUiMode ? (
               <Builder {...builderProps} />
             ) : isAntdMode ? (
               <Builder {...builderProps} />
