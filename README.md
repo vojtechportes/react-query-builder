@@ -44,6 +44,62 @@ npm install @vojtechportes/react-query-builder
 
 React Query Builder supports React `18+`.
 
+## Example
+
+```tsx
+import React, { useState } from 'react';
+import {
+  Builder,
+  type DenormalizedQuery,
+  type IBuilderFieldProps,
+} from '@vojtechportes/react-query-builder';
+
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'STATE',
+    label: 'State',
+    type: 'LIST',
+    operators: ['EQUAL', 'NOT_EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+  },
+  {
+    field: 'IS_IN_EU',
+    label: 'Is in EU',
+    type: 'BOOLEAN',
+  },
+];
+
+const initialData: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'STATE',
+        operator: 'EQUAL',
+        value: 'CZ',
+        readOnly: true,
+      },
+      {
+        field: 'IS_IN_EU',
+        operator: 'EQUAL',
+        value: true,
+      },
+    ],
+  },
+];
+
+export const MyBuilder = () => {
+  const [data, setData] = useState(initialData);
+
+  return <Builder fields={fields} data={data} onChange={setData} />;
+};
+```
+
 ## UI Adapters
 
 The package also exposes ready-made component mappings through versioned
@@ -136,62 +192,6 @@ More adapter details:
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/adapters" target="_blank" rel="noopener noreferrer">Documentation: Adapters</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/adapters" target="_blank" rel="noopener noreferrer">API: Adapters</a>
 
-## Example
-
-```tsx
-import React, { useState } from 'react';
-import {
-  Builder,
-  type DenormalizedQuery,
-  type IBuilderFieldProps,
-} from '@vojtechportes/react-query-builder';
-
-const fields: IBuilderFieldProps[] = [
-  {
-    field: 'STATE',
-    label: 'State',
-    type: 'LIST',
-    operators: ['EQUAL', 'NOT_EQUAL'],
-    value: [
-      { value: 'CZ', label: 'Czech Republic' },
-      { value: 'SK', label: 'Slovakia' },
-    ],
-  },
-  {
-    field: 'IS_IN_EU',
-    label: 'Is in EU',
-    type: 'BOOLEAN',
-  },
-];
-
-const initialData: DenormalizedQuery = [
-  {
-    type: 'GROUP',
-    value: 'AND',
-    isNegated: false,
-    children: [
-      {
-        field: 'STATE',
-        operator: 'EQUAL',
-        value: 'CZ',
-        readOnly: true,
-      },
-      {
-        field: 'IS_IN_EU',
-        operator: 'EQUAL',
-        value: true,
-      },
-    ],
-  },
-];
-
-export const MyBuilder = () => {
-  const [data, setData] = useState(initialData);
-
-  return <Builder fields={fields} data={data} onChange={setData} />;
-};
-```
-
 ## Text Mode
 
 `Builder` can optionally switch between the visual query UI and a SQL text
@@ -246,10 +246,10 @@ The library also provides parser and formatter helpers through subpath exports:
 
 Supported formats are documented on the website:
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting" target="_blank" rel="noopener noreferrer">Parsing and Formatting</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats" target="_blank" rel="noopener noreferrer">Supported Formats</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/format-query" target="_blank" rel="noopener noreferrer">formatQuery API</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/parse-query" target="_blank" rel="noopener noreferrer">parseQuery API</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting" target="_blank" rel="noopener noreferrer">Documentation: Parsing and Formatting</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats" target="_blank" rel="noopener noreferrer">Documentation: Supported Formats</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/format-query" target="_blank" rel="noopener noreferrer">API: formatQuery</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/parse-query" target="_blank" rel="noopener noreferrer">API: parseQuery</a>
 
 ## Responsive Behavior
 
@@ -262,5 +262,5 @@ The default builder components include a compact responsive layout for medium-wi
 
 Responsive behavior is documented in more detail on the website:
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/components" target="_blank" rel="noopener noreferrer">Components</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/components" target="_blank" rel="noopener noreferrer">Documentation: Components</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
