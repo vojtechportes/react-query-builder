@@ -226,6 +226,19 @@ const antdAdapterSnippet = `import { components } from '@vojtechportes/react-que
   onChange={setData}
 />;`;
 
+const mantineAdapterSnippet = `import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import { components } from '@vojtechportes/react-query-builder/mantine/v9';
+
+<MantineProvider>
+  <Builder
+    fields={fields}
+    data={data}
+    components={components}
+    onChange={setData}
+  />
+</MantineProvider>;`;
+
 const fluentUiAdapterSnippet = `import { components } from '@vojtechportes/react-query-builder/fluentui/v8';
 
 <Builder
@@ -238,6 +251,8 @@ const fluentUiAdapterSnippet = `import { components } from '@vojtechportes/react
 const muiV7Snippet = `import { components } from '@vojtechportes/react-query-builder/mui/v7';`;
 
 const antdV5Snippet = `import { components } from '@vojtechportes/react-query-builder/antd/v5';`;
+
+const mantineV8Snippet = `import { components } from '@vojtechportes/react-query-builder/mantine/v8';`;
 
 const fluentUiV8Snippet = `import { components } from '@vojtechportes/react-query-builder/fluentui/v8';`;
 
@@ -296,6 +311,39 @@ export const MyAntdBuilder = () => {
       components={components}
       onChange={setData}
     />
+  );
+};`;
+
+const mantineCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import {
+  createMantineComponents,
+  components as mantineComponents,
+} from '@vojtechportes/react-query-builder/mantine/v9';
+
+const components = createMantineComponents(mantineComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyMantineBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <MantineProvider>
+      <Builder
+        fields={fields}
+        data={data}
+        components={components}
+        onChange={setData}
+      />
+    </MantineProvider>
   );
 };`;
 
@@ -807,7 +855,7 @@ export const apiPages: IApiPage[] = [
     description:
       'API overview for packaged UI adapter entrypoints, shared exports, and how adapters map onto the components override surface.',
     searchText:
-      'Adapters API mui material ui antd ant design fluent ui components object adapter entrypoints customization shared exports',
+      'Adapters API mui material ui antd ant design mantine fluent ui components object adapter entrypoints customization shared exports',
     content: (
       <>
         <SectionTitle>Available adapter entrypoints</SectionTitle>
@@ -815,12 +863,13 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><TextLink to="/api/adapters/mui">MUI</TextLink>:</ItemTitle> Covers <InlineCode>mui/v9</InlineCode>, legacy <InlineCode>mui/v7</InlineCode>, and the MUI-specific merge helper.</li>
           <li><ItemTitle><TextLink to="/api/adapters/antd">ANTD</TextLink>:</ItemTitle> Covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, and the ANTD-specific merge helper.</li>
           <li><ItemTitle><TextLink to="/api/adapters/fluentui">Fluent UI</TextLink>:</ItemTitle> Covers <InlineCode>fluentui/v8</InlineCode> and the Fluent-UI-specific merge helper.</li>
+          <li><ItemTitle><TextLink to="/api/adapters/mantine">Mantine</TextLink>:</ItemTitle> Covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, and the Mantine-specific merge helper.</li>
         </List>
         <SectionTitle>What adapters export</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> A ready-to-pass object that matches <InlineCode>IBuilderComponentsProps</InlineCode>.</li>
-          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, or <InlineCode>FluentUiSelect</InlineCode> for partial customization.</li>
-          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, and <InlineCode>createFluentUiComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, <InlineCode>MantineSelect</InlineCode>, or <InlineCode>FluentUiSelect</InlineCode> for partial customization.</li>
+          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, <InlineCode>createMantineComponents</InlineCode>, and <InlineCode>createFluentUiComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
         </List>
         <SectionTitle>Relationship to the Components API</SectionTitle>
         <List>
@@ -942,6 +991,49 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/adapters/fluentui">Fluent UI adapter guide</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters/mantine',
+    title: 'Mantine',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for the Mantine adapter entrypoints, exports, and createMantineComponents helper.',
+    searchText:
+      'Mantine adapter API mantine v9 mantine v8 createMantineComponents components',
+    content: (
+      <>
+        <CodeBlock
+          code={mantineAdapterSnippet}
+          language="tsx"
+          label="Mantine v9 adapter usage"
+        />
+        <CodeBlock code={mantineV8Snippet} language="tsx" label="Mantine v8 import" />
+        <CodeBlock
+          code={mantineCreateComponentsSnippet}
+          language="tsx"
+          label="createMantineComponents"
+        />
+        <SectionTitle>Available entrypoints</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mantine/v9</InlineCode>:</ItemTitle> Recommended Mantine adapter for new projects on Mantine 9.</li>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode>:</ItemTitle> Mantine adapter for applications still on Mantine 8.</li>
+        </List>
+        <SectionTitle>Exports</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Ready-made Mantine component mapping for <InlineCode>Builder</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MantineSelect</InlineCode>, <InlineCode>MantineInput</InlineCode>, and related Mantine-backed controls for partial overrides.</li>
+          <li><ItemTitle><InlineCode>createMantineComponents</InlineCode>:</ItemTitle> Merges Mantine defaults with local overrides while preserving nested <InlineCode>form</InlineCode> keys.</li>
+          <li><ItemTitle><InlineCode>MantineProvider</InlineCode>:</ItemTitle> Mantine-backed builders should be rendered within Mantine's provider so the host app theme and styles are available.</li>
+          <li><ItemTitle><InlineCode>@mantine/core/styles.css</InlineCode>:</ItemTitle> Import Mantine's base stylesheet once in your application entrypoint so Mantine controls render correctly.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters/mantine">Mantine adapter guide</TextLink>.
         </AlertBox>
       </>
     ),

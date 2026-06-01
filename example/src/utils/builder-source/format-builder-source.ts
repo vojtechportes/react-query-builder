@@ -3,6 +3,12 @@ import type { IBuilderSourceOptions } from './types';
 import { createThemeOverrides } from './utils/create-theme-overrides.util';
 import { formatThemeOverrides } from './utils/format-theme-overrides.util';
 
+const indentBlock = (block: string, spaces: number) =>
+  block
+    .split('\n')
+    .map(line => `${' '.repeat(spaces)}${line}`)
+    .join('\n');
+
 export const formatBuilderSource = ({
   readOnly,
   readOnlyProtectsDelete,
@@ -22,6 +28,7 @@ export const formatBuilderSource = ({
 }: IBuilderSourceOptions) => {
   const usesMuiAdapter = customizationMode === 'mui';
   const usesAntdAdapter = customizationMode === 'antd';
+  const usesMantineAdapter = customizationMode === 'mantine';
   const usesFluentUiAdapter = customizationMode === 'fluentui';
   const themeOverrides =
     customizationMode === 'default'
@@ -48,6 +55,11 @@ export const formatBuilderSource = ({
       : null,
     usesAntdAdapter
       ? `import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';`
+      : null,
+    usesMantineAdapter
+      ? `import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import { components as mantineComponents } from '@vojtechportes/react-query-builder/mantine/v9';`
       : null,
     usesFluentUiAdapter
       ? `import { components as fluentUiComponents } from '@vojtechportes/react-query-builder/fluentui/v8';`
@@ -79,6 +91,7 @@ export const formatBuilderSource = ({
     showValidation ? 'showValidation' : null,
     usesMuiAdapter ? 'components={muiComponents}' : null,
     usesAntdAdapter ? 'components={antdComponents}' : null,
+    usesMantineAdapter ? 'components={mantineComponents}' : null,
     usesFluentUiAdapter ? 'components={fluentUiComponents}' : null,
   ].filter(Boolean);
 
@@ -87,6 +100,8 @@ export const formatBuilderSource = ({
       ? 'createMonacoComponents(muiComponents)'
       : usesAntdAdapter
         ? 'createMonacoComponents(antdComponents)'
+        : usesMantineAdapter
+          ? 'createMonacoComponents(mantineComponents)'
         : usesFluentUiAdapter
           ? 'createMonacoComponents(fluentUiComponents)'
         : 'createMonacoComponents({})'
@@ -110,7 +125,7 @@ export const formatBuilderSource = ({
     '    />',
   ].join('\n');
 
-  const wrappedBuilderMarkup = usesThemeProvider
+  const themedBuilderMarkup = usesThemeProvider
     ? [
         '    <ThemeProvider',
         '      colors={',
@@ -125,6 +140,14 @@ export const formatBuilderSource = ({
       ].join('\n')
     : builderMarkup;
 
+  const wrappedBuilderMarkup = usesMantineAdapter
+    ? [
+        '    <MantineProvider>',
+        indentBlock(themedBuilderMarkup, 2),
+        '    </MantineProvider>',
+      ].join('\n')
+    : themedBuilderMarkup;
+
   return [
     imports,
     '',
@@ -136,5 +159,7 @@ export const formatBuilderSource = ({
     wrappedBuilderMarkup,
     '  );',
     '};',
-  ].join('\n');
+  ]
+    .filter(line => line !== null)
+    .join('\n');
 };

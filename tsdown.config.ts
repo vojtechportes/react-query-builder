@@ -10,6 +10,8 @@ export default defineConfig({
     'antd/v5/index': 'src/antd/v5/index.ts',
     'antd/v6/index': 'src/antd/v6/index.ts',
     'fluentui/v8/index': 'src/fluentui/v8/index.ts',
+    'mantine/v8/index': 'src/mantine/v8/index.ts',
+    'mantine/v9/index': 'src/mantine/v9/index.ts',
     'mui/v7/index': 'src/mui/v7/index.ts',
     'mui/v9/index': 'src/mui/v9/index.ts',
     'monaco/index': 'src/monaco/index.ts',

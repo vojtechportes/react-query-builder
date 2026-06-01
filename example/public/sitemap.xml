@@ -43,6 +43,9 @@
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/antd</loc>
   </url>
   <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/mantine</loc>
+  </url>
+  <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/fluentui</loc>
   </url>
   <url>
@@ -74,6 +77,9 @@
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/antd</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/mantine</loc>
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/fluentui</loc>

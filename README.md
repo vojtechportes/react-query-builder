@@ -109,6 +109,8 @@ subpath exports:
 - `@vojtechportes/react-query-builder/mui/v7` for applications still on MUI 7
 - `@vojtechportes/react-query-builder/antd/v6` for new Ant Design projects
 - `@vojtechportes/react-query-builder/antd/v5` for applications still on Ant Design 5
+- `@vojtechportes/react-query-builder/mantine/v9` for new Mantine projects
+- `@vojtechportes/react-query-builder/mantine/v8` for applications still on Mantine 8
 - `@vojtechportes/react-query-builder/fluentui/v8` for Fluent UI React 8 projects
 
 Install the peer dependencies that match the adapter you want to use and pass
@@ -160,6 +162,33 @@ export const MyAntdBuilder = () => {
 };
 ```
 
+Mantine example:
+
+```bash
+npm install @mantine/core@^9.0.0 @mantine/hooks@^9.0.0
+```
+
+```tsx
+import React from 'react';
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
+import { Builder } from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/mantine/v9';
+
+export const MyMantineBuilder = () => {
+  return (
+    <MantineProvider>
+      <Builder
+        fields={fields}
+        data={data}
+        components={components}
+        onChange={setData}
+      />
+    </MantineProvider>
+  );
+};
+```
+
 Fluent UI example:
 
 ```bash
@@ -184,7 +213,7 @@ export const MyFluentUiBuilder = () => {
 ```
 
 `ThemeProvider` customizes the built-in default component set. It does not
-theme the MUI, ANTD, or Fluent UI adapters, which keep their styling in their host UI
+theme the MUI, ANTD, Mantine, or Fluent UI adapters, which keep their styling in their host UI
 libraries.
 
 More adapter details:
