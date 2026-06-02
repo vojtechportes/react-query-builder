@@ -18,6 +18,7 @@ export const BootstrapRule: FC<IRuleProps> = ({
       style={{
         ...bootstrapCardStyles,
         display: 'grid',
+        overflow: 'hidden',
         gridTemplateColumns: dragHandle
           ? hasControls
             ? 'auto minmax(0, 1fr) auto'

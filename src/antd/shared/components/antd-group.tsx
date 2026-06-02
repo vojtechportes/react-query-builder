@@ -20,6 +20,7 @@ export const AntdGroup: FC<IGroupProps> = ({
       className={className}
       style={{
         display: 'grid',
+        overflow: 'hidden',
         gridTemplateColumns: dragHandle ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
         marginTop: '0.5rem',
         backgroundColor: token.colorFillAlter,

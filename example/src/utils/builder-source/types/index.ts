@@ -6,6 +6,7 @@ export type CustomizationMode =
   | 'antd'
   | 'mantine'
   | 'fluentui'
+  | 'radix'
   | 'bootstrap';
 
 export interface IBuilderSourceOptions {

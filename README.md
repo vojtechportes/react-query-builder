@@ -113,6 +113,7 @@ subpath exports:
 - `@vojtechportes/react-query-builder/mantine/v9` for new Mantine projects
 - `@vojtechportes/react-query-builder/mantine/v8` for applications still on Mantine 8
 - `@vojtechportes/react-query-builder/fluentui/v8` for Fluent UI React 8 projects
+- `@vojtechportes/react-query-builder/radix/v1` for Radix Themes 1 projects
 
 Install the peer dependencies that match the adapter you want to use and pass
 the exported `components` object to `Builder`.
@@ -233,8 +234,35 @@ export const MyFluentUiBuilder = () => {
 };
 ```
 
+Radix example:
+
+```bash
+npm install @radix-ui/themes@^1.1.2
+```
+
+```tsx
+import React from 'react';
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import { Builder } from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/radix/v1';
+
+export const MyRadixBuilder = () => {
+  return (
+    <Theme>
+      <Builder
+        fields={fields}
+        data={data}
+        components={components}
+        onChange={setData}
+      />
+    </Theme>
+  );
+};
+```
+
 `ThemeProvider` customizes the built-in default component set. It does not
-theme the MUI, ANTD, Mantine, or Fluent UI adapters, which keep their styling in their host UI
+theme the MUI, ANTD, Mantine, Fluent UI, or Radix adapters, which keep their styling in their host UI
 libraries.
 
 More adapter details:

@@ -30,6 +30,7 @@ export const formatBuilderSource = ({
   const usesAntdAdapter = customizationMode === 'antd';
   const usesMantineAdapter = customizationMode === 'mantine';
   const usesFluentUiAdapter = customizationMode === 'fluentui';
+  const usesRadixAdapter = customizationMode === 'radix';
   const usesBootstrapAdapter = customizationMode === 'bootstrap';
   const themeOverrides =
     customizationMode === 'default'
@@ -69,6 +70,11 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
     usesFluentUiAdapter
       ? `import { components as fluentUiComponents } from '@vojtechportes/react-query-builder/fluentui/v8';`
       : null,
+    usesRadixAdapter
+      ? `import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import { components as radixComponents } from '@vojtechportes/react-query-builder/radix/v1';`
+      : null,
     `import { demoFields, initialQueryTree } from '../constants/demo-data';`,
   ]
     .filter(Boolean)
@@ -98,6 +104,7 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
     usesAntdAdapter ? 'components={antdComponents}' : null,
     usesMantineAdapter ? 'components={mantineComponents}' : null,
     usesFluentUiAdapter ? 'components={fluentUiComponents}' : null,
+    usesRadixAdapter ? 'components={radixComponents}' : null,
     usesBootstrapAdapter ? 'components={bootstrapComponents}' : null,
   ].filter(Boolean);
 
@@ -110,6 +117,8 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
           ? 'createMonacoComponents(mantineComponents)'
         : usesFluentUiAdapter
           ? 'createMonacoComponents(fluentUiComponents)'
+        : usesRadixAdapter
+          ? 'createMonacoComponents(radixComponents)'
         : usesBootstrapAdapter
           ? 'createMonacoComponents(bootstrapComponents)'
         : 'createMonacoComponents({})'
@@ -154,6 +163,12 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
         indentBlock(themedBuilderMarkup, 2),
         '    </MantineProvider>',
       ].join('\n')
+    : usesRadixAdapter
+      ? [
+          '    <Theme>',
+          indentBlock(themedBuilderMarkup, 2),
+          '    </Theme>',
+        ].join('\n')
     : themedBuilderMarkup;
 
   return [

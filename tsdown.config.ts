@@ -15,6 +15,7 @@ export default defineConfig({
     'mantine/v9/index': 'src/mantine/v9/index.ts',
     'mui/v7/index': 'src/mui/v7/index.ts',
     'mui/v9/index': 'src/mui/v9/index.ts',
+    'radix/v1/index': 'src/radix/v1/index.ts',
     'monaco/index': 'src/monaco/index.ts',
   },
   format: ['esm', 'cjs'],

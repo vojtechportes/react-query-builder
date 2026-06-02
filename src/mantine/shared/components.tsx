@@ -407,6 +407,7 @@ export const MantineRule: FC<IRuleProps> = ({
       mt="sm"
       style={{
         display: 'grid',
+        overflow: 'hidden',
         gridTemplateColumns: hasControls
           ? dragHandle
             ? 'auto minmax(0, 1fr) auto'
@@ -464,6 +465,7 @@ export const MantineGroup: FC<IGroupProps> = ({
       bg="gray.0"
       style={{
         display: 'grid',
+        overflow: 'hidden',
         gridTemplateColumns: dragHandle ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
       }}
     >

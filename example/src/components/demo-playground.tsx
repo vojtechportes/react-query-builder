@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import '@radix-ui/themes/styles.css';
 import {
   Builder,
   type DenormalizedQuery,
@@ -12,6 +13,8 @@ import { MantineProvider } from '@mantine/core';
 import { components as mantineComponents } from '@vojtechportes/react-query-builder/mantine/v9';
 import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
+import { Theme as RadixTheme } from '@radix-ui/themes';
+import { components as radixComponents } from '@vojtechportes/react-query-builder/radix/v1';
 import type { IColors } from '../../../src/constants/colors';
 import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
 import { demoFields, defaultTheme, initialQueryTree } from '../constants/demo-data';
@@ -280,9 +283,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const isAntdMode = customizationMode === 'antd';
   const isMantineMode = customizationMode === 'mantine';
   const isFluentUiMode = customizationMode === 'fluentui';
+  const isRadixMode = customizationMode === 'radix';
   const isBootstrapMode = customizationMode === 'bootstrap';
   const usesAdapterMode =
-    isMuiMode || isAntdMode || isMantineMode || isFluentUiMode || isBootstrapMode;
+    isMuiMode ||
+    isAntdMode ||
+    isMantineMode ||
+    isFluentUiMode ||
+    isRadixMode ||
+    isBootstrapMode;
 
   React.useEffect(() => {
     if (!singleRootGroup && textMode) {
@@ -303,6 +312,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       baseComponents = fluentUiComponents;
     } else if (customizationMode === 'bootstrap') {
       baseComponents = bootstrapComponents;
+    } else if (customizationMode === 'radix') {
+      baseComponents = radixComponents;
     }
 
     if (!useMonacoTextEditor) {
@@ -577,6 +588,16 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               />
               <span>Bootstrap adapter</span>
             </ToggleRow>
+
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'radix'}
+                onChange={() => setCustomizationMode('radix')}
+              />
+              <span>Radix adapter</span>
+            </ToggleRow>
           </ChoiceGroup>
         </Panel>
 
@@ -593,6 +614,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                     ? 'ThemeProvider colors style the default builder components only. The Mantine adapter uses Mantine styling instead.'
                   : isFluentUiMode
                     ? 'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.'
+                  : isRadixMode
+                    ? 'ThemeProvider colors style the default builder components only. The Radix adapter uses Radix Themes styling instead.'
                   : isBootstrapMode
                     ? 'ThemeProvider colors style the default builder components only. The Bootstrap adapter uses Bootstrap styling instead.'
                     : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
@@ -655,6 +678,10 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 <Builder {...builderProps} />
               ) : isFluentUiMode ? (
                 <Builder {...builderProps} />
+              ) : isRadixMode ? (
+                <RadixTheme>
+                  <Builder {...builderProps} />
+                </RadixTheme>
               ) : isAntdMode ? (
                 <Builder {...builderProps} />
               ) : isBootstrapMode ? (

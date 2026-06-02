@@ -20,6 +20,7 @@ export const BootstrapGroup: FC<IGroupProps> = ({
       style={{
         ...bootstrapCardStyles,
         display: 'grid',
+        overflow: 'hidden',
         gridTemplateColumns: dragHandle ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
       }}
     >
