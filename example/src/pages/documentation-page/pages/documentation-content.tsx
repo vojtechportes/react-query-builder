@@ -262,7 +262,7 @@ const mantineAdaptersInstallSnippet = `npm install @mantine/core@^9.0.0 @mantine
 
 const fluentUiAdaptersInstallSnippet = `npm install @fluentui/react@^8.125.6`;
 
-const radixAdaptersInstallSnippet = `npm install @radix-ui/themes@^1.1.2`;
+const radixAdaptersInstallSnippet = `npm install @radix-ui/themes@^1.1.2 @radix-ui/react-icons@^1.3.2`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -2242,13 +2242,20 @@ export const documentationPages: IDocumentationPage[] = [
         </List>
         <SectionTitle>Installing Radix Themes</SectionTitle>
         <p>
-          Install the Radix Themes peer dependency before using the adapter.
+          Install the Radix Themes peer dependency and the Radix icons package
+          before using the adapter.
         </p>
         <CodeBlock
           code={radixAdaptersInstallSnippet}
           language="bash"
           label="Radix Themes v1 peer"
         />
+        <AlertBox title="Icons package required" variant="info">
+          The Radix adapter renders icons from{' '}
+          <InlineCode>@radix-ui/react-icons</InlineCode>, so applications using
+          the adapter should install that package alongside{' '}
+          <InlineCode>@radix-ui/themes</InlineCode>.
+        </AlertBox>
         <AlertBox title="Stylesheet required" variant="info">
           Import <InlineCode>@radix-ui/themes/styles.css</InlineCode> once in your
           application entrypoint so Radix Themes components render with the expected
