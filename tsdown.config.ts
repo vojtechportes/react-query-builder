@@ -7,6 +7,7 @@ export default defineConfig({
     index: 'src/index.tsx',
     parseQuery: 'src/parseQuery/index.ts',
     formatQuery: 'src/formatQuery/index.ts',
+    'bootstrap/v5/index': 'src/bootstrap/v5/index.ts',
     'antd/v5/index': 'src/antd/v5/index.ts',
     'antd/v6/index': 'src/antd/v6/index.ts',
     'fluentui/v8/index': 'src/fluentui/v8/index.ts',

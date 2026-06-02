@@ -5,6 +5,7 @@ import {
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
 import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';
+import { components as bootstrapComponents } from '@vojtechportes/react-query-builder/bootstrap/v5';
 import { components as fluentUiComponents } from '@vojtechportes/react-query-builder/fluentui/v8';
 import mantineStyles from '@mantine/core/styles.css?inline';
 import { MantineProvider } from '@mantine/core';
@@ -24,6 +25,10 @@ import {
   type CustomizationMode,
   type OutputFormat,
 } from '../utils/query-formatters';
+import {
+  bootstrapScopeClassName,
+  scopedBootstrapStyles,
+} from './bootstrap-demo-scope';
 import { CodeBlock } from './code-block';
 import { ThemeEditor } from './theme-editor';
 
@@ -275,8 +280,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const isAntdMode = customizationMode === 'antd';
   const isMantineMode = customizationMode === 'mantine';
   const isFluentUiMode = customizationMode === 'fluentui';
+  const isBootstrapMode = customizationMode === 'bootstrap';
   const usesAdapterMode =
-    isMuiMode || isAntdMode || isMantineMode || isFluentUiMode;
+    isMuiMode || isAntdMode || isMantineMode || isFluentUiMode || isBootstrapMode;
 
   React.useEffect(() => {
     if (!singleRootGroup && textMode) {
@@ -292,9 +298,11 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           ? antdComponents
           : customizationMode === 'mantine'
             ? mantineComponents
-          : customizationMode === 'fluentui'
-            ? fluentUiComponents
-          : undefined;
+            : customizationMode === 'fluentui'
+              ? fluentUiComponents
+              : customizationMode === 'bootstrap'
+                ? bootstrapComponents
+                : undefined;
 
     if (!useMonacoTextEditor) {
       return baseComponents;
@@ -558,6 +566,16 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               />
               <span>Mantine adapter</span>
             </ToggleRow>
+
+            <ToggleRow>
+              <Toggle
+                type="radio"
+                name="customization-mode"
+                checked={customizationMode === 'bootstrap'}
+                onChange={() => setCustomizationMode('bootstrap')}
+              />
+              <span>Bootstrap adapter</span>
+            </ToggleRow>
           </ChoiceGroup>
         </Panel>
 
@@ -574,7 +592,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                     ? 'ThemeProvider colors style the default builder components only. The Mantine adapter uses Mantine styling instead.'
                   : isFluentUiMode
                     ? 'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.'
-                  : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
+                  : isBootstrapMode
+                    ? 'ThemeProvider colors style the default builder components only. The Bootstrap adapter uses Bootstrap styling instead.'
+                    : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
                 : undefined
             }
           />
@@ -628,12 +648,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               </BuilderSurface>
             </>
           ) : (
-            <BuilderSurface>
+            <BuilderSurface className={isBootstrapMode ? bootstrapScopeClassName : undefined}>
+              {isBootstrapMode ? <style>{scopedBootstrapStyles}</style> : null}
               {isMuiMode ? (
                 <Builder {...builderProps} />
               ) : isFluentUiMode ? (
                 <Builder {...builderProps} />
               ) : isAntdMode ? (
+                <Builder {...builderProps} />
+              ) : isBootstrapMode ? (
                 <Builder {...builderProps} />
               ) : (
                 <ThemeProvider colors={themeColors}>

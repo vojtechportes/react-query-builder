@@ -60,6 +60,11 @@
       "import": "./dist/formatQuery.mjs",
       "require": "./dist/formatQuery.cjs"
     },
+    "./bootstrap/v5": {
+      "types": "./dist/bootstrap/v5/index.d.ts",
+      "import": "./dist/bootstrap/v5/index.mjs",
+      "require": "./dist/bootstrap/v5/index.cjs"
+    },
     "./mui/v7": {
       "types": "./dist/mui/v7/index.d.ts",
       "import": "./dist/mui/v7/index.mjs",
@@ -136,6 +141,7 @@
     "@mui/icons-material": "^7.3.10 || ^9.0.1",
     "@mui/material": "^7.3.10 || ^9.0.1",
     "antd": "^5.0.0 || ^6.0.0",
+    "bootstrap-icons": "^1.13.1",
     "monaco-editor": "^0.52.2",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
@@ -163,6 +169,9 @@
       "optional": true
     },
     "@mui/material": {
+      "optional": true
+    },
+    "bootstrap-icons": {
       "optional": true
     },
     "monaco-editor": {
@@ -197,6 +206,7 @@
     "@types/react-dom": "^18.3.1",
     "@types/styled-components": "^5.1.34",
     "antd": "^6.0.0",
+    "bootstrap-icons": "^1.13.1",
     "eslint": "^9.15.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
