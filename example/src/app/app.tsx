@@ -48,6 +48,7 @@ export const App: React.FC = () => (
           <Route path="/api/adapters/bootstrap" element={<ApiPage />} />
           <Route path="/api/adapters/mantine" element={<ApiPage />} />
           <Route path="/api/adapters/fluentui" element={<ApiPage />} />
+          <Route path="/api/adapters/radix" element={<ApiPage />} />
           <Route path="/api/theming" element={<ApiPage />} />
           <Route path="/api/format-query" element={<ApiPage />} />
           <Route path="/api/parse-query" element={<ApiPage />} />
@@ -77,6 +78,10 @@ export const App: React.FC = () => (
           />
           <Route
             path="/documentation/adapters/fluentui"
+            element={<DocumentationPage />}
+          />
+          <Route
+            path="/documentation/adapters/radix"
             element={<DocumentationPage />}
           />
           <Route

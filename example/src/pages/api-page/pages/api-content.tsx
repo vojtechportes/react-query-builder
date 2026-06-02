@@ -259,6 +259,19 @@ const fluentUiAdapterSnippet = `import { components } from '@vojtechportes/react
   onChange={setData}
 />;`;
 
+const radixAdapterSnippet = `import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import { components } from '@vojtechportes/react-query-builder/radix/v1';
+
+<Theme>
+  <Builder
+    fields={fields}
+    data={data}
+    components={components}
+    onChange={setData}
+  />
+</Theme>;`;
+
 const muiV7Snippet = `import { components } from '@vojtechportes/react-query-builder/mui/v7';`;
 
 const antdV5Snippet = `import { components } from '@vojtechportes/react-query-builder/antd/v5';`;
@@ -268,6 +281,8 @@ const bootstrapV5Snippet = `import { components } from '@vojtechportes/react-que
 const mantineV8Snippet = `import { components } from '@vojtechportes/react-query-builder/mantine/v8';`;
 
 const fluentUiV8Snippet = `import { components } from '@vojtechportes/react-query-builder/fluentui/v8';`;
+
+const radixV1Snippet = `import { components } from '@vojtechportes/react-query-builder/radix/v1';`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -417,6 +432,39 @@ export const MyFluentUiBuilder = () => {
       components={components}
       onChange={setData}
     />
+  );
+};`;
+
+const radixCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import {
+  createRadixComponents,
+  components as radixComponents,
+} from '@vojtechportes/react-query-builder/radix/v1';
+
+const components = createRadixComponents(radixComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyRadixBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Theme>
+      <Builder
+        fields={fields}
+        data={data}
+        components={components}
+        onChange={setData}
+      />
+    </Theme>
   );
 };`;
 
@@ -608,7 +656,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle>Core API:</ItemTitle> <InlineCode>Builder</InlineCode>, <InlineCode>Fields</InlineCode>, and <InlineCode>Data</InlineCode>.</li>
           <li><ItemTitle>Editing state:</ItemTitle> <InlineCode>Builder</InlineCode> also exposes history-related state such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> through <InlineCode>onStateChange</InlineCode>.</li>
           <li><ItemTitle>Imperative control:</ItemTitle> <InlineCode>useBuilderRef</InlineCode> and <InlineCode>IBuilderRef</InlineCode> expose builder actions through a React ref.</li>
-          <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode>, <InlineCode>Adapters</InlineCode>, and <InlineCode>Theming</InlineCode>, including packaged adapters for MUI, ANTD, Bootstrap, Mantine, and Fluent UI.</li>
+          <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode>, <InlineCode>Adapters</InlineCode>, and <InlineCode>Theming</InlineCode>, including packaged adapters for MUI, ANTD, Bootstrap, Mantine, Fluent UI, and Radix.</li>
           <li><ItemTitle>Query Conversion:</ItemTitle> <InlineCode>formatQuery</InlineCode> and <InlineCode>parseQuery</InlineCode>.</li>
         </List>
         <AlertBox title="Documentation and demo" variant="info">
@@ -899,7 +947,7 @@ export const apiPages: IApiPage[] = [
     description:
       'API overview for packaged UI adapter entrypoints, shared exports, and how adapters map onto the components override surface.',
     searchText:
-      'Adapters API mui material ui antd ant design bootstrap mantine fluent ui components object adapter entrypoints customization shared exports',
+      'Adapters API mui material ui antd ant design bootstrap mantine fluent ui radix themes components object adapter entrypoints customization shared exports',
     content: (
       <>
         <SectionTitle>Available adapter entrypoints</SectionTitle>
@@ -909,12 +957,13 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><TextLink to="/api/adapters/fluentui">Fluent UI</TextLink>:</ItemTitle> Covers <InlineCode>fluentui/v8</InlineCode> and the Fluent-UI-specific merge helper.</li>
           <li><ItemTitle><TextLink to="/api/adapters/mantine">Mantine</TextLink>:</ItemTitle> Covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, and the Mantine-specific merge helper.</li>
           <li><ItemTitle><TextLink to="/api/adapters/bootstrap">Bootstrap</TextLink>:</ItemTitle> Covers <InlineCode>bootstrap/v5</InlineCode> and the Bootstrap-specific merge helper.</li>
+          <li><ItemTitle><TextLink to="/api/adapters/radix">Radix</TextLink>:</ItemTitle> Covers <InlineCode>radix/v1</InlineCode>, Radix Themes provider setup, and the Radix-specific merge helper.</li>
         </List>
         <SectionTitle>What adapters export</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> A ready-to-pass object that matches <InlineCode>IBuilderComponentsProps</InlineCode>.</li>
-          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, <InlineCode>BootstrapSelect</InlineCode>, <InlineCode>MantineSelect</InlineCode>, or <InlineCode>FluentUiSelect</InlineCode> for partial customization.</li>
-          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, <InlineCode>createBootstrapComponents</InlineCode>, <InlineCode>createMantineComponents</InlineCode>, and <InlineCode>createFluentUiComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, <InlineCode>BootstrapSelect</InlineCode>, <InlineCode>MantineSelect</InlineCode>, <InlineCode>FluentUiSelect</InlineCode>, or <InlineCode>RadixSelect</InlineCode> for partial customization.</li>
+          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, <InlineCode>createBootstrapComponents</InlineCode>, <InlineCode>createMantineComponents</InlineCode>, <InlineCode>createFluentUiComponents</InlineCode>, and <InlineCode>createRadixComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
         </List>
         <SectionTitle>Relationship to the Components API</SectionTitle>
         <List>
@@ -1120,6 +1169,48 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/adapters/bootstrap">Bootstrap adapter guide</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters/radix',
+    title: 'Radix',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for the Radix Themes adapter entrypoint, exports, and createRadixComponents helper.',
+    searchText:
+      'Radix adapter API radix themes radix v1 createRadixComponents components',
+    content: (
+      <>
+        <CodeBlock
+          code={radixAdapterSnippet}
+          language="tsx"
+          label="Radix v1 adapter usage"
+        />
+        <CodeBlock code={radixV1Snippet} language="tsx" label="Radix v1 import" />
+        <CodeBlock
+          code={radixCreateComponentsSnippet}
+          language="tsx"
+          label="createRadixComponents"
+        />
+        <SectionTitle>Available entrypoint</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/radix/v1</InlineCode>:</ItemTitle> Radix Themes adapter for applications on <InlineCode>@radix-ui/themes</InlineCode> 1.x.</li>
+        </List>
+        <SectionTitle>Exports</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Ready-made Radix Themes component mapping for <InlineCode>Builder</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>RadixSelect</InlineCode>, <InlineCode>RadixInput</InlineCode>, and related Radix-backed controls for partial overrides.</li>
+          <li><ItemTitle><InlineCode>createRadixComponents</InlineCode>:</ItemTitle> Merges Radix defaults with local overrides while preserving nested <InlineCode>form</InlineCode> keys.</li>
+          <li><ItemTitle><InlineCode>Theme</InlineCode>:</ItemTitle> Radix-backed builders should be rendered within Radix Themes' provider so the host app theme and tokens are available.</li>
+          <li><ItemTitle><InlineCode>@radix-ui/themes/styles.css</InlineCode>:</ItemTitle> Import the Radix Themes stylesheet once in your application entrypoint so the adapter controls render correctly.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters/radix">Radix adapter guide</TextLink>.
         </AlertBox>
       </>
     ),

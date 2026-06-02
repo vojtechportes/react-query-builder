@@ -216,6 +216,29 @@ export const MyFluentUiBuilder = () => {
   );
 };`;
 
+const radixSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import { components } from '@vojtechportes/react-query-builder/radix/v1';
+
+export const MyRadixBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Theme>
+      <Builder
+        data={data}
+        fields={fields}
+        components={components}
+        onChange={setData}
+      />
+    </Theme>
+  );
+};`;
+
 const muiOverrideSnippet = `import {
   components as muiComponents,
   MuiSelect,
@@ -238,6 +261,8 @@ const bootstrapAdaptersInstallSnippet = `npm install bootstrap@^5.0.0 bootstrap-
 const mantineAdaptersInstallSnippet = `npm install @mantine/core@^9.0.0 @mantine/hooks@^9.0.0 react@^19.2.0 react-dom@^19.2.0`;
 
 const fluentUiAdaptersInstallSnippet = `npm install @fluentui/react@^8.125.6`;
+
+const radixAdaptersInstallSnippet = `npm install @radix-ui/themes@^1.1.2`;
 
 const muiCreateComponentsSnippet = `import {
   Builder,
@@ -387,6 +412,39 @@ export const MyFluentUiBuilder = () => {
       components={components}
       onChange={setData}
     />
+  );
+};`;
+
+const radixCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
+import {
+  createRadixComponents,
+  components as radixComponents,
+} from '@vojtechportes/react-query-builder/radix/v1';
+
+const components = createRadixComponents(radixComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyRadixBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Theme>
+      <Builder
+        data={data}
+        fields={fields}
+        components={components}
+        onChange={setData}
+      />
+    </Theme>
   );
 };`;
 
@@ -1014,7 +1072,7 @@ export const documentationPages: IDocumentationPage[] = [
         <List>
           <li>Start with installation and the first controlled builder example.</li>
           <li>Move to parsing and formatting when you need interoperability with external query syntaxes.</li>
-          <li>Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine, or Fluent UI.</li>
+          <li>Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine, Fluent UI, or Radix Themes.</li>
           <li>
             Use the <TextLink to="/api">API reference</TextLink> when you need
             prop, data-shape, or export-level details.
@@ -1867,6 +1925,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li><TextLink to="/documentation/adapters/fluentui">Fluent UI</TextLink> covers <InlineCode>fluentui/v8</InlineCode>, install steps, and merge patterns.</li>
           <li><TextLink to="/documentation/adapters/mantine">Mantine</TextLink> covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, install steps, provider usage, and merge patterns.</li>
           <li><TextLink to="/documentation/adapters/bootstrap">Bootstrap</TextLink> covers <InlineCode>bootstrap/v5</InlineCode>, stylesheet setup, and merge patterns.</li>
+          <li><TextLink to="/documentation/adapters/radix">Radix</TextLink> covers <InlineCode>radix/v1</InlineCode>, stylesheet and provider setup, and merge patterns.</li>
         </List>
         <SectionTitle>Extending an adapter</SectionTitle>
         <List>
@@ -1882,7 +1941,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Choose the adapter subpage that matches your UI library for exact installation commands and code samples.</li>
         </List>
         <AlertBox title="Monaco text mode" variant="info">
-          When you want Monaco text mode together with MUI, ANTD, Bootstrap, Mantine, or Fluent UI, compose the
+          When you want Monaco text mode together with MUI, ANTD, Bootstrap, Mantine, Fluent UI, or Radix, compose the
           adapter <InlineCode>components</InlineCode> object with{' '}
           <InlineCode>createMonacoComponents(...)</InlineCode>. See{' '}
           <TextLink to="/documentation/text-mode">Text Mode</TextLink> for examples.
@@ -2161,6 +2220,61 @@ export const documentationPages: IDocumentationPage[] = [
     ),
   },
   {
+    path: '/documentation/adapters/radix',
+    title: 'Radix',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for the Radix Themes adapter, including radix/v1 installation, provider setup, usage, and component merging.',
+    searchText:
+      'Radix adapter radix themes radix v1 adapter install Theme createRadixComponents components',
+    content: (
+      <>
+        <p>
+          Use the Radix adapter when your application uses Radix Themes and you
+          want the builder controls to align with that design system.
+        </p>
+        <SectionTitle>Available entrypoint</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/radix/v1</InlineCode> targets <InlineCode>@radix-ui/themes</InlineCode> 1.x and is available in the demo.</li>
+        </List>
+        <SectionTitle>Installing Radix Themes</SectionTitle>
+        <p>
+          Install the Radix Themes peer dependency before using the adapter.
+        </p>
+        <CodeBlock
+          code={radixAdaptersInstallSnippet}
+          language="bash"
+          label="Radix Themes v1 peer"
+        />
+        <AlertBox title="Stylesheet required" variant="info">
+          Import <InlineCode>@radix-ui/themes/styles.css</InlineCode> once in your
+          application entrypoint so Radix Themes components render with the expected
+          styling.
+        </AlertBox>
+        <AlertBox title="Provider required" variant="info">
+          Render the builder inside <InlineCode>Theme</InlineCode> so Radix Themes
+          tokens and component styles are available to the adapter.
+        </AlertBox>
+        <SectionTitle>Using Radix v1</SectionTitle>
+        <CodeBlock code={radixSnippet} language="tsx" label="Radix v1 adapter" />
+        <SectionTitle>Extending the Radix adapter</SectionTitle>
+        <CodeBlock
+          code={radixCreateComponentsSnippet}
+          language="tsx"
+          label="Merging Radix defaults"
+        />
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/adapters/radix">Radix adapter API</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
     path: '/documentation/theming',
     title: 'Theming',
     sectionKey: 'customization',
@@ -2183,9 +2297,9 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
           <InlineCode>mui/v7</InlineCode>, <InlineCode>mui/v9</InlineCode>,{' '}
           <InlineCode>antd/v5</InlineCode>, <InlineCode>antd/v6</InlineCode>,{' '}
-          <InlineCode>bootstrap/v5</InlineCode>,{' '}
+          <InlineCode>bootstrap/v5</InlineCode>, <InlineCode>fluentui/v8</InlineCode>,{' '}
           <InlineCode>mantine/v8</InlineCode>, <InlineCode>mantine/v9</InlineCode>, or{' '}
-          <InlineCode>fluentui/v8</InlineCode>, these theme tokens do not affect
+          <InlineCode>radix/v1</InlineCode>, these theme tokens do not affect
           the adapter UI.
         </AlertBox>
         <AlertBox title="API reference" variant="info">

@@ -18,6 +18,7 @@ export const AntdRule: FC<IRuleProps> = ({
       data-test={dataTest}
       style={{
         display: 'grid',
+        overflow: 'hidden',
         gridTemplateColumns: hasControls
           ? dragHandle
             ? 'auto minmax(0, 1fr) auto'
