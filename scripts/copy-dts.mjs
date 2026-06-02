@@ -1,42 +1,50 @@
 /* global console */
 
-import { copyFile, readdir } from 'node:fs/promises';
+import { copyFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
 const distDir = path.resolve(__dirname, '..', 'dist');
+const packageJsonPath = path.join(rootDir, 'package.json');
 
-const findDeclarationFiles = async (directory) => {
-  const entries = await readdir(directory, { withFileTypes: true });
-  const nestedFiles = await Promise.all(
-    entries.map(async (entry) => {
-      const resolvedPath = path.join(directory, entry.name);
+const getPublicDeclarationFiles = async () => {
+  const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+  const declarationFiles = new Set();
 
-      if (entry.isDirectory()) {
-        return findDeclarationFiles(resolvedPath);
-      }
+  if (typeof packageJson.types === 'string') {
+    declarationFiles.add(path.resolve(rootDir, packageJson.types));
+  }
 
-      return entry.name.endsWith('.d.mts') ? [resolvedPath] : [];
-    })
+  for (const exportDefinition of Object.values(packageJson.exports ?? {})) {
+    if (
+      exportDefinition &&
+      typeof exportDefinition === 'object' &&
+      typeof exportDefinition.types === 'string'
+    ) {
+      declarationFiles.add(path.resolve(rootDir, exportDefinition.types));
+    }
+  }
+
+  return [...declarationFiles].filter(fileName =>
+    fileName.startsWith(distDir) && fileName.endsWith('.d.ts')
   );
-
-  return nestedFiles.flat();
 };
 
 try {
-  const declarationFiles = await findDeclarationFiles(distDir);
+  const declarationFiles = await getPublicDeclarationFiles();
 
   await Promise.all(
     declarationFiles.map(fileName =>
       copyFile(
-        fileName,
-        fileName.replace(/\.d\.mts$/, '.d.ts')
+        fileName.replace(/\.d\.ts$/, '.d.mts'),
+        fileName
       )
     )
   );
 } catch (error) {
-  console.error('Unable to create .d.ts files from .d.mts build artifacts');
+  console.error('Unable to create public .d.ts files from .d.mts build artifacts');
   throw error;
 }

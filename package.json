@@ -115,7 +115,22 @@
     "registry": "https://registry.npmjs.org"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.map",
+    "!dist/**/*.d.ts",
+    "dist/index.d.ts",
+    "dist/parseQuery.d.ts",
+    "dist/formatQuery.d.ts",
+    "dist/bootstrap/v5/index.d.ts",
+    "dist/mui/v7/index.d.ts",
+    "dist/mui/v9/index.d.ts",
+    "dist/antd/v5/index.d.ts",
+    "dist/antd/v6/index.d.ts",
+    "dist/fluentui/v8/index.d.ts",
+    "dist/mantine/v8/index.d.ts",
+    "dist/mantine/v9/index.d.ts",
+    "dist/radix/v1/index.d.ts",
+    "dist/monaco/index.d.ts"
   ],
   "scripts": {
     "build": "tsdown && node scripts/copy-dts.mjs",

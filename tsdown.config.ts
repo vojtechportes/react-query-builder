@@ -2,7 +2,9 @@ import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   clean: true,
-  dts: true,
+  dts: {
+    cjsReexport: true,
+  },
   entry: {
     index: 'src/index.tsx',
     parseQuery: 'src/parseQuery/index.ts',
@@ -19,5 +21,5 @@ export default defineConfig({
     'monaco/index': 'src/monaco/index.ts',
   },
   format: ['esm', 'cjs'],
-  sourcemap: true,
+  sourcemap: false,
 });
