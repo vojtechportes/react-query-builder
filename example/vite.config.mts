@@ -48,6 +48,10 @@ export default defineConfig({
         replacement: `${srcRoot}/antd/v6`,
       },
       {
+        find: '@vojtechportes/react-query-builder/bootstrap/v5',
+        replacement: `${srcRoot}/bootstrap/v5`,
+      },
+      {
         find: '@vojtechportes/react-query-builder/fluentui/v8',
         replacement: `${srcRoot}/fluentui/v8`,
       },

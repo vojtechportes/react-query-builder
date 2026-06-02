@@ -30,6 +30,7 @@ export const formatBuilderSource = ({
   const usesAntdAdapter = customizationMode === 'antd';
   const usesMantineAdapter = customizationMode === 'mantine';
   const usesFluentUiAdapter = customizationMode === 'fluentui';
+  const usesBootstrapAdapter = customizationMode === 'bootstrap';
   const themeOverrides =
     customizationMode === 'default'
       ? createThemeOverrides(themeColors, defaultThemeColors)
@@ -55,6 +56,10 @@ export const formatBuilderSource = ({
       : null,
     usesAntdAdapter
       ? `import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';`
+      : null,
+    usesBootstrapAdapter
+      ? `import 'bootstrap/dist/css/bootstrap.min.css';
+import { components as bootstrapComponents } from '@vojtechportes/react-query-builder/bootstrap/v5';`
       : null,
     usesMantineAdapter
       ? `import '@mantine/core/styles.css';
@@ -93,6 +98,7 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
     usesAntdAdapter ? 'components={antdComponents}' : null,
     usesMantineAdapter ? 'components={mantineComponents}' : null,
     usesFluentUiAdapter ? 'components={fluentUiComponents}' : null,
+    usesBootstrapAdapter ? 'components={bootstrapComponents}' : null,
   ].filter(Boolean);
 
   const componentExpression = useMonacoTextEditor
@@ -104,6 +110,8 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
           ? 'createMonacoComponents(mantineComponents)'
         : usesFluentUiAdapter
           ? 'createMonacoComponents(fluentUiComponents)'
+        : usesBootstrapAdapter
+          ? 'createMonacoComponents(bootstrapComponents)'
         : 'createMonacoComponents({})'
     : null;
 

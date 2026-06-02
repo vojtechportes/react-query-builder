@@ -153,6 +153,27 @@ export const MyAntdBuilder = () => {
   );
 };`;
 
+const bootstrapSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { components } from '@vojtechportes/react-query-builder/bootstrap/v5';
+
+export const MyBootstrapBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
 const mantineSnippet = `import {
   Builder,
   type DenormalizedQuery,
@@ -212,6 +233,8 @@ const adaptersInstallSnippet = `npm install @mui/material@^9.0.1 @mui/icons-mate
 
 const antdAdaptersInstallSnippet = `npm install antd@^6.0.0 @ant-design/icons@^6.0.0`;
 
+const bootstrapAdaptersInstallSnippet = `npm install bootstrap@^5.0.0 bootstrap-icons@^1.13.1`;
+
 const mantineAdaptersInstallSnippet = `npm install @mantine/core@^9.0.0 @mantine/hooks@^9.0.0 react@^19.2.0 react-dom@^19.2.0`;
 
 const fluentUiAdaptersInstallSnippet = `npm install @fluentui/react@^8.125.6`;
@@ -262,6 +285,37 @@ const components = createAntdComponents(antdComponents, {
 });
 
 export const MyAntdBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      data={data}
+      fields={fields}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const bootstrapCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import {
+  createBootstrapComponents,
+  components as bootstrapComponents,
+} from '@vojtechportes/react-query-builder/bootstrap/v5';
+
+const components = createBootstrapComponents(bootstrapComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyBootstrapBuilder = () => {
   const [data, setData] = useState<DenormalizedQuery>(initialData);
 
   return (
@@ -954,12 +1008,13 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation overview for installation, usage, parsing and formatting, customization, adapters, and localization.',
     searchText:
-      'Documentation overview installation usage parsing formatting configuration theming localization demo query builder react library website',
+      'Documentation overview installation usage parsing formatting configuration theming localization adapters bootstrap demo query builder react library website',
     content: (
       <>
         <List>
           <li>Start with installation and the first controlled builder example.</li>
           <li>Move to parsing and formatting when you need interoperability with external query syntaxes.</li>
+          <li>Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine, or Fluent UI.</li>
           <li>
             Use the <TextLink to="/api">API reference</TextLink> when you need
             prop, data-shape, or export-level details.
@@ -1797,7 +1852,7 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation overview for packaged UI adapters, versioned entrypoints, adapter-specific subpages, and shared customization patterns.',
     searchText:
-      'Adapters customization mui material ui antd ant design mantine fluent ui versioned adapter entrypoints adapter overview create components pages ready made overrides',
+      'Adapters customization mui material ui antd ant design bootstrap mantine fluent ui versioned adapter entrypoints adapter overview create components pages ready made overrides',
     content: (
       <>
         <p>
@@ -1811,6 +1866,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li><TextLink to="/documentation/adapters/antd">ANTD</TextLink> covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, install steps, and merge patterns.</li>
           <li><TextLink to="/documentation/adapters/fluentui">Fluent UI</TextLink> covers <InlineCode>fluentui/v8</InlineCode>, install steps, and merge patterns.</li>
           <li><TextLink to="/documentation/adapters/mantine">Mantine</TextLink> covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, install steps, provider usage, and merge patterns.</li>
+          <li><TextLink to="/documentation/adapters/bootstrap">Bootstrap</TextLink> covers <InlineCode>bootstrap/v5</InlineCode>, stylesheet setup, and merge patterns.</li>
         </List>
         <SectionTitle>Extending an adapter</SectionTitle>
         <List>
@@ -1826,7 +1882,7 @@ export const documentationPages: IDocumentationPage[] = [
           <li>Choose the adapter subpage that matches your UI library for exact installation commands and code samples.</li>
         </List>
         <AlertBox title="Monaco text mode" variant="info">
-          When you want Monaco text mode together with MUI, ANTD, Mantine, or Fluent UI, compose the
+          When you want Monaco text mode together with MUI, ANTD, Bootstrap, Mantine, or Fluent UI, compose the
           adapter <InlineCode>components</InlineCode> object with{' '}
           <InlineCode>createMonacoComponents(...)</InlineCode>. See{' '}
           <TextLink to="/documentation/text-mode">Text Mode</TextLink> for examples.
@@ -2052,6 +2108,59 @@ export const documentationPages: IDocumentationPage[] = [
     ),
   },
   {
+    path: '/documentation/adapters/bootstrap',
+    title: 'Bootstrap',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Documentation for the Bootstrap adapter, including bootstrap/v5 installation, stylesheet setup, usage, and component merging.',
+    searchText:
+      'Bootstrap adapter bootstrap v5 adapter install stylesheet createBootstrapComponents components',
+    content: (
+      <>
+        <p>
+          Use the Bootstrap adapter when your application already ships Bootstrap 5
+          styles and you want the builder controls mapped to Bootstrap-flavored UI.
+        </p>
+        <SectionTitle>Available entrypoint</SectionTitle>
+        <List>
+          <li><InlineCode>@vojtechportes/react-query-builder/bootstrap/v5</InlineCode> is the Bootstrap 5 adapter and is available in the demo.</li>
+        </List>
+        <SectionTitle>Installing Bootstrap</SectionTitle>
+        <p>
+          Install Bootstrap and import its stylesheet before rendering the adapter.
+        </p>
+        <CodeBlock
+          code={bootstrapAdaptersInstallSnippet}
+          language="bash"
+          label="Bootstrap 5 peer"
+        />
+        <AlertBox title="Stylesheet required" variant="info">
+          Import <InlineCode>bootstrap/dist/css/bootstrap.min.css</InlineCode> in
+          your application entrypoint or the specific subtree where the adapter is
+          rendered. Also import <InlineCode>bootstrap-icons/font/bootstrap-icons.css</InlineCode>{' '}
+          so the adapter icon buttons render with the official Bootstrap Icons package.
+          Without these stylesheets, the adapter falls back to unstyled HTML.
+        </AlertBox>
+        <SectionTitle>Using Bootstrap v5</SectionTitle>
+        <CodeBlock code={bootstrapSnippet} language="tsx" label="Bootstrap v5 adapter" />
+        <SectionTitle>Extending the Bootstrap adapter</SectionTitle>
+        <CodeBlock
+          code={bootstrapCreateComponentsSnippet}
+          language="tsx"
+          label="Merging Bootstrap defaults"
+        />
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
+          <TextLink to="/documentation/components">Components</TextLink>, and{' '}
+          <TextLink to="/api/adapters/bootstrap">Bootstrap adapter API</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
     path: '/documentation/theming',
     title: 'Theming',
     sectionKey: 'customization',
@@ -2074,6 +2183,7 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
           <InlineCode>mui/v7</InlineCode>, <InlineCode>mui/v9</InlineCode>,{' '}
           <InlineCode>antd/v5</InlineCode>, <InlineCode>antd/v6</InlineCode>,{' '}
+          <InlineCode>bootstrap/v5</InlineCode>,{' '}
           <InlineCode>mantine/v8</InlineCode>, <InlineCode>mantine/v9</InlineCode>, or{' '}
           <InlineCode>fluentui/v8</InlineCode>, these theme tokens do not affect
           the adapter UI.

@@ -1,0 +1,515 @@
+.bootstrap-demo-scope {
+  --bs-body-bg: #ffffff;
+  --bs-body-bg-tertiary: #f8f9fa;
+  --bs-body-color: #212529;
+  --bs-border-color: #dee2e6;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
+  --bs-primary: #0d6efd;
+  --bs-primary-rgb: 13, 110, 253;
+  --bs-secondary: #6c757d;
+  --bs-secondary-rgb: 108, 117, 125;
+  --bs-danger: #dc3545;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-warning: #ffc107;
+  --bs-warning-rgb: 255, 193, 7;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  --bs-success: #198754;
+  --bs-success-rgb: 25, 135, 84;
+  --bs-border-radius: 0.375rem;
+  --bs-border-radius-sm: 0.25rem;
+  --bs-box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --bs-font-sans-serif:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans',
+    'Liberation Sans',
+    sans-serif;
+  --bs-font-monospace:
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace;
+  color: var(--bs-body-color);
+  font-family: var(--bs-font-sans-serif);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.bootstrap-demo-scope,
+.bootstrap-demo-scope *,
+.bootstrap-demo-scope *::before,
+.bootstrap-demo-scope *::after {
+  box-sizing: border-box;
+}
+
+.bootstrap-demo-scope button,
+.bootstrap-demo-scope input,
+.bootstrap-demo-scope select,
+.bootstrap-demo-scope textarea {
+  font: inherit;
+}
+
+.bootstrap-demo-scope .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--bs-border-radius);
+  background: transparent;
+  color: inherit;
+  line-height: 1.5;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.bootstrap-demo-scope .btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.bootstrap-demo-scope .btn-sm,
+.bootstrap-demo-scope .btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--bs-border-radius-sm);
+  font-size: 0.875rem;
+}
+
+.bootstrap-demo-scope .btn-primary {
+  border-color: var(--bs-primary);
+  background: var(--bs-primary);
+  color: #fff;
+}
+
+.bootstrap-demo-scope .btn-primary:hover:not(:disabled),
+.bootstrap-demo-scope .btn-primary.show {
+  border-color: #0a58ca;
+  background: #0b5ed7;
+}
+
+.bootstrap-demo-scope .btn-outline-secondary {
+  border-color: var(--bs-secondary);
+  color: var(--bs-secondary);
+}
+
+.bootstrap-demo-scope .btn-outline-secondary:hover:not(:disabled),
+.bootstrap-demo-scope .btn-outline-secondary.active {
+  border-color: var(--bs-secondary);
+  background: var(--bs-secondary);
+  color: #fff;
+}
+
+.bootstrap-demo-scope .btn-outline-primary {
+  border-color: var(--bs-primary);
+  color: var(--bs-primary);
+}
+
+.bootstrap-demo-scope .btn-outline-primary:hover:not(:disabled) {
+  background: var(--bs-primary);
+  color: #fff;
+}
+
+.bootstrap-demo-scope .btn-outline-danger {
+  border-color: var(--bs-danger);
+  color: var(--bs-danger);
+}
+
+.bootstrap-demo-scope .btn-outline-danger:hover:not(:disabled) {
+  background: var(--bs-danger);
+  color: #fff;
+}
+
+.bootstrap-demo-scope .dropdown-toggle::after {
+  display: inline-block;
+  margin-left: 0.255em;
+  vertical-align: 0.155em;
+  content: '';
+  border-top: 0.3em solid currentColor;
+  border-right: 0.3em solid transparent;
+  border-bottom: 0;
+  border-left: 0.3em solid transparent;
+}
+
+.bootstrap-demo-scope .form-control,
+.bootstrap-demo-scope .form-select {
+  display: block;
+  width: 100%;
+  min-height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background-color: #fff;
+  color: var(--bs-body-color);
+  line-height: 1.5;
+  appearance: none;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.bootstrap-demo-scope .form-control-sm,
+.bootstrap-demo-scope .form-select-sm {
+  min-height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--bs-border-radius-sm);
+  font-size: 0.875rem;
+}
+
+.bootstrap-demo-scope .form-select {
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+}
+
+.bootstrap-demo-scope .form-control:focus,
+.bootstrap-demo-scope .form-select:focus,
+.bootstrap-demo-scope .form-check-input:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.bootstrap-demo-scope textarea.form-control {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+.bootstrap-demo-scope .form-check {
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 2.5em;
+  margin-bottom: 0.125rem;
+}
+
+.bootstrap-demo-scope .form-check-input {
+  float: left;
+  width: 2em;
+  height: 1em;
+  margin-top: 0.25em;
+  margin-left: -2.5em;
+  vertical-align: top;
+  appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 2em;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0, 0, 0, 0.25)'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+  cursor: pointer;
+  transition:
+    background-position 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.bootstrap-demo-scope .form-check-input:checked {
+  border-color: var(--bs-primary);
+  background-color: var(--bs-primary);
+  background-position: right center;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+.bootstrap-demo-scope .form-check-input:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.bootstrap-demo-scope .alert {
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--bs-border-radius);
+}
+
+.bootstrap-demo-scope .alert-warning {
+  border-color: #ffe69c;
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.bootstrap-demo-scope .alert-info {
+  border-color: #9eeaf9;
+  background: #cff4fc;
+  color: #055160;
+}
+
+.bootstrap-demo-scope .alert-success {
+  border-color: #a3cfbb;
+  background: #d1e7dd;
+  color: #0a3622;
+}
+
+.bootstrap-demo-scope .alert-danger {
+  border-color: #f1aeb5;
+  background: #f8d7da;
+  color: #58151c;
+}
+
+.bootstrap-demo-scope .text-bg-warning {
+  border-color: #ffda6a;
+  background: #ffc107;
+  color: #000;
+}
+
+.bootstrap-demo-scope .text-bg-info {
+  border-color: #3dd5f3;
+  background: #0dcaf0;
+  color: #000;
+}
+
+.bootstrap-demo-scope .text-bg-success {
+  border-color: #479f76;
+  background: #198754;
+  color: #fff;
+}
+
+.bootstrap-demo-scope .text-bg-danger {
+  border-color: #b02a37;
+  background: #dc3545;
+  color: #fff;
+}
+
+.bootstrap-demo-scope .dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0;
+  border: 1px solid rgba(0, 0, 0, 0.175);
+  border-radius: var(--bs-border-radius);
+  background: #fff;
+  color: var(--bs-body-color);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.bootstrap-demo-scope .dropdown-item {
+  display: flex;
+  width: 100%;
+  padding: 0.25rem 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--bs-body-color);
+  text-align: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.bootstrap-demo-scope .dropdown-item:hover,
+.bootstrap-demo-scope .dropdown-item:focus {
+  background: #e9ecef;
+  color: #1e2125;
+}
+
+.bootstrap-demo-scope .dropdown-item.active {
+  background: var(--bs-primary);
+  color: #fff;
+}
+
+.bootstrap-demo-scope .btn-group {
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.bootstrap-demo-scope .btn-group > .btn {
+  position: relative;
+  flex: 0 1 auto;
+}
+
+.bootstrap-demo-scope .btn-group > .btn:hover,
+.bootstrap-demo-scope .btn-group > .btn:focus-visible,
+.bootstrap-demo-scope .btn-group > .btn:active,
+.bootstrap-demo-scope .btn-group > .btn.active,
+.bootstrap-demo-scope .btn-group > .btn.btn-primary {
+  z-index: 1;
+}
+
+.bootstrap-demo-scope .btn-group > .btn:not(:first-child) {
+  margin-left: -1px;
+}
+
+.bootstrap-demo-scope .btn-group > .btn:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.bootstrap-demo-scope .btn-group > .btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.bootstrap-demo-scope .border {
+  border: 1px solid var(--bs-border-color) !important;
+}
+
+.bootstrap-demo-scope .border-0 {
+  border: 0 !important;
+}
+
+.bootstrap-demo-scope .border-bottom {
+  border-bottom: 1px solid var(--bs-border-color) !important;
+}
+
+.bootstrap-demo-scope .rounded {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+.bootstrap-demo-scope .rounded-0 {
+  border-radius: 0 !important;
+}
+
+.bootstrap-demo-scope .bg-body {
+  background: var(--bs-body-bg) !important;
+}
+
+.bootstrap-demo-scope .bg-body-tertiary {
+  background: var(--bs-body-bg-tertiary) !important;
+}
+
+.bootstrap-demo-scope .shadow-sm {
+  box-shadow: var(--bs-box-shadow-sm) !important;
+}
+
+.bootstrap-demo-scope .position-relative {
+  position: relative !important;
+}
+
+.bootstrap-demo-scope .d-flex {
+  display: flex !important;
+}
+
+.bootstrap-demo-scope .d-inline-flex {
+  display: inline-flex !important;
+}
+
+.bootstrap-demo-scope .align-items-center {
+  align-items: center !important;
+}
+
+.bootstrap-demo-scope .align-items-start {
+  align-items: flex-start !important;
+}
+
+.bootstrap-demo-scope .align-items-end {
+  align-items: flex-end !important;
+}
+
+.bootstrap-demo-scope .justify-content-center {
+  justify-content: center !important;
+}
+
+.bootstrap-demo-scope .justify-content-between {
+  justify-content: space-between !important;
+}
+
+.bootstrap-demo-scope .justify-content-end {
+  justify-content: flex-end !important;
+}
+
+.bootstrap-demo-scope .flex-wrap {
+  flex-wrap: wrap !important;
+}
+
+.bootstrap-demo-scope .flex-shrink-0 {
+  flex-shrink: 0 !important;
+}
+
+.bootstrap-demo-scope .w-100 {
+  width: 100% !important;
+}
+
+.bootstrap-demo-scope .min-w-0 {
+  min-width: 0 !important;
+}
+
+.bootstrap-demo-scope .text-start {
+  text-align: left !important;
+}
+
+.bootstrap-demo-scope .text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bootstrap-demo-scope .font-monospace {
+  font-family: var(--bs-font-monospace) !important;
+}
+
+.bootstrap-demo-scope .lh-1 {
+  line-height: 1 !important;
+}
+
+.bootstrap-demo-scope .gap-2 {
+  gap: 0.5rem !important;
+}
+
+.bootstrap-demo-scope .mt-1 {
+  margin-top: 0.25rem !important;
+}
+
+.bootstrap-demo-scope .mt-2 {
+  margin-top: 0.5rem !important;
+}
+
+.bootstrap-demo-scope .mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.bootstrap-demo-scope .mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.bootstrap-demo-scope .ms-2 {
+  margin-left: 0.5rem !important;
+}
+
+.bootstrap-demo-scope .p-1 {
+  padding: 0.25rem !important;
+}
+
+.bootstrap-demo-scope .p-3 {
+  padding: 1rem !important;
+}
+
+.bootstrap-demo-scope .px-2 {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.bootstrap-demo-scope .py-1 {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+
+.bootstrap-demo-scope .pb-3 {
+  padding-bottom: 1rem !important;
+}
+
+.bootstrap-demo-scope .pe-3 {
+  padding-right: 1rem !important;
+}

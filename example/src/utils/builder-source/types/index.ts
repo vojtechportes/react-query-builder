@@ -5,7 +5,8 @@ export type CustomizationMode =
   | 'mui'
   | 'antd'
   | 'mantine'
-  | 'fluentui';
+  | 'fluentui'
+  | 'bootstrap';
 
 export interface IBuilderSourceOptions {
   readOnly: boolean;

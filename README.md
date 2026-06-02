@@ -107,6 +107,7 @@ subpath exports:
 
 - `@vojtechportes/react-query-builder/mui/v9` for new Material UI projects
 - `@vojtechportes/react-query-builder/mui/v7` for applications still on MUI 7
+- `@vojtechportes/react-query-builder/bootstrap/v5` for Bootstrap 5 projects
 - `@vojtechportes/react-query-builder/antd/v6` for new Ant Design projects
 - `@vojtechportes/react-query-builder/antd/v5` for applications still on Ant Design 5
 - `@vojtechportes/react-query-builder/mantine/v9` for new Mantine projects
@@ -115,6 +116,26 @@ subpath exports:
 
 Install the peer dependencies that match the adapter you want to use and pass
 the exported `components` object to `Builder`.
+
+Bootstrap 5 example:
+
+```tsx
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Builder } from '@vojtechportes/react-query-builder';
+import { components } from '@vojtechportes/react-query-builder/bootstrap/v5';
+
+export const MyBootstrapBuilder = () => {
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};
+```
 
 Material UI example:
 

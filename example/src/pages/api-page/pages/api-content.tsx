@@ -226,6 +226,17 @@ const antdAdapterSnippet = `import { components } from '@vojtechportes/react-que
   onChange={setData}
 />;`;
 
+const bootstrapAdapterSnippet = `import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { components } from '@vojtechportes/react-query-builder/bootstrap/v5';
+
+<Builder
+  fields={fields}
+  data={data}
+  components={components}
+  onChange={setData}
+/>;`;
+
 const mantineAdapterSnippet = `import '@mantine/core/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { components } from '@vojtechportes/react-query-builder/mantine/v9';
@@ -251,6 +262,8 @@ const fluentUiAdapterSnippet = `import { components } from '@vojtechportes/react
 const muiV7Snippet = `import { components } from '@vojtechportes/react-query-builder/mui/v7';`;
 
 const antdV5Snippet = `import { components } from '@vojtechportes/react-query-builder/antd/v5';`;
+
+const bootstrapV5Snippet = `import { components } from '@vojtechportes/react-query-builder/bootstrap/v5';`;
 
 const mantineV8Snippet = `import { components } from '@vojtechportes/react-query-builder/mantine/v8';`;
 
@@ -302,6 +315,37 @@ const components = createAntdComponents(antdComponents, {
 });
 
 export const MyAntdBuilder = () => {
+  const [data, setData] = useState<DenormalizedQuery>(initialData);
+
+  return (
+    <Builder
+      fields={fields}
+      data={data}
+      components={components}
+      onChange={setData}
+    />
+  );
+};`;
+
+const bootstrapCreateComponentsSnippet = `import {
+  Builder,
+  type DenormalizedQuery,
+} from '@vojtechportes/react-query-builder';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import {
+  createBootstrapComponents,
+  components as bootstrapComponents,
+} from '@vojtechportes/react-query-builder/bootstrap/v5';
+
+const components = createBootstrapComponents(bootstrapComponents, {
+  form: {
+    Input: MyInput,
+  },
+  Add: MyAddButton,
+});
+
+export const MyBootstrapBuilder = () => {
   const [data, setData] = useState<DenormalizedQuery>(initialData);
 
   return (
@@ -557,14 +601,14 @@ export const apiPages: IApiPage[] = [
     description:
       'API overview covering core builder types, customization points, and query conversion exports.',
     searchText:
-      'API overview builder props fields data components formatQuery parseQuery exports types shapes reference',
+      'API overview builder props fields data components adapters bootstrap formatQuery parseQuery exports types shapes reference',
     content: (
       <>
         <List>
           <li><ItemTitle>Core API:</ItemTitle> <InlineCode>Builder</InlineCode>, <InlineCode>Fields</InlineCode>, and <InlineCode>Data</InlineCode>.</li>
           <li><ItemTitle>Editing state:</ItemTitle> <InlineCode>Builder</InlineCode> also exposes history-related state such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> through <InlineCode>onStateChange</InlineCode>.</li>
           <li><ItemTitle>Imperative control:</ItemTitle> <InlineCode>useBuilderRef</InlineCode> and <InlineCode>IBuilderRef</InlineCode> expose builder actions through a React ref.</li>
-          <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode>, <InlineCode>Adapters</InlineCode>, and <InlineCode>Theming</InlineCode>.</li>
+          <li><ItemTitle>Customization:</ItemTitle> <InlineCode>Components</InlineCode>, <InlineCode>Adapters</InlineCode>, and <InlineCode>Theming</InlineCode>, including packaged adapters for MUI, ANTD, Bootstrap, Mantine, and Fluent UI.</li>
           <li><ItemTitle>Query Conversion:</ItemTitle> <InlineCode>formatQuery</InlineCode> and <InlineCode>parseQuery</InlineCode>.</li>
         </List>
         <AlertBox title="Documentation and demo" variant="info">
@@ -855,7 +899,7 @@ export const apiPages: IApiPage[] = [
     description:
       'API overview for packaged UI adapter entrypoints, shared exports, and how adapters map onto the components override surface.',
     searchText:
-      'Adapters API mui material ui antd ant design mantine fluent ui components object adapter entrypoints customization shared exports',
+      'Adapters API mui material ui antd ant design bootstrap mantine fluent ui components object adapter entrypoints customization shared exports',
     content: (
       <>
         <SectionTitle>Available adapter entrypoints</SectionTitle>
@@ -864,12 +908,13 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><TextLink to="/api/adapters/antd">ANTD</TextLink>:</ItemTitle> Covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, and the ANTD-specific merge helper.</li>
           <li><ItemTitle><TextLink to="/api/adapters/fluentui">Fluent UI</TextLink>:</ItemTitle> Covers <InlineCode>fluentui/v8</InlineCode> and the Fluent-UI-specific merge helper.</li>
           <li><ItemTitle><TextLink to="/api/adapters/mantine">Mantine</TextLink>:</ItemTitle> Covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, and the Mantine-specific merge helper.</li>
+          <li><ItemTitle><TextLink to="/api/adapters/bootstrap">Bootstrap</TextLink>:</ItemTitle> Covers <InlineCode>bootstrap/v5</InlineCode> and the Bootstrap-specific merge helper.</li>
         </List>
         <SectionTitle>What adapters export</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> A ready-to-pass object that matches <InlineCode>IBuilderComponentsProps</InlineCode>.</li>
-          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, <InlineCode>MantineSelect</InlineCode>, or <InlineCode>FluentUiSelect</InlineCode> for partial customization.</li>
-          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, <InlineCode>createMantineComponents</InlineCode>, and <InlineCode>createFluentUiComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>MuiSelect</InlineCode>, <InlineCode>AntdSelect</InlineCode>, <InlineCode>BootstrapSelect</InlineCode>, <InlineCode>MantineSelect</InlineCode>, or <InlineCode>FluentUiSelect</InlineCode> for partial customization.</li>
+          <li><ItemTitle>Adapter merge helpers:</ItemTitle> <InlineCode>createMuiComponents</InlineCode>, <InlineCode>createAntdComponents</InlineCode>, <InlineCode>createBootstrapComponents</InlineCode>, <InlineCode>createMantineComponents</InlineCode>, and <InlineCode>createFluentUiComponents</InlineCode> merge adapter defaults with local overrides while preserving the nested <InlineCode>form</InlineCode> mapping.</li>
         </List>
         <SectionTitle>Relationship to the Components API</SectionTitle>
         <List>
@@ -1034,6 +1079,47 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/adapters/mantine">Mantine adapter guide</TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/api/adapters/bootstrap',
+    title: 'Bootstrap',
+    depth: 1,
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'API reference for the Bootstrap adapter entrypoint, exports, and createBootstrapComponents helper.',
+    searchText:
+      'Bootstrap adapter API bootstrap v5 createBootstrapComponents components',
+    content: (
+      <>
+        <CodeBlock
+          code={bootstrapAdapterSnippet}
+          language="tsx"
+          label="Bootstrap v5 adapter usage"
+        />
+        <CodeBlock code={bootstrapV5Snippet} language="tsx" label="Bootstrap v5 import" />
+        <CodeBlock
+          code={bootstrapCreateComponentsSnippet}
+          language="tsx"
+          label="createBootstrapComponents"
+        />
+        <SectionTitle>Available entrypoint</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>@vojtechportes/react-query-builder/bootstrap/v5</InlineCode>:</ItemTitle> Bootstrap 5 adapter.</li>
+        </List>
+        <SectionTitle>Exports</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>components</InlineCode>:</ItemTitle> Ready-made Bootstrap component mapping for <InlineCode>Builder</InlineCode>.</li>
+          <li><ItemTitle>Individual mapped components:</ItemTitle> Named exports such as <InlineCode>BootstrapSelect</InlineCode>, <InlineCode>BootstrapInput</InlineCode>, and related Bootstrap-backed controls for partial overrides.</li>
+          <li><ItemTitle><InlineCode>createBootstrapComponents</InlineCode>:</ItemTitle> Merges Bootstrap defaults with local overrides while preserving nested <InlineCode>form</InlineCode> keys.</li>
+          <li><ItemTitle>Stylesheet requirement:</ItemTitle> Import <InlineCode>bootstrap/dist/css/bootstrap.min.css</InlineCode> and <InlineCode>bootstrap-icons/font/bootstrap-icons.css</InlineCode> before rendering the adapter so the Bootstrap classes and official icon set resolve to actual styles.</li>
+        </List>
+        <AlertBox title="Documentation" variant="info">
+          <TextLink to="/documentation/adapters/bootstrap">Bootstrap adapter guide</TextLink>.
         </AlertBox>
       </>
     ),
