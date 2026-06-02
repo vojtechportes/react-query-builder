@@ -2,6 +2,7 @@
 .DS_Store
 node_modules
 .cache
+.npm-cache/
 .vite
 .rts2_cache_cjs
 .rts2_cache_esm
