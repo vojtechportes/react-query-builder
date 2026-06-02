@@ -291,18 +291,19 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   }, [singleRootGroup, textMode]);
 
   const builderComponents = React.useMemo(() => {
-    const baseComponents =
-      customizationMode === 'mui'
-        ? muiComponents
-        : customizationMode === 'antd'
-          ? antdComponents
-          : customizationMode === 'mantine'
-            ? mantineComponents
-            : customizationMode === 'fluentui'
-              ? fluentUiComponents
-              : customizationMode === 'bootstrap'
-                ? bootstrapComponents
-                : undefined;
+    let baseComponents;
+
+    if (customizationMode === 'mui') {
+      baseComponents = muiComponents;
+    } else if (customizationMode === 'antd') {
+      baseComponents = antdComponents;
+    } else if (customizationMode === 'mantine') {
+      baseComponents = mantineComponents;
+    } else if (customizationMode === 'fluentui') {
+      baseComponents = fluentUiComponents;
+    } else if (customizationMode === 'bootstrap') {
+      baseComponents = bootstrapComponents;
+    }
 
     if (!useMonacoTextEditor) {
       return baseComponents;
