@@ -237,8 +237,11 @@ export const MyFluentUiBuilder = () => {
 Radix example:
 
 ```bash
-npm install @radix-ui/themes@^1.1.2
+npm install @radix-ui/themes@^1.1.2 @radix-ui/react-icons@^1.3.2
 ```
+
+The Radix adapter also uses `@radix-ui/react-icons`, so install it alongside
+`@radix-ui/themes`.
 
 ```tsx
 import React from 'react';
