@@ -6,6 +6,11 @@ import {
   QueryGroupType,
   DenormalizedQuery,
 } from '../../../utils/query-tree';
+import {
+  BuilderFieldOption,
+  BuilderFieldOptionsStatus,
+  IBuilderFieldOptionState,
+} from '../../../builder/types/field-option';
 import { IBuilderHistoryState } from '../../../history/types';
 
 export interface IBuilderRef {
@@ -40,6 +45,21 @@ export interface IBuilderRef {
   lockNode: (nodeId: string, state?: 'self' | 'all') => boolean;
   unlockNode: (nodeId: string) => boolean;
   getNodeById: (nodeId: string) => NormalizedNode | undefined;
+  isFieldInUse: (field: string) => boolean;
+  getFieldOptionState: (field: string) => IBuilderFieldOptionState;
+  setFieldOptions: (
+    field: string,
+    options:
+      | BuilderFieldOption[]
+      | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
+  ) => void;
+  setFieldOptionsStatus: (
+    field: string,
+    status: BuilderFieldOptionsStatus
+  ) => void;
+  invalidateFieldOptions: (field: string) => void;
+  reloadFieldOptions: (field: string) => void;
+  clearFieldOptions: (field: string) => void;
   getNodes: () => NormalizedQuery;
   getData: () => DenormalizedQuery;
   getHistory: () => IBuilderHistoryState;

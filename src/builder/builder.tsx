@@ -59,6 +59,9 @@ import {
 import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
 import { resolveLockedNode } from '../hooks/use-builder-ref/utils/resolve-locked-node.util';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
+import { createBuilderFieldOptionsStore } from './utils/create-builder-field-options-store.util';
+import { isBuilderFieldInUse } from './utils/is-builder-field-in-use.util';
+import { resolveBuilderFieldOptionState } from './utils/resolve-builder-field-option-state.util';
 
 export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   data: originalData = [],
@@ -75,6 +78,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   newNodePlacement = 'append',
   validator,
   onStateChange,
+  onFieldOptionsReload,
   showValidation = false,
   history = false,
   onChange,
@@ -128,6 +132,11 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   >([]);
   const lastEmittedData = useRef<DenormalizedQuery | null>(null);
   const pendingChangeData = useRef<NormalizedQuery | null>(null);
+  const fieldOptionsStoreRef = useRef<ReturnType<typeof createBuilderFieldOptionsStore>>();
+
+  if (!fieldOptionsStoreRef.current) {
+    fieldOptionsStoreRef.current = createBuilderFieldOptionsStore();
+  }
   const filteredData = data.filter((item) => !item.parent);
   const AddComponent = components.Add || Button;
   const AlertComponent = components.Alert || defaultComponents.Alert || DefaultAlert;
@@ -348,6 +357,28 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         const node = findNodeById(data, nodeId);
         return node ? clone(node) : undefined;
       },
+      isFieldInUse: (field) => isBuilderFieldInUse(data, field),
+      getFieldOptionState: (field) =>
+        resolveBuilderFieldOptionState(
+          fields.find((fieldConfig) => fieldConfig.field === field),
+          fieldOptionsStoreRef.current?.getState(field)
+        ),
+      setFieldOptions: (field, options) => {
+        fieldOptionsStoreRef.current?.setOptions(field, options);
+      },
+      setFieldOptionsStatus: (field, status) => {
+        fieldOptionsStoreRef.current?.setStatus(field, status);
+      },
+      invalidateFieldOptions: (field) => {
+        fieldOptionsStoreRef.current?.invalidate(field);
+      },
+      reloadFieldOptions: (field) => {
+        fieldOptionsStoreRef.current?.invalidate(field);
+        onFieldOptionsReload?.(field);
+      },
+      clearFieldOptions: (field) => {
+        fieldOptionsStoreRef.current?.clear(field);
+      },
       getNodes: () => clone(data),
       getData: () => emitQuery(data),
       getHistory: () => clone(historyState),
@@ -355,7 +386,17 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       undo,
       redo,
     }),
-    [commitData, data, historyState, newNodePlacement, redo, setHistory, undo]
+    [
+      commitData,
+      data,
+      fields,
+      historyState,
+      newNodePlacement,
+      onFieldOptionsReload,
+      redo,
+      setHistory,
+      undo,
+    ]
   );
 
   useEffect(() => {
@@ -630,6 +671,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       fields={fields}
       components={components}
       strings={strings}
+      fieldOptionsStore={fieldOptionsStoreRef.current}
       readOnly={readOnly}
       readOnlyProtectsDelete={readOnlyProtectsDelete}
       lockable={lockable}

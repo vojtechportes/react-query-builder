@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AlertBox } from '../../../components/alert-box';
 import { CodeBlock } from '../../../components/code-block';
+import { ImperativeFieldOptionsDemo } from '../../../components/imperative-field-options-demo';
 import {
   InlineCode,
   ItemTitle,
@@ -859,6 +860,20 @@ builderRef.current?.updateNode(nodeId, node => ({
   readOnly: true,
 }));`;
 
+const builderRefFieldOptionsSnippet = `builderRef.current?.isFieldInUse('CITY');
+
+builderRef.current?.getFieldOptionState('CITY');
+
+builderRef.current?.setFieldOptionsStatus('CITY', 'loading');
+builderRef.current?.setFieldOptions('CITY', [
+  { value: 'PRG', label: 'Prague' },
+  { value: 'BRN', label: 'Brno' },
+]);
+
+builderRef.current?.invalidateFieldOptions('CITY');
+builderRef.current?.reloadFieldOptions('CITY');
+builderRef.current?.clearFieldOptions('CITY');`;
+
 const builderRefHistorySnippet = `const builderRef = useBuilderRef();
 
 const history = builderRef.current?.getHistory();
@@ -875,7 +890,227 @@ const builderRefReadSnippet = `const builderRef = useBuilderRef();
 
 const allNodes = builderRef.current?.getNodes();
 const singleNode = builderRef.current?.getNodeById(nodeId);
-const denormalizedData = builderRef.current?.getData();`;
+const denormalizedData = builderRef.current?.getData();
+const isCityInUse = builderRef.current?.isFieldInUse('CITY');
+const cityOptionState = builderRef.current?.getFieldOptionState('CITY');`;
+
+const dynamicFieldOptionsSnippet = `import React, { useEffect, useState } from 'react';
+import {
+  Builder,
+  useBuilderRef,
+  type BuilderFieldOptionsStatus,
+  type DenormalizedQuery,
+  type IBuilderFieldProps,
+} from '@vojtechportes/react-query-builder';
+
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'COUNTRY',
+    label: 'Country',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+  },
+  {
+    field: 'CITY',
+    label: 'City',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [],
+  },
+];
+
+export const DynamicOptionsExample = () => {
+  const [data, setData] = useState<DenormalizedQuery>([
+    {
+      type: 'GROUP',
+      value: 'AND',
+      isNegated: false,
+      children: [
+        { field: 'COUNTRY', operator: 'EQUAL', value: 'CZ' },
+        { field: 'CITY', operator: 'EQUAL', value: '' },
+      ],
+    },
+  ]);
+  const builderRef = useBuilderRef();
+
+  useEffect(() => {
+    const rootGroup = data[0];
+    const countryRule =
+      rootGroup && 'children' in rootGroup
+        ? rootGroup.children.find(
+            child => 'field' in child && child.field === 'COUNTRY'
+          )
+        : undefined;
+    const selectedCountry =
+      countryRule && 'value' in countryRule && typeof countryRule.value === 'string'
+        ? countryRule.value
+        : '';
+
+    if (!builderRef.current?.isFieldInUse('CITY')) {
+      builderRef.current?.clearFieldOptions('CITY');
+      return;
+    }
+
+    builderRef.current?.setFieldOptionsStatus('CITY', 'loading');
+
+    const timeoutId = window.setTimeout(() => {
+      builderRef.current?.setFieldOptions(
+        'CITY',
+        selectedCountry === 'CZ'
+          ? [
+              { value: 'PRG', label: 'Prague' },
+              { value: 'BRN', label: 'Brno' },
+            ]
+          : [
+              { value: 'BTS', label: 'Bratislava' },
+              { value: 'KSC', label: 'Kosice' },
+            ]
+      );
+    }, 500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [data, builderRef]);
+
+  return <Builder ref={builderRef} fields={fields} data={data} onChange={setData} />;
+};`;
+
+const dynamicFieldOptionsReloadSnippet = `const builderRef = useBuilderRef();
+const [cityReloadToken, setCityReloadToken] = useState(0);
+
+useEffect(() => {
+  if (!builderRef.current?.isFieldInUse('CITY')) {
+    return;
+  }
+
+  builderRef.current.setFieldOptionsStatus('CITY', 'loading');
+  loadCities().then(options => {
+    builderRef.current?.setFieldOptions('CITY', options);
+  });
+}, [cityReloadToken]);
+
+<Builder
+  ref={builderRef}
+  fields={fields}
+  data={data}
+  onFieldOptionsReload={(field) => {
+    if (field === 'CITY') {
+      setCityReloadToken(token => token + 1);
+    }
+  }}
+  onChange={setData}
+/>;
+
+builderRef.current?.reloadFieldOptions('CITY');`;
+
+const dynamicFieldOptionsReactQuerySnippet = `import React, { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  Builder,
+  useBuilderRef,
+  type DenormalizedQuery,
+  type IBuilderFieldProps,
+} from '@vojtechportes/react-query-builder';
+
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'COUNTRY',
+    label: 'Country',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+  },
+  {
+    field: 'CITY',
+    label: 'City',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [],
+  },
+];
+
+export const ReactQueryOptionsExample = () => {
+  const [data, setData] = useState<DenormalizedQuery>([
+    {
+      type: 'GROUP',
+      value: 'AND',
+      isNegated: false,
+      children: [
+        { field: 'COUNTRY', operator: 'EQUAL', value: 'CZ' },
+        { field: 'CITY', operator: 'EQUAL', value: '' },
+      ],
+    },
+  ]);
+  const builderRef = useBuilderRef();
+
+  const getFieldOptionsStatus = (
+    status: 'idle' | 'pending' | 'error' | 'success'
+  ): BuilderFieldOptionsStatus => {
+    switch (status) {
+      case 'pending':
+        return 'loading';
+      case 'error':
+        return 'error';
+      case 'success':
+        return 'success';
+      default:
+        return 'idle';
+    }
+  };
+
+  const selectedCountry = useMemo(() => {
+    const rootGroup = data[0];
+    const countryRule =
+      rootGroup && 'children' in rootGroup
+        ? rootGroup.children.find(
+            child => 'field' in child && child.field === 'COUNTRY'
+          )
+        : undefined;
+
+    return countryRule && 'value' in countryRule && typeof countryRule.value === 'string'
+      ? countryRule.value
+      : '';
+  }, [data]);
+
+  const isCityInScope = builderRef.current?.isFieldInUse('CITY') ?? false;
+
+  const { data: response, status } = useQuery({
+    queryKey: ['cities', selectedCountry],
+    queryFn: () => loadCities(selectedCountry),
+    enabled: isCityInScope && Boolean(selectedCountry),
+  });
+
+  useEffect(() => {
+    if (!builderRef.current) {
+      return;
+    }
+
+    builderRef.current.setFieldOptionsStatus(
+      'CITY',
+      getFieldOptionsStatus(status)
+    );
+
+    if (status !== 'success') {
+      return;
+    }
+
+    builderRef.current.setFieldOptions(
+      'CITY',
+      response.data.map(({ code, city }) => ({
+        value: code,
+        label: city,
+      }))
+    );
+  }, [response, status]);
+
+  return <Builder ref={builderRef} fields={fields} data={data} onChange={setData} />;
+};`;
 
 const lockingSnippet = `const data: DenormalizedQuery = [
   {
@@ -1071,6 +1306,7 @@ export const documentationPages: IDocumentationPage[] = [
       <>
         <List>
           <li>Start with installation and the first controlled builder example.</li>
+          <li>Use <TextLink to="/documentation/dynamic-field-options">Dynamic Field Options</TextLink> when list values need to come from async or dependent data sources.</li>
           <li>Move to parsing and formatting when you need interoperability with external query syntaxes.</li>
           <li>Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine, Fluent UI, or Radix Themes.</li>
           <li>
@@ -1140,6 +1376,10 @@ export const documentationPages: IDocumentationPage[] = [
           for editing workflows, or{' '}
           <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>{' '}
           for imperative control, or{' '}
+          <TextLink to="/documentation/dynamic-field-options">
+            Dynamic Field Options
+          </TextLink>{' '}
+          for async select data, or{' '}
           <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
           for partial locking.
         </AlertBox>
@@ -1177,6 +1417,8 @@ export const documentationPages: IDocumentationPage[] = [
           <li><InlineCode>getNodeById(id)</InlineCode> returns one normalized node by id.</li>
           <li><InlineCode>getNodes()</InlineCode> returns the current normalized node array.</li>
           <li><InlineCode>getData()</InlineCode> returns the denormalized public query shape.</li>
+          <li><InlineCode>isFieldInUse(field)</InlineCode> tells you whether a field is currently present in the query.</li>
+          <li><InlineCode>getFieldOptionState(field)</InlineCode> returns runtime options and the current option status for that field.</li>
         </List>
         <SectionTitle>Mutation methods</SectionTitle>
         <CodeBlock code={builderRefMutationSnippet} language="tsx" label="Mutating nodes" />
@@ -1185,6 +1427,18 @@ export const documentationPages: IDocumentationPage[] = [
           <li><InlineCode>addNode</InlineCode>, <InlineCode>addGroup</InlineCode>, <InlineCode>addRule</InlineCode>, and <InlineCode>insertNodes</InlineCode> let you build structure imperatively.</li>
           <li><InlineCode>replaceNode</InlineCode> swaps a node directly, while <InlineCode>updateNode</InlineCode> is useful when you want the next value to depend on the current node.</li>
           <li><InlineCode>setNodeLock</InlineCode>, <InlineCode>lockNode</InlineCode>, and <InlineCode>unlockNode</InlineCode> write the same read-only states as the lock UI.</li>
+        </List>
+        <SectionTitle>Dynamic field options</SectionTitle>
+        <CodeBlock
+          code={builderRefFieldOptionsSnippet}
+          language="tsx"
+          label="Managing field options"
+        />
+        <List>
+          <li><InlineCode>setFieldOptionsStatus(field, status)</InlineCode> lets surrounding app code reflect loading, success, idle, or error state.</li>
+          <li><InlineCode>setFieldOptions(field, options)</InlineCode> replaces the runtime option set without changing the original <InlineCode>fields</InlineCode> array.</li>
+          <li><InlineCode>invalidateFieldOptions(field)</InlineCode> drops runtime options and falls back to the static options defined in <InlineCode>field.value</InlineCode>.</li>
+          <li><InlineCode>clearFieldOptions(field)</InlineCode> removes the runtime state entirely, which is useful when a dependent field leaves scope.</li>
         </List>
         <SectionTitle>History methods</SectionTitle>
         <CodeBlock code={builderRefHistorySnippet} language="tsx" label="History access" />
@@ -1200,8 +1454,71 @@ export const documentationPages: IDocumentationPage[] = [
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder-ref">Builder Ref</TextLink>,{' '}
-          <TextLink to="/api/builder">Builder</TextLink>, and{' '}
-          <TextLink to="/api/data">Data</TextLink>.
+          <TextLink to="/api/builder">Builder</TextLink>,{' '}
+          <TextLink to="/api/data">Data</TextLink>, and{' '}
+          <TextLink to="/documentation/dynamic-field-options">
+            Dynamic Field Options
+          </TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/dynamic-field-options',
+    title: 'Dynamic Field Options',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Documentation for loading and invalidating list field options through the imperative builderRef API, including a live demo and a TanStack React Query example.',
+    searchText:
+      'dynamic field options builderRef setFieldOptions invalidateFieldOptions clearFieldOptions getFieldOptionState isFieldInUse tanstack react-query async select options live demo',
+    content: (
+      <>
+        <p>
+          Use the imperative field-option API when a list field depends on
+          other builder values or on external application state, but you still
+          want to keep the <InlineCode>fields</InlineCode> array stable.
+        </p>
+        <SectionTitle>Concept</SectionTitle>
+        <List>
+          <li><InlineCode>field.value</InlineCode> still defines the initial static option set and remains the backwards-compatible fallback.</li>
+          <li>Runtime options live in builder-managed state and are pushed through <InlineCode>builderRef</InlineCode>.</li>
+          <li><InlineCode>isFieldInUse(field)</InlineCode> helps you avoid fetching options for fields that are not currently present in the query.</li>
+          <li><InlineCode>invalidateFieldOptions(field)</InlineCode> resets the runtime cache so the field falls back to <InlineCode>field.value</InlineCode>.</li>
+          <li><InlineCode>reloadFieldOptions(field)</InlineCode> invalidates the runtime cache and notifies the surrounding app through <InlineCode>onFieldOptionsReload</InlineCode>.</li>
+        </List>
+        <CodeBlock
+          code={dynamicFieldOptionsSnippet}
+          language="tsx"
+          label="Imperative options flow"
+        />
+        <CodeBlock
+          code={dynamicFieldOptionsReloadSnippet}
+          language="tsx"
+          label="Reload flow"
+        />
+        <SectionTitle>Live example</SectionTitle>
+        <p>
+          This example watches the selected country, simulates a delayed backend
+          request, and updates the city options through{' '}
+          <InlineCode>setFieldOptions</InlineCode>.
+        </p>
+        <ImperativeFieldOptionsDemo />
+        <SectionTitle>TanStack React Query example</SectionTitle>
+        <p>
+          If your app already uses TanStack React Query, keep fetching and
+          caching there and only push mapped options into the builder when the
+          query resolves.
+        </p>
+        <CodeBlock
+          code={dynamicFieldOptionsReactQuerySnippet}
+          language="tsx"
+          label="React Query integration"
+        />
+        <AlertBox title="API reference" variant="info">
+          <TextLink to="/api/builder-ref">Builder Ref</TextLink> and{' '}
+          <TextLink to="/api/fields">Fields</TextLink>.
         </AlertBox>
       </>
     ),

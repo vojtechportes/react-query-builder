@@ -13,6 +13,7 @@ import {
   IBuilderHistoryState,
 } from './history/types';
 import { NormalizedQuery } from './utils/query-tree';
+import { IBuilderFieldOptionsStore } from './builder/utils/builder-field-options-store';
 
 export interface IBuilderContextProps {
   fields: IBuilderFieldProps[];
@@ -29,6 +30,7 @@ export interface IBuilderContextProps {
   validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
   strings: IStrings;
+  fieldOptionsStore?: IBuilderFieldOptionsStore;
   setData?: React.Dispatch<NormalizedQuery>;
   onChange?: (data: NormalizedQuery) => void;
   updateData?: (
@@ -62,6 +64,7 @@ export interface IBuilderContextProviderProps {
   validation?: IBuilderValidationResult;
   components: IBuilderComponentsProps;
   strings: IStrings;
+  fieldOptionsStore?: IBuilderFieldOptionsStore;
   setData?: React.Dispatch<NormalizedQuery>;
   onChange?: (data: NormalizedQuery) => void;
   updateData?: (
@@ -76,6 +79,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   fields,
   components,
   strings,
+  fieldOptionsStore,
   data,
   readOnly,
   readOnlyProtectsDelete,
@@ -139,6 +143,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         fields,
         components: resolvedComponents,
         strings: resolvedStrings,
+        fieldOptionsStore,
         data,
         readOnly,
         readOnlyProtectsDelete,

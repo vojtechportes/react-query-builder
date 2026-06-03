@@ -24,8 +24,10 @@ export const createRuleValueForFieldOperator = (
       return isRangeOperator(operator) ? ['', ''] : '';
     case 'NUMBER':
       return isRangeOperator(operator) ? [0, 0] : 0;
-    case 'LIST':
-      return isOptionList(field.value) ? field.value[0].value : undefined;
+    case 'LIST': {
+      const firstOption = isOptionList(field.value) ? field.value[0] : undefined;
+      return firstOption ? firstOption.value : undefined;
+    }
     case 'MULTI_LIST':
       return isOptionList(field.value) ? [] : undefined;
     case 'STATEMENT':
