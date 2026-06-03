@@ -56,6 +56,10 @@ export const App: React.FC = () => (
           <Route path="/documentation/installation" element={<DocumentationPage />} />
           <Route path="/documentation/usage" element={<DocumentationPage />} />
           <Route path="/documentation/builder-ref" element={<DocumentationPage />} />
+          <Route
+            path="/documentation/dynamic-field-options"
+            element={<DocumentationPage />}
+          />
           <Route path="/documentation/validation" element={<DocumentationPage />} />
           <Route path="/documentation/history" element={<DocumentationPage />} />
           <Route path="/documentation/builder-behavior" element={<DocumentationPage />} />

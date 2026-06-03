@@ -51,6 +51,22 @@ describe('#utils/createRuleStateForField', () => {
     });
   });
 
+  it('Creates a list rule state without a value when the option list is empty', () => {
+    const field: IBuilderFieldProps = {
+      field: 'CITY',
+      label: 'City',
+      type: 'LIST',
+      operators: ['EQUAL'],
+      value: [],
+    };
+
+    expect(createRuleStateForField(field)).toEqual({
+      field: 'CITY',
+      operator: 'EQUAL',
+      operators: ['EQUAL'],
+    });
+  });
+
   it('Creates a numeric rule state with numeric defaults', () => {
     const field: IBuilderFieldProps = {
       field: 'PRICE',

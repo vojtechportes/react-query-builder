@@ -100,6 +100,29 @@ export const MyBuilder = () => {
 };
 ```
 
+## Dynamic Field Options
+
+When list options depend on other rules or on external application state, keep
+the `fields` array stable and update options through the imperative `builderRef`
+API instead of replacing the full field definition.
+
+This is especially useful for dependent selects, async option loading, and
+integrations with tools like TanStack React Query.
+
+The imperative API includes methods such as:
+
+- `isFieldInUse(field)`
+- `setFieldOptions(field, options)`
+- `setFieldOptionsStatus(field, status)`
+- `invalidateFieldOptions(field)`
+- `reloadFieldOptions(field)`
+- `clearFieldOptions(field)`
+
+See the Dynamic Field Options documentation for the full concept, live example,
+and React Query integration example:
+
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/dynamic-field-options" target="_blank" rel="noopener noreferrer">Dynamic Field Options Documentation</a>
+
 ## UI Adapters
 
 The package also exposes ready-made component mappings through versioned

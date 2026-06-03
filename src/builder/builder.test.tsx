@@ -2968,6 +2968,151 @@ describe('#components/Builder', () => {
     ]);
   });
 
+  it('Exposes imperative field option methods without replacing the fields prop', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={listFields}
+          components={{
+            ...defaultComponents,
+            form: {
+              ...defaultComponents.form,
+              Select: ({ id, values, selectedValue }) => (
+                <div
+                  data-test="SelectSpy"
+                  data-id={id}
+                  data-values={values.map(({ value }) => value).join(',')}
+                  data-selected={selectedValue || ''}
+                />
+              ),
+            },
+          }}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'STATUS', value: 'OPEN', operator: 'EQUAL' }],
+            },
+          ]}
+        />
+      );
+    };
+
+    const { container } = render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+
+    const getValueSelect = () => {
+      const ruleId = getBuilderRef()
+        .getNodes()
+        .find((node) => 'field' in node)?.id;
+
+      return ruleId
+        ? (container.querySelector(
+            `[data-id="query-builder-rule-${ruleId}-value"]`
+          ) as HTMLElement | null)
+        : null;
+    };
+
+    expect(getBuilderRef().isFieldInUse('STATUS')).toBe(true);
+    expect(getBuilderRef().isFieldInUse('UNKNOWN')).toBe(false);
+    expect(getBuilderRef().getFieldOptionState('STATUS')).toEqual({
+      options: [
+        { value: 'OPEN', label: 'Open' },
+        { value: 'CLOSED', label: 'Closed' },
+      ],
+      status: 'idle',
+    });
+    expect(getValueSelect()?.getAttribute('data-values')).toBe('OPEN,CLOSED');
+
+    act(() => {
+      getBuilderRef().setFieldOptionsStatus('STATUS', 'loading');
+      getBuilderRef().setFieldOptions('STATUS', [
+        { value: 'ARCHIVED', label: 'Archived' },
+      ]);
+    });
+
+    expect(getBuilderRef().getFieldOptionState('STATUS')).toEqual({
+      options: [{ value: 'ARCHIVED', label: 'Archived' }],
+      status: 'success',
+    });
+    expect(getValueSelect()?.getAttribute('data-values')).toBe('ARCHIVED');
+
+    act(() => {
+      getBuilderRef().invalidateFieldOptions('STATUS');
+    });
+
+    expect(getBuilderRef().getFieldOptionState('STATUS')).toEqual({
+      options: [
+        { value: 'OPEN', label: 'Open' },
+        { value: 'CLOSED', label: 'Closed' },
+      ],
+      status: 'idle',
+    });
+    expect(getValueSelect()?.getAttribute('data-values')).toBe('OPEN,CLOSED');
+  });
+
+  it('reloadFieldOptions invalidates the runtime cache and notifies the consumer', () => {
+    const onFieldOptionsReload = jest.fn();
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={listFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'STATUS', value: 'OPEN', operator: 'EQUAL' }],
+            },
+          ]}
+          onFieldOptionsReload={onFieldOptionsReload}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+
+    act(() => {
+      getBuilderRef().setFieldOptions('STATUS', [
+        { value: 'ARCHIVED', label: 'Archived' },
+      ]);
+      getBuilderRef().reloadFieldOptions('STATUS');
+    });
+
+    expect(onFieldOptionsReload).toHaveBeenCalledWith('STATUS');
+    expect(getBuilderRef().getFieldOptionState('STATUS')).toEqual({
+      options: [
+        { value: 'OPEN', label: 'Open' },
+        { value: 'CLOSED', label: 'Closed' },
+      ],
+      status: 'idle',
+    });
+  });
+
   it('Uses newNodePlacement for imperative add methods when index is omitted', () => {
     const onChange = jest.fn();
     let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;

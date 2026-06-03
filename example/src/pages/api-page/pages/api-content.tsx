@@ -26,6 +26,7 @@ const builderSignature = `export interface IBuilderProps {
   newNodePlacement?: 'append' | 'prepend';
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
+  onFieldOptionsReload?: (field: string) => void;
   showValidation?: boolean;
   history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
@@ -68,6 +69,21 @@ const builderRefSignature = `export interface IBuilderRef {
   lockNode: (nodeId: string, state?: 'self' | 'all') => boolean;
   unlockNode: (nodeId: string) => boolean;
   getNodeById: (nodeId: string) => NormalizedNode | undefined;
+  isFieldInUse: (field: string) => boolean;
+  getFieldOptionState: (field: string) => IBuilderFieldOptionState;
+  setFieldOptions: (
+    field: string,
+    options:
+      | BuilderFieldOption[]
+      | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
+  ) => void;
+  setFieldOptionsStatus: (
+    field: string,
+    status: BuilderFieldOptionsStatus
+  ) => void;
+  invalidateFieldOptions: (field: string) => void;
+  reloadFieldOptions: (field: string) => void;
+  clearFieldOptions: (field: string) => void;
   getNodes: () => NormalizedQuery;
   getData: () => DenormalizedQuery;
   getHistory: () => IBuilderHistoryState;
@@ -108,6 +124,22 @@ const fieldBaseSignature = `interface IBuilderFieldBase<TType, TValue, TValidati
   operators?: BuilderFieldOperator[];
   validation?: TValidation;
 }`;
+
+const fieldOptionTypesSignature = `export type BuilderFieldOption = {
+  value: string;
+  label: string;
+};
+
+export type BuilderFieldOptionsStatus =
+  | 'idle'
+  | 'loading'
+  | 'success'
+  | 'error';
+
+export interface IBuilderFieldOptionState {
+  options: BuilderFieldOption[];
+  status: BuilderFieldOptionsStatus;
+};`;
 
 const queryTreeSignature = `export type QueryGroupValue = 'AND' | 'OR';
 export type QueryGroupType = 'with-modifiers' | 'without-modifiers';
@@ -742,7 +774,7 @@ export const apiPages: IApiPage[] = [
     description:
       'API reference for useBuilderRef, IBuilderRef, and the imperative builder methods for node operations and history access.',
     searchText:
-      'useBuilderRef IBuilderRef BuilderRef imperative ref cloneNode deleteNode replaceNode updateNode insertNodes addNode addGroup addRule moveNode setNodeLock lockNode unlockNode getNodeById getNodes getData getHistory setHistory undo redo',
+      'useBuilderRef IBuilderRef BuilderRef imperative ref cloneNode deleteNode replaceNode updateNode insertNodes addNode addGroup addRule moveNode setNodeLock lockNode unlockNode getNodeById getNodes getData getHistory setHistory undo redo isFieldInUse getFieldOptionState setFieldOptions setFieldOptionsStatus invalidateFieldOptions clearFieldOptions',
     content: (
       <>
         <CodeBlock code={builderRefSignature} language="ts" label="Builder ref API" />
@@ -757,6 +789,8 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>getNodes()</InlineCode>:</ItemTitle> Returns the current normalized query array.</li>
           <li><ItemTitle><InlineCode>getData()</InlineCode>:</ItemTitle> Returns the current denormalized query tree in the same shape emitted by <InlineCode>onChange</InlineCode>.</li>
           <li><ItemTitle><InlineCode>getHistory()</InlineCode>:</ItemTitle> Returns the current history object with <InlineCode>past</InlineCode> and <InlineCode>future</InlineCode> stacks.</li>
+          <li><ItemTitle><InlineCode>isFieldInUse(field)</InlineCode>:</ItemTitle> Returns <InlineCode>true</InlineCode> when at least one rule currently targets the given field.</li>
+          <li><ItemTitle><InlineCode>getFieldOptionState(field)</InlineCode>:</ItemTitle> Returns the current runtime option list and the option loading status for that field.</li>
         </List>
         <SectionTitle>Mutation methods</SectionTitle>
         <List>
@@ -770,6 +804,14 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>addRule(rule?, parentId?, index?)</InlineCode>:</ItemTitle> Creates and inserts a new rule node with optional initial values.</li>
           <li><ItemTitle><InlineCode>moveNode(nodeId, index, parentId?)</InlineCode>:</ItemTitle> Moves a node to a new index and optional parent group.</li>
         </List>
+        <SectionTitle>Field option methods</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>setFieldOptions(field, options)</InlineCode>:</ItemTitle> Replaces the runtime option set for a field without changing the original <InlineCode>fields</InlineCode> prop.</li>
+          <li><ItemTitle><InlineCode>setFieldOptionsStatus(field, status)</InlineCode>:</ItemTitle> Stores an option loading state of <InlineCode>'idle'</InlineCode>, <InlineCode>'loading'</InlineCode>, <InlineCode>'success'</InlineCode>, or <InlineCode>'error'</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>invalidateFieldOptions(field)</InlineCode>:</ItemTitle> Clears the runtime cache and falls back to the static options defined in <InlineCode>field.value</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>reloadFieldOptions(field)</InlineCode>:</ItemTitle> Invalidates the runtime cache and then calls <InlineCode>onFieldOptionsReload(field)</InlineCode> so the surrounding app can trigger a refetch.</li>
+          <li><ItemTitle><InlineCode>clearFieldOptions(field)</InlineCode>:</ItemTitle> Removes the runtime option state entirely. This is useful when a dependent field leaves scope.</li>
+        </List>
         <SectionTitle>Lock and history methods</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>setNodeLock(nodeId, state)</InlineCode>:</ItemTitle> Sets the explicit lock state for a rule or group. Groups additionally support <InlineCode>'all'</InlineCode> for descendant inheritance.</li>
@@ -780,6 +822,9 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
+          <TextLink to="/documentation/dynamic-field-options">
+            Dynamic Field Options
+          </TextLink>,{' '}
           <TextLink to="/documentation/history">Undo and Redo</TextLink>, and{' '}
           <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
@@ -795,30 +840,37 @@ export const apiPages: IApiPage[] = [
     description:
       'Field definition API reference for IBuilderFieldProps, field types, operators, and validation metadata.',
     searchText:
-      'IBuilderFieldProps field label type value operators validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP',
+      'IBuilderFieldProps field label type value operators validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState dynamic field options',
     content: (
       <>
         <CodeBlock code={fieldTypesSignature} language="ts" label="Field unions" />
         <CodeBlock code={fieldBaseSignature} language="ts" label="Shared field shape" />
+        <CodeBlock
+          code={fieldOptionTypesSignature}
+          language="ts"
+          label="Imperative option types"
+        />
         <SectionTitle>Props</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>field</InlineCode>:</ItemTitle> Required stable identifier used in query data and conversion helpers.</li>
           <li><ItemTitle><InlineCode>label</InlineCode>:</ItemTitle> Required user-facing caption shown in the field selector.</li>
           <li><ItemTitle><InlineCode>type</InlineCode>:</ItemTitle> Required field type. This controls which widget and value semantics are used.</li>
-          <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional default or backing field value metadata. For <InlineCode>LIST</InlineCode> and <InlineCode>MULTI_LIST</InlineCode>, this is the option set.</li>
+          <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional default or backing field value metadata. For <InlineCode>LIST</InlineCode> and <InlineCode>MULTI_LIST</InlineCode>, this is the initial static option set.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional operator whitelist. When omitted, the builder falls back to the default operators for the field type.</li>
           <li><ItemTitle><InlineCode>validation</InlineCode>:</ItemTitle> Optional validation config. The shape depends on field type.</li>
         </List>
         <SectionTitle>Type notes</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>BOOLEAN</InlineCode> / <InlineCode>TEXT</InlineCode> / <InlineCode>DATE</InlineCode> / <InlineCode>NUMBER</InlineCode>:</ItemTitle> The standard scalar field families with built-in widget and validation behavior.</li>
-          <li><ItemTitle><InlineCode>LIST</InlineCode> / <InlineCode>MULTI_LIST</InlineCode>:</ItemTitle> Option-backed selectors where <InlineCode>value</InlineCode> holds the option set.</li>
+          <li><ItemTitle><InlineCode>LIST</InlineCode> / <InlineCode>MULTI_LIST</InlineCode>:</ItemTitle> Option-backed selectors where <InlineCode>value</InlineCode> holds the initial static option set, and imperative runtime options can be pushed through <InlineCode>builderRef</InlineCode>.</li>
           <li><ItemTitle><InlineCode>STATEMENT</InlineCode>:</ItemTitle> Advanced field type for free-form statement-like values. Document it carefully in consuming apps because it is less self-explanatory than scalar or list fields.</li>
           <li><ItemTitle><InlineCode>GROUP</InlineCode>:</ItemTitle> Advanced structural field type intended for specialized query models rather than everyday filter fields.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
-          <TextLink to="/documentation/usage">Usage</TextLink> and{' '}
-          <TextLink to="/documentation/localization">Localization</TextLink>.
+          <TextLink to="/documentation/usage">Usage</TextLink>,{' '}
+          <TextLink to="/documentation/dynamic-field-options">
+            Dynamic Field Options
+          </TextLink>, and <TextLink to="/documentation/localization">Localization</TextLink>.
         </AlertBox>
       </>
     ),

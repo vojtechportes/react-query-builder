@@ -32,6 +32,7 @@ import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 import { updateRuleLockState } from '../utils/read-only/update-rule-lock-state.util';
+import { useBuilderFieldOptionState } from '../builder/hooks/use-builder-field-option-state';
 
 const BooleanContainer = styled.div`
   display: flex;
@@ -213,6 +214,12 @@ export const Rule: FC<IRuleProps> = ({
       </>
     ) : null;
 
+  const fieldConfig =
+    typeof fieldRef === 'string' && fieldRef.trim() !== ''
+      ? fields.find(item => item.field === fieldRef)
+      : undefined;
+  const fieldOptionState = useBuilderFieldOptionState(fieldConfig);
+
   if (typeof fieldRef !== 'string' || fieldRef.trim() === '') {
     return (
       <RuleContainer
@@ -244,58 +251,61 @@ export const Rule: FC<IRuleProps> = ({
     );
   }
 
-  try {
-    const fieldIndex = fields.findIndex(item => item.field === fieldRef);
-    const { field, operators, type, value: fieldValue } = fields[fieldIndex];
-    const operatorsOptionList =
-      operators &&
-      operators.map(item => ({
-        value: item,
-        label: (strings.operators && strings.operators[item]) || item,
-      }));
-    const shouldRenderValueInput = operatorRequiresValue(operator);
+  if (!fieldConfig) {
+    return null;
+  }
 
-    return (
-      <RuleContainer
-        dragHandle={dragHandle}
-        controls={controls}
-        data-test={dataTest}
-      >
-        <div>
-          <FieldsContent>
-            <LayoutItem>
-              <FieldSelect
-                selectedValue={field}
-                id={id}
-                disabled={isFieldReadOnly}
-              />
-            </LayoutItem>
+  const { field, operators, type } = fieldConfig;
+  const fieldValue = fieldOptionState.options;
+  const operatorsOptionList =
+    operators &&
+    operators.map(item => ({
+      value: item,
+      label: (strings.operators && strings.operators[item]) || item,
+    }));
+  const shouldRenderValueInput = operatorRequiresValue(operator);
 
-            {type === 'BOOLEAN' && (
-              <>
-                {isOptionList(operatorsOptionList) && (
-                  <LayoutItem>
-                    <OperatorSelect
+  return (
+    <RuleContainer
+      dragHandle={dragHandle}
+      controls={controls}
+      data-test={dataTest}
+    >
+      <div>
+        <FieldsContent>
+          <LayoutItem>
+            <FieldSelect
+              selectedValue={field}
+              id={id}
+              disabled={isFieldReadOnly}
+            />
+          </LayoutItem>
+
+          {type === 'BOOLEAN' && (
+            <>
+              {isOptionList(operatorsOptionList) && (
+                <LayoutItem>
+                  <OperatorSelect
+                    id={id}
+                    values={operatorsOptionList}
+                    selectedValue={operator}
+                    disabled={isOperatorReadOnly}
+                  />
+                </LayoutItem>
+              )}
+              {shouldRenderValueInput && isBoolean(selectedValue) && (
+                <ValueContent>
+                  <BooleanContainer>
+                    <Boolean
                       id={id}
-                      values={operatorsOptionList}
-                      selectedValue={operator}
-                      disabled={isOperatorReadOnly}
+                      selectedValue={selectedValue}
+                      disabled={isValueReadOnly}
                     />
-                  </LayoutItem>
-                )}
-                {shouldRenderValueInput && isBoolean(selectedValue) && (
-                  <ValueContent>
-                    <BooleanContainer>
-                      <Boolean
-                        id={id}
-                        selectedValue={selectedValue}
-                        disabled={isValueReadOnly}
-                      />
-                    </BooleanContainer>
-                  </ValueContent>
-                )}
-              </>
-            )}
+                  </BooleanContainer>
+                </ValueContent>
+              )}
+            </>
+          )}
 
             {type === 'LIST' &&
               isOptionList(fieldValue) &&
@@ -309,13 +319,11 @@ export const Rule: FC<IRuleProps> = ({
                       disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
-                  {operator &&
-                    shouldRenderValueInput &&
-                    isString(selectedValue) && (
+                  {operator && shouldRenderValueInput && (
                       <ValueContent>
                         <Select
                           id={id}
-                          selectedValue={selectedValue}
+                          selectedValue={isString(selectedValue) ? selectedValue : ''}
                           values={fieldValue}
                           disabled={isValueReadOnly}
                         />
@@ -336,14 +344,12 @@ export const Rule: FC<IRuleProps> = ({
                       disabled={isOperatorReadOnly}
                     />
                   </LayoutItem>
-                  {operator &&
-                    shouldRenderValueInput &&
-                    isStringArray(selectedValue) && (
+                  {operator && shouldRenderValueInput && (
                       <ValueContent>
                         <SelectMulti
                           id={id}
                           values={fieldValue}
-                          selectedValue={selectedValue}
+                          selectedValue={isStringArray(selectedValue) ? selectedValue : []}
                           disabled={isValueReadOnly}
                         />
                       </ValueContent>
@@ -429,19 +435,16 @@ export const Rule: FC<IRuleProps> = ({
                 </>
               )}
           </FieldsContent>
-          {validationIssues.length > 0 && (
-            <ValidationIssues>
-              {validationIssues.map((issue) => (
-                <li key={`${issue.code || issue.message}-${issue.message}`}>
-                  {issue.message}
-                </li>
-              ))}
-            </ValidationIssues>
-          )}
-        </div>
-      </RuleContainer>
-    );
-  } catch {
-    return null;
-  }
+        {validationIssues.length > 0 && (
+          <ValidationIssues>
+            {validationIssues.map((issue) => (
+              <li key={`${issue.code || issue.message}-${issue.message}`}>
+                {issue.message}
+              </li>
+            ))}
+          </ValidationIssues>
+        )}
+      </div>
+    </RuleContainer>
+  );
 };

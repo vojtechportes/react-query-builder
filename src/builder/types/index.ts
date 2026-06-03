@@ -49,6 +49,11 @@ export type BuilderFieldOperator = QueryOperator;
 export type BuilderGroupValues = QueryGroupValue;
 export type { BuilderLockState };
 export type { GroupReadOnlyTarget, RuleReadOnlyTarget };
+export type {
+  BuilderFieldOption,
+  BuilderFieldOptionsStatus,
+  IBuilderFieldOptionState,
+} from './field-option';
 export type { IAlertProps, AlertSeverity, AlertVariant } from '../../alert';
 export type { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
 export type { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
@@ -386,6 +391,7 @@ export interface IBuilderProps {
   newNodePlacement?: BuilderNewNodePlacement;
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
+  onFieldOptionsReload?: (field: string) => void;
   showValidation?: boolean;
   history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
