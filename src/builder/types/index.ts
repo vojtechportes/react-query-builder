@@ -19,6 +19,7 @@ import { Text } from '../../text';
 import { IStrings } from '../../constants/strings';
 import { BuilderLockState } from '../../utils/lock-state';
 import { BuilderDefaultMode } from './builder-default-mode';
+import type { IBuilderFieldChange } from './field-option';
 import { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
 import { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
 import { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';
@@ -52,7 +53,13 @@ export type { GroupReadOnlyTarget, RuleReadOnlyTarget };
 export type {
   BuilderFieldOption,
   BuilderFieldOptionsStatus,
+  BuilderRuleValueReconciliationStrategy,
+  IBuilderRuleDependencyEntry,
+  IBuilderFieldDependencyEntry,
+  IBuilderFieldChange,
   IBuilderFieldOptionState,
+  IBuilderRuleValueReconciliationConfig,
+  INearestFieldMatch,
 } from './field-option';
 export type { IAlertProps, AlertSeverity, AlertVariant } from '../../alert';
 export type { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
@@ -392,9 +399,22 @@ export interface IBuilderProps {
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
   onFieldOptionsReload?: (field: string) => void;
+  onRuleOptionsReload?: (ruleId: string) => void;
+  onFieldChange?: (change: IBuilderFieldChange) => void;
   showValidation?: boolean;
   history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
 }
 
-export type { BuilderRef, IBuilderRef } from '../../hooks/use-builder-ref/types';
+export type {
+  BuilderFieldOptionStateListener,
+  IBuilderRuleOptionsBindingConfig,
+  IBuilderRuleOptionsErrorContext,
+  IBuilderRuleOptionsResolvedContext,
+  IBuilderRuleOptionsResolverContext,
+  BuilderRuleDependenciesListener,
+  BuilderRef,
+  BuilderFieldDependenciesListener,
+  BuilderRefListener,
+  IBuilderRef,
+} from '../../hooks/use-builder-ref/types';

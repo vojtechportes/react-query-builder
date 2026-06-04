@@ -4,7 +4,8 @@ import { IBuilderFieldOptionState } from '../types/field-option';
 
 export const resolveBuilderFieldOptionState = (
   field: IBuilderFieldProps | undefined,
-  state: IBuilderFieldOptionState | undefined
+  fieldState: IBuilderFieldOptionState | undefined,
+  ruleState?: IBuilderFieldOptionState | undefined
 ): IBuilderFieldOptionState => {
   const fallbackOptions =
     field &&
@@ -12,9 +13,10 @@ export const resolveBuilderFieldOptionState = (
     isOptionList(field.value)
       ? field.value
       : [];
+  const preferredState = ruleState || fieldState;
 
   return {
-    options: state?.options || fallbackOptions,
-    status: state?.status || 'idle',
+    options: preferredState?.options || fallbackOptions,
+    status: preferredState?.status || 'idle',
   };
 };

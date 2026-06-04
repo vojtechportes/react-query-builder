@@ -4,6 +4,7 @@ import { Switch as DefaultSwitch } from '../form/switch';
 import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
+import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
 import { updateItem } from '../utils/update-item.util';
 
 export interface IBooleanProps {
@@ -25,6 +26,7 @@ export const Boolean: FC<IBooleanProps> = ({
     dispatchAction,
     components,
     readOnly,
+    onFieldChange,
   } = useContext(BuilderContext);
   const isDisabled = !!(readOnly || disabled);
 
@@ -42,19 +44,28 @@ export const Boolean: FC<IBooleanProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
+      const nextData = updateItem(data, id, item => {
+        if ('children' in item) {
+          return;
+        }
+
+        item.value = value;
+      });
+
       applyDataUpdate(
         data,
         setData,
         onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if ('children' in item) {
-              return;
-            }
-
-            item.value = value;
-          }),
+        () => nextData,
         updateData
+      );
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        value
       );
       return;
     }
@@ -68,6 +79,20 @@ export const Boolean: FC<IBooleanProps> = ({
         ...currentRule,
         value,
       })
+    );
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, item => {
+        if ('children' in item) {
+          return;
+        }
+
+        item.value = value;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      value
     );
   };
 

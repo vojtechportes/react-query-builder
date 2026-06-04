@@ -4,24 +4,39 @@ import { IBuilderFieldProps } from '../types';
 import { resolveBuilderFieldOptionState } from '../utils/resolve-builder-field-option-state.util';
 
 export const useBuilderFieldOptionState = (
-  field: IBuilderFieldProps | undefined
+  field: IBuilderFieldProps | undefined,
+  ruleId?: string
 ) => {
   const { fieldOptionsStore } = useContext(BuilderContext);
   const fieldName = field?.field;
-  const runtimeState = useSyncExternalStore(
+  const fieldRuntimeState = useSyncExternalStore(
     (listener) =>
       fieldName && fieldOptionsStore
-        ? fieldOptionsStore.subscribe(fieldName, listener)
+        ? fieldOptionsStore.subscribeField(fieldName, listener)
         : () => undefined,
     () =>
       fieldName && fieldOptionsStore
-        ? fieldOptionsStore.getState(fieldName)
+        ? fieldOptionsStore.getFieldState(fieldName)
         : undefined,
     () =>
       fieldName && fieldOptionsStore
-        ? fieldOptionsStore.getState(fieldName)
+        ? fieldOptionsStore.getFieldState(fieldName)
+        : undefined
+  );
+  const ruleRuntimeState = useSyncExternalStore(
+    (listener) =>
+      ruleId && fieldOptionsStore
+        ? fieldOptionsStore.subscribeRule(ruleId, listener)
+        : () => undefined,
+    () =>
+      ruleId && fieldOptionsStore
+        ? fieldOptionsStore.getRuleState(ruleId)
+        : undefined,
+    () =>
+      ruleId && fieldOptionsStore
+        ? fieldOptionsStore.getRuleState(ruleId)
         : undefined
   );
 
-  return resolveBuilderFieldOptionState(field, runtimeState);
+  return resolveBuilderFieldOptionState(field, fieldRuntimeState, ruleRuntimeState);
 };

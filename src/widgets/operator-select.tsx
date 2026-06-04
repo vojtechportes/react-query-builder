@@ -6,6 +6,7 @@ import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
+import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isRangeOperator } from '../utils/is-range-operator.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
@@ -39,6 +40,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
     components,
     strings,
     readOnly,
+    onFieldChange,
   } =
     useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
@@ -63,33 +65,63 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       return;
     }
 
+    const getNextRuleValue = () => {
+      const nextRequiresValue = operatorRequiresValue(value);
+      const currentRequiresValue = operatorRequiresValue(currentRule.operator);
+
+      if (!nextRequiresValue) {
+        return undefined;
+      }
+
+      if (
+        !currentRequiresValue ||
+        isRangeOperator(currentRule.operator) !== isRangeOperator(value)
+      ) {
+        return createRuleValueForFieldOperator(nextField, value);
+      }
+
+      return currentRule.value;
+    };
+    const nextRuleValue = getNextRuleValue();
+
     if (!dispatchAction && setData && onChange) {
+      const nextData = updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        if (typeof nextRuleValue === 'undefined') {
+          delete item.value;
+        } else {
+          item.value = nextRuleValue;
+        }
+
+        item.operator = value;
+      });
+
       applyDataUpdate(
         data,
         setData,
         onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if (isNormalizedGroupNode(item)) {
-              return;
-            }
-
-            const nextRequiresValue = operatorRequiresValue(value);
-            const currentRequiresValue = operatorRequiresValue(item.operator);
-
-            if (!nextRequiresValue) {
-              delete item.value;
-            } else if (
-              !currentRequiresValue ||
-              isRangeOperator(item.operator) !== isRangeOperator(value)
-            ) {
-              item.value = createRuleValueForFieldOperator(nextField, value);
-            }
-
-            item.operator = value;
-          }),
+        () => nextData,
         updateData
       );
+      const nextRule = findNodeById(nextData, id);
+
+      if (
+        nextRule &&
+        !isNormalizedGroupNode(nextRule) &&
+        nextRule.value !== currentRule.value
+      ) {
+        emitBuilderFieldChange(
+          onFieldChange,
+          nextData,
+          id,
+          currentRule.field,
+          currentRule.value,
+          nextRule.value
+        );
+      }
       return;
     }
 
@@ -98,21 +130,32 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
     }
 
     const nextRule = { ...currentRule };
-    const nextRequiresValue = operatorRequiresValue(value);
-    const currentRequiresValue = operatorRequiresValue(currentRule.operator);
-
-    if (!nextRequiresValue) {
+    if (typeof nextRuleValue === 'undefined') {
       delete nextRule.value;
-    } else if (
-      !currentRequiresValue ||
-      isRangeOperator(currentRule.operator) !== isRangeOperator(value)
-    ) {
-      nextRule.value = createRuleValueForFieldOperator(nextField, value);
+    } else {
+      nextRule.value = nextRuleValue;
     }
 
     nextRule.operator = value;
 
     dispatchAction(createReplaceNodeAction(id, nextRule));
+    if (nextRule.value !== currentRule.value) {
+      emitBuilderFieldChange(
+        onFieldChange,
+        updateItem(data, id, item => {
+          if (isNormalizedGroupNode(item)) {
+            return;
+          }
+
+          item.operator = nextRule.operator;
+          item.value = nextRule.value;
+        }),
+        id,
+        currentRule.field,
+        currentRule.value,
+        nextRule.value
+      );
+    }
   };
 
   if (!strings.form) {

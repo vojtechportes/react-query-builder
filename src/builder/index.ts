@@ -8,16 +8,26 @@ export { TextModeToggleContent } from './components/text-mode-toggle-content';
 export { TextModeEditor } from './text-mode/components/text-mode-editor';
 export { TextModeInput } from './text-mode/components/text-mode-input';
 export { useBuilderRef } from '../hooks/use-builder-ref';
+export { useBuilderRuleDependencies } from '../hooks/use-builder-rule-dependencies';
 export type { IHistoryButtonProps } from './components/history-button';
 export type {
+  IBuilderRuleOptionsBindingConfig,
+  IBuilderRuleOptionsErrorContext,
+  IBuilderRuleOptionsResolvedContext,
+  IBuilderRuleOptionsResolverContext,
+  BuilderRuleDependenciesListener,
+  BuilderFieldDependenciesListener,
+  BuilderFieldOptionStateListener,
   BuilderDefaultMode,
   BuilderRef,
+  BuilderRefListener,
   BuilderValidationMessage,
   BuilderValidationSeverity,
   IBuilderTextModeConfig,
   BuilderFieldOperator,
   BuilderFieldOption,
   BuilderFieldOptionsStatus,
+  BuilderRuleValueReconciliationStrategy,
   BuilderFieldType,
   BuilderFieldValue,
   BuilderGroupMode,
@@ -30,8 +40,12 @@ export type {
   IBooleanFieldProps,
   IBooleanFieldValidation,
   IBuilderComponentsProps,
+  IBuilderFieldChange,
+  IBuilderRuleDependencyEntry,
+  IBuilderFieldDependencyEntry,
   IBuilderFieldProps,
   IBuilderFieldOptionState,
+  IBuilderRuleValueReconciliationConfig,
   IBuilderFieldValidationBase,
   IBuilderOperatorValidationRule,
   IBuilderStateChange,
@@ -65,6 +79,7 @@ export type {
   INumberFieldProps,
   INumberFieldValidation,
   INumberFieldValidationRule,
+  INearestFieldMatch,
   INumberValueValidationRule,
   IStatementFieldProps,
   IStatementFieldValidation,

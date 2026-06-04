@@ -27,6 +27,8 @@ const builderSignature = `export interface IBuilderProps {
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
   onFieldOptionsReload?: (field: string) => void;
+  onRuleOptionsReload?: (ruleId: string) => void;
+  onFieldChange?: (change: IBuilderFieldChange) => void;
   showValidation?: boolean;
   history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
@@ -69,10 +71,29 @@ const builderRefSignature = `export interface IBuilderRef {
   lockNode: (nodeId: string, state?: 'self' | 'all') => boolean;
   unlockNode: (nodeId: string) => boolean;
   getNodeById: (nodeId: string) => NormalizedNode | undefined;
+  getNearestField: (
+    currentNodeId: string,
+    targetFieldName: string
+  ) => INearestFieldMatch | undefined;
   isFieldInUse: (field: string) => boolean;
   getFieldOptionState: (field: string) => IBuilderFieldOptionState;
+  getRuleOptionState: (ruleId: string) => IBuilderFieldOptionState;
+  subscribeToFieldOptionState: (
+    field: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
+  subscribeToRuleOptionState: (
+    ruleId: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
   setFieldOptions: (
     field: string,
+    options:
+      | BuilderFieldOption[]
+      | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
+  ) => void;
+  setRuleOptions: (
+    ruleId: string,
     options:
       | BuilderFieldOption[]
       | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
@@ -81,9 +102,20 @@ const builderRefSignature = `export interface IBuilderRef {
     field: string,
     status: BuilderFieldOptionsStatus
   ) => void;
+  setRuleOptionsStatus: (
+    ruleId: string,
+    status: BuilderFieldOptionsStatus
+  ) => void;
   invalidateFieldOptions: (field: string) => void;
   reloadFieldOptions: (field: string) => void;
   clearFieldOptions: (field: string) => void;
+  invalidateRuleOptions: (ruleId: string) => void;
+  reloadRuleOptions: (ruleId: string) => void;
+  clearRuleOptions: (ruleId: string) => void;
+  reconcileRuleValueWithOptions: (
+    ruleId: string,
+    config: IBuilderRuleValueReconciliationConfig
+  ) => boolean;
   getNodes: () => NormalizedQuery;
   getData: () => DenormalizedQuery;
   getHistory: () => IBuilderHistoryState;
@@ -92,9 +124,79 @@ const builderRefSignature = `export interface IBuilderRef {
   redo: () => void;
 }
 
-export type BuilderRef = React.MutableRefObject<IBuilderRef | null>;
+export type BuilderRefListener = (builder: IBuilderRef | null) => void;
+export type BuilderRuleDependenciesListener = (
+  entries: IBuilderRuleDependencyEntry[]
+) => void;
+export type BuilderFieldDependenciesListener = BuilderRuleDependenciesListener;
+export type BuilderFieldOptionStateListener = (
+  state: IBuilderFieldOptionState
+) => void;
+
+export type BuilderRef = React.MutableRefObject<IBuilderRef | null> & {
+  subscribe: (listener: BuilderRefListener) => () => void;
+  bindRuleOptions: (
+    field: string,
+    config: IBuilderRuleOptionsBindingConfig
+  ) => () => void;
+  subscribeToRuleDependencies: (
+    field: string,
+    dependencyFields: string[],
+    listener: BuilderRuleDependenciesListener
+  ) => () => void;
+  subscribeToFieldDependencies: (
+    field: string,
+    dependencyFields: string[],
+    listener: BuilderFieldDependenciesListener
+  ) => () => void;
+  subscribeToFieldOptionState: (
+    field: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
+  subscribeToRuleOptionState: (
+    ruleId: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
+  reconcileRuleValueWithOptions: (
+    ruleId: string,
+    config: IBuilderRuleValueReconciliationConfig
+  ) => boolean;
+};
 
 export const useBuilderRef = (): BuilderRef;`;
+
+const builderRuleDependenciesHookSignature = `export const useBuilderRuleDependencies = (
+  builderRef: BuilderRef,
+  field: string,
+  dependencyFields: string[]
+): IBuilderRuleDependencyEntry[];`;
+
+const builderRuleOptionsBindingSignature = `export interface IBuilderRuleOptionsResolverContext {
+  ruleId: string;
+  field: string;
+  dependencies: Record<string, INearestFieldMatch | undefined>;
+  signal: AbortSignal;
+}
+
+export interface IBuilderRuleOptionsBindingConfig {
+  dependencies: string[];
+  resolve: (
+    context: IBuilderRuleOptionsResolverContext
+  ) => Promise<BuilderFieldOption[]>;
+  onError?: (
+    error: unknown,
+    context: Omit<IBuilderRuleOptionsResolverContext, 'signal'>
+  ) => void;
+  onOptionsResolved?: (
+    context: {
+      ruleId: string;
+      field: string;
+      dependencies: Record<string, INearestFieldMatch | undefined>;
+      options: BuilderFieldOption[];
+    }
+  ) => void;
+  clearOnMissingDependencies?: boolean;
+}`;
 
 const fieldTypesSignature = `export type BuilderFieldType =
   | 'BOOLEAN'
@@ -126,7 +228,7 @@ const fieldBaseSignature = `interface IBuilderFieldBase<TType, TValue, TValidati
 }`;
 
 const fieldOptionTypesSignature = `export type BuilderFieldOption = {
-  value: string;
+  value: string | number;
   label: string;
 };
 
@@ -139,6 +241,32 @@ export type BuilderFieldOptionsStatus =
 export interface IBuilderFieldOptionState {
   options: BuilderFieldOption[];
   status: BuilderFieldOptionsStatus;
+}
+
+export interface IBuilderRuleValueReconciliationConfig {
+  strategy: 'clear-if-missing';
+}
+
+export interface IBuilderRuleDependencyEntry {
+  ruleId: string;
+  dependencies: Record<string, INearestFieldMatch | undefined>;
+}
+
+export type IBuilderFieldDependencyEntry = IBuilderRuleDependencyEntry;
+
+export interface INearestFieldMatch {
+  nodeId: string;
+  field: string;
+  value: QueryRuleValue | undefined;
+  operator?: QueryOperator;
+}
+
+export interface IBuilderFieldChange {
+  nodeId: string;
+  field: string;
+  previousValue: QueryRuleValue | undefined;
+  value: QueryRuleValue | undefined;
+  data: DenormalizedQuery;
 };`;
 
 const queryTreeSignature = `export type QueryGroupValue = 'AND' | 'OR';
@@ -733,6 +861,9 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>newNodePlacement</InlineCode>:</ItemTitle> Defaults to <InlineCode>'append'</InlineCode>. Controls whether newly added rules and groups are inserted at the end or the beginning of their parent when built-in add actions or imperative add methods omit an explicit index.</li>
           <li><ItemTitle><InlineCode>validator</InlineCode>:</ItemTitle> Optional function that receives the denormalized query plus validation context and returns a validation result synchronously or asynchronously.</li>
           <li><ItemTitle><InlineCode>onStateChange</InlineCode>:</ItemTitle> Optional callback fired with <InlineCode>data</InlineCode>, <InlineCode>isValid</InlineCode>, the full validation object, and history state flags such as <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>onFieldOptionsReload</InlineCode>:</ItemTitle> Optional callback fired by <InlineCode>reloadFieldOptions(field)</InlineCode> for shared field-level runtime options.</li>
+          <li><ItemTitle><InlineCode>onRuleOptionsReload</InlineCode>:</ItemTitle> Optional callback fired by <InlineCode>reloadRuleOptions(ruleId)</InlineCode> for dependency-aware rule-level runtime options.</li>
+          <li><ItemTitle><InlineCode>onFieldChange</InlineCode>:</ItemTitle> Optional callback fired with node id, field name, previous value, next value, and denormalized data after a rule field or value changes.</li>
           <li><ItemTitle><InlineCode>showValidation</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Controls whether validation issues are rendered in the built-in UI.</li>
           <li><ItemTitle><InlineCode>history</InlineCode>:</ItemTitle> Optional. Set to <InlineCode>true</InlineCode> to enable undo and redo with default settings, or pass <InlineCode>IBuilderHistoryConfig</InlineCode> to customize retention and built-in controls.</li>
           <li><ItemTitle><InlineCode>onChange</InlineCode>:</ItemTitle> Optional callback fired with the denormalized query tree after changes are emitted.</li>
@@ -774,23 +905,49 @@ export const apiPages: IApiPage[] = [
     description:
       'API reference for useBuilderRef, IBuilderRef, and the imperative builder methods for node operations and history access.',
     searchText:
-      'useBuilderRef IBuilderRef BuilderRef imperative ref cloneNode deleteNode replaceNode updateNode insertNodes addNode addGroup addRule moveNode setNodeLock lockNode unlockNode getNodeById getNodes getData getHistory setHistory undo redo isFieldInUse getFieldOptionState setFieldOptions setFieldOptionsStatus invalidateFieldOptions clearFieldOptions',
+      'useBuilderRef useBuilderRuleDependencies bindRuleOptions IBuilderRef BuilderRef BuilderRefListener BuilderRuleDependenciesListener imperative ref subscribe subscribeToRuleDependencies cloneNode deleteNode replaceNode updateNode insertNodes addNode addGroup addRule moveNode setNodeLock lockNode unlockNode getNodeById getNearestField getNodes getData getHistory setHistory undo redo isFieldInUse getFieldOptionState getRuleOptionState setFieldOptions setRuleOptions setFieldOptionsStatus setRuleOptionsStatus invalidateFieldOptions invalidateRuleOptions reloadFieldOptions reloadRuleOptions clearFieldOptions clearRuleOptions',
     content: (
       <>
         <CodeBlock code={builderRefSignature} language="ts" label="Builder ref API" />
+        <CodeBlock
+          code={builderRuleDependenciesHookSignature}
+          language="ts"
+          label="Rule dependencies hook"
+        />
+        <CodeBlock
+          code={builderRuleOptionsBindingSignature}
+          language="ts"
+          label="Rule options binding"
+        />
         <SectionTitle>How to attach it</SectionTitle>
         <List>
-          <li><ItemTitle><InlineCode>useBuilderRef()</InlineCode>:</ItemTitle> Returns a typed mutable React ref object for the builder instance.</li>
+          <li><ItemTitle><InlineCode>useBuilderRef()</InlineCode>:</ItemTitle> Returns a typed React ref controller for the builder instance.</li>
+          <li><ItemTitle><InlineCode>useBuilderRuleDependencies(builderRef, field, dependencyFields)</InlineCode>:</ItemTitle> Returns one dependency snapshot per matching rule and is the recommended React-first integration for React Query or similar hook-based data layers.</li>
           <li><ItemTitle><InlineCode>{'<Builder ref={builderRef} />'}</InlineCode>:</ItemTitle> Attaches the ref to the builder so <InlineCode>builderRef.current</InlineCode> exposes the imperative methods.</li>
+          <li><ItemTitle><InlineCode>builderRef.subscribe(listener)</InlineCode>:</ItemTitle> Subscribes to builder handle updates. The listener fires immediately with the current handle and then again whenever committed builder state replaces that handle.</li>
+          <li><ItemTitle><InlineCode>builderRef.bindRuleOptions(field, config)</InlineCode>:</ItemTitle> Automatically hydrates and refreshes rule-scoped options for dependency-aware fields. This is the recommended entrypoint when you do not need an external query library to own the orchestration, and <InlineCode>onOptionsResolved</InlineCode> is the clean place for follow-up work such as explicit value reconciliation.</li>
+          <li><ItemTitle><InlineCode>builderRef.subscribeToRuleDependencies(field, dependencyFields, listener)</InlineCode>:</ItemTitle> Subscribes to dependency snapshots for one field. The listener receives one entry per matching rule and only re-runs when that rule&apos;s dependency context changes.</li>
+          <li><ItemTitle><InlineCode>builderRef.subscribeToFieldOptionState(field, listener)</InlineCode> and <InlineCode>builderRef.subscribeToRuleOptionState(ruleId, listener)</InlineCode>:</ItemTitle> Subscribe to reactive loading and option snapshots for external UI such as badges, spinners, or helper text.</li>
         </List>
+        <AlertBox title="Reactive option state" variant="info">
+          <InlineCode>getFieldOptionState()</InlineCode> and <InlineCode>getRuleOptionState()</InlineCode>{' '}
+          return snapshots. Use <InlineCode>subscribeToFieldOptionState()</InlineCode> or{' '}
+          <InlineCode>subscribeToRuleOptionState()</InlineCode> when surrounding React UI should rerender as the state changes.
+        </AlertBox>
         <SectionTitle>Read methods</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>getNodeById(nodeId)</InlineCode>:</ItemTitle> Returns one normalized node by id, or <InlineCode>undefined</InlineCode> when it does not exist.</li>
           <li><ItemTitle><InlineCode>getNodes()</InlineCode>:</ItemTitle> Returns the current normalized query array.</li>
           <li><ItemTitle><InlineCode>getData()</InlineCode>:</ItemTitle> Returns the current denormalized query tree in the same shape emitted by <InlineCode>onChange</InlineCode>.</li>
           <li><ItemTitle><InlineCode>getHistory()</InlineCode>:</ItemTitle> Returns the current history object with <InlineCode>past</InlineCode> and <InlineCode>future</InlineCode> stacks.</li>
+          <li><ItemTitle><InlineCode>getNearestField(currentNodeId, targetFieldName)</InlineCode>:</ItemTitle> Returns the nearest matching rule in the current ancestor chain. This is especially useful for dependency-aware rule options.</li>
           <li><ItemTitle><InlineCode>isFieldInUse(field)</InlineCode>:</ItemTitle> Returns <InlineCode>true</InlineCode> when at least one rule currently targets the given field.</li>
-          <li><ItemTitle><InlineCode>getFieldOptionState(field)</InlineCode>:</ItemTitle> Returns the current runtime option list and the option loading status for that field.</li>
+          <li><ItemTitle><InlineCode>getFieldOptionState(field)</InlineCode>:</ItemTitle> Returns the shared runtime option list and loading status for a field.</li>
+          <li><ItemTitle><InlineCode>getRuleOptionState(ruleId)</InlineCode>:</ItemTitle> Returns the rule-scoped runtime option list and loading status for one rule instance.</li>
+          <li><ItemTitle><InlineCode>bindRuleOptions(field, config)</InlineCode>:</ItemTitle> Resolves dependency-aware options, sets <InlineCode>loading</InlineCode>, <InlineCode>success</InlineCode>, and <InlineCode>error</InlineCode> states, aborts stale requests, and clears removed rules automatically. Use <InlineCode>onOptionsResolved</InlineCode> when you want to run post-load logic such as <InlineCode>reconcileRuleValueWithOptions(...)</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>subscribeToRuleDependencies(field, dependencyFields, listener)</InlineCode>:</ItemTitle> Emits dependency entries such as the nearest country for every city rule, which is ideal for dependency-aware dynamic options.</li>
+          <li><ItemTitle><InlineCode>subscribeToFieldOptionState(field, listener)</InlineCode> and <InlineCode>subscribeToRuleOptionState(ruleId, listener)</InlineCode>:</ItemTitle> Emit reactive option-state snapshots so external UI can reflect <InlineCode>idle</InlineCode>, <InlineCode>loading</InlineCode>, <InlineCode>success</InlineCode>, or <InlineCode>error</InlineCode> without waiting for unrelated renders.</li>
+          <li><ItemTitle><InlineCode>reconcileRuleValueWithOptions(ruleId, {'{'} strategy {'}'} )</InlineCode>:</ItemTitle> Reconciles the current rule value against the effective option list. The built-in <InlineCode>clear-if-missing</InlineCode> strategy is useful when a value should be cleared once it is no longer available after a dependency-driven reload.</li>
         </List>
         <SectionTitle>Mutation methods</SectionTitle>
         <List>
@@ -804,13 +961,22 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>addRule(rule?, parentId?, index?)</InlineCode>:</ItemTitle> Creates and inserts a new rule node with optional initial values.</li>
           <li><ItemTitle><InlineCode>moveNode(nodeId, index, parentId?)</InlineCode>:</ItemTitle> Moves a node to a new index and optional parent group.</li>
         </List>
-        <SectionTitle>Field option methods</SectionTitle>
+        <SectionTitle>Field Option Methods</SectionTitle>
         <List>
-          <li><ItemTitle><InlineCode>setFieldOptions(field, options)</InlineCode>:</ItemTitle> Replaces the runtime option set for a field without changing the original <InlineCode>fields</InlineCode> prop.</li>
-          <li><ItemTitle><InlineCode>setFieldOptionsStatus(field, status)</InlineCode>:</ItemTitle> Stores an option loading state of <InlineCode>'idle'</InlineCode>, <InlineCode>'loading'</InlineCode>, <InlineCode>'success'</InlineCode>, or <InlineCode>'error'</InlineCode>.</li>
-          <li><ItemTitle><InlineCode>invalidateFieldOptions(field)</InlineCode>:</ItemTitle> Clears the runtime cache and falls back to the static options defined in <InlineCode>field.value</InlineCode>.</li>
-          <li><ItemTitle><InlineCode>reloadFieldOptions(field)</InlineCode>:</ItemTitle> Invalidates the runtime cache and then calls <InlineCode>onFieldOptionsReload(field)</InlineCode> so the surrounding app can trigger a refetch.</li>
-          <li><ItemTitle><InlineCode>clearFieldOptions(field)</InlineCode>:</ItemTitle> Removes the runtime option state entirely. This is useful when a dependent field leaves scope.</li>
+          <li><ItemTitle><InlineCode>setFieldOptions(field, options)</InlineCode>:</ItemTitle> Replaces the shared runtime option set for a field without changing the original <InlineCode>fields</InlineCode> prop.</li>
+          <li><ItemTitle><InlineCode>setFieldOptionsStatus(field, status)</InlineCode>:</ItemTitle> Stores a shared option loading state of <InlineCode>'idle'</InlineCode>, <InlineCode>'loading'</InlineCode>, <InlineCode>'success'</InlineCode>, or <InlineCode>'error'</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>invalidateFieldOptions(field)</InlineCode>:</ItemTitle> Clears the shared runtime cache and falls back to the static options defined in <InlineCode>field.value</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>reloadFieldOptions(field)</InlineCode>:</ItemTitle> Invalidates the shared runtime cache and then calls <InlineCode>onFieldOptionsReload(field)</InlineCode> so the surrounding app can trigger a refetch.</li>
+          <li><ItemTitle><InlineCode>clearFieldOptions(field)</InlineCode>:</ItemTitle> Removes the shared runtime option state entirely.</li>
+        </List>
+        <SectionTitle>Rule Option Methods</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>setRuleOptions(ruleId, options)</InlineCode>:</ItemTitle> Replaces the runtime option set for one specific rule instance.</li>
+          <li><ItemTitle><InlineCode>setRuleOptionsStatus(ruleId, status)</InlineCode>:</ItemTitle> Stores a loading state for one specific rule instance.</li>
+          <li><ItemTitle><InlineCode>invalidateRuleOptions(ruleId)</InlineCode>:</ItemTitle> Clears the rule-scoped runtime cache and falls back to field-scoped or static options.</li>
+          <li><ItemTitle><InlineCode>reloadRuleOptions(ruleId)</InlineCode>:</ItemTitle> Invalidates the rule-scoped runtime cache and then calls <InlineCode>onRuleOptionsReload(ruleId)</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>clearRuleOptions(ruleId)</InlineCode>:</ItemTitle> Removes the rule-scoped runtime option state entirely.</li>
+          <li><ItemTitle><InlineCode>reconcileRuleValueWithOptions(ruleId, {'{'} strategy: 'clear-if-missing' {'}'})</InlineCode>:</ItemTitle> Compares the current rule value against the effective option list for that rule and clears missing selections explicitly instead of doing it automatically on every reload.</li>
         </List>
         <SectionTitle>Lock and history methods</SectionTitle>
         <List>
@@ -840,7 +1006,7 @@ export const apiPages: IApiPage[] = [
     description:
       'Field definition API reference for IBuilderFieldProps, field types, operators, and validation metadata.',
     searchText:
-      'IBuilderFieldProps field label type value operators validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState dynamic field options',
+      'IBuilderFieldProps field label type value operators validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState INearestFieldMatch IBuilderFieldChange dynamic field options',
     content: (
       <>
         <CodeBlock code={fieldTypesSignature} language="ts" label="Field unions" />
@@ -862,7 +1028,7 @@ export const apiPages: IApiPage[] = [
         <SectionTitle>Type notes</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>BOOLEAN</InlineCode> / <InlineCode>TEXT</InlineCode> / <InlineCode>DATE</InlineCode> / <InlineCode>NUMBER</InlineCode>:</ItemTitle> The standard scalar field families with built-in widget and validation behavior.</li>
-          <li><ItemTitle><InlineCode>LIST</InlineCode> / <InlineCode>MULTI_LIST</InlineCode>:</ItemTitle> Option-backed selectors where <InlineCode>value</InlineCode> holds the initial static option set, and imperative runtime options can be pushed through <InlineCode>builderRef</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>LIST</InlineCode> / <InlineCode>MULTI_LIST</InlineCode>:</ItemTitle> Option-backed selectors where <InlineCode>value</InlineCode> holds the initial static option set, field-level runtime options can be shared across all rules of that field, and rule-level runtime options can override them per rule instance.</li>
           <li><ItemTitle><InlineCode>STATEMENT</InlineCode>:</ItemTitle> Advanced field type for free-form statement-like values. Document it carefully in consuming apps because it is less self-explanatory than scalar or list fields.</li>
           <li><ItemTitle><InlineCode>GROUP</InlineCode>:</ItemTitle> Advanced structural field type intended for specialized query models rather than everyday filter fields.</li>
         </List>

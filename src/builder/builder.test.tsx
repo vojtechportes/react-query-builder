@@ -9,13 +9,14 @@ import {
 } from '@testing-library/react';
 import {
   Builder,
+  BuilderRef,
   defaultComponents,
   IBuilderFieldProps,
   IBuilderProps,
   IBuilderRef,
   useBuilderRef,
 } from './index';
-import { DenormalizedQuery } from '../utils/query-tree';
+import { DenormalizedQuery, INormalizedRuleNode } from '../utils/query-tree';
 
 export const fields: IBuilderFieldProps[] = [
   {
@@ -42,6 +43,69 @@ const listFields: IBuilderFieldProps[] = [
       { value: 'CLOSED', label: 'Closed' },
     ],
     operators: ['IN', 'NOT_IN', 'EQUAL'],
+  },
+];
+
+const dependentListFields: IBuilderFieldProps[] = [
+  {
+    field: 'COUNTRY',
+    label: 'Country',
+    type: 'LIST',
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+    operators: ['EQUAL'],
+  },
+  {
+    field: 'CITY',
+    label: 'City',
+    type: 'LIST',
+    value: [],
+    operators: ['EQUAL'],
+  },
+];
+
+const numericListFields: IBuilderFieldProps[] = [
+  {
+    field: 'PRIORITY',
+    label: 'Priority',
+    type: 'LIST',
+    value: [
+      { value: 1, label: 'Low' },
+      { value: 2, label: 'Medium' },
+      { value: 3, label: 'High' },
+    ],
+    operators: ['EQUAL'],
+  },
+];
+
+const numericMultiListFields: IBuilderFieldProps[] = [
+  {
+    field: 'SCORES',
+    label: 'Scores',
+    type: 'MULTI_LIST',
+    value: [
+      { value: 1, label: 'One' },
+      { value: 2, label: 'Two' },
+      { value: 3, label: 'Three' },
+    ],
+    operators: ['ALL_IN'],
+  },
+];
+
+const stringMultiListFields: IBuilderFieldProps[] = [
+  {
+    field: 'SEGMENTS',
+    label: 'Segments',
+    type: 'MULTI_LIST',
+    value: [
+      { value: 'A', label: 'Segment A' },
+      { value: 'B', label: 'Segment B' },
+      { value: 'C', label: 'Segment C' },
+      { value: 'D', label: 'Segment D' },
+    ],
+    operators: ['ALL_IN'],
   },
 ];
 
@@ -3111,6 +3175,996 @@ describe('#components/Builder', () => {
       ],
       status: 'idle',
     });
+  });
+
+  it('Notifies builderRef subscribers when the builder becomes ready and when data changes', async () => {
+    let builderRefObject: BuilderRef | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={fields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                {
+                  field: 'MOCK_FIELD',
+                  value: 'alpha',
+                  operator: 'EQUAL',
+                },
+              ],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const builderRef = builderRefObject as BuilderRef | null;
+    expect(builderRef).toBeDefined();
+
+    const states: DenormalizedQuery[] = [];
+    const unsubscribe = builderRef?.subscribe((builder) => {
+      if (!builder) {
+        return;
+      }
+
+      states.push(builder.getData());
+    });
+
+    expect(states[0]).toEqual([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: 'alpha',
+            operator: 'EQUAL',
+          },
+        ],
+      },
+    ]);
+
+    const firstRuleId = builderRef?.current
+      ?.getNodes()
+      .find((node) => 'field' in node)?.id;
+
+    expect(firstRuleId).toBeDefined();
+
+    act(() => {
+      expect(
+        builderRef?.current?.updateNode(firstRuleId as string, (node) => ({
+          ...(node as INormalizedRuleNode),
+          value: 'beta',
+        }))
+      ).toBe(true);
+    });
+
+    await waitFor(() => {
+      expect(states.length).toBeGreaterThanOrEqual(2);
+      expect(states.at(-1)).toEqual([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              field: 'MOCK_FIELD',
+              value: 'beta',
+              operator: 'EQUAL',
+            },
+          ],
+        },
+      ]);
+    });
+
+    unsubscribe?.();
+  });
+
+  it('Supports rule-scoped field options and nearest field lookup for repeated groups', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          components={{
+            ...defaultComponents,
+            form: {
+              ...defaultComponents.form,
+              Select: ({ id, values, selectedValue }) => (
+                <div
+                  data-test="SelectSpy"
+                  data-id={id}
+                  data-values={values.map(({ value }) => value).join(',')}
+                  data-selected={selectedValue || ''}
+                />
+              ),
+            },
+          }}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                {
+                  type: 'GROUP',
+                  value: 'AND',
+                  isNegated: false,
+                  children: [
+                    { field: 'COUNTRY', value: 'CZ', operator: 'EQUAL' },
+                    { field: 'CITY', value: '', operator: 'EQUAL' },
+                  ],
+                },
+                {
+                  type: 'GROUP',
+                  value: 'AND',
+                  isNegated: false,
+                  children: [
+                    { field: 'COUNTRY', value: 'SK', operator: 'EQUAL' },
+                    { field: 'CITY', value: '', operator: 'EQUAL' },
+                  ],
+                },
+              ],
+            },
+          ]}
+        />
+      );
+    };
+
+    const { container } = render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const cityRules = getBuilderRef()
+      .getNodes()
+      .filter((node) => 'field' in node && node.field === 'CITY');
+    const firstCityRuleId = cityRules[0]?.id as string;
+    const secondCityRuleId = cityRules[1]?.id as string;
+
+    expect(getBuilderRef().getNearestField(firstCityRuleId, 'COUNTRY')).toMatchObject({
+      field: 'COUNTRY',
+      value: 'CZ',
+    });
+    expect(getBuilderRef().getNearestField(secondCityRuleId, 'COUNTRY')).toMatchObject({
+      field: 'COUNTRY',
+      value: 'SK',
+    });
+
+    act(() => {
+      getBuilderRef().setFieldOptions('CITY', [
+        { value: 'SHARED', label: 'Shared City' },
+      ]);
+      getBuilderRef().setRuleOptions(firstCityRuleId, [
+        { value: 'PRG', label: 'Prague' },
+      ]);
+      getBuilderRef().setRuleOptionsStatus(secondCityRuleId, 'loading');
+      getBuilderRef().setRuleOptions(secondCityRuleId, [
+        { value: 'BTS', label: 'Bratislava' },
+      ]);
+    });
+
+    expect(getBuilderRef().getRuleOptionState(firstCityRuleId)).toEqual({
+      options: [{ value: 'PRG', label: 'Prague' }],
+      status: 'success',
+    });
+    expect(getBuilderRef().getRuleOptionState(secondCityRuleId)).toEqual({
+      options: [{ value: 'BTS', label: 'Bratislava' }],
+      status: 'success',
+    });
+
+    expect(
+      container.querySelector(
+        `[data-id="query-builder-rule-${firstCityRuleId}-value"]`
+      )
+    ).toHaveAttribute('data-values', 'PRG');
+    expect(
+      container.querySelector(
+        `[data-id="query-builder-rule-${secondCityRuleId}-value"]`
+      )
+    ).toHaveAttribute('data-values', 'BTS');
+
+    act(() => {
+      getBuilderRef().invalidateRuleOptions(firstCityRuleId);
+    });
+
+    expect(getBuilderRef().getRuleOptionState(firstCityRuleId)).toEqual({
+      options: [{ value: 'SHARED', label: 'Shared City' }],
+      status: 'success',
+    });
+    expect(
+      container.querySelector(
+        `[data-id="query-builder-rule-${firstCityRuleId}-value"]`
+      )
+    ).toHaveAttribute('data-values', 'SHARED');
+  });
+
+  it('Subscribes to dependency snapshots for one field without manual diffing', async () => {
+    let builderRefObject: BuilderRef | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                {
+                  type: 'GROUP',
+                  value: 'AND',
+                  isNegated: false,
+                  children: [
+                    { field: 'COUNTRY', value: 'CZ', operator: 'EQUAL' },
+                    { field: 'CITY', value: '', operator: 'EQUAL' },
+                  ],
+                },
+                {
+                  type: 'GROUP',
+                  value: 'AND',
+                  isNegated: false,
+                  children: [
+                    { field: 'COUNTRY', value: 'SK', operator: 'EQUAL' },
+                    { field: 'CITY', value: '', operator: 'EQUAL' },
+                  ],
+                },
+              ],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const builderRef = builderRefObject as BuilderRef | null;
+    expect(builderRef).toBeDefined();
+
+    const snapshots: Array<Array<{ ruleId: string; countryValue?: string }>> = [];
+    const unsubscribe = builderRef?.subscribeToRuleDependencies(
+      'CITY',
+      ['COUNTRY'],
+      (entries) => {
+        snapshots.push(
+          entries.map(({ ruleId, dependencies }) => ({
+            ruleId,
+            countryValue:
+              dependencies.COUNTRY && typeof dependencies.COUNTRY.value === 'string'
+                ? dependencies.COUNTRY.value
+                : undefined,
+          }))
+        );
+      }
+    );
+
+    expect(snapshots).toHaveLength(1);
+    expect(snapshots[0]?.map(({ countryValue }) => countryValue)).toEqual([
+      'CZ',
+      'SK',
+    ]);
+
+    const firstCountryRuleId = builderRef?.current
+      ?.getNodes()
+      .find((node) => 'field' in node && node.field === 'COUNTRY')?.id;
+
+    expect(firstCountryRuleId).toBeDefined();
+
+    act(() => {
+      expect(
+        builderRef?.current?.updateNode(firstCountryRuleId as string, (node) => ({
+          ...(node as INormalizedRuleNode),
+          value: 'SK',
+        }))
+      ).toBe(true);
+    });
+
+    await waitFor(() => {
+      expect(snapshots.length).toBeGreaterThanOrEqual(2);
+      expect(snapshots.at(-1)?.map(({ countryValue }) => countryValue)).toEqual([
+        'SK',
+        'SK',
+      ]);
+    });
+
+    unsubscribe?.();
+  });
+
+  it('Binds dependency-aware rule options with automatic hydration and refresh', async () => {
+    let builderRefObject: BuilderRef | null = null;
+
+    const cityOptionsByCountry: Record<string, Array<{ value: string; label: string }>> = {
+      CZ: [
+        { value: 'PRG', label: 'Prague' },
+        { value: 'BRN', label: 'Brno' },
+      ],
+      SK: [
+        { value: 'BTS', label: 'Bratislava' },
+        { value: 'KSC', label: 'Kosice' },
+      ],
+    } as const;
+
+    const TestComponent = () => {
+      const [data, setData] = React.useState<DenormalizedQuery>([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'COUNTRY', value: 'CZ', operator: 'EQUAL' },
+                { field: 'CITY', value: 'PRG', operator: 'EQUAL' },
+              ],
+            },
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'COUNTRY', value: 'SK', operator: 'EQUAL' },
+                { field: 'CITY', value: 'BTS', operator: 'EQUAL' },
+              ],
+            },
+          ],
+        },
+      ]);
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      React.useEffect(
+        () =>
+          builderRef.bindRuleOptions('CITY', {
+            dependencies: ['COUNTRY'],
+            resolve: async ({ dependencies }) => {
+              const countryValue = dependencies.COUNTRY?.value;
+
+              if (typeof countryValue !== 'string') {
+                return [];
+              }
+
+              return cityOptionsByCountry[countryValue] ?? [];
+            },
+            onOptionsResolved: ({ ruleId }) => {
+              builderRef.reconcileRuleValueWithOptions(ruleId, {
+                strategy: 'clear-if-missing',
+              });
+            },
+          }),
+        [builderRef]
+      );
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          data={data}
+          onChange={setData}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const builderRef = builderRefObject as BuilderRef | null;
+    expect(builderRef).toBeDefined();
+
+    const cityRuleIds =
+      builderRef?.current
+        ?.getNodes()
+        .filter((node) => 'field' in node && node.field === 'CITY')
+        .map((node) => node.id) || [];
+
+    expect(cityRuleIds).toHaveLength(2);
+
+    await waitFor(() => {
+      expect(builderRef?.current?.getRuleOptionState(cityRuleIds[0] || '')).toEqual({
+        options: cityOptionsByCountry.CZ,
+        status: 'success',
+      });
+      expect(builderRef?.current?.getRuleOptionState(cityRuleIds[1] || '')).toEqual({
+        options: cityOptionsByCountry.SK,
+        status: 'success',
+      });
+    });
+
+    const firstCountryRuleId = builderRef?.current
+      ?.getNodes()
+      .find((node) => 'field' in node && node.field === 'COUNTRY')?.id;
+
+    expect(firstCountryRuleId).toBeDefined();
+
+    act(() => {
+      expect(
+        builderRef?.current?.updateNode(firstCountryRuleId as string, (node) => ({
+          ...(node as INormalizedRuleNode),
+          value: 'SK',
+        }))
+      ).toBe(true);
+    });
+
+    await waitFor(() => {
+      expect(builderRef?.current?.getRuleOptionState(cityRuleIds[0] || '')).toEqual({
+        options: cityOptionsByCountry.SK,
+        status: 'success',
+      });
+      expect(builderRef?.current?.getNodeById(cityRuleIds[0] || '')).not.toHaveProperty(
+        'value'
+      );
+    });
+  });
+
+  it('Reconciles a rule value against the current rule-scoped options', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'CITY', value: 'PRG', operator: 'EQUAL' }],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const cityRuleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'CITY')?.id as string;
+
+    act(() => {
+      getBuilderRef().setRuleOptions(cityRuleId, [
+        { value: 'BTS', label: 'Bratislava' },
+      ]);
+      expect(
+        getBuilderRef().reconcileRuleValueWithOptions(cityRuleId, {
+          strategy: 'clear-if-missing',
+        })
+      ).toBe(true);
+    });
+
+    expect(getBuilderRef().getNodeById(cityRuleId)).not.toHaveProperty('value');
+  });
+
+  it('Reconciles numeric list values against the current rule-scoped options', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={numericListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'PRIORITY', value: 2, operator: 'EQUAL' }],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const ruleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'PRIORITY')?.id as string;
+
+    act(() => {
+      getBuilderRef().setRuleOptions(ruleId, [{ value: 3, label: 'High' }]);
+      expect(
+        getBuilderRef().reconcileRuleValueWithOptions(ruleId, {
+          strategy: 'clear-if-missing',
+        })
+      ).toBe(true);
+    });
+
+    expect(getBuilderRef().getNodeById(ruleId)).not.toHaveProperty('value');
+  });
+
+  it('Reconciles numeric multi-list values against the current rule-scoped options', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={numericMultiListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'SCORES', value: [1, 2], operator: 'ALL_IN' }],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const ruleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'SCORES')?.id as string;
+
+    act(() => {
+      getBuilderRef().setRuleOptions(ruleId, [{ value: 2, label: 'Two' }]);
+      expect(
+        getBuilderRef().reconcileRuleValueWithOptions(ruleId, {
+          strategy: 'clear-if-missing',
+        })
+      ).toBe(true);
+    });
+
+    expect(getBuilderRef().getNodeById(ruleId)).toMatchObject({
+      value: [2],
+    });
+  });
+
+  it('Reconciles string multi-list values with partial overlap against the current rule-scoped options', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={stringMultiListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'SEGMENTS', value: ['A', 'B', 'C'], operator: 'ALL_IN' },
+              ],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const ruleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'SEGMENTS')?.id as string;
+
+    act(() => {
+      getBuilderRef().setRuleOptions(ruleId, [
+        { value: 'B', label: 'Segment B' },
+        { value: 'D', label: 'Segment D' },
+      ]);
+      expect(
+        getBuilderRef().reconcileRuleValueWithOptions(ruleId, {
+          strategy: 'clear-if-missing',
+        })
+      ).toBe(true);
+    });
+
+    expect(getBuilderRef().getNodeById(ruleId)).toMatchObject({
+      value: ['B'],
+    });
+  });
+
+  it('Reconciles string multi-list values to an empty array when no options overlap', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={stringMultiListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'SEGMENTS', value: ['A', 'B'], operator: 'ALL_IN' },
+              ],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const ruleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'SEGMENTS')?.id as string;
+
+    act(() => {
+      getBuilderRef().setRuleOptions(ruleId, [
+        { value: 'D', label: 'Segment D' },
+      ]);
+      expect(
+        getBuilderRef().reconcileRuleValueWithOptions(ruleId, {
+          strategy: 'clear-if-missing',
+        })
+      ).toBe(true);
+    });
+
+    expect(getBuilderRef().getNodeById(ruleId)).toMatchObject({
+      value: [],
+    });
+  });
+
+  it('Reconciles against shared field options after rule-scoped options are cleared', () => {
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'CITY', value: 'BTS', operator: 'EQUAL' }],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const cityRuleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'CITY')?.id as string;
+
+    act(() => {
+      getBuilderRef().setFieldOptions('CITY', [
+        { value: 'PRG', label: 'Prague' },
+        { value: 'BRN', label: 'Brno' },
+      ]);
+      getBuilderRef().setRuleOptions(cityRuleId, [
+        { value: 'BTS', label: 'Bratislava' },
+      ]);
+      getBuilderRef().invalidateRuleOptions(cityRuleId);
+      expect(
+        getBuilderRef().reconcileRuleValueWithOptions(cityRuleId, {
+          strategy: 'clear-if-missing',
+        })
+      ).toBe(true);
+    });
+
+    expect(getBuilderRef().getRuleOptionState(cityRuleId)).toEqual({
+      options: [
+        { value: 'PRG', label: 'Prague' },
+        { value: 'BRN', label: 'Brno' },
+      ],
+      status: 'success',
+    });
+    expect(getBuilderRef().getNodeById(cityRuleId)).not.toHaveProperty('value');
+  });
+
+  it('Subscribes to reactive field option state updates', () => {
+    let builderRefObject: BuilderRef | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={listFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'STATUS', value: 'OPEN', operator: 'EQUAL' }],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const builderRef = builderRefObject as BuilderRef | null;
+    expect(builderRef).toBeDefined();
+
+    const states: Array<{ status: string; optionCount: number }> = [];
+    const unsubscribe = builderRef?.subscribeToFieldOptionState('STATUS', (state) => {
+      states.push({
+        status: state.status,
+        optionCount: state.options.length,
+      });
+    });
+
+    expect(states[0]).toEqual({
+      status: 'idle',
+      optionCount: 2,
+    });
+
+    act(() => {
+      builderRef?.current?.setFieldOptionsStatus('STATUS', 'loading');
+      builderRef?.current?.setFieldOptions('STATUS', [
+        { value: 'ACTIVE', label: 'Active' },
+      ]);
+    });
+
+    expect(states).toContainEqual({
+      status: 'loading',
+      optionCount: 0,
+    });
+    expect(states.at(-1)).toEqual({
+      status: 'success',
+      optionCount: 1,
+    });
+
+    unsubscribe?.();
+  });
+
+  it('Subscribes to reactive rule option state updates', () => {
+    let builderRefObject: BuilderRef | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { field: 'COUNTRY', value: 'CZ', operator: 'EQUAL' },
+                { field: 'CITY', value: '', operator: 'EQUAL' },
+              ],
+            },
+          ]}
+          onChange={jest.fn()}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const builderRef = builderRefObject as BuilderRef | null;
+    expect(builderRef).toBeDefined();
+
+    const cityRuleId = builderRef?.current
+      ?.getNodes()
+      .find((node) => 'field' in node && node.field === 'CITY')?.id;
+
+    expect(cityRuleId).toBeDefined();
+
+    const states: Array<{ status: string; optionCount: number }> = [];
+    const unsubscribe = builderRef?.subscribeToRuleOptionState(
+      cityRuleId as string,
+      (state) => {
+        states.push({
+          status: state.status,
+          optionCount: state.options.length,
+        });
+      }
+    );
+
+    expect(states[0]).toEqual({
+      status: 'idle',
+      optionCount: 0,
+    });
+
+    act(() => {
+      builderRef?.current?.setRuleOptionsStatus(cityRuleId as string, 'loading');
+      builderRef?.current?.setRuleOptions(cityRuleId as string, [
+        { value: 'PRG', label: 'Prague' },
+      ]);
+    });
+
+    expect(states).toContainEqual({
+      status: 'loading',
+      optionCount: 0,
+    });
+    expect(states.at(-1)).toEqual({
+      status: 'success',
+      optionCount: 1,
+    });
+
+    unsubscribe?.();
+  });
+
+  it('reloadRuleOptions invalidates the runtime cache and notifies the consumer', () => {
+    const onRuleOptionsReload = jest.fn();
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+
+    const TestComponent = () => {
+      const builderRef = useBuilderRef();
+      builderRefObject = builderRef;
+
+      return (
+        <Builder
+          ref={builderRef}
+          fields={dependentListFields}
+          data={[
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [{ field: 'CITY', value: '', operator: 'EQUAL' }],
+            },
+          ]}
+          onRuleOptionsReload={onRuleOptionsReload}
+        />
+      );
+    };
+
+    render(<TestComponent />);
+
+    const getBuilderRef = () => {
+      const currentBuilderRef = builderRefObject?.current;
+      expect(currentBuilderRef).toBeDefined();
+      return currentBuilderRef as IBuilderRef;
+    };
+    const cityRuleId = getBuilderRef()
+      .getNodes()
+      .find((node) => 'field' in node && node.field === 'CITY')?.id as string;
+
+    act(() => {
+      getBuilderRef().setRuleOptions(cityRuleId, [
+        { value: 'PRG', label: 'Prague' },
+      ]);
+      getBuilderRef().reloadRuleOptions(cityRuleId);
+    });
+
+    expect(onRuleOptionsReload).toHaveBeenCalledWith(cityRuleId);
+    expect(getBuilderRef().getRuleOptionState(cityRuleId)).toEqual({
+      options: [],
+      status: 'idle',
+    });
+  });
+
+  it('Emits field changes with node context', () => {
+    const onFieldChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        onFieldChange={onFieldChange}
+        onChange={jest.fn()}
+      />
+    );
+
+    const input = container.querySelector(
+      'input[id^="query-builder-rule-"][id$="-value"]'
+    ) as HTMLInputElement | null;
+
+    expect(input).not.toBeNull();
+
+    fireEvent.change(input as HTMLInputElement, {
+      target: { value: 'beta' },
+    });
+
+    expect(onFieldChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        field: 'MOCK_FIELD',
+        previousValue: 'alpha',
+        value: 'beta',
+        data: [
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+            ],
+          },
+        ],
+      })
+    );
+    expect(onFieldChange.mock.calls[0][0].nodeId).toEqual(expect.any(String));
   });
 
   it('Uses newNodePlacement for imperative add methods when index is omitted', () => {
