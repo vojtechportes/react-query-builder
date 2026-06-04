@@ -5,6 +5,7 @@ import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleStateForField } from '../utils/create-rule-state-for-field.util';
+import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { updateItem } from '../utils/update-item.util';
 
@@ -29,6 +30,7 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
     components,
     strings,
     readOnly,
+    onFieldChange,
   } = useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
   const isDisabled = Boolean(readOnly || disabled);
@@ -46,25 +48,34 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
+      const nextRuleState = createRuleStateForField(nextField);
+      const nextData = updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        Object.keys(item).forEach(key => {
+          if (!['id', 'parent', 'readOnly'].includes(key)) {
+            delete ((item as unknown) as Record<string, unknown>)[key];
+          }
+        });
+        Object.assign(item, nextRuleState);
+      });
+
       applyDataUpdate(
         data,
         setData,
         onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if (isNormalizedGroupNode(item)) {
-              return;
-            }
-
-            const nextRuleState = createRuleStateForField(nextField);
-            Object.keys(item).forEach(key => {
-              if (!['id', 'parent', 'readOnly'].includes(key)) {
-                delete ((item as unknown) as Record<string, unknown>)[key];
-              }
-            });
-            Object.assign(item, nextRuleState);
-          }),
+        () => nextData,
         updateData
+      );
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        nextField.field,
+        currentRule.value,
+        nextRuleState.value
       );
       return;
     }
@@ -73,13 +84,34 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
       return;
     }
 
+    const nextRuleState = createRuleStateForField(nextField);
+
     dispatchAction(
       createReplaceNodeAction(id, {
         id: currentRule.id,
         parent: currentRule.parent,
         readOnly: currentRule.readOnly,
-        ...createRuleStateForField(nextField),
+        ...nextRuleState,
       })
+    );
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        Object.keys(item).forEach(key => {
+          if (!['id', 'parent', 'readOnly'].includes(key)) {
+            delete ((item as unknown) as Record<string, unknown>)[key];
+          }
+        });
+        Object.assign(item, nextRuleState);
+      }),
+      id,
+      nextField.field,
+      currentRule.value,
+      nextRuleState.value
     );
   };
 

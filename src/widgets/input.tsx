@@ -7,6 +7,7 @@ import { findNodeById } from '../history/find-node-by-id';
 import { compactBuilderMedia } from '../styles/responsive.styles';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { coerceNumberInputValue } from '../utils/coerce-number-input-value.util';
+import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { isUndefined } from '../utils/is-undefined.util';
@@ -45,6 +46,7 @@ export const Input: FC<IInputProps> = ({
     dispatchAction,
     components,
     readOnly,
+    onFieldChange,
   } = useContext(BuilderContext);
   const InputComponent = components.form?.Input || DefaultInput;
   const isDisabled = Boolean(readOnly || disabled);
@@ -63,26 +65,42 @@ export const Input: FC<IInputProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
+      const nextData = updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        if (isStringOrNumberArray(item.value)) {
+          const nextRangeValue = item.value.slice() as typeof item.value;
+          nextRangeValue[index] = nextValue;
+          item.value = nextRangeValue;
+          return;
+        }
+
+        item.value = nextValue;
+      });
+
       applyDataUpdate(
         data,
         setData,
         onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if (isNormalizedGroupNode(item)) {
-              return;
-            }
-
-            if (isStringOrNumberArray(item.value)) {
-              const nextRangeValue = item.value.slice() as typeof item.value;
-              nextRangeValue[index] = nextValue;
-              item.value = nextRangeValue;
-              return;
-            }
-
-            item.value = nextValue;
-          }),
+        () => nextData,
         updateData
+      );
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        isStringOrNumberArray(currentRule.value)
+          ? (() => {
+              const nextRangeValue =
+                currentRule.value.slice() as typeof currentRule.value;
+              nextRangeValue[index] = nextValue;
+              return nextRangeValue;
+            })()
+          : nextValue
       );
       return;
     }
@@ -103,6 +121,20 @@ export const Input: FC<IInputProps> = ({
     }
 
     dispatchAction(createReplaceNodeAction(id, nextRule));
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        item.value = nextRule.value;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      nextRule.value
+    );
   };
 
   if (isStringOrNumberArray(value)) {

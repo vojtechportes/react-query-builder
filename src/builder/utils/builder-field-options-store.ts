@@ -5,15 +5,26 @@ import {
 } from '../types/field-option';
 
 export interface IBuilderFieldOptionsStore {
-  subscribe: (field: string, listener: () => void) => () => void;
-  getState: (field: string) => IBuilderFieldOptionState | undefined;
-  setOptions: (
+  subscribeField: (field: string, listener: () => void) => () => void;
+  getFieldState: (field: string) => IBuilderFieldOptionState | undefined;
+  setFieldOptions: (
     field: string,
     options:
       | BuilderFieldOption[]
       | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
   ) => void;
-  setStatus: (field: string, status: BuilderFieldOptionsStatus) => void;
-  invalidate: (field: string) => void;
-  clear: (field: string) => void;
+  setFieldStatus: (field: string, status: BuilderFieldOptionsStatus) => void;
+  invalidateField: (field: string) => void;
+  clearField: (field: string) => void;
+  subscribeRule: (ruleId: string, listener: () => void) => () => void;
+  getRuleState: (ruleId: string) => IBuilderFieldOptionState | undefined;
+  setRuleOptions: (
+    ruleId: string,
+    options:
+      | BuilderFieldOption[]
+      | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
+  ) => void;
+  setRuleStatus: (ruleId: string, status: BuilderFieldOptionsStatus) => void;
+  invalidateRule: (ruleId: string) => void;
+  clearRule: (ruleId: string) => void;
 }

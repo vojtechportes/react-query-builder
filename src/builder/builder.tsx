@@ -60,8 +60,10 @@ import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-de
 import { resolveLockedNode } from '../hooks/use-builder-ref/utils/resolve-locked-node.util';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 import { createBuilderFieldOptionsStore } from './utils/create-builder-field-options-store.util';
+import { getNearestFieldMatch } from './utils/get-nearest-field-match.util';
 import { isBuilderFieldInUse } from './utils/is-builder-field-in-use.util';
 import { resolveBuilderFieldOptionState } from './utils/resolve-builder-field-option-state.util';
+import { resolveReconciledBuilderRuleValue } from './utils/resolve-reconciled-builder-rule-value.util';
 
 export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   data: originalData = [],
@@ -79,6 +81,8 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   validator,
   onStateChange,
   onFieldOptionsReload,
+  onRuleOptionsReload,
+  onFieldChange,
   showValidation = false,
   history = false,
   onChange,
@@ -357,27 +361,144 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         const node = findNodeById(data, nodeId);
         return node ? clone(node) : undefined;
       },
+      getNearestField: (currentNodeId, targetFieldName) =>
+        getNearestFieldMatch(data, currentNodeId, targetFieldName),
       isFieldInUse: (field) => isBuilderFieldInUse(data, field),
       getFieldOptionState: (field) =>
         resolveBuilderFieldOptionState(
           fields.find((fieldConfig) => fieldConfig.field === field),
-          fieldOptionsStoreRef.current?.getState(field)
+          fieldOptionsStoreRef.current?.getFieldState(field)
         ),
+      getRuleOptionState: (ruleId) => {
+        const ruleNode = findNodeById(data, ruleId);
+        const fieldConfig =
+          ruleNode && !('children' in ruleNode)
+            ? fields.find((fieldItem) => fieldItem.field === ruleNode.field)
+            : undefined;
+
+        return resolveBuilderFieldOptionState(
+          fieldConfig,
+          fieldConfig
+            ? fieldOptionsStoreRef.current?.getFieldState(fieldConfig.field)
+            : undefined,
+          fieldOptionsStoreRef.current?.getRuleState(ruleId)
+        );
+      },
+      subscribeToFieldOptionState: (field, listener) => {
+        const emitState = () => {
+          listener(
+            resolveBuilderFieldOptionState(
+              fields.find((fieldConfig) => fieldConfig.field === field),
+              fieldOptionsStoreRef.current?.getFieldState(field)
+            )
+          );
+        };
+
+        emitState();
+
+        return (
+          fieldOptionsStoreRef.current?.subscribeField(field, emitState) || (() => {})
+        );
+      },
+      subscribeToRuleOptionState: (ruleId, listener) => {
+        const emitState = () => {
+          const ruleNode = findNodeById(data, ruleId);
+          const fieldConfig =
+            ruleNode && !('children' in ruleNode)
+              ? fields.find((fieldItem) => fieldItem.field === ruleNode.field)
+              : undefined;
+
+          listener(
+            resolveBuilderFieldOptionState(
+              fieldConfig,
+              fieldConfig
+                ? fieldOptionsStoreRef.current?.getFieldState(fieldConfig.field)
+                : undefined,
+              fieldOptionsStoreRef.current?.getRuleState(ruleId)
+            )
+          );
+        };
+
+        emitState();
+
+        return (
+          fieldOptionsStoreRef.current?.subscribeRule(ruleId, emitState) || (() => {})
+        );
+      },
       setFieldOptions: (field, options) => {
-        fieldOptionsStoreRef.current?.setOptions(field, options);
+        fieldOptionsStoreRef.current?.setFieldOptions(field, options);
+      },
+      setRuleOptions: (ruleId, options) => {
+        fieldOptionsStoreRef.current?.setRuleOptions(ruleId, options);
       },
       setFieldOptionsStatus: (field, status) => {
-        fieldOptionsStoreRef.current?.setStatus(field, status);
+        fieldOptionsStoreRef.current?.setFieldStatus(field, status);
+      },
+      setRuleOptionsStatus: (ruleId, status) => {
+        fieldOptionsStoreRef.current?.setRuleStatus(ruleId, status);
       },
       invalidateFieldOptions: (field) => {
-        fieldOptionsStoreRef.current?.invalidate(field);
+        fieldOptionsStoreRef.current?.invalidateField(field);
       },
       reloadFieldOptions: (field) => {
-        fieldOptionsStoreRef.current?.invalidate(field);
+        fieldOptionsStoreRef.current?.invalidateField(field);
         onFieldOptionsReload?.(field);
       },
       clearFieldOptions: (field) => {
-        fieldOptionsStoreRef.current?.clear(field);
+        fieldOptionsStoreRef.current?.clearField(field);
+      },
+      invalidateRuleOptions: (ruleId) => {
+        fieldOptionsStoreRef.current?.invalidateRule(ruleId);
+      },
+      reloadRuleOptions: (ruleId) => {
+        fieldOptionsStoreRef.current?.invalidateRule(ruleId);
+        onRuleOptionsReload?.(ruleId);
+      },
+      clearRuleOptions: (ruleId) => {
+        fieldOptionsStoreRef.current?.clearRule(ruleId);
+      },
+      reconcileRuleValueWithOptions: (ruleId, config) => {
+        const ruleNode = findNodeById(data, ruleId);
+
+        if (!ruleNode || 'children' in ruleNode) {
+          return false;
+        }
+
+        const fieldConfig = fields.find((fieldItem) => fieldItem.field === ruleNode.field);
+
+        if (
+          !fieldConfig ||
+          (fieldConfig.type !== 'LIST' && fieldConfig.type !== 'MULTI_LIST')
+        ) {
+          return false;
+        }
+
+        const optionState = resolveBuilderFieldOptionState(
+          fieldConfig,
+          fieldOptionsStoreRef.current?.getFieldState(fieldConfig.field),
+          fieldOptionsStoreRef.current?.getRuleState(ruleId)
+        );
+        const nextValue = resolveReconciledBuilderRuleValue(
+          fieldConfig.type,
+          ruleNode.value,
+          optionState.options,
+          config
+        );
+        const valueChanged = Array.isArray(ruleNode.value) && Array.isArray(nextValue)
+          ? ruleNode.value.length !== nextValue.length ||
+            ruleNode.value.some((value, index) => value !== nextValue[index])
+          : ruleNode.value !== nextValue;
+
+        if (!valueChanged) {
+          return true;
+        }
+
+        return commitData(
+          createReplaceNodeAction(ruleId, {
+            ...ruleNode,
+            value: nextValue,
+          })
+        );
       },
       getNodes: () => clone(data),
       getData: () => emitQuery(data),
@@ -393,6 +514,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       historyState,
       newNodePlacement,
       onFieldOptionsReload,
+      onRuleOptionsReload,
       redo,
       setHistory,
       undo,
@@ -672,6 +794,9 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       components={components}
       strings={strings}
       fieldOptionsStore={fieldOptionsStoreRef.current}
+      onFieldOptionsReload={onFieldOptionsReload}
+      onRuleOptionsReload={onRuleOptionsReload}
+      onFieldChange={onFieldChange}
       readOnly={readOnly}
       readOnlyProtectsDelete={readOnlyProtectsDelete}
       lockable={lockable}

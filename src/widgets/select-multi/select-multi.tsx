@@ -6,6 +6,7 @@ import { findNodeById } from '../../history/find-node-by-id';
 import { isNormalizedGroupNode } from '../../utils/is-normalized-group-node.util';
 import { isStringArray } from '../../utils/is-string-array.util';
 import { applyDataUpdate } from '../../utils/apply-data-update.util';
+import { emitBuilderFieldChange } from '../../utils/emit-builder-field-change.util';
 import { updateItem } from '../../utils/update-item.util';
 
 export interface ISelectMultiProps {
@@ -30,6 +31,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     components,
     strings,
     readOnly,
+    onFieldChange,
   } =
     useContext(BuilderContext);
   const SelectMultiComponent =
@@ -52,22 +54,32 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
+      const nextValue = currentRule.value.filter(
+        currentValue => currentValue !== value
+      );
+      nextValue.push(value);
+      const nextData = updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.value = nextValue;
+      });
+
       applyDataUpdate(
         data,
         setData,
         onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
-              return;
-            }
-
-            item.value = item.value.filter(
-              currentValue => currentValue !== value
-            );
-            item.value.push(value);
-          }),
+        () => nextData,
         updateData
+      );
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        nextValue
       );
       return;
     }
@@ -87,6 +99,20 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         value: nextValue,
       })
     );
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.value = nextValue;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      nextValue
+    );
   };
 
   const handleDelete = (value: string) => {
@@ -105,21 +131,31 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
+      const nextValue = currentRule.value.filter(
+        currentValue => currentValue !== value
+      );
+      const nextData = updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.value = nextValue;
+      });
+
       applyDataUpdate(
         data,
         setData,
         onChange,
-        currentData =>
-          updateItem(currentData, id, item => {
-            if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
-              return;
-            }
-
-            item.value = item.value.filter(
-              currentValue => currentValue !== value
-            );
-          }),
+        () => nextData,
         updateData
+      );
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        nextValue
       );
       return;
     }
@@ -128,13 +164,29 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
       return;
     }
 
+    const nextValue = currentRule.value.filter(
+      currentValue => currentValue !== value
+    );
+
     dispatchAction(
       createReplaceNodeAction(id, {
         ...currentRule,
-        value: currentRule.value.filter(
-          currentValue => currentValue !== value
-        ),
+        value: nextValue,
       })
+    );
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, item => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.value = nextValue;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      nextValue
     );
   };
 

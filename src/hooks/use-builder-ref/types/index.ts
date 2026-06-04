@@ -10,6 +10,9 @@ import {
   BuilderFieldOption,
   BuilderFieldOptionsStatus,
   IBuilderFieldOptionState,
+  INearestFieldMatch,
+  IBuilderRuleDependencyEntry,
+  IBuilderRuleValueReconciliationConfig,
 } from '../../../builder/types/field-option';
 import { IBuilderHistoryState } from '../../../history/types';
 
@@ -45,10 +48,29 @@ export interface IBuilderRef {
   lockNode: (nodeId: string, state?: 'self' | 'all') => boolean;
   unlockNode: (nodeId: string) => boolean;
   getNodeById: (nodeId: string) => NormalizedNode | undefined;
+  getNearestField: (
+    currentNodeId: string,
+    targetFieldName: string
+  ) => INearestFieldMatch | undefined;
   isFieldInUse: (field: string) => boolean;
   getFieldOptionState: (field: string) => IBuilderFieldOptionState;
+  getRuleOptionState: (ruleId: string) => IBuilderFieldOptionState;
+  subscribeToFieldOptionState: (
+    field: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
+  subscribeToRuleOptionState: (
+    ruleId: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
   setFieldOptions: (
     field: string,
+    options:
+      | BuilderFieldOption[]
+      | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
+  ) => void;
+  setRuleOptions: (
+    ruleId: string,
     options:
       | BuilderFieldOption[]
       | ((current: BuilderFieldOption[]) => BuilderFieldOption[])
@@ -57,9 +79,20 @@ export interface IBuilderRef {
     field: string,
     status: BuilderFieldOptionsStatus
   ) => void;
+  setRuleOptionsStatus: (
+    ruleId: string,
+    status: BuilderFieldOptionsStatus
+  ) => void;
   invalidateFieldOptions: (field: string) => void;
   reloadFieldOptions: (field: string) => void;
   clearFieldOptions: (field: string) => void;
+  invalidateRuleOptions: (ruleId: string) => void;
+  reloadRuleOptions: (ruleId: string) => void;
+  clearRuleOptions: (ruleId: string) => void;
+  reconcileRuleValueWithOptions: (
+    ruleId: string,
+    config: IBuilderRuleValueReconciliationConfig
+  ) => boolean;
   getNodes: () => NormalizedQuery;
   getData: () => DenormalizedQuery;
   getHistory: () => IBuilderHistoryState;
@@ -68,4 +101,75 @@ export interface IBuilderRef {
   redo: () => void;
 }
 
-export type BuilderRef = React.MutableRefObject<IBuilderRef | null>;
+export type BuilderRefListener = (builder: IBuilderRef | null) => void;
+export type BuilderRuleDependenciesListener = (
+  entries: IBuilderRuleDependencyEntry[]
+) => void;
+export type BuilderFieldDependenciesListener = BuilderRuleDependenciesListener;
+export interface IBuilderRuleOptionsResolverContext {
+  ruleId: string;
+  field: string;
+  dependencies: Record<string, INearestFieldMatch | undefined>;
+  signal: AbortSignal;
+}
+
+export interface IBuilderRuleOptionsErrorContext {
+  ruleId: string;
+  field: string;
+  dependencies: Record<string, INearestFieldMatch | undefined>;
+}
+
+export interface IBuilderRuleOptionsResolvedContext {
+  ruleId: string;
+  field: string;
+  dependencies: Record<string, INearestFieldMatch | undefined>;
+  options: BuilderFieldOption[];
+}
+
+export interface IBuilderRuleOptionsBindingConfig {
+  dependencies: string[];
+  resolve: (
+    context: IBuilderRuleOptionsResolverContext
+  ) => Promise<BuilderFieldOption[]>;
+  onError?: (
+    error: unknown,
+    context: IBuilderRuleOptionsErrorContext
+  ) => void;
+  onOptionsResolved?: (
+    context: IBuilderRuleOptionsResolvedContext
+  ) => void;
+  clearOnMissingDependencies?: boolean;
+}
+export type BuilderFieldOptionStateListener = (
+  state: IBuilderFieldOptionState
+) => void;
+
+export type BuilderRef = React.MutableRefObject<IBuilderRef | null> & {
+  subscribe: (listener: BuilderRefListener) => () => void;
+  bindRuleOptions: (
+    field: string,
+    config: IBuilderRuleOptionsBindingConfig
+  ) => () => void;
+  subscribeToRuleDependencies: (
+    field: string,
+    dependencyFields: string[],
+    listener: BuilderRuleDependenciesListener
+  ) => () => void;
+  subscribeToFieldDependencies: (
+    field: string,
+    dependencyFields: string[],
+    listener: BuilderFieldDependenciesListener
+  ) => () => void;
+  subscribeToFieldOptionState: (
+    field: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
+  subscribeToRuleOptionState: (
+    ruleId: string,
+    listener: BuilderFieldOptionStateListener
+  ) => () => void;
+  reconcileRuleValueWithOptions: (
+    ruleId: string,
+    config: IBuilderRuleValueReconciliationConfig
+  ) => boolean;
+};

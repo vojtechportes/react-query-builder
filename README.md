@@ -109,7 +109,8 @@ API instead of replacing the full field definition.
 This is especially useful for dependent selects, async option loading, and
 integrations with tools like TanStack React Query.
 
-The imperative API includes methods such as:
+Use field-level methods when every rule of the same field should share one
+runtime option set:
 
 - `isFieldInUse(field)`
 - `setFieldOptions(field, options)`
@@ -117,6 +118,16 @@ The imperative API includes methods such as:
 - `invalidateFieldOptions(field)`
 - `reloadFieldOptions(field)`
 - `clearFieldOptions(field)`
+
+Use rule-level methods when options depend on other rules or on surrounding app
+state:
+
+- `bindRuleOptions(field, config)`
+- `useBuilderRuleDependencies(builderRef, field, dependencyFields)`
+- `subscribeToRuleDependencies(field, dependencyFields, listener)`
+- `setRuleOptions(ruleId, options)`
+- `setRuleOptionsStatus(ruleId, status)`
+- `reconcileRuleValueWithOptions(ruleId, { strategy: 'clear-if-missing' })`
 
 See the Dynamic Field Options documentation for the full concept, live example,
 and React Query integration example:

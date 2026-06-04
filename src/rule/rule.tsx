@@ -218,7 +218,7 @@ export const Rule: FC<IRuleProps> = ({
     typeof fieldRef === 'string' && fieldRef.trim() !== ''
       ? fields.find(item => item.field === fieldRef)
       : undefined;
-  const fieldOptionState = useBuilderFieldOptionState(fieldConfig);
+  const fieldOptionState = useBuilderFieldOptionState(fieldConfig, id);
 
   if (typeof fieldRef !== 'string' || fieldRef.trim() === '') {
     return (

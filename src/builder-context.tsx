@@ -3,6 +3,7 @@ import {
   BuilderGroupMode,
   BuilderNewNodePlacement,
   IBuilderComponentsProps,
+  IBuilderFieldChange,
   IBuilderFieldProps,
   IBuilderValidationResult,
 } from './builder/types';
@@ -31,6 +32,9 @@ export interface IBuilderContextProps {
   components: IBuilderComponentsProps;
   strings: IStrings;
   fieldOptionsStore?: IBuilderFieldOptionsStore;
+  onFieldOptionsReload?: (field: string) => void;
+  onRuleOptionsReload?: (ruleId: string) => void;
+  onFieldChange?: (change: IBuilderFieldChange) => void;
   setData?: React.Dispatch<NormalizedQuery>;
   onChange?: (data: NormalizedQuery) => void;
   updateData?: (
@@ -65,6 +69,9 @@ export interface IBuilderContextProviderProps {
   components: IBuilderComponentsProps;
   strings: IStrings;
   fieldOptionsStore?: IBuilderFieldOptionsStore;
+  onFieldOptionsReload?: (field: string) => void;
+  onRuleOptionsReload?: (ruleId: string) => void;
+  onFieldChange?: (change: IBuilderFieldChange) => void;
   setData?: React.Dispatch<NormalizedQuery>;
   onChange?: (data: NormalizedQuery) => void;
   updateData?: (
@@ -80,6 +87,9 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   components,
   strings,
   fieldOptionsStore,
+  onFieldOptionsReload,
+  onRuleOptionsReload,
+  onFieldChange,
   data,
   readOnly,
   readOnlyProtectsDelete,
@@ -144,6 +154,9 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         components: resolvedComponents,
         strings: resolvedStrings,
         fieldOptionsStore,
+        onFieldOptionsReload,
+        onRuleOptionsReload,
+        onFieldChange,
         data,
         readOnly,
         readOnlyProtectsDelete,
