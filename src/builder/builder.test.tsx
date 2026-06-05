@@ -1052,21 +1052,242 @@ describe('#components/Builder', () => {
       />
     );
 
-    const previousTextValue = (
-      getByDataTest(container, 'CustomTextModeEditorInput') as HTMLTextAreaElement
-    ).value;
-
     fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
       target: { value: '(MOCK_NUMBER != 8)' },
     });
 
     expect(onChange).not.toHaveBeenCalled();
     expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
-      previousTextValue
+      '(MOCK_NUMBER != 8)'
     );
     expect(getByDataTest(container, 'CustomTextModeEditorError')).toHaveTextContent(
       'One or more read-only clauses cannot be changed or removed in text mode.'
     );
+  });
+
+  it('allows adding another rule with the same locked field and operator in text mode', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field', 'operator'],
+                },
+              },
+              {
+                field: 'MOCK_NUMBER',
+                value: 5,
+                operator: 'NOT_EQUAL',
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: {
+        value:
+          "(MOCK_FIELD = 'alpha' AND MOCK_FIELD = 'beta' AND MOCK_NUMBER != 5)",
+      },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL',
+              readOnly: {
+                enabled: true,
+                targets: ['field', 'operator'],
+              },
+            },
+            {
+              field: 'MOCK_FIELD',
+              value: 'beta',
+              operator: 'EQUAL',
+            },
+            {
+              field: 'MOCK_NUMBER',
+              value: 5,
+              operator: 'NOT_EQUAL',
+            },
+          ],
+        },
+      ])
+    );
+
+    expect(queryByDataTest(container, 'CustomTextModeEditorError')).toBeNull();
+  });
+
+  it('allows adding another rule next to a targeted lock when another identical read-only rule exists elsewhere', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: {
+                  enabled: true,
+                  targets: ['field', 'operator'],
+                },
+              },
+              {
+                type: 'GROUP',
+                value: 'OR',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'gamma',
+                    operator: 'EQUAL',
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 5,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+              {
+                type: 'GROUP',
+                value: 'AND',
+                isNegated: false,
+                children: [
+                  {
+                    field: 'MOCK_FIELD',
+                    value: 'gamma',
+                    operator: 'EQUAL',
+                    readOnly: true,
+                  },
+                  {
+                    field: 'MOCK_NUMBER',
+                    value: 8,
+                    operator: 'NOT_EQUAL',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: {
+        value:
+          "((MOCK_FIELD = 'alpha' AND MOCK_FIELD = 'beta') AND (MOCK_FIELD = 'gamma' OR MOCK_NUMBER != 5) AND (MOCK_FIELD = 'gamma' AND MOCK_NUMBER != 8))",
+      },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                {
+                  field: 'MOCK_FIELD',
+                  value: 'alpha',
+                  operator: 'EQUAL',
+                  readOnly: {
+                    enabled: true,
+                    targets: ['field', 'operator'],
+                  },
+                },
+                {
+                  field: 'MOCK_FIELD',
+                  value: 'beta',
+                  operator: 'EQUAL',
+                },
+              ],
+            },
+            {
+              type: 'GROUP',
+              value: 'OR',
+              isNegated: false,
+              children: [
+                {
+                  field: 'MOCK_FIELD',
+                  value: 'gamma',
+                  operator: 'EQUAL',
+                },
+                {
+                  field: 'MOCK_NUMBER',
+                  value: 5,
+                  operator: 'NOT_EQUAL',
+                },
+              ],
+            },
+            {
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                {
+                  field: 'MOCK_FIELD',
+                  value: 'gamma',
+                  operator: 'EQUAL',
+                  readOnly: true,
+                },
+                {
+                  field: 'MOCK_NUMBER',
+                  value: 8,
+                  operator: 'NOT_EQUAL',
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    );
+
+    expect(queryByDataTest(container, 'CustomTextModeEditorError')).toBeNull();
   });
 
   it('allows deleting a group with a read-only descendant in text mode when readOnlyProtectsDelete is false', async () => {
@@ -1753,6 +1974,55 @@ describe('#components/Builder', () => {
         canRedo: true,
       });
     });
+  });
+
+  it('Keeps exact local spacing for valid text-mode edits after a combinator', async () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+              { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
+            ],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        components={{
+          ...defaultComponents,
+          TextModeEditor: CustomTextModeEditor,
+        }}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
+      target: { value: "(MOCK_FIELD = 'alpha' AND  MOCK_NUMBER = 3)" },
+    });
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenLastCalledWith([
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            { field: 'MOCK_NUMBER', value: 3, operator: 'EQUAL' },
+          ],
+        },
+      ])
+    );
+
+    expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
+      "(MOCK_FIELD = 'alpha' AND  MOCK_NUMBER = 3)"
+    );
   });
 
   it('Clones a rule directly below the original rule', () => {
