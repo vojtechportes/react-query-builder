@@ -135,6 +135,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   const [textDiagnostics, setTextDiagnostics] = useState<
     ReturnType<typeof parseBuilderSqlText>['diagnostics']
   >([]);
+  const pendingLocalTextValue = useRef<string | null>(null);
   const lastEmittedData = useRef<DenormalizedQuery | null>(null);
   const pendingChangeData = useRef<NormalizedQuery | null>(null);
   const fieldOptionsStoreRef = useRef<ReturnType<typeof createBuilderFieldOptionsStore>>();
@@ -584,6 +585,15 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
   useEffect(() => {
     if (!textModeEnabled) {
+      pendingLocalTextValue.current = null;
+      return;
+    }
+
+    if (mode === 'text' && pendingLocalTextValue.current !== null) {
+      setTextValue(pendingLocalTextValue.current);
+      setTextDiagnostics([]);
+      setTextErrorMessage(null);
+      pendingLocalTextValue.current = null;
       return;
     }
 
@@ -599,7 +609,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     setTextProtectedRanges(nextTextState.protectedRanges);
     setTextDiagnostics([]);
     setTextErrorMessage(null);
-  }, [data, fields, textModeEnabled]);
+  }, [data, fields, mode, textModeEnabled]);
 
   const handleAddRootGroup = useCallback(() => {
     dispatchAction(
@@ -696,14 +706,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
             : null
         );
 
-        if (readOnlyTargetDiagnostic) {
-          setTextValue(textValue);
-          setTextProtectedRanges((currentProtectedRanges) => [
-            ...currentProtectedRanges,
-          ]);
-        }
-
-        if (readOnlyNegationDiagnostic) {
+        if (readOnlyTargetDiagnostic || readOnlyNegationDiagnostic) {
           setTextProtectedRanges((currentProtectedRanges) => [
             ...currentProtectedRanges,
           ]);
@@ -728,6 +731,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         rootGroupType,
         singleRootGroup
       );
+      pendingLocalTextValue.current = nextText;
       commitData(createReplaceQueryAction(nextData));
     },
     [
@@ -737,7 +741,6 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       rootGroupType,
       singleRootGroup,
       strings.textMode,
-      textValue,
     ]
   );
 

@@ -8,6 +8,7 @@ import { IThemeProps } from '../../theme-provider/theme-provider';
 import { createMonacoRangeFromOffsets } from '../utils/create-monaco-range-from-offsets';
 import { createMonacoDiagnosticDecoration } from '../utils/create-monaco-diagnostic-decoration';
 import { doesChangeIntersectProtectedRanges } from '../utils/does-change-intersect-protected-ranges';
+import { restoreSelectionsBeforeChange } from '../utils/restore-selection-before-change';
 import { updateProtectedRangesAfterChange } from '../utils/update-protected-ranges-after-change';
 
 const EditorRoot = styled.div`
@@ -90,10 +91,22 @@ const ErrorMessage = styled.div<{ $theme: Required<IThemeProps> }>`
   font-size: 0.8rem;
 `;
 
+const EMPTY_PROTECTED_RANGES: ITextModeProtectedRange[] = [];
+
+const areProtectedRangesEqual = (
+  left: ITextModeProtectedRange[],
+  right: ITextModeProtectedRange[]
+): boolean =>
+  left.length === right.length &&
+  left.every(
+    (range, index) =>
+      range.start === right[index]?.start && range.end === right[index]?.end
+  );
+
 export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   value,
   diagnostics,
-  protectedRanges = [],
+  protectedRanges = EMPTY_PROTECTED_RANGES,
   protectedRangeHoverMessage = null,
   errorMessage,
   readOnly = false,
@@ -108,6 +121,9 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   const onChangeRef = useRef(onChange);
   const isSyncingValueRef = useRef(false);
   const isRevertingChangeRef = useRef(false);
+  const pendingSelectionRestoreRef = useRef<Monaco.Selection[] | null>(null);
+  const pendingSelectionRestoreValueRef = useRef<string | null>(null);
+  const pendingEchoValuesRef = useRef<string[]>([]);
   const decorationIdsRef = useRef<string[]>([]);
   const protectedRangesRef = useRef<ITextModeProtectedRange[]>(protectedRanges);
   const acceptedValueRef = useRef(value);
@@ -172,6 +188,18 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
           return;
         }
 
+        const monaco = monacoRef.current;
+        const currentSelections = editor.getSelections();
+        const restoredSelections =
+          monaco && currentSelections && currentSelections.length > 0
+            ? restoreSelectionsBeforeChange(
+                currentSelections,
+                event.changes,
+                model,
+                monaco
+              )
+            : null;
+
         const intersectsProtectedRange = event.changes.some(change =>
           doesChangeIntersectProtectedRanges(change, protectedRangesRef.current, {
             allowPureDeletionOfProtectedRanges: allowProtectedRangeDeletion,
@@ -186,8 +214,14 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
 
           isRevertingChangeRef.current = true;
           editor.setValue(acceptedValueRef.current);
+          if (restoredSelections && restoredSelections.length > 0) {
+            editor.setSelections(restoredSelections);
+          }
           protectedRangesRef.current = restoredProtectedRanges;
           setRenderedProtectedRanges(restoredProtectedRanges);
+          pendingSelectionRestoreRef.current = null;
+          pendingSelectionRestoreValueRef.current = null;
+          pendingEchoValuesRef.current = [];
           isRevertingChangeRef.current = false;
           return;
         }
@@ -197,6 +231,17 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
           protectedRangesRef.current
         );
         setRenderedProtectedRanges(protectedRangesRef.current);
+        pendingSelectionRestoreRef.current = restoredSelections;
+        pendingSelectionRestoreValueRef.current = model.getValue();
+        if (
+          pendingEchoValuesRef.current[pendingEchoValuesRef.current.length - 1] !==
+          model.getValue()
+        ) {
+          pendingEchoValuesRef.current = [
+            ...pendingEchoValuesRef.current,
+            model.getValue(),
+          ];
+        }
 
         onChangeRef.current(model.getValue());
       });
@@ -221,6 +266,10 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   useEffect(() => {
     const nextProtectedRanges = [...protectedRanges];
 
+    if (areProtectedRangesEqual(acceptedProtectedRangesRef.current, nextProtectedRanges)) {
+      return;
+    }
+
     protectedRangesRef.current = nextProtectedRanges;
     acceptedProtectedRangesRef.current = nextProtectedRanges;
     setRenderedProtectedRanges(nextProtectedRanges);
@@ -240,16 +289,59 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
     }
 
     const currentValue = editorRef.current.getValue();
+    const pendingEchoIndex = pendingEchoValuesRef.current.indexOf(value);
 
     if (currentValue === value) {
       acceptedValueRef.current = value;
+      if (pendingEchoIndex !== -1) {
+        pendingEchoValuesRef.current = pendingEchoValuesRef.current.slice(
+          pendingEchoIndex + 1
+        );
+      }
+
+      if (pendingSelectionRestoreValueRef.current !== value) {
+        pendingSelectionRestoreRef.current = null;
+        pendingSelectionRestoreValueRef.current = null;
+      }
+
       return;
+    }
+
+    if (
+      pendingEchoValuesRef.current.length > 0 &&
+      value === acceptedValueRef.current
+    ) {
+      return;
+    }
+
+    if (pendingEchoIndex !== -1) {
+      const hasNewerPendingEcho =
+        pendingEchoIndex < pendingEchoValuesRef.current.length - 1;
+
+      pendingEchoValuesRef.current = pendingEchoValuesRef.current.slice(
+        pendingEchoIndex + 1
+      );
+
+      if (hasNewerPendingEcho) {
+        return;
+      }
     }
 
     isSyncingValueRef.current = true;
     editorRef.current.setValue(value);
+    protectedRangesRef.current = [...acceptedProtectedRangesRef.current];
+    setRenderedProtectedRanges(protectedRangesRef.current);
+    if (
+      pendingSelectionRestoreRef.current &&
+      pendingSelectionRestoreRef.current.length > 0
+    ) {
+      editorRef.current.setSelections(pendingSelectionRestoreRef.current);
+    }
     isSyncingValueRef.current = false;
     acceptedValueRef.current = value;
+    pendingSelectionRestoreRef.current = null;
+    pendingSelectionRestoreValueRef.current = null;
+    pendingEchoValuesRef.current = [];
   }, [value]);
 
   useEffect(() => {
