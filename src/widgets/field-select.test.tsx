@@ -101,4 +101,45 @@ describe('#components/Widgets/FieldSelect', () => {
 
     expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
   });
+
+  it('disables exhausted field options while keeping the current selection available', () => {
+    const limitedFields: IBuilderFieldProps[] = [
+      {
+        field: 'MOCK_FIELD_1',
+        label: 'Mock Field 1',
+        type: 'BOOLEAN',
+        usageLimit: { max: 1 },
+      },
+      {
+        field: 'MOCK_FIELD_2',
+        label: 'Mock Field 2',
+        type: 'DATE',
+        operators: ['BETWEEN'],
+        usageLimit: { max: 1 },
+      },
+    ];
+    const limitedData: any[] = [
+      {
+        id: 'group-1',
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: ['rule-1', 'rule-2'],
+      },
+      { id: 'rule-1', field: 'MOCK_FIELD_1', value: false, parent: 'group-1' },
+      { id: 'rule-2', field: 'MOCK_FIELD_2', value: '', parent: 'group-1' },
+    ];
+    const { container } = renderWithContext(
+      <FieldSelect id="rule-2" selectedValue="MOCK_FIELD_2" />,
+      {
+        data: limitedData,
+        fields: limitedFields,
+      }
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+
+    expect(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_1]')).toBeDisabled();
+    expect(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_2]')).not.toBeDisabled();
+  });
 });

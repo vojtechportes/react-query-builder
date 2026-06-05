@@ -4,6 +4,7 @@ import { IThemeProps } from '../../../theme-provider/theme-provider';
 import { CheckIcon } from './check-icon';
 
 const StyledOption = styled.button<{
+  $disabled: boolean;
   $selected: boolean;
   $theme: Required<IThemeProps>;
 }>`
@@ -17,19 +18,22 @@ const StyledOption = styled.button<{
   background: ${({ $theme }) => $theme.colors.white};
   color: ${({ $theme }) => $theme.colors.grey['900']};
   text-align: left;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
   transition:
     background-color 0.16s ease,
     color 0.16s ease,
     box-shadow 0.16s ease;
 
   &:hover {
-    background: ${({ $theme }) => $theme.colors.grey['100']};
+    background: ${({ $disabled, $theme }) =>
+      $disabled ? $theme.colors.white : $theme.colors.grey['100']};
   }
 
   &:focus-visible {
     outline: none;
-    background: ${({ $theme }) => $theme.colors.grey['100']};
+    background: ${({ $disabled, $theme }) =>
+      $disabled ? $theme.colors.white : $theme.colors.grey['100']};
   }
 
   ${({ $selected, $theme }) =>
@@ -59,6 +63,7 @@ const StyledIndicator = styled.span<{ $selected: boolean; $theme: Required<IThem
 `;
 
 export interface IOptionProps {
+  disabled?: boolean;
   label: string;
   selected: boolean;
   value: string;
@@ -67,6 +72,7 @@ export interface IOptionProps {
 }
 
 export const Option: FC<IOptionProps> = ({
+  disabled = false,
   label,
   selected,
   value,
@@ -79,9 +85,15 @@ export const Option: FC<IOptionProps> = ({
       data-test={`SelectMultiOption[${value}]`}
       role="option"
       aria-selected={selected}
+      disabled={disabled}
+      $disabled={disabled}
       $selected={selected}
       $theme={theme}
-      onClick={() => onClick(value)}
+      onClick={() => {
+        if (!disabled) {
+          onClick(value);
+        }
+      }}
     >
       <StyledLabel>{label}</StyledLabel>
       <StyledIndicator $selected={selected} $theme={theme}>

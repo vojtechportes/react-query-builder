@@ -44,4 +44,23 @@ describe('#components/Select', () => {
 
     expect(onChange).toHaveBeenCalled();
   });
+
+  it('does not emit a disabled option', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Select
+        disabled={false}
+        onChange={onChange}
+        selectedValue="Test"
+        values={[{ value: 'test', label: 'test', disabled: true }]}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+
+    expect(getByDataTest(container, 'SelectMultiOption[test]')).toBeDisabled();
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[test]'));
+
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

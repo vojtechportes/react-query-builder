@@ -245,6 +245,28 @@ describe('#components/Builder', () => {
     expect(queryByDataTest(container, 'Redo')).toBeNull();
   });
 
+  it('Disables root add rule when all root-scope fields are exhausted', () => {
+    const limitedFields: IBuilderFieldProps[] = [
+      {
+        field: 'MOCK_FIELD',
+        label: 'Mock Field',
+        type: 'TEXT',
+        operators: ['EQUAL'],
+        usageLimit: { max: 1, scope: 'parent' },
+      },
+    ];
+    const { container } = render(
+      <Builder
+        fields={limitedFields}
+        data={[{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }]}
+        singleRootGroup={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(getByDataTest(container, 'AddRootRule')).toBeDisabled();
+  });
+
   it('Switches the builder into SQL text mode', () => {
     const { container } = render(
       <Builder

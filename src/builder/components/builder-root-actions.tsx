@@ -23,6 +23,7 @@ export interface IBuilderRootActionsProps {
   onSwitchToBuilderMode?: () => void;
   onSwitchToTextMode?: () => void;
   onAddRootRule: () => void;
+  disableAddRootRule?: boolean;
   onAddRootGroup: () => void;
   onAddRootGroupWithoutModifiers: () => void;
   AddComponent: React.ComponentType<IButtonProps>;
@@ -49,6 +50,7 @@ export const BuilderRootActions: FC<IBuilderRootActionsProps> = ({
   onSwitchToBuilderMode,
   onSwitchToTextMode,
   onAddRootRule,
+  disableAddRootRule = false,
   onAddRootGroup,
   onAddRootGroupWithoutModifiers,
   AddComponent,
@@ -124,7 +126,11 @@ export const BuilderRootActions: FC<IBuilderRootActionsProps> = ({
       ) : null}
       {!readOnly && strings.group && !singleRootGroup ? (
         <>
-          <AddComponent onClick={onAddRootRule} data-test="AddRootRule">
+          <AddComponent
+            onClick={onAddRootRule}
+            disabled={disableAddRootRule}
+            data-test="AddRootRule"
+          >
             {strings.group.addRule}
           </AddComponent>
           {groupTypes === 'both' ? (

@@ -122,6 +122,26 @@ export const demoFields: IBuilderFieldProps[] = [
     type: 'STATEMENT',
     value: 'HAS_DEBT() AND LAST_PAYMENT_DAYS_AGO() > 30',
   },
+  {
+    field: 'FIRST_NAME',
+    label: 'First name',
+    type: 'TEXT',
+    operators: [
+      'EQUAL',
+      'NOT_EQUAL',
+      'CONTAINS',
+      'NOT_CONTAINS',
+      'STARTS_WITH',
+      'ENDS_WITH',
+    ],
+    validation: {
+      required: true,
+    },
+    usageLimit: {
+      max: 1,
+      scope: 'global'
+    }
+  },
 ];
 
 export const initialQueryTree: DenormalizedQuery = [

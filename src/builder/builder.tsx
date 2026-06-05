@@ -62,6 +62,7 @@ import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.uti
 import { createBuilderFieldOptionsStore } from './utils/create-builder-field-options-store.util';
 import { getNearestFieldMatch } from './utils/get-nearest-field-match.util';
 import { isBuilderFieldInUse } from './utils/is-builder-field-in-use.util';
+import { canAddRuleForParent } from './utils/resolve-builder-field-usage.util';
 import { resolveBuilderFieldOptionState } from './utils/resolve-builder-field-option-state.util';
 import { resolveReconciledBuilderRuleValue } from './utils/resolve-reconciled-builder-rule-value.util';
 
@@ -142,6 +143,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     fieldOptionsStoreRef.current = createBuilderFieldOptionsStore();
   }
   const filteredData = data.filter((item) => !item.parent);
+  const canAddRootRule = canAddRuleForParent(data, fields);
   const AddComponent = components.Add || Button;
   const AlertComponent = components.Alert || defaultComponents.Alert || DefaultAlert;
   const OutlinedButtonComponent =
@@ -845,6 +847,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
           onSwitchToBuilderMode={handleSwitchToBuilderMode}
           onSwitchToTextMode={handleSwitchToTextMode}
           onAddRootRule={handleAddRootRule}
+          disableAddRootRule={!canAddRootRule}
           onAddRootGroup={handleAddRootGroup}
           onAddRootGroupWithoutModifiers={handleAddRootGroupWithoutModifiers}
           AddComponent={AddComponent}

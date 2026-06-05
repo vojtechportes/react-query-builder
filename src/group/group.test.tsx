@@ -214,4 +214,40 @@ describe('#components/Group', () => {
 
     expect(container.firstChild).toBeNull();
   });
+
+  it('disables add rule when all fields are exhausted for the current group', () => {
+    const limitedFields: IBuilderFieldProps[] = [
+      {
+        field: 'MOCK_FIELD',
+        label: 'Mock Field',
+        type: 'TEXT',
+        usageLimit: { max: 1, scope: 'parent' },
+      },
+    ];
+    const limitedData: any[] = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        id: 'test-1',
+        isNegated: false,
+        children: ['test-2'],
+      },
+      {
+        field: 'MOCK_FIELD',
+        value: 'alpha',
+        operator: 'EQUAL',
+        id: 'test-2',
+        parent: 'test-1',
+      },
+    ];
+    const { container } = renderWithContext(
+      <Group id="test-1" isRoot value="AND" isNegated={false} />,
+      {
+        data: limitedData,
+        fields: limitedFields,
+      }
+    );
+
+    expect(getByDataTest(container, 'AddRule')).toBeDisabled();
+  });
 });

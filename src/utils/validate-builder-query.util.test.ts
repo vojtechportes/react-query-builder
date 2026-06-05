@@ -213,4 +213,95 @@ describe('validateBuilderQuery', () => {
       'This field is mandatory'
     );
   });
+
+  it('Returns a usage limit issue when a global field bucket overflows', async () => {
+    const result = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            { id: 'rule-1', field: 'NAME', operator: 'EQUAL', value: 'Alice' },
+            { id: 'rule-2', field: 'NAME', operator: 'EQUAL', value: 'Bob' },
+          ],
+        },
+      ],
+      {
+        ...context,
+        fields: context.fields.map((field) =>
+          field.field === 'NAME'
+            ? {
+                ...field,
+                usageLimit: {
+                  max: 1,
+                },
+              }
+            : field
+        ),
+      }
+    );
+
+    expect(result.isValid).toEqual(false);
+    expect(result.issuesByRuleId['rule-2'][0].code).toEqual('usage_limit_exceeded');
+  });
+
+  it('Limits shared usage keys within the same parent scope only', async () => {
+    const fieldsWithScopedUsageLimits: IBuilderFieldProps[] = [
+      ...context.fields,
+      {
+        field: 'ALIAS',
+        label: 'Alias',
+        type: 'TEXT',
+        operators: ['EQUAL'],
+        usageLimit: {
+          key: 'person-name',
+          max: 1,
+          scope: 'parent',
+        },
+      },
+    ].map((field) =>
+      field.field === 'NAME'
+        ? {
+            ...field,
+            usageLimit: {
+              key: 'person-name',
+              max: 1,
+              scope: 'parent',
+            },
+          }
+        : field
+    ) as IBuilderFieldProps[];
+
+    const result = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            { id: 'rule-1', field: 'NAME', operator: 'EQUAL', value: 'Alice' },
+            { id: 'rule-2', field: 'ALIAS', operator: 'EQUAL', value: 'Bob' },
+            {
+              id: 'group-2',
+              type: 'GROUP',
+              value: 'AND',
+              isNegated: false,
+              children: [
+                { id: 'rule-3', field: 'ALIAS', operator: 'EQUAL', value: 'Carol' },
+              ],
+            },
+          ],
+        },
+      ],
+      {
+        ...context,
+        fields: fieldsWithScopedUsageLimits,
+      }
+    );
+
+    expect(result.isValid).toEqual(false);
+    expect(result.issuesByRuleId['rule-2'][0].code).toEqual('usage_limit_exceeded');
+    expect(result.issuesByRuleId['rule-3']).toBeUndefined();
+  });
 });
