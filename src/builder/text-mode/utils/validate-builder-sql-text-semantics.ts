@@ -1,10 +1,19 @@
 import { IStrings } from '../../../constants/strings';
+import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
+import { getBuilderValidationMessage } from '../../../utils/validation/get-builder-validation-message.util';
 import { getValidationString } from '../../../utils/validation/get-validation-string.util';
 import { IBuilderFieldProps } from '../../types';
+import {
+  resolveBuilderFieldUsageLimitKey,
+  resolveBuilderFieldUsageLimitScope,
+} from '../../utils/resolve-builder-field-usage.util';
 import { ITextModeDiagnostic } from '../types/text-mode-diagnostic';
-import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
-import { collectParsedSqlRules } from '../../../query-formats/sql/utils/collect-parsed-sql-rules';
 import { resolveFieldAllowedValues } from './resolve-field-allowed-values';
+
+interface IParsedRuleEntry {
+  parentScopeId: string;
+  rule: Exclude<ParsedNode, { kind: 'group' }>;
+}
 
 const createFieldNotFoundDiagnostic = (
   fieldName: string,
@@ -56,15 +65,55 @@ const createOperatorNotAllowedDiagnostic = (
   end,
 });
 
+const createUsageLimitExceededDiagnostic = (
+  field: IBuilderFieldProps,
+  start: number,
+  end: number,
+  strings: IStrings
+): ITextModeDiagnostic => ({
+  code: 'usage_limit_exceeded',
+  message: getBuilderValidationMessage(
+    field.usageLimit?.message,
+    getValidationString(
+      strings.validation,
+      'usageLimitExceeded',
+      `Field "${field.field}" can appear at most ${field.usageLimit?.max} times in this scope`,
+      {
+        field: field.label || field.field,
+        max: field.usageLimit?.max,
+      }
+    ),
+    {
+      field,
+      usageLimit: field.usageLimit,
+    }
+  ),
+  start,
+  end,
+});
+
+const collectParsedRuleEntries = (
+  nodes: ParsedNode[],
+  parentScopeId = '__root__'
+): IParsedRuleEntry[] =>
+  nodes.flatMap((node, index) => {
+    if ('kind' in node) {
+      return collectParsedRuleEntries(node.children, `${parentScopeId}.${index}`);
+    }
+
+    return [{ rule: node, parentScopeId }];
+  });
+
 export const validateBuilderSqlTextSemantics = (
   nodes: ParsedNode[],
   fields: IBuilderFieldProps[],
   strings: IStrings
 ): ITextModeDiagnostic[] => {
   const diagnostics: ITextModeDiagnostic[] = [];
-  const parsedRules = collectParsedSqlRules(nodes);
+  const parsedRules = collectParsedRuleEntries(nodes);
+  const usageCounts = new Map<string, number>();
 
-  parsedRules.forEach((rule) => {
+  parsedRules.forEach(({ rule, parentScopeId }) => {
     const field = fields.find((fieldItem) => fieldItem.field === rule.field);
     const operator = rule.operator;
 
@@ -78,6 +127,27 @@ export const validateBuilderSqlTextSemantics = (
         )
       );
       return;
+    }
+
+    if (field.usageLimit) {
+      const scope = resolveBuilderFieldUsageLimitScope(field);
+      const usageBucketKey = `${scope}:${resolveBuilderFieldUsageLimitKey(field)}:${
+        scope === 'parent' ? parentScopeId : 'all'
+      }`;
+      const nextUsageCount = (usageCounts.get(usageBucketKey) || 0) + 1;
+
+      usageCounts.set(usageBucketKey, nextUsageCount);
+
+      if (nextUsageCount > field.usageLimit.max) {
+        diagnostics.push(
+          createUsageLimitExceededDiagnostic(
+            field,
+            rule.source.field.start,
+            rule.source.field.end,
+            strings
+          )
+        );
+      }
     }
 
     if (
@@ -121,9 +191,7 @@ export const validateBuilderSqlTextSemantics = (
           return;
         }
 
-        diagnostics.push(
-          createOneOfDiagnostic(range.start, range.end, strings)
-        );
+        diagnostics.push(createOneOfDiagnostic(range.start, range.end, strings));
       });
 
       return;
