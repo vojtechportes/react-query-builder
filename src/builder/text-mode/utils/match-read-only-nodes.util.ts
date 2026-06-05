@@ -20,6 +20,7 @@ export interface IReadOnlyNodeDescriptor {
   readOnly: DenormalizedNode['readOnly'];
   path: number[];
   parentPath: number[];
+  parentGroupFingerprint?: string;
 }
 
 export interface INodeCandidate {
@@ -28,6 +29,7 @@ export interface INodeCandidate {
   node: DenormalizedNode;
   path: number[];
   parentPath: number[];
+  parentGroupFingerprint?: string;
 }
 
 const normalizeLockFingerprintOperator = (
@@ -175,10 +177,36 @@ const findUniqueGlobalCandidate = (
   return matchingCandidates.length === 1 ? matchingCandidates[0] : undefined;
 };
 
+const findCandidateByParentGroupFingerprint = (
+  descriptor: IReadOnlyNodeDescriptor,
+  candidates: INodeCandidate[],
+  usedCandidates: WeakSet<DenormalizedNode>,
+  matcher: (candidate: INodeCandidate) => boolean
+): INodeCandidate | undefined => {
+  if (!descriptor.parentGroupFingerprint) {
+    return undefined;
+  }
+
+  const matchingCandidates = candidates
+    .filter(
+      candidate =>
+        !usedCandidates.has(candidate.node) &&
+        candidate.parentGroupFingerprint === descriptor.parentGroupFingerprint &&
+        matcher(candidate)
+    )
+    .sort(
+      (left, right) =>
+        getSiblingDistance(descriptor, left) - getSiblingDistance(descriptor, right)
+    );
+
+  return matchingCandidates[0];
+};
+
 export const collectReadOnlyNodeDescriptors = (
   query: DenormalizedQuery,
   target: IReadOnlyNodeDescriptor[] = [],
-  parentPath: number[] = []
+  parentPath: number[] = [],
+  parentGroup?: DenormalizedGroupNode
 ): IReadOnlyNodeDescriptor[] => {
   query.forEach((node, index) => {
     const path = [...parentPath, index];
@@ -202,10 +230,13 @@ export const collectReadOnlyNodeDescriptors = (
           readOnly: node.readOnly,
           path,
           parentPath,
+          parentGroupFingerprint: parentGroup
+            ? createExactFingerprint(parentGroup)
+            : undefined,
         });
       }
 
-      collectReadOnlyNodeDescriptors(node.children, target, path);
+      collectReadOnlyNodeDescriptors(node.children, target, path, node);
       return;
     }
 
@@ -223,6 +254,9 @@ export const collectReadOnlyNodeDescriptors = (
         readOnly: ruleNode.readOnly,
         path,
         parentPath,
+        parentGroupFingerprint: parentGroup
+          ? createExactFingerprint(parentGroup)
+          : undefined,
       });
     }
   });
@@ -237,7 +271,8 @@ export const collectReadOnlyNodeCandidates = (
     'group-all': [],
     'group-self': [],
   },
-  parentPath: number[] = []
+  parentPath: number[] = [],
+  parentGroup?: DenormalizedGroupNode
 ): Record<IReadOnlyNodeDescriptor['kind'], INodeCandidate[]> => {
   query.forEach((node, index) => {
     const path = [...parentPath, index];
@@ -249,6 +284,9 @@ export const collectReadOnlyNodeCandidates = (
         node,
         path,
         parentPath,
+        parentGroupFingerprint: parentGroup
+          ? createExactFingerprint(parentGroup)
+          : undefined,
       });
       candidates['group-self'].push({
         kind: 'group-self',
@@ -256,8 +294,11 @@ export const collectReadOnlyNodeCandidates = (
         node,
         path,
         parentPath,
+        parentGroupFingerprint: parentGroup
+          ? createExactFingerprint(parentGroup)
+          : undefined,
       });
-      collectReadOnlyNodeCandidates(node.children, candidates, path);
+      collectReadOnlyNodeCandidates(node.children, candidates, path, node);
       return;
     }
 
@@ -267,6 +308,9 @@ export const collectReadOnlyNodeCandidates = (
       node,
       path,
       parentPath,
+      parentGroupFingerprint: parentGroup
+        ? createExactFingerprint(parentGroup)
+        : undefined,
     });
   });
 
@@ -284,6 +328,12 @@ export const matchReadOnlyDescriptorToCandidate = (
     usedCandidates,
     candidate => candidate.fingerprint === descriptor.fingerprint
   ) ||
+  findCandidateByParentGroupFingerprint(
+    descriptor,
+    candidatePool,
+    usedCandidates,
+    candidate => candidate.fingerprint === descriptor.fingerprint
+  ) ||
   findUniqueGlobalCandidate(
     candidatePool,
     usedCandidates,
@@ -291,6 +341,22 @@ export const matchReadOnlyDescriptorToCandidate = (
   ) ||
   (descriptor.relaxedFingerprint
     ? findCandidate(
+        descriptor,
+        candidatePool,
+        usedCandidates,
+        candidate => {
+          const relaxedFingerprint =
+            descriptor.kind === 'rule'
+              ? getRuleCandidateRelaxedFingerprint(candidate.node, descriptor.readOnly)
+              : getGroupCandidateRelaxedFingerprint(
+                  candidate.node as DenormalizedGroupNode,
+                  descriptor.readOnly
+                );
+
+          return relaxedFingerprint === descriptor.relaxedFingerprint;
+        }
+      )
+    || findCandidateByParentGroupFingerprint(
         descriptor,
         candidatePool,
         usedCandidates,
