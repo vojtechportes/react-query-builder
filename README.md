@@ -100,6 +100,60 @@ export const MyBuilder = () => {
 };
 ```
 
+## Validation and Usage Limits
+
+Field metadata can define both value validation and structural usage limits.
+Use `validation` for rule-local checks like required values or numeric bounds,
+and use `usageLimit` when a field or shared field bucket should only appear a
+limited number of times globally or within the same parent group.
+
+```tsx
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'PRIMARY_EMAIL',
+    label: 'Primary email',
+    type: 'TEXT',
+    operators: ['EQUAL', 'CONTAINS'],
+    usageLimit: {
+      max: 1,
+      scope: 'global',
+    },
+    validation: {
+      required: true,
+    },
+  },
+  {
+    field: 'BILLING_CONTACT',
+    label: 'Billing contact',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    usageLimit: {
+      key: 'contact-field',
+      max: 1,
+      scope: 'parent',
+    },
+  },
+  {
+    field: 'SHIPPING_CONTACT',
+    label: 'Shipping contact',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    usageLimit: {
+      key: 'contact-field',
+      max: 1,
+      scope: 'parent',
+    },
+  },
+];
+```
+
+When a usage limit is exhausted, the field becomes disabled in the selector,
+and the built-in Add Rule action is disabled when no selectable fields remain
+in the current scope.
+
+- <a href="https://vojtechportes.github.io/react-query-builder/documentation/validation" target="_blank" rel="noopener noreferrer">Documentation: Validation</a>
+- <a href="https://vojtechportes.github.io/react-query-builder/api/fields" target="_blank" rel="noopener noreferrer">API: Fields</a>
+
 ## Dynamic Field Options
 
 When list options depend on other rules or on external application state, keep

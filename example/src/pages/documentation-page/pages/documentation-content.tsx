@@ -526,6 +526,48 @@ const validationSnippet = `const fields: IBuilderFieldProps[] = [
   onChange={setData}
 />;`;
 
+const usageLimitSnippet = `const fields: IBuilderFieldProps[] = [
+  {
+    field: 'PRIMARY_EMAIL',
+    label: 'Primary email',
+    type: 'TEXT',
+    operators: ['EQUAL', 'CONTAINS'],
+    usageLimit: {
+      max: 1,
+      scope: 'global',
+    },
+  },
+  {
+    field: 'BILLING_CONTACT',
+    label: 'Billing contact',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    usageLimit: {
+      key: 'contact-field',
+      max: 1,
+      scope: 'parent',
+    },
+  },
+  {
+    field: 'SHIPPING_CONTACT',
+    label: 'Shipping contact',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    usageLimit: {
+      key: 'contact-field',
+      max: 1,
+      scope: 'parent',
+    },
+  },
+];
+
+<Builder
+  fields={fields}
+  data={data}
+  showValidation
+  onChange={setData}
+/>;`;
+
 const builderBehaviorSnippet = `<Builder
   fields={fields}
   data={data}
@@ -1666,9 +1708,9 @@ export const documentationPages: IDocumentationPage[] = [
     sectionTitle: 'Getting Started',
     summary: '',
     description:
-      'Built-in validation for fields and rules, validation rendering with showValidation, and custom validator integration.',
+      'Built-in validation for fields and rules, structural usageLimit constraints, validation rendering with showValidation, and custom validator integration.',
     searchText:
-      'Validation built-in validation validator showValidation onStateChange required minLength maxLength minItems maxItems range validation rules fields builder',
+      'Validation built-in validation validator usageLimit showValidation onStateChange required minLength maxLength minItems maxItems range validation rules fields builder',
     content: (
       <>
         <p>
@@ -1689,10 +1731,26 @@ export const documentationPages: IDocumentationPage[] = [
           <li>List and multi-list fields support item-count constraints such as <InlineCode>minItems</InlineCode> and <InlineCode>maxItems</InlineCode>.</li>
           <li>Range operators such as <InlineCode>BETWEEN</InlineCode> can use <InlineCode>range</InlineCode> validation to validate both values together.</li>
         </List>
+        <SectionTitle>Structural usage limits</SectionTitle>
+        <p>
+          Use <InlineCode>usageLimit</InlineCode> when a constraint depends on how
+          many rules already use a field or a shared usage bucket. This is separate
+          from value validation because it governs query structure rather than the
+          validity of a single rule value.
+        </p>
+        <CodeBlock code={usageLimitSnippet} language="tsx" label="Field usage limits" />
+        <List>
+          <li><InlineCode>max</InlineCode> defines how many matching rules are allowed inside the selected scope.</li>
+          <li><InlineCode>scope=&quot;global&quot;</InlineCode> limits usage across the whole query tree.</li>
+          <li><InlineCode>scope=&quot;parent&quot;</InlineCode> limits usage only among sibling rules in the same immediate parent group.</li>
+          <li><InlineCode>key</InlineCode> lets multiple different fields share the same quota bucket.</li>
+          <li>Exhausted fields are disabled in the field selector, and the Add Rule button is disabled when no selectable fields remain in the current scope.</li>
+          <li><InlineCode>showValidation</InlineCode> still surfaces an issue when data arrives in an already invalid state, such as external input or text mode edits.</li>
+        </List>
         <AlertBox title="Custom validator" variant="info">
           Use <InlineCode>validator</InlineCode> when validation depends on
           multiple rules, external state, or rules that are not expressible in
-          field-level validation config.
+          field-level validation config or <InlineCode>usageLimit</InlineCode>.
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink> and{' '}

@@ -8,6 +8,7 @@ import { createRuleStateForField } from '../utils/create-rule-state-for-field.ut
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { updateItem } from '../utils/update-item.util';
+import { isBuilderFieldUsageExhausted } from '../builder/utils/resolve-builder-field-usage.util';
 
 export interface IFieldSelectProps {
   selectedValue: string;
@@ -34,6 +35,9 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
   } = useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
   const isDisabled = Boolean(readOnly || disabled);
+  const currentRule = findNodeById(data, id);
+  const parentId =
+    currentRule && !isNormalizedGroupNode(currentRule) ? currentRule.parent : undefined;
 
   const handleChange = (value: string) => {
     if (isDisabled) {
@@ -115,9 +119,18 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
     );
   };
 
-  const fieldNames = fields.map(field => ({
+  const fieldNames = fields.map((field) => ({
     value: field.field,
     label: field.label,
+    disabled:
+      field.field !== selectedValue &&
+      isBuilderFieldUsageExhausted({
+        data,
+        fields,
+        field,
+        parentId,
+        excludeRuleId: id,
+      }),
   }));
 
   if (!strings.form) {

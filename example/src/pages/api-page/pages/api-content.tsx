@@ -224,7 +224,17 @@ const fieldBaseSignature = `interface IBuilderFieldBase<TType, TValue, TValidati
   value?: TValue;
   type: TType;
   operators?: BuilderFieldOperator[];
+  usageLimit?: IBuilderFieldUsageLimit;
   validation?: TValidation;
+}`;
+
+const fieldUsageLimitSignature = `export type BuilderFieldUsageLimitScope = 'global' | 'parent';
+
+export interface IBuilderFieldUsageLimit {
+  key?: string;
+  max: number;
+  scope?: BuilderFieldUsageLimitScope;
+  message?: BuilderValidationMessage;
 }`;
 
 const fieldOptionTypesSignature = `export type BuilderFieldOption = {
@@ -1004,13 +1014,18 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Core API',
     summary: '',
     description:
-      'Field definition API reference for IBuilderFieldProps, field types, operators, and validation metadata.',
+      'Field definition API reference for IBuilderFieldProps, field types, operators, usageLimit, and validation metadata.',
     searchText:
-      'IBuilderFieldProps field label type value operators validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState INearestFieldMatch IBuilderFieldChange dynamic field options',
+      'IBuilderFieldProps field label type value operators usageLimit validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState INearestFieldMatch IBuilderFieldChange dynamic field options',
     content: (
       <>
         <CodeBlock code={fieldTypesSignature} language="ts" label="Field unions" />
         <CodeBlock code={fieldBaseSignature} language="ts" label="Shared field shape" />
+        <CodeBlock
+          code={fieldUsageLimitSignature}
+          language="ts"
+          label="Field usage limits"
+        />
         <CodeBlock
           code={fieldOptionTypesSignature}
           language="ts"
@@ -1023,7 +1038,15 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>type</InlineCode>:</ItemTitle> Required field type. This controls which widget and value semantics are used.</li>
           <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional default or backing field value metadata. For <InlineCode>LIST</InlineCode> and <InlineCode>MULTI_LIST</InlineCode>, this is the initial static option set.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional operator whitelist. When omitted, the builder falls back to the default operators for the field type.</li>
+          <li><ItemTitle><InlineCode>usageLimit</InlineCode>:</ItemTitle> Optional structural constraint that limits how many rules may use this field or its shared usage bucket.</li>
           <li><ItemTitle><InlineCode>validation</InlineCode>:</ItemTitle> Optional validation config. The shape depends on field type.</li>
+        </List>
+        <SectionTitle>usageLimit</SectionTitle>
+        <List>
+          <li><ItemTitle><InlineCode>max</InlineCode>:</ItemTitle> Required maximum number of matching rules allowed in the selected scope.</li>
+          <li><ItemTitle><InlineCode>scope</InlineCode>:</ItemTitle> Optional. Defaults to <InlineCode>global</InlineCode>. Use <InlineCode>parent</InlineCode> to limit usage only within the same immediate parent group.</li>
+          <li><ItemTitle><InlineCode>key</InlineCode>:</ItemTitle> Optional shared bucket identifier. When omitted, the builder uses the field&apos;s own <InlineCode>field</InlineCode> value.</li>
+          <li><ItemTitle><InlineCode>message</InlineCode>:</ItemTitle> Optional custom validation message used when persisted or imported data exceeds the allowed limit.</li>
         </List>
         <SectionTitle>Type notes</SectionTitle>
         <List>
@@ -1034,6 +1057,7 @@ export const apiPages: IApiPage[] = [
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/usage">Usage</TextLink>,{' '}
+          <TextLink to="/documentation/validation">Validation</TextLink>,{' '}
           <TextLink to="/documentation/dynamic-field-options">
             Dynamic Field Options
           </TextLink>, and <TextLink to="/documentation/localization">Localization</TextLink>.

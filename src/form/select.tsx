@@ -19,7 +19,7 @@ const HiddenInput = styled.input`
 `;
 
 export interface ISelectProps {
-  values: Array<{ value: string; label: string }>;
+  values: Array<{ value: string; label: string; disabled?: boolean }>;
   selectedValue?: string;
   emptyValue?: string;
   onChange: (value: any) => void;
@@ -77,12 +77,13 @@ export const Select: FC<ISelectProps> = ({
       />
       {isOpen ? (
         <Popover theme={theme}>
-          {values.map(({ value, label }) => (
+          {values.map(({ value, label, disabled: optionDisabled = false }) => (
             <Option
               key={value}
               value={value}
               label={label}
               selected={value === selectedValue}
+              disabled={optionDisabled}
               onClick={handleSelect}
               theme={theme}
             />

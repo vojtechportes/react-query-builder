@@ -120,6 +120,7 @@ export interface IStrings {
     rangeOrderAllowEqual?: string;
     rangeCustom?: string;
     fieldNotFound?: string;
+    usageLimitExceeded?: string;
     invalidTree?: string;
   };
 }
@@ -241,6 +242,7 @@ export const strings: IStrings = {
     rangeOrderAllowEqual: 'Range start must be less than or equal to range end',
     rangeCustom: 'Range is invalid',
     fieldNotFound: 'Field "{field}" is not defined',
+    usageLimitExceeded: 'Field "{field}" can appear at most {max} times in this scope',
     invalidTree: 'Input data tree is in invalid format',
   },
 };

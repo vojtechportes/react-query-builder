@@ -27,6 +27,7 @@ import { Group as DefaultGroupContainer } from './group-container';
 import { Option as DefaultOption } from './option';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 import { updateGroupLockState } from '../utils/read-only/update-group-lock-state.util';
+import { canAddRuleForParent } from '../builder/utils/resolve-builder-field-usage.util';
 
 export interface IGroupProps {
   value?: BuilderGroupValues;
@@ -67,6 +68,7 @@ export const Group: FC<IGroupProps> = ({
     groupTypes,
     singleRootGroup,
     newNodePlacement = 'append',
+    fields,
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const Add = components.Add || Button;
@@ -88,6 +90,7 @@ export const Group: FC<IGroupProps> = ({
     isReadOnly || readOnlyTargets.includes('negation');
   const isCombinatorReadOnly =
     isReadOnly || readOnlyTargets.includes('combinator');
+  const canAddRule = canAddRuleForParent(data, fields, id);
 
   const addItem = (payload: NormalizedNode) => {
     const currentGroup = data.find((item) => item.id === id);
@@ -311,7 +314,11 @@ export const Group: FC<IGroupProps> = ({
         <>
           {!isReadOnly && (
             <>
-              <Add onClick={handleAddRule} data-test="AddRule">
+              <Add
+                onClick={handleAddRule}
+                disabled={!canAddRule}
+                data-test="AddRule"
+              >
                 {strings.group.addRule}
               </Add>
               {addGroupControl}

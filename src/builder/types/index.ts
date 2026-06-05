@@ -81,12 +81,22 @@ export type BuilderFieldValue =
   | boolean
   | Array<{ value: string | number; label: string }>;
 
+export type BuilderFieldUsageLimitScope = 'global' | 'parent';
+
+export interface IBuilderFieldUsageLimit {
+  key?: string;
+  max: number;
+  scope?: BuilderFieldUsageLimitScope;
+  message?: BuilderValidationMessage;
+}
+
 export interface IBuilderValidationMessageContext {
   field: IBuilderFieldProps;
   operator?: BuilderFieldOperator;
   value?: BuilderFieldValue;
   ruleId?: string;
   rangeBoundary?: 'start' | 'end';
+  usageLimit?: IBuilderFieldUsageLimit;
 }
 
 export type BuilderValidationMessage =
@@ -223,6 +233,7 @@ interface IBuilderFieldBase<
   type: TType;
   operators?: BuilderFieldOperator[];
   validation?: TValidation;
+  usageLimit?: IBuilderFieldUsageLimit;
 }
 
 export type IBooleanFieldProps = IBuilderFieldBase<
