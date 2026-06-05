@@ -1218,6 +1218,40 @@ describe('#components/Builder', () => {
     );
   });
 
+  it('Reports usageLimit violations as text mode semantic diagnostics', () => {
+    const onChange = jest.fn();
+    const limitedFields: IBuilderFieldProps[] = [
+      {
+        field: 'MOCK_FIELD',
+        label: 'Mock Field',
+        type: 'TEXT',
+        operators: ['EQUAL'],
+        usageLimit: {
+          max: 1,
+          scope: 'global',
+        },
+      },
+    ];
+    const { container } = render(
+      <Builder
+        fields={limitedFields}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "MOCK_FIELD = 'alpha' AND MOCK_FIELD = 'beta'" },
+    });
+
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'at most 1 times in this scope'
+    );
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it('Parses valid SQL text back into builder data', async () => {
     const onChange = jest.fn();
     const { container } = render(
