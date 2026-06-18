@@ -45,7 +45,7 @@ describe('formatQuery', () => {
     ];
 
     expect(formatQuery(query, 'SQL', { wrapWhereClause: true })).toEqual(
-      "WHERE NOT status = 'archived'"
+      "WHERE NOT (status = 'archived')"
     );
   });
 });

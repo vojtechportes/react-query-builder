@@ -19,6 +19,7 @@ export interface IUseBuilderValidationArgs {
   fields: IBuilderFieldProps[];
   singleRootGroup: boolean;
   groupTypes: BuilderGroupMode;
+  allowGroupNegation: boolean;
   strings: IStrings;
   validator?: IBuilderValidator;
   onStateChange?: (state: IBuilderStateChange) => void;
@@ -32,6 +33,7 @@ export const useBuilderValidation = ({
   fields,
   singleRootGroup,
   groupTypes,
+  allowGroupNegation,
   strings,
   validator,
   onStateChange,
@@ -101,6 +103,7 @@ export const useBuilderValidation = ({
       fields,
       singleRootGroup,
       groupTypes,
+      allowGroupNegation,
       strings,
     };
     const validationResult = validator
@@ -124,6 +127,7 @@ export const useBuilderValidation = ({
     data,
     fields,
     groupTypes,
+    allowGroupNegation,
     onStateChange,
     originalData,
     singleRootGroup,

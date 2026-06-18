@@ -15,6 +15,7 @@ export const formatBuilderSource = ({
   lockable,
   cloneable,
   draggable,
+  allowGroupNegation,
   newNodePlacement,
   history,
   textMode,
@@ -91,6 +92,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     lockable ? 'lockable' : null,
     cloneable ? 'cloneable' : null,
     draggable ? 'draggable' : null,
+    allowGroupNegation ? null : 'allowGroupNegation={false}',
     newNodePlacement === 'prepend'
       ? 'newNodePlacement="prepend"'
       : null,

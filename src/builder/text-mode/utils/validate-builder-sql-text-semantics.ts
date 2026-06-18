@@ -1,117 +1,48 @@
 import { IStrings } from '../../../constants/strings';
 import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
-import { getBuilderValidationMessage } from '../../../utils/validation/get-builder-validation-message.util';
-import { getValidationString } from '../../../utils/validation/get-validation-string.util';
 import { IBuilderFieldProps } from '../../types';
 import {
   resolveBuilderFieldUsageLimitKey,
   resolveBuilderFieldUsageLimitScope,
 } from '../../utils/resolve-builder-field-usage.util';
 import { ITextModeDiagnostic } from '../types/text-mode-diagnostic';
+import { collectParsedRuleEntries } from './collect-parsed-rule-entries.util';
+import { createFieldNotFoundDiagnostic } from './create-field-not-found-diagnostic.util';
+import { createNegationNotAllowedDiagnostic } from './create-negation-not-allowed-diagnostic.util';
+import { createOneOfDiagnostic } from './create-one-of-diagnostic.util';
+import { createOperatorNotAllowedDiagnostic } from './create-operator-not-allowed-diagnostic.util';
+import { createUsageLimitExceededDiagnostic } from './create-usage-limit-exceeded-diagnostic.util';
+import { findFirstGroupWithNegationToken } from './find-first-group-with-negation-token.util';
 import { resolveFieldAllowedValues } from './resolve-field-allowed-values';
 
-interface IParsedRuleEntry {
-  parentScopeId: string;
-  rule: Exclude<ParsedNode, { kind: 'group' }>;
+interface IValidateBuilderSqlTextSemanticsOptions {
+  allowGroupNegation?: boolean;
 }
-
-const createFieldNotFoundDiagnostic = (
-  fieldName: string,
-  start: number,
-  end: number,
-  strings: IStrings
-): ITextModeDiagnostic => ({
-  code: 'field_not_found',
-  message: getValidationString(
-    strings.validation,
-    'fieldNotFound',
-    `Field "${fieldName}" is not defined`,
-    { field: fieldName }
-  ),
-  start,
-  end,
-});
-
-const createOneOfDiagnostic = (
-  start: number,
-  end: number,
-  strings: IStrings
-): ITextModeDiagnostic => ({
-  code: 'one_of',
-  message: getValidationString(
-    strings.validation,
-    'oneOf',
-    'Value must be one of the allowed options'
-  ),
-  start,
-  end,
-});
-
-const createOperatorNotAllowedDiagnostic = (
-  fieldName: string,
-  operator: string,
-  start: number,
-  end: number,
-  strings: IStrings
-): ITextModeDiagnostic => ({
-  code: 'operator_not_allowed',
-  message: getValidationString(
-    strings.validation,
-    'operatorNotAllowed',
-    `Operator "${operator}" is not allowed for field "${fieldName}"`,
-    { field: fieldName, operator }
-  ),
-  start,
-  end,
-});
-
-const createUsageLimitExceededDiagnostic = (
-  field: IBuilderFieldProps,
-  start: number,
-  end: number,
-  strings: IStrings
-): ITextModeDiagnostic => ({
-  code: 'usage_limit_exceeded',
-  message: getBuilderValidationMessage(
-    field.usageLimit?.message,
-    getValidationString(
-      strings.validation,
-      'usageLimitExceeded',
-      `Field "${field.field}" can appear at most ${field.usageLimit?.max} times in this scope`,
-      {
-        field: field.label || field.field,
-        max: field.usageLimit?.max,
-      }
-    ),
-    {
-      field,
-      usageLimit: field.usageLimit,
-    }
-  ),
-  start,
-  end,
-});
-
-const collectParsedRuleEntries = (
-  nodes: ParsedNode[],
-  parentScopeId = '__root__'
-): IParsedRuleEntry[] =>
-  nodes.flatMap((node, index) => {
-    if ('kind' in node) {
-      return collectParsedRuleEntries(node.children, `${parentScopeId}.${index}`);
-    }
-
-    return [{ rule: node, parentScopeId }];
-  });
 
 export const validateBuilderSqlTextSemantics = (
   nodes: ParsedNode[],
   fields: IBuilderFieldProps[],
-  strings: IStrings
+  strings: IStrings,
+  options: IValidateBuilderSqlTextSemanticsOptions = {}
 ): ITextModeDiagnostic[] => {
   const diagnostics: ITextModeDiagnostic[] = [];
   const parsedRules = collectParsedRuleEntries(nodes);
   const usageCounts = new Map<string, number>();
+
+  if (options.allowGroupNegation === false) {
+    const negatedGroup = findFirstGroupWithNegationToken(nodes);
+    const firstNegationSource = negatedGroup?.negationSources?.[0];
+
+    if (firstNegationSource) {
+      diagnostics.push(
+        createNegationNotAllowedDiagnostic(
+          firstNegationSource.start,
+          firstNegationSource.end,
+          strings
+        )
+      );
+    }
+  }
 
   parsedRules.forEach(({ rule, parentScopeId }) => {
     const field = fields.find((fieldItem) => fieldItem.field === rule.field);

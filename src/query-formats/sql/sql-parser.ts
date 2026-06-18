@@ -58,13 +58,18 @@ export class SqlParser {
 
   private parseNot(): ParsedNode {
     if (this.isKeyword('NOT')) {
-      this.consume();
-      const operand = this.parsePrimary();
+      const notToken = this.consume();
+      const operand = this.parseNot();
+      const nextNegationSources = [
+        this.toTokenRange(notToken),
+        ...(this.isParsedGroup(operand) ? operand.negationSources || [] : []),
+      ];
 
       if (this.isParsedGroup(operand)) {
         return {
           ...operand,
           isNegated: !operand.isNegated,
+          negationSources: nextNegationSources,
         };
       }
 
@@ -73,6 +78,7 @@ export class SqlParser {
         combinator: 'AND',
         isNegated: true,
         children: [operand],
+        negationSources: nextNegationSources,
       };
     }
 
@@ -566,6 +572,7 @@ export class SqlParser {
       combinator,
       isNegated: false,
       children,
+      negationSources: undefined,
     };
   }
 

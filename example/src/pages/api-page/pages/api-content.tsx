@@ -21,6 +21,7 @@ const builderSignature = `export interface IBuilderProps {
   lockable?: boolean;
   cloneable?: boolean;
   draggable?: boolean;
+  allowGroupNegation?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both';
   newNodePlacement?: 'append' | 'prepend';
@@ -866,6 +867,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>lockable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders lock controls for rules and groups and writes the resulting lock state back into emitted query data without discarding existing targeted <InlineCode>readOnly.targets</InlineCode> configurations.</li>
           <li><ItemTitle><InlineCode>cloneable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders clone controls for rules and groups and inserts the cloned node directly below the original.</li>
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
+          <li><ItemTitle><InlineCode>allowGroupNegation</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. When set to <InlineCode>false</InlineCode>, group negation is disabled across the builder: the group-level <InlineCode>NOT</InlineCode> control is hidden, emitted groups are normalized to non-negated form, and SQL text mode rejects group-level <InlineCode>NOT (...)</InlineCode> expressions. Operator-level negation such as <InlineCode>NOT IN</InlineCode>, <InlineCode>NOT LIKE</InlineCode>, <InlineCode>IS NOT NULL</InlineCode>, and <InlineCode>NOT BETWEEN</InlineCode> remains supported.</li>
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group. Text mode requires this to stay enabled.</li>
           <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both. When text mode is active, builder-compatible SQL round-tripping uses groups with modifiers.</li>
           <li><ItemTitle><InlineCode>newNodePlacement</InlineCode>:</ItemTitle> Defaults to <InlineCode>'append'</InlineCode>. Controls whether newly added rules and groups are inserted at the end or the beginning of their parent when built-in add actions or imperative add methods omit an explicit index.</li>

@@ -264,6 +264,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [lockable, setLockable] = React.useState(false);
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
+  const [allowGroupNegation, setAllowGroupNegation] = React.useState(true);
   const [newNodePlacement, setNewNodePlacement] = React.useState<
     'append' | 'prepend'
   >('append');
@@ -332,6 +333,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     cloneable,
     onChange: setData,
     draggable,
+    allowGroupNegation,
     newNodePlacement,
     history,
     textMode,
@@ -358,6 +360,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         lockable,
         cloneable,
         draggable,
+        allowGroupNegation,
         newNodePlacement,
         history,
         textMode,
@@ -375,6 +378,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       lockable,
       cloneable,
       draggable,
+      allowGroupNegation,
       newNodePlacement,
       history,
       textMode,
@@ -438,6 +442,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               onChange={event => setDraggable(event.target.checked)}
             />
             <span>Draggable nodes</span>
+          </ToggleRow>
+
+          <ToggleRow>
+            <Toggle
+              type="checkbox"
+              checked={allowGroupNegation}
+              onChange={event => setAllowGroupNegation(event.target.checked)}
+            />
+            <span>Allow group negation</span>
           </ToggleRow>
 
           <ToggleRow>

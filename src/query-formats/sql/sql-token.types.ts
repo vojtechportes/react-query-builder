@@ -3,6 +3,7 @@ import type {
   QueryOperator,
 } from '../../utils/query-tree';
 import { IParsedSqlRuleNode } from './types/parsed-sql-rule-node';
+import { ISqlSourceRange } from './types/sql-source-range';
 
 export type TokenType =
   | 'LPAREN'
@@ -27,6 +28,7 @@ export interface IParsedGroup {
   combinator: QueryGroupValue;
   isNegated: boolean;
   children: ParsedNode[];
+  negationSources?: ISqlSourceRange[];
   preserveBoundary?: boolean;
 }
 

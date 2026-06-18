@@ -380,6 +380,9 @@ For advanced text editing, the package also exposes
 `@vojtechportes/react-query-builder/monaco`. The built-in editor is lightweight
 and works without extra dependencies, while the Monaco integration is the
 recommended path when locked query segments must stay protected in text mode.
+Set `allowGroupNegation={false}` to remove the group-level `NOT` toggle and
+reject `NOT (...)` groups in text mode, while still allowing operator-level
+negation such as `NOT IN` or `IS NOT NULL`.
 
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>

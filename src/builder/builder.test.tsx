@@ -832,6 +832,29 @@ describe('#components/Builder', () => {
     ).toContain('Negation is read-only');
   });
 
+  it('Rejects negation in text mode when allowGroupNegation is false', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }]}
+        textMode
+        defaultMode="text"
+        allowGroupNegation={false}
+        onChange={onChange}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: "NOT (MOCK_FIELD = 'alpha')" },
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'Negation is not allowed'
+    );
+  });
+
   it('Preserves protected ranges after editing an unlocked value in text mode', async () => {
     const onChange = jest.fn();
     const { container } = render(
@@ -2310,6 +2333,82 @@ describe('#components/Builder', () => {
     expect(queryByDataTest(container, 'Option[not]')).toBeNull();
     expect(queryByDataTest(container, 'Option[and]')).toBeNull();
     expect(queryByDataTest(container, 'Option[or]')).toBeNull();
+  });
+
+  it('Hides the negation control when allowGroupNegation is false', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [{ field: 'MOCK_FIELD', value: '', operator: 'EQUAL' }],
+          },
+        ]}
+        allowGroupNegation={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(queryByDataTest(container, 'Option[not]')).toBeNull();
+  });
+
+  it('Removes negation from emitted group data when allowGroupNegation is false', () => {
+    const { container } = render(
+      <Builder
+        fields={fields}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: true,
+            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          },
+        ]}
+        textMode
+        defaultMode="text"
+        allowGroupNegation={false}
+        onChange={jest.fn()}
+      />
+    );
+
+    expect(
+      (getByDataTest(container, 'TextModeEditor') as HTMLTextAreaElement).value
+    ).toBe("(MOCK_FIELD = 'alpha')");
+  });
+
+  it('Stays stable when rerendered with negated incoming data and allowGroupNegation is false', async () => {
+    const onStateChange = jest.fn();
+    const props: IBuilderProps = {
+      fields,
+      data: [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: true,
+          children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+        },
+      ],
+      allowGroupNegation: false,
+      onStateChange,
+      onChange: jest.fn(),
+    };
+    const { rerender } = render(<Builder {...props} />);
+
+    await waitFor(() =>
+      expect(onStateChange.mock.calls.length).toBeGreaterThanOrEqual(1)
+    );
+    const initialCallCount = onStateChange.mock.calls.length;
+
+    rerender(<Builder {...props} />);
+
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+
+    expect(onStateChange).toHaveBeenCalledTimes(initialCallCount);
   });
 
   it('Locks the builder to a single undeletable root group', () => {

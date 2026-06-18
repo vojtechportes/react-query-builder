@@ -56,6 +56,7 @@ describe('validateBuilderQuery', () => {
     ] as IBuilderFieldProps[],
     singleRootGroup: true,
     groupTypes: 'with-modifiers',
+    allowGroupNegation: true,
     strings,
   };
 
