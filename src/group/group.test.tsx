@@ -73,6 +73,29 @@ const renderWithContext = (
     </BuilderContext.Provider>
   );
 
+const getStyleRules = (): CSSStyleRule[] => {
+  const rules: CSSStyleRule[] = [];
+
+  const appendRules = (cssRules: CSSRuleList) => {
+    Array.from(cssRules).forEach(rule => {
+      if (rule instanceof CSSStyleRule) {
+        rules.push(rule);
+        return;
+      }
+
+      if (rule instanceof CSSMediaRule) {
+        appendRules(rule.cssRules);
+      }
+    });
+  };
+
+  Array.from(document.styleSheets).forEach(styleSheet => {
+    appendRules(styleSheet.cssRules);
+  });
+
+  return rules;
+};
+
 describe('#components/Group', () => {
   it('renders in editable and read-only modes', () => {
     const editable = renderWithContext(
@@ -207,6 +230,46 @@ describe('#components/Group', () => {
     expect(dispatchAction).not.toHaveBeenCalled();
   });
 
+  it('hides the negation control when allowGroupNegation is false', () => {
+    const { container } = renderWithContext(
+      <Group id="test-2" isRoot={false} value="AND" isNegated={false} />,
+      { allowGroupNegation: false }
+    );
+
+    expect(queryByDataTest(container, 'Option[not]')).toBeNull();
+  });
+
+  it('uses sibling-aware header join styles when group negation is hidden', () => {
+    const { container, getByText } = renderWithContext(
+      <Group id="test-2" isRoot={false} value="AND" isNegated={false} />,
+      { allowGroupNegation: false }
+    );
+
+    expect(queryByDataTest(container, 'Option[not]')).toBeNull();
+
+    const leftContainer = getByText(strings.group?.and || 'AND').parentElement;
+
+    expect(leftContainer).toBeTruthy();
+    expect(leftContainer?.children).toHaveLength(2);
+
+    const classNames = Array.from(leftContainer?.classList || []);
+    const rules = getStyleRules();
+    const normalizeSelector = (selector: string) => selector.replace(/\s+/g, '');
+    const hasRule = (suffix: string) =>
+      classNames.some(className =>
+        rules.some(
+          rule =>
+            normalizeSelector(rule.selectorText) ===
+            normalizeSelector(`.${className}${suffix}`)
+        )
+      );
+
+    expect(hasRule('>div:first-child')).toBe(true);
+    expect(hasRule('>div+div')).toBe(true);
+    expect(hasRule('>div:last-child')).toBe(true);
+    expect(hasRule('>div:nth-child(2)')).toBe(false);
+  });
+
   it('renders nothing when strings are unavailable', () => {
     const { container } = renderWithContext(<Group id="test-1" isRoot />, {
       strings: {},
@@ -248,6 +311,6 @@ describe('#components/Group', () => {
       }
     );
 
-    expect(getByDataTest(container, 'AddRule')).toBeDisabled();
+    expect(getByDataTest(container, 'AddRule')).toHaveProperty('disabled', true);
   });
 });

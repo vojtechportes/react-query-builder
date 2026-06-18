@@ -575,6 +575,7 @@ const builderBehaviorSnippet = `<Builder
   readOnlyProtectsDelete
   cloneable
   draggable
+  allowGroupNegation={false}
   newNodePlacement="prepend"
   singleRootGroup={false}
   groupTypes="both"
@@ -595,6 +596,10 @@ const builderBehaviorSnippet = `<Builder
 //
 // draggable:
 // Enables drag-and-drop for editable rules and groups.
+//
+// allowGroupNegation={false}:
+// Hides the group-level NOT toggle and rejects NOT (...) groups in text mode
+// while still allowing operator-level negation such as NOT IN or IS NOT NULL.
 //
 // newNodePlacement="prepend":
 // Inserts newly added rules and groups at the beginning of their parent instead
@@ -1833,7 +1838,7 @@ export const documentationPages: IDocumentationPage[] = [
     description:
       'Documentation for clone controls, drag-and-drop, insertion placement, root-group behavior, and group mode configuration.',
     searchText:
-      'builder behavior cloneable clone controls draggable drag and drop readOnlyProtectsDelete newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
+      'builder behavior cloneable clone controls draggable drag and drop allowGroupNegation group negation not groups readOnlyProtectsDelete newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
     content: (
       <>
         <p>
@@ -1912,6 +1917,30 @@ export const documentationPages: IDocumentationPage[] = [
           <li>
             <InlineCode>both</InlineCode> lets users choose which group kind to
             insert when adding a new group.
+          </li>
+        </List>
+        <SectionTitle>allowGroupNegation</SectionTitle>
+        <List>
+          <li>
+            Set <InlineCode>allowGroupNegation={false}</InlineCode> when you want
+            groups to keep combinators like <InlineCode>AND</InlineCode> and{' '}
+            <InlineCode>OR</InlineCode> but remove the group-level{' '}
+            <InlineCode>NOT</InlineCode> option.
+          </li>
+          <li>
+            This is narrower than <InlineCode>groupTypes</InlineCode>: it only
+            disables negating whole groups and does not affect whether groups
+            render combinator controls.
+          </li>
+          <li>
+            Operator-level negation still works normally, including{' '}
+            <InlineCode>NOT IN</InlineCode>, <InlineCode>NOT LIKE</InlineCode>,{' '}
+            <InlineCode>IS NOT NULL</InlineCode>, and{' '}
+            <InlineCode>NOT BETWEEN</InlineCode>.
+          </li>
+          <li>
+            When disabled, incoming negated groups are normalized to non-negated
+            form so the builder output stays consistent with the visible UI.
           </li>
         </List>
         <AlertBox title="Related docs" variant="info">
@@ -2263,6 +2292,14 @@ export const documentationPages: IDocumentationPage[] = [
             <ItemTitle>Localized read-only protection:</ItemTitle> Rule field,
             operator, and value segments can be protected inline, while read-only
             negation is additionally enforced semantically and reported below the editor when changed.
+          </li>
+          <li>
+            <ItemTitle>Group negation validation:</ItemTitle> When{' '}
+            <InlineCode>allowGroupNegation={false}</InlineCode>, the text editor
+            rejects group-level <InlineCode>NOT (...)</InlineCode> expressions
+            and highlights the offending <InlineCode>NOT</InlineCode> token, while
+            still allowing operator-level negation such as{' '}
+            <InlineCode>NOT IN</InlineCode> or <InlineCode>IS NOT NULL</InlineCode>.
           </li>
           <li>
             <ItemTitle>Monaco packaging:</ItemTitle>{' '}

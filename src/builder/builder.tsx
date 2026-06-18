@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -65,6 +66,10 @@ import { isBuilderFieldInUse } from './utils/is-builder-field-in-use.util';
 import { canAddRuleForParent } from './utils/resolve-builder-field-usage.util';
 import { resolveBuilderFieldOptionState } from './utils/resolve-builder-field-option-state.util';
 import { resolveReconciledBuilderRuleValue } from './utils/resolve-reconciled-builder-rule-value.util';
+import {
+  removeQueryNegation,
+} from '../utils/remove-query-negation.util';
+import { removeNormalizedQueryNegation } from '../utils/remove-normalized-query-negation.util';
 
 export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   data: originalData = [],
@@ -76,6 +81,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   lockable = false,
   cloneable = false,
   draggable = false,
+  allowGroupNegation = true,
   singleRootGroup = true,
   groupTypes = 'with-modifiers',
   newNodePlacement = 'append',
@@ -90,6 +96,16 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   textMode,
   defaultMode = 'builder',
 }, ref) => {
+  const sanitizeDenormalizedQuery = useCallback(
+    (query: DenormalizedQuery): DenormalizedQuery =>
+      allowGroupNegation ? query : removeQueryNegation(query),
+    [allowGroupNegation]
+  );
+  const sanitizeNormalizedQuery = useCallback(
+    (query: NormalizedQuery): NormalizedQuery =>
+      allowGroupNegation ? query : removeNormalizedQueryNegation(query),
+    [allowGroupNegation]
+  );
   const textModeConfig = resolveBuilderTextModeConfig(textMode);
   const textModeConfigured = Boolean(textModeConfig) && singleRootGroup;
   const supportsLockedTextMode =
@@ -108,11 +124,17 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       : 'with-modifiers';
   const resolvedDefaultMode = defaultMode ?? textModeConfig?.defaultMode ?? 'builder';
   const theme = useTheme();
+  const compatibleOriginalData = useMemo(
+    () => sanitizeDenormalizedQuery(originalData),
+    [originalData, sanitizeDenormalizedQuery]
+  );
   const initialData = initialTextModeEnabled
-    ? normalizeBuilderTextModeQuery(originalData)
-    : originalData;
+    ? normalizeBuilderTextModeQuery(compatibleOriginalData)
+    : compatibleOriginalData;
   const [data, setData] = useState<NormalizedQuery>(() =>
-    ingestQuery(initialData, initialRootGroupType, singleRootGroup)
+    sanitizeNormalizedQuery(
+      ingestQuery(initialData, initialRootGroupType, singleRootGroup)
+    )
   );
   const [mode, setMode] = useState<'builder' | 'text'>(resolvedDefaultMode);
   const [textValue, setTextValue] = useState<string>(() => {
@@ -176,9 +198,10 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     setData: (nextData) => {
       const resolvedData =
         typeof nextData === 'function' ? nextData(data) : nextData;
+      const sanitizedData = sanitizeNormalizedQuery(resolvedData);
 
-      pendingChangeData.current = resolvedData;
-      setData(resolvedData);
+      pendingChangeData.current = sanitizedData;
+      setData(sanitizedData);
     },
     history,
   });
@@ -198,6 +221,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     fields,
     singleRootGroup,
     groupTypes: effectiveGroupTypes,
+    allowGroupNegation,
     strings,
     validator,
     onStateChange,
@@ -219,14 +243,14 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       }
 
       try {
-        const denormalizedData = emitQuery(nextData);
+        const denormalizedData = sanitizeDenormalizedQuery(emitQuery(nextData));
         lastEmittedData.current = denormalizedData;
         onChange(denormalizedData);
       } catch {
         throw new Error('Input data tree is in invalid format');
       }
     },
-    [onChange]
+    [onChange, sanitizeDenormalizedQuery]
   );
 
   useImperativeHandle(
@@ -504,7 +528,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         );
       },
       getNodes: () => clone(data),
-      getData: () => emitQuery(data),
+      getData: () => sanitizeDenormalizedQuery(emitQuery(data)),
       getHistory: () => clone(historyState),
       setHistory,
       undo,
@@ -519,6 +543,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       onFieldOptionsReload,
       onRuleOptionsReload,
       redo,
+      sanitizeDenormalizedQuery,
       setHistory,
       undo,
     ]
@@ -541,7 +566,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       return;
     }
 
-    const currentQuery = emitQuery(data);
+    const currentQuery = sanitizeDenormalizedQuery(emitQuery(data));
     const normalizedQuery = normalizeBuilderTextModeQuery(currentQuery);
 
     if (isSameQuery(currentQuery, normalizedQuery)) {
@@ -551,8 +576,20 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     pendingChangeData.current = null;
     lastEmittedData.current = null;
     resetHistory();
-    setData(ingestQuery(normalizedQuery, rootGroupType, singleRootGroup));
-  }, [data, resetHistory, rootGroupType, singleRootGroup, textModeEnabled]);
+    setData(
+      sanitizeNormalizedQuery(
+        ingestQuery(normalizedQuery, rootGroupType, singleRootGroup)
+      )
+    );
+  }, [
+    data,
+    resetHistory,
+    rootGroupType,
+    sanitizeDenormalizedQuery,
+    sanitizeNormalizedQuery,
+    singleRootGroup,
+    textModeEnabled,
+  ]);
 
   useEffect(() => {
     if (!pendingChangeData.current || pendingChangeData.current !== data) {
@@ -565,13 +602,13 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   }, [data, emitChange]);
 
   useEffect(() => {
-    const compatibleOriginalData = textModeEnabled
-      ? normalizeBuilderTextModeQuery(originalData)
-      : originalData;
+    const nextCompatibleOriginalData = textModeEnabled
+      ? normalizeBuilderTextModeQuery(compatibleOriginalData)
+      : compatibleOriginalData;
 
     if (
       lastEmittedData.current &&
-      isSameQuery(lastEmittedData.current, compatibleOriginalData)
+      isSameQuery(lastEmittedData.current, nextCompatibleOriginalData)
     ) {
       lastEmittedData.current = null;
       pendingChangeData.current = null;
@@ -580,8 +617,19 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
     pendingChangeData.current = null;
     resetHistory();
-    setData(ingestQuery(compatibleOriginalData, rootGroupType, singleRootGroup));
-  }, [originalData, resetHistory, rootGroupType, singleRootGroup, textModeEnabled]);
+    setData(
+      sanitizeNormalizedQuery(
+        ingestQuery(nextCompatibleOriginalData, rootGroupType, singleRootGroup)
+      )
+    );
+  }, [
+    compatibleOriginalData,
+    resetHistory,
+    rootGroupType,
+    sanitizeNormalizedQuery,
+    singleRootGroup,
+    textModeEnabled,
+  ]);
 
   useEffect(() => {
     if (!textModeEnabled) {
@@ -598,7 +646,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     }
 
     const nextTextState = formatBuilderSqlState(
-      normalizeBuilderTextModeQuery(emitQuery(data)),
+      normalizeBuilderTextModeQuery(sanitizeDenormalizedQuery(emitQuery(data))),
       fields,
       {
         protectGroupDeletionBoundaries: readOnlyProtectsDelete,
@@ -609,7 +657,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     setTextProtectedRanges(nextTextState.protectedRanges);
     setTextDiagnostics([]);
     setTextErrorMessage(null);
-  }, [data, fields, mode, textModeEnabled]);
+  }, [data, fields, mode, readOnlyProtectsDelete, sanitizeDenormalizedQuery, textModeEnabled]);
 
   const handleAddRootGroup = useCallback(() => {
     dispatchAction(
@@ -649,7 +697,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
   const handleSwitchToTextMode = useCallback(() => {
     const nextTextState = formatBuilderSqlState(
-      normalizeBuilderTextModeQuery(emitQuery(data)),
+      normalizeBuilderTextModeQuery(sanitizeDenormalizedQuery(emitQuery(data))),
       fields,
       {
         protectGroupDeletionBoundaries: readOnlyProtectsDelete,
@@ -661,14 +709,16 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     setTextDiagnostics([]);
     setTextErrorMessage(null);
     setMode('text');
-  }, [data, fields]);
+  }, [data, fields, readOnlyProtectsDelete, sanitizeDenormalizedQuery]);
 
   const handleTextChange = useCallback(
     (nextText: string) => {
       setTextValue(nextText);
 
-      const parseResult = parseBuilderSqlText(nextText, fields, strings);
-      const currentQuery = emitQuery(data);
+      const parseResult = parseBuilderSqlText(nextText, fields, strings, {
+        allowGroupNegation,
+      });
+      const currentQuery = sanitizeDenormalizedQuery(emitQuery(data));
       const readOnlyTargetDiagnostic =
         parseResult.data && parseResult.diagnostics.length === 0
           ? findReadOnlyTargetDiagnostic(currentQuery, parseResult.data, {
@@ -718,7 +768,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       setTextDiagnostics([]);
       setTextErrorMessage(null);
 
-      if (isSameQuery(parseResult.data, emitQuery(data))) {
+      if (isSameQuery(parseResult.data, currentQuery)) {
         return;
       }
 
@@ -727,7 +777,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         ? reapplyBuilderTextModeLocks(normalizedCurrentQuery, parseResult.data)
         : parseResult.data;
       const nextData = ingestQuery(
-        normalizeBuilderTextModeQuery(nextQuery),
+        normalizeBuilderTextModeQuery(sanitizeDenormalizedQuery(nextQuery)),
         rootGroupType,
         singleRootGroup
       );
@@ -735,12 +785,14 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       commitData(createReplaceQueryAction(nextData));
     },
     [
+      allowGroupNegation,
       commitData,
       data,
       readOnlyProtectsDelete,
       rootGroupType,
+      sanitizeDenormalizedQuery,
       singleRootGroup,
-      strings.textMode,
+      strings,
     ]
   );
 
@@ -807,6 +859,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       lockable={lockable}
       cloneable={cloneable}
       draggable={draggable}
+      allowGroupNegation={allowGroupNegation}
       singleRootGroup={singleRootGroup}
       groupTypes={effectiveGroupTypes}
       newNodePlacement={newNodePlacement}

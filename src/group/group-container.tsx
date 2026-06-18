@@ -43,21 +43,23 @@ const Left = styled.div`
   align-self: end;
   justify-self: start;
 
+  > div {
+    border-radius: 0;
+  }
+
   > div:first-child {
     border-right: 0;
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
   }
 
-  > div:last-child {
+  > div + div {
     border-left: 0;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
   }
 
-  > div:nth-child(2) {
-    border-right: 0;
-    border-left: 0;
+  > div:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
   }
 `;
 

@@ -15,6 +15,7 @@ export interface IBuilderSourceOptions {
   lockable: boolean;
   cloneable: boolean;
   draggable: boolean;
+  allowGroupNegation: boolean;
   newNodePlacement: 'append' | 'prepend';
   history: boolean;
   textMode: boolean;

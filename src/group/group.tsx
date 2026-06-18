@@ -66,6 +66,7 @@ export const Group: FC<IGroupProps> = ({
     cloneable,
     lockable,
     groupTypes,
+    allowGroupNegation = true,
     singleRootGroup,
     newNodePlacement = 'append',
     fields,
@@ -280,15 +281,17 @@ export const Group: FC<IGroupProps> = ({
       controlsLeft={
         hasModifiers ? (
           <>
-            <Option
-              isSelected={Boolean(isNegated)}
-              value={!isNegated}
-              disabled={isNegationReadOnly}
-              onClick={handleToggleNegateGroup}
-              data-test="Option[not]"
-            >
-              {strings.group.not}
-            </Option>
+            {allowGroupNegation ? (
+              <Option
+                isSelected={Boolean(isNegated)}
+                value={!isNegated}
+                disabled={isNegationReadOnly}
+                onClick={handleToggleNegateGroup}
+                data-test="Option[not]"
+              >
+                {strings.group.not}
+              </Option>
+            ) : null}
             <Option
               isSelected={value === 'AND'}
               value="AND"

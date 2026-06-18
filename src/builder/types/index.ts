@@ -310,6 +310,7 @@ export interface IBuilderValidationContext {
   fields: IBuilderFieldProps[];
   singleRootGroup: boolean;
   groupTypes: BuilderGroupMode;
+  allowGroupNegation: boolean;
   strings: IStrings;
 }
 
@@ -404,6 +405,7 @@ export interface IBuilderProps {
   lockable?: boolean;
   cloneable?: boolean;
   draggable?: boolean;
+  allowGroupNegation?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
   newNodePlacement?: BuilderNewNodePlacement;
