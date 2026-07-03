@@ -55,6 +55,10 @@ export const App: React.FC = () => (
           <Route path="/documentation" element={<DocumentationPage />} />
           <Route path="/documentation/installation" element={<DocumentationPage />} />
           <Route path="/documentation/usage" element={<DocumentationPage />} />
+          <Route
+            path="/documentation/field-comparisons"
+            element={<DocumentationPage />}
+          />
           <Route path="/documentation/builder-ref" element={<DocumentationPage />} />
           <Route
             path="/documentation/dynamic-field-options"
@@ -150,3 +154,4 @@ export const App: React.FC = () => (
     </React.Suspense>
   </BrowserRouter>
 );
+

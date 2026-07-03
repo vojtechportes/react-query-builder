@@ -25,6 +25,7 @@ export interface IBuilderContextProps {
   cloneable?: boolean;
   draggable?: boolean;
   allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
   newNodePlacement?: BuilderNewNodePlacement;
@@ -63,6 +64,7 @@ export interface IBuilderContextProviderProps {
   cloneable?: boolean;
   draggable?: boolean;
   allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
   newNodePlacement?: BuilderNewNodePlacement;
@@ -99,6 +101,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
   cloneable,
   draggable,
   allowGroupNegation,
+  allowFieldComparisons,
   singleRootGroup,
   groupTypes,
   newNodePlacement,
@@ -167,6 +170,7 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
         cloneable,
         draggable,
         allowGroupNegation,
+        allowFieldComparisons,
         singleRootGroup,
         groupTypes,
         newNodePlacement,
@@ -183,3 +187,4 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
     </BuilderContext.Provider>
   );
 };
+

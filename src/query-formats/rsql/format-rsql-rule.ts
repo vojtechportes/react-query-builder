@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import { formatRsqlValue } from './shared';
 
 const ensureArrayValue = (
@@ -38,6 +39,14 @@ const ensureStringValue = (
   return value;
 };
 
+const ensureRsqlSupportsRule = (rule: IDenormalizedRuleNode): void => {
+  if (isFieldComparisonRule(rule)) {
+    throw new Error(
+      `RSQL does not support field-to-field comparisons for field "${rule.field}" and operator "${rule.operator}".`
+    );
+  }
+};
+
 const joinComparisons = (
   field: string,
   operator: string,
@@ -54,6 +63,8 @@ const joinComparisons = (
 };
 
 export const formatRsqlRule = (rule: IDenormalizedRuleNode): string => {
+  ensureRsqlSupportsRule(rule);
+
   switch (rule.operator) {
     case 'EQUAL':
       return `${rule.field}==${formatRsqlValue(rule.value as never)}`;

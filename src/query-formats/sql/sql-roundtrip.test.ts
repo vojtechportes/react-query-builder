@@ -45,5 +45,34 @@ describe('SQL roundtrip', () => {
 
     expect(parsed.data).toEqual(query);
   });
+
+  it('round-trips supported field-to-field comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'price',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'cost',
+          },
+          {
+            field: 'name',
+            operator: 'LIKE',
+            valueSource: 'field',
+            valueField: 'name_pattern',
+          },
+        ],
+      },
+    ];
+
+    const sql = formatQuery(query, 'SQL');
+    const parsed = parseQuery(sql, 'SQL');
+
+    expect(parsed.data).toEqual(query);
+  });
 });
 

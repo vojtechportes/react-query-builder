@@ -22,5 +22,44 @@ describe('formatQuery JSONata', () => {
       '$contains(name, /^Stev/)'
     );
   });
-});
 
+  it('formats supported field-to-field scalar comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'price',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'cost',
+          },
+          {
+            field: 'discount',
+            operator: 'SMALLER',
+            valueSource: 'field',
+            valueField: 'max_discount',
+          },
+          {
+            field: 'name',
+            operator: 'EQUAL',
+            valueSource: 'field',
+            valueField: 'fallback_name',
+          },
+          {
+            field: 'status',
+            operator: 'NOT_EQUAL',
+            valueSource: 'field',
+            valueField: 'archived_status',
+          },
+        ],
+      },
+    ];
+
+    expect(formatQuery(query, 'JSONata')).toEqual(
+      '(price >= cost and discount < max_discount and name = fallback_name and status != archived_status)'
+    );
+  });
+});

@@ -3,6 +3,7 @@ import type {
   QueryGroupValue,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type {
   CelTokenType,
   ICelToken,
@@ -20,6 +21,8 @@ const CEL_STRING_METHODS = new Set([
 ]);
 
 const CEL_LIST_METHODS = new Set(['all', 'exists']);
+
+type CelFieldReference = { kind: 'field'; field: string };
 
 export class CelParser {
   private readonly tokens: ICelToken[];
@@ -170,7 +173,7 @@ export class CelParser {
     }
 
     const operatorToken = this.expect('OPERATOR');
-    const value = this.parseScalarValue();
+    const value = this.parseComparisonValue();
 
     if (operatorToken.value === '==' && value === null) {
       return { field, operator: 'IS_NULL' };
@@ -178,6 +181,15 @@ export class CelParser {
 
     if (operatorToken.value === '!=' && value === null) {
       return { field, operator: 'IS_NOT_NULL' };
+    }
+
+    if (this.isFieldReference(value)) {
+      return {
+        field,
+        operator: this.mapOperator(operatorToken.value),
+        valueSource: 'field',
+        valueField: value.field,
+      };
     }
 
     return {
@@ -196,8 +208,44 @@ export class CelParser {
     }
 
     this.expect('LPAREN');
-    const value = this.parseStringValue();
+    const value = this.parseStringOrFieldReferenceValue();
     this.expect('RPAREN');
+
+    if (this.isFieldReference(value)) {
+      if (methodName === 'contains') {
+        return {
+          field,
+          operator: 'CONTAINS',
+          valueSource: 'field',
+          valueField: value.field,
+        };
+      }
+
+      if (methodName === 'startsWith') {
+        return {
+          field,
+          operator: 'STARTS_WITH',
+          valueSource: 'field',
+          valueField: value.field,
+        };
+      }
+
+      if (methodName === 'endsWith') {
+        return {
+          field,
+          operator: 'ENDS_WITH',
+          valueSource: 'field',
+          valueField: value.field,
+        };
+      }
+
+      return {
+        field,
+        operator: 'LIKE',
+        valueSource: 'field',
+        valueField: value.field,
+      };
+    }
 
     if (methodName === 'contains') {
       return { field, operator: 'CONTAINS', value };
@@ -269,6 +317,19 @@ export class CelParser {
     throw new Error(`Expected a scalar value but found "${token.value}".`);
   }
 
+  private parseComparisonValue():
+    | string
+    | number
+    | boolean
+    | null
+    | CelFieldReference {
+    if (this.peek().type === 'IDENTIFIER') {
+      return { kind: 'field', field: this.parseFieldPath(true) };
+    }
+
+    return this.parseScalarValue();
+  }
+
   private parseStringValue(): string {
     const value = this.parseScalarValue();
 
@@ -277,6 +338,14 @@ export class CelParser {
     }
 
     return value;
+  }
+
+  private parseStringOrFieldReferenceValue(): string | CelFieldReference {
+    if (this.peek().type === 'IDENTIFIER') {
+      return { kind: 'field', field: this.parseFieldPath(true) };
+    }
+
+    return this.parseStringValue();
   }
 
   private parseArrayValue(): string[] | number[] {
@@ -373,6 +442,10 @@ export class CelParser {
       return null;
     }
 
+    if (isFieldComparisonRule(left) || isFieldComparisonRule(right)) {
+      return null;
+    }
+
     if (
       combinator === 'AND' &&
       left.operator === 'LARGER_EQUAL' &&
@@ -406,6 +479,15 @@ export class CelParser {
 
   private isParsedGroup(node: ParsedCelNode): node is IParsedCelGroup {
     return 'kind' in node && node.kind === 'group';
+  }
+
+  private isFieldReference(value: unknown): value is CelFieldReference {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'kind' in value &&
+      value.kind === 'field'
+    );
   }
 
   private isKeyword(value: string): boolean {

@@ -84,4 +84,58 @@ describe('#components/Widgets/Select', () => {
 
     expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
   });
+
+  it('resets field-comparison rules back to literal mode in the dispatch path', () => {
+    const dispatchAction = jest.fn();
+    const onFieldChange = jest.fn();
+    const fieldComparisonData: any[] = [
+      {
+        id: 'test',
+        field: 'MOCK_FIELD',
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: 'OTHER_FIELD',
+      },
+    ];
+    const { container } = renderWithContext(
+      <Select id="test" selectedValue="" values={selectValues} />,
+      {
+        data: fieldComparisonData,
+        dispatchAction,
+        onFieldChange,
+      }
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[test]'));
+
+    expect(dispatchAction).toHaveBeenCalledWith({
+      type: 'replace-node',
+      nodeId: 'test',
+      node: {
+        id: 'test',
+        field: 'MOCK_FIELD',
+        operator: 'EQUAL',
+        valueSource: 'value',
+        value: 'test',
+        valueField: undefined,
+      },
+    });
+    expect(onFieldChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        previousValueSource: 'field',
+        previousValueField: 'OTHER_FIELD',
+        valueSource: 'value',
+        value: 'test',
+        data: [
+          {
+            field: 'MOCK_FIELD',
+            operator: 'EQUAL',
+            valueSource: 'value',
+            value: 'test',
+          },
+        ],
+      })
+    );
+  });
 });

@@ -10,6 +10,14 @@ import { getMissingSqlTokenMessage } from './utils/get-missing-sql-token-message
 import { createSqlParseError } from './utils/create-sql-parse-error';
 import { getSqlParserString } from './utils/get-sql-parser-string';
 
+interface IParsedSqlFieldReferenceValue {
+  valueField: string;
+  range: {
+    start: number;
+    end: number;
+  };
+}
+
 export class SqlParser {
   private readonly tokens: IToken[];
   private readonly textModeStrings?: IStrings['textMode'];
@@ -173,7 +181,12 @@ export class SqlParser {
 
       if (this.isKeyword('LIKE')) {
         const likeToken = this.expectKeyword('LIKE');
-        return this.createLikeRule(fieldToken, true, likeToken, this.parseScalarValue());
+        return this.createLikeRule(
+          fieldToken,
+          true,
+          likeToken,
+          this.parseScalarOrFieldReferenceValue()
+        );
       }
 
       if (this.isKeyword('BETWEEN')) {
@@ -231,7 +244,12 @@ export class SqlParser {
 
     if (this.isKeyword('LIKE')) {
       const likeToken = this.expectKeyword('LIKE');
-      return this.createLikeRule(fieldToken, false, likeToken, this.parseScalarValue());
+      return this.createLikeRule(
+        fieldToken,
+        false,
+        likeToken,
+        this.parseScalarOrFieldReferenceValue()
+      );
     }
 
     if (this.isKeyword('BETWEEN')) {
@@ -255,7 +273,23 @@ export class SqlParser {
     }
 
     const operatorToken = this.expect('OPERATOR');
-    const value = this.parseScalarValue();
+    const value = this.parseScalarOrFieldReferenceValue();
+
+    if ('valueField' in value) {
+      return {
+        field,
+        operator: this.mapOperator(operatorToken.value),
+        valueSource: 'field',
+        valueField: value.valueField,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(operatorToken),
+          value: value.range,
+          valueField: value.range,
+          values: [value.range],
+        },
+      };
+    }
 
     return {
       field,
@@ -274,9 +308,25 @@ export class SqlParser {
     fieldToken: IToken,
     negated: boolean,
     operatorToken: IToken,
-    value: IParsedSqlScalarValue
+    value: IParsedSqlScalarValue | IParsedSqlFieldReferenceValue
   ): IParsedSqlRuleNode {
     const field = fieldToken.value;
+
+    if ('valueField' in value) {
+      return {
+        field,
+        operator: negated ? 'NOT_LIKE' : 'LIKE',
+        valueSource: 'field',
+        valueField: value.valueField,
+        source: {
+          field: this.toTokenRange(fieldToken),
+          operator: this.toTokenRange(operatorToken),
+          value: value.range,
+          valueField: value.range,
+          values: [value.range],
+        },
+      };
+    }
 
     if (typeof value.value !== 'string') {
       return {
@@ -484,6 +534,20 @@ export class SqlParser {
       token.start,
       token.end
     );
+  }
+
+  private parseScalarOrFieldReferenceValue():
+    | IParsedSqlScalarValue
+    | IParsedSqlFieldReferenceValue {
+    if (this.peek().type === 'IDENTIFIER') {
+      const valueFieldToken = this.parseIdentifier();
+      return {
+        valueField: valueFieldToken.value,
+        range: this.toTokenRange(valueFieldToken),
+      };
+    }
+
+    return this.parseScalarValue();
   }
 
   private parseIdentifier(): IToken {

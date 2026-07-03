@@ -73,12 +73,25 @@ export const Input: FC<IInputProps> = ({
         if (isStringOrNumberArray(item.value)) {
           const nextRangeValue = item.value.slice() as typeof item.value;
           nextRangeValue[index] = nextValue;
+          item.valueSource = 'value';
+          delete item.valueField;
           item.value = nextRangeValue;
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = nextValue;
       });
+
+      const emittedValue = isStringOrNumberArray(currentRule.value)
+        ? (() => {
+            const nextRangeValue =
+              currentRule.value.slice() as typeof currentRule.value;
+            nextRangeValue[index] = nextValue;
+            return nextRangeValue;
+          })()
+        : nextValue;
 
       applyDataUpdate(
         data,
@@ -93,14 +106,12 @@ export const Input: FC<IInputProps> = ({
         id,
         currentRule.field,
         currentRule.value,
-        isStringOrNumberArray(currentRule.value)
-          ? (() => {
-              const nextRangeValue =
-                currentRule.value.slice() as typeof currentRule.value;
-              nextRangeValue[index] = nextValue;
-              return nextRangeValue;
-            })()
-          : nextValue
+        emittedValue,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
       );
       return;
     }
@@ -120,6 +131,9 @@ export const Input: FC<IInputProps> = ({
       nextRule.value = nextValue;
     }
 
+    nextRule.valueSource = 'value';
+    delete nextRule.valueField;
+
     dispatchAction(createReplaceNodeAction(id, nextRule));
     emitBuilderFieldChange(
       onFieldChange,
@@ -128,12 +142,19 @@ export const Input: FC<IInputProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = nextRule.value;
       }),
       id,
       currentRule.field,
       currentRule.value,
-      nextRule.value
+      nextRule.value,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: nextRule.valueSource ?? 'value',
+      }
     );
   };
 

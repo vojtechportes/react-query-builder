@@ -4,6 +4,7 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 
 const inferSpelFieldType = (
   rule: IDenormalizedRuleNode
@@ -36,24 +37,36 @@ export const inferSpelFields = (data: DenormalizedQuery): IBuilderFieldProps[] =
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
   >();
 
-  collectRules(data).forEach(rule => {
-    const current = fieldMap.get(rule.field);
-    const nextType = inferSpelFieldType(rule);
+  const mergeFieldConfig = (
+    fieldName: string,
+    type: IBuilderFieldProps['type'],
+    operator?: QueryOperator
+  ) => {
+    const current = fieldMap.get(fieldName);
 
     if (!current) {
-      fieldMap.set(rule.field, {
-        type: nextType,
-        operators: rule.operator ? [rule.operator] : [],
+      fieldMap.set(fieldName, {
+        type,
+        operators: operator ? [operator] : [],
       });
       return;
     }
 
-    if (current.type !== nextType) {
+    if (current.type !== type) {
       current.type = 'TEXT';
     }
 
-    if (rule.operator && !current.operators.includes(rule.operator)) {
-      current.operators.push(rule.operator);
+    if (operator && !current.operators.includes(operator)) {
+      current.operators.push(operator);
+    }
+  };
+
+  collectRules(data).forEach(rule => {
+    const nextType = inferSpelFieldType(rule);
+    mergeFieldConfig(rule.field, nextType, rule.operator);
+
+    if (isFieldComparisonRule(rule)) {
+      mergeFieldConfig(rule.valueField, nextType, rule.operator);
     }
   });
 

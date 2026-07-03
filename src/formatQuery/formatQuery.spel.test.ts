@@ -31,4 +31,64 @@ describe('formatQuery SpEL', () => {
       "(name.startsWith('Stev') and (age >= 18 and age <= 30) and ({'b2b', 'priority'}.?[segments.contains(#this)].size() == 2))"
     );
   });
+
+  it('formats supported field-to-field scalar comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'price',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'cost',
+          },
+          {
+            field: 'discount',
+            operator: 'SMALLER',
+            valueSource: 'field',
+            valueField: 'max_discount',
+          },
+          {
+            field: 'name',
+            operator: 'EQUAL',
+            valueSource: 'field',
+            valueField: 'fallback_name',
+          },
+          {
+            field: 'status',
+            operator: 'NOT_EQUAL',
+            valueSource: 'field',
+            valueField: 'archived_status',
+          },
+        ],
+      },
+    ];
+
+    expect(formatQuery(query, 'SpEL')).toEqual(
+      '(price >= cost and discount < max_discount and name == fallback_name and status != archived_status)'
+    );
+  });
+
+  it('formats native field-to-field string methods', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'name', operator: 'CONTAINS', valueSource: 'field', valueField: 'needle' },
+          { field: 'name', operator: 'STARTS_WITH', valueSource: 'field', valueField: 'prefix' },
+          { field: 'name', operator: 'ENDS_WITH', valueSource: 'field', valueField: 'suffix' },
+          { field: 'status', operator: 'NOT_CONTAINS', valueSource: 'field', valueField: 'archived_status' },
+        ],
+      },
+    ];
+
+    expect(formatQuery(query, 'SpEL')).toEqual(
+      '(name.contains(needle) and name.startsWith(prefix) and name.endsWith(suffix) and !(status.contains(archived_status)))'
+    );
+  });
 });

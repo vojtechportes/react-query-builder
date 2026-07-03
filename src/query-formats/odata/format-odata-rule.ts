@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import { formatODataScalarValue } from './shared';
 
 const ensureArrayValue = (
@@ -38,20 +39,30 @@ const ensureStringValue = (
   return value;
 };
 
+const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : formatODataScalarValue(rule.value as never);
+
+const formatFieldOrStringValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : formatODataScalarValue(ensureStringValue(rule.operator, rule.value));
+
 export const formatODataRule = (rule: IDenormalizedRuleNode): string => {
   switch (rule.operator) {
     case 'EQUAL':
-      return `${rule.field} eq ${formatODataScalarValue(rule.value as never)}`;
+      return `${rule.field} eq ${formatFieldOrScalarValue(rule)}`;
     case 'NOT_EQUAL':
-      return `${rule.field} ne ${formatODataScalarValue(rule.value as never)}`;
+      return `${rule.field} ne ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER':
-      return `${rule.field} gt ${formatODataScalarValue(rule.value as never)}`;
+      return `${rule.field} gt ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER_EQUAL':
-      return `${rule.field} ge ${formatODataScalarValue(rule.value as never)}`;
+      return `${rule.field} ge ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER':
-      return `${rule.field} lt ${formatODataScalarValue(rule.value as never)}`;
+      return `${rule.field} lt ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER_EQUAL':
-      return `${rule.field} le ${formatODataScalarValue(rule.value as never)}`;
+      return `${rule.field} le ${formatFieldOrScalarValue(rule)}`;
     case 'IN': {
       const values = ensureArrayValue(rule.operator, rule.value)
         .map(item => `${rule.field} eq ${formatODataScalarValue(item)}`);
@@ -89,21 +100,13 @@ export const formatODataRule = (rule: IDenormalizedRuleNode): string => {
     case 'IS_NOT_NULL':
       return `${rule.field} ne null`;
     case 'CONTAINS':
-      return `contains(${rule.field},${formatODataScalarValue(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `contains(${rule.field},${formatFieldOrStringValue(rule)})`;
     case 'NOT_CONTAINS':
-      return `not contains(${rule.field},${formatODataScalarValue(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `not contains(${rule.field},${formatFieldOrStringValue(rule)})`;
     case 'STARTS_WITH':
-      return `startswith(${rule.field},${formatODataScalarValue(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `startswith(${rule.field},${formatFieldOrStringValue(rule)})`;
     case 'ENDS_WITH':
-      return `endswith(${rule.field},${formatODataScalarValue(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `endswith(${rule.field},${formatFieldOrStringValue(rule)})`;
     case 'LIKE':
       return `${rule.field} eq ${formatODataScalarValue(
         ensureStringValue(rule.operator, rule.value)

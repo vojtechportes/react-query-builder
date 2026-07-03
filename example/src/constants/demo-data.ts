@@ -16,6 +16,30 @@ export const demoFields: IBuilderFieldProps[] = [
       { value: 'DE', label: 'Germany' },
       { value: 'AT', label: 'Austria' },
     ],
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['CUSTOMER_COUNTRY_CODE', 'DELIVERY_COUNTRY_CODE'],
+    },
+  },
+  {
+    field: 'CUSTOMER_COUNTRY_CODE',
+    label: 'Customer country code',
+    type: 'TEXT',
+    operators: ['EQUAL', 'NOT_EQUAL', 'IS_NULL', 'IS_NOT_NULL'],
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['CUSTOMER_COUNTRY', 'DELIVERY_COUNTRY_CODE'],
+    },
+  },
+  {
+    field: 'DELIVERY_COUNTRY_CODE',
+    label: 'Delivery country code',
+    type: 'TEXT',
+    operators: ['EQUAL', 'NOT_EQUAL', 'IS_NULL', 'IS_NOT_NULL'],
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['CUSTOMER_COUNTRY', 'CUSTOMER_COUNTRY_CODE'],
+    },
   },
   {
     field: 'CUSTOMER_SEGMENTS',
@@ -34,12 +58,18 @@ export const demoFields: IBuilderFieldProps[] = [
     label: 'Customer is in EU',
     type: 'BOOLEAN',
     operators: ['EQUAL', 'NOT_EQUAL'],
+    fieldComparison: {
+      type: 'boolean',
+    },
   },
   {
     field: 'IS_VAT_PAYER',
     label: 'Customer is VAT payer',
     type: 'BOOLEAN',
     operators: ['EQUAL', 'NOT_EQUAL', 'IS_NULL', 'IS_NOT_NULL'],
+    fieldComparison: {
+      type: 'boolean',
+    },
   },
   {
     field: 'CUSTOMER_CITY',
@@ -57,6 +87,9 @@ export const demoFields: IBuilderFieldProps[] = [
       'IS_NULL',
       'IS_NOT_NULL',
     ],
+    fieldComparison: {
+      type: 'string',
+    },
   },
   {
     field: 'ORDER_TOTAL',
@@ -74,6 +107,69 @@ export const demoFields: IBuilderFieldProps[] = [
       'IS_NULL',
       'IS_NOT_NULL',
     ],
+    fieldComparison: {
+      type: 'number',
+    },
+  },
+  {
+    field: 'ORDER_APPROVAL_LIMIT',
+    label: 'Order approval limit',
+    type: 'NUMBER',
+    operators: [
+      'EQUAL',
+      'NOT_EQUAL',
+      'BETWEEN',
+      'NOT_BETWEEN',
+      'LARGER',
+      'SMALLER',
+      'LARGER_EQUAL',
+      'SMALLER_EQUAL',
+      'IS_NULL',
+      'IS_NOT_NULL',
+    ],
+    fieldComparison: {
+      type: 'number',
+    },
+  },
+  {
+    field: 'ORDER_MANUAL_REVIEW_THRESHOLD',
+    label: 'Order manual review threshold',
+    type: 'NUMBER',
+    operators: [
+      'EQUAL',
+      'NOT_EQUAL',
+      'BETWEEN',
+      'NOT_BETWEEN',
+      'LARGER',
+      'SMALLER',
+      'LARGER_EQUAL',
+      'SMALLER_EQUAL',
+      'IS_NULL',
+      'IS_NOT_NULL',
+    ],
+    fieldComparison: {
+      type: 'number',
+    },
+  },
+  {
+    field: 'ORDER_DISCOUNT_CAP',
+    label: 'Order discount cap',
+    type: 'NUMBER',
+    operators: [
+      'EQUAL',
+      'NOT_EQUAL',
+      'BETWEEN',
+      'NOT_BETWEEN',
+      'LARGER',
+      'SMALLER',
+      'LARGER_EQUAL',
+      'SMALLER_EQUAL',
+      'IS_NULL',
+      'IS_NOT_NULL',
+    ],
+    fieldComparison: {
+      type: 'number',
+    },
   },
   {
     field: 'ORDER_CREATED_AT',
@@ -91,6 +187,9 @@ export const demoFields: IBuilderFieldProps[] = [
       'IS_NULL',
       'IS_NOT_NULL',
     ],
+    fieldComparison: {
+      type: 'date',
+    },
   },
   {
     field: 'COMPANY_NAME',
@@ -108,6 +207,10 @@ export const demoFields: IBuilderFieldProps[] = [
     ],
     validation: {
       required: true,
+    },
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['CUSTOMER_CITY'],
     },
   },
   {
@@ -139,8 +242,8 @@ export const demoFields: IBuilderFieldProps[] = [
     },
     usageLimit: {
       max: 1,
-      scope: 'global'
-    }
+      scope: 'global',
+    },
   },
 ];
 
@@ -174,6 +277,12 @@ export const initialQueryTree: DenormalizedQuery = [
             operator: 'BETWEEN',
             value: [2500, 12000],
           },
+          {
+            field: 'CUSTOMER_COUNTRY',
+            operator: 'EQUAL',
+            valueSource: 'field',
+            valueField: 'CUSTOMER_COUNTRY_CODE',
+          },
         ],
       },
       {
@@ -191,6 +300,18 @@ export const initialQueryTree: DenormalizedQuery = [
             field: 'ORDER_TOTAL',
             operator: 'BETWEEN',
             value: [2500, 12000],
+          },
+          {
+            field: 'ORDER_TOTAL',
+            operator: 'SMALLER_EQUAL',
+            valueSource: 'field',
+            valueField: 'ORDER_APPROVAL_LIMIT',
+          },
+          {
+            field: 'ORDER_TOTAL',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'ORDER_MANUAL_REVIEW_THRESHOLD',
           },
         ],
       },
@@ -220,8 +341,9 @@ export const initialQueryTree: DenormalizedQuery = [
             children: [
               {
                 field: 'COMPANY_NAME',
-                operator: 'CONTAINS',
-                value: 'Prague',
+                operator: 'EQUAL',
+                valueSource: 'field',
+                valueField: 'CUSTOMER_CITY',
               },
               {
                 field: 'ORDER_CREATED_AT',
@@ -236,4 +358,52 @@ export const initialQueryTree: DenormalizedQuery = [
   },
 ];
 
+export const parsingSandboxInitialQueryTree: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'CUSTOMER_COUNTRY',
+        operator: 'EQUAL',
+        value: 'CZ',
+      },
+      {
+        type: 'GROUP',
+        value: 'OR',
+        isNegated: false,
+        children: [
+          {
+            field: 'CUSTOMER_CITY',
+            operator: 'EQUAL',
+            value: 'Prague',
+          },
+          {
+            field: 'ORDER_TOTAL',
+            operator: 'BETWEEN',
+            value: [2500, 12000],
+          },
+        ],
+      },
+      {
+        field: 'IS_VAT_PAYER',
+        operator: 'EQUAL',
+        value: true,
+      },
+      {
+        field: 'CUSTOMER_SEGMENTS',
+        operator: 'ALL_IN',
+        value: ['B2B', 'Priority'],
+      },
+      {
+        field: 'ORDER_CREATED_AT',
+        operator: 'LARGER_EQUAL',
+        value: '2025-01-01',
+      },
+    ],
+  },
+];
+
 export const defaultTheme = { colors };
+

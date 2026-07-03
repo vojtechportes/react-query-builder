@@ -4,6 +4,7 @@ import {
   IDenormalizedRuleNode,
 } from './query-tree';
 import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
+import { getRuleValueSource } from './rule-value-source';
 
 const isSameReadOnly = (leftReadOnly: unknown, rightReadOnly: unknown): boolean =>
   JSON.stringify(leftReadOnly ?? null) === JSON.stringify(rightReadOnly ?? null);
@@ -39,7 +40,9 @@ const isSameNode = (left: DenormalizedNode, right: DenormalizedNode): boolean =>
   return (
     leftRule.field === rightRule.field &&
     leftRule.operator === rightRule.operator &&
+    getRuleValueSource(leftRule) === getRuleValueSource(rightRule) &&
     isSameValue(leftRule.value, rightRule.value) &&
+    leftRule.valueField === rightRule.valueField &&
     isSameReadOnly(leftRule.readOnly, rightRule.readOnly)
   );
 };

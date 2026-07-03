@@ -3,6 +3,7 @@ import type {
   QueryGroupValue,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type {
   IODataToken,
   IParsedODataGroup,
@@ -11,6 +12,8 @@ import type {
 } from './odata-token.types';
 import { inferODataStringOperator } from './shared';
 import { tokenizeOData } from './tokenize-odata';
+
+type ODataFieldReference = { kind: 'field'; field: string };
 
 export class ODataParser {
   private readonly tokens: IODataToken[];
@@ -105,7 +108,7 @@ export class ODataParser {
     this.expect('LPAREN');
     const field = this.parseIdentifier();
     this.expect('COMMA');
-    const value = this.parseStringValue();
+    const value = this.parseStringOrFieldReferenceValue();
     this.expect('RPAREN');
 
     if (
@@ -114,6 +117,20 @@ export class ODataParser {
       functionName !== 'endswith'
     ) {
       throw new Error(`Unsupported OData function "${functionName}".`);
+    }
+
+    if (this.isFieldReference(value)) {
+      return {
+        field,
+        operator:
+          functionName === 'contains'
+            ? 'CONTAINS'
+            : functionName === 'startswith'
+              ? 'STARTS_WITH'
+              : 'ENDS_WITH',
+        valueSource: 'field',
+        valueField: value.field,
+      };
     }
 
     return {
@@ -132,7 +149,7 @@ export class ODataParser {
       'lt',
       'le',
     ]);
-    const value = this.parseScalarValue();
+    const value = this.parseComparisonValue();
 
     if (operator === 'eq' && value === null) {
       return { field, operator: 'IS_NULL' };
@@ -140,6 +157,15 @@ export class ODataParser {
 
     if (operator === 'ne' && value === null) {
       return { field, operator: 'IS_NOT_NULL' };
+    }
+
+    if (this.isFieldReference(value)) {
+      return {
+        field,
+        operator: this.mapOperator(operator),
+        valueSource: 'field',
+        valueField: value.field,
+      };
     }
 
     return {
@@ -185,6 +211,19 @@ export class ODataParser {
     throw new Error(`Expected a scalar value but found "${token.value}".`);
   }
 
+  private parseComparisonValue():
+    | string
+    | number
+    | boolean
+    | null
+    | ODataFieldReference {
+    if (this.peek().type === 'IDENTIFIER') {
+      return { kind: 'field', field: this.parseIdentifier() };
+    }
+
+    return this.parseScalarValue();
+  }
+
   private parseStringValue(): string {
     const value = this.parseScalarValue();
 
@@ -193,6 +232,14 @@ export class ODataParser {
     }
 
     return value;
+  }
+
+  private parseStringOrFieldReferenceValue(): string | ODataFieldReference {
+    if (this.peek().type === 'IDENTIFIER') {
+      return { kind: 'field', field: this.parseIdentifier() };
+    }
+
+    return this.parseStringValue();
   }
 
   private mapOperator(value: string): QueryOperator {
@@ -256,6 +303,10 @@ export class ODataParser {
       return null;
     }
 
+    if (isFieldComparisonRule(left) || isFieldComparisonRule(right)) {
+      return null;
+    }
+
     if (
       combinator === 'AND' &&
       left.operator === 'LARGER_EQUAL' &&
@@ -313,6 +364,15 @@ export class ODataParser {
 
   private isParsedGroup(node: ParsedODataNode): node is IParsedODataGroup {
     return 'kind' in node && node.kind === 'group';
+  }
+
+  private isFieldReference(value: unknown): value is ODataFieldReference {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'kind' in value &&
+      value.kind === 'field'
+    );
   }
 
   private isKeyword(value: string): boolean {

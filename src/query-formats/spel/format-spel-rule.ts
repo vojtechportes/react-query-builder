@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import {
   escapeSpelRegex,
   formatSpelArrayValue,
@@ -43,20 +44,30 @@ const ensureStringValue = (
   return value;
 };
 
+const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : formatSpelScalarValue(rule.value as never);
+
+const formatFieldOrStringValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : quoteSpelString(ensureStringValue(rule.operator, rule.value));
+
 export const formatSpelRule = (rule: IDenormalizedRuleNode): string => {
   switch (rule.operator) {
     case 'EQUAL':
-      return `${rule.field} == ${formatSpelScalarValue(rule.value as never)}`;
+      return `${rule.field} == ${formatFieldOrScalarValue(rule)}`;
     case 'NOT_EQUAL':
-      return `${rule.field} != ${formatSpelScalarValue(rule.value as never)}`;
+      return `${rule.field} != ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER':
-      return `${rule.field} > ${formatSpelScalarValue(rule.value as never)}`;
+      return `${rule.field} > ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER_EQUAL':
-      return `${rule.field} >= ${formatSpelScalarValue(rule.value as never)}`;
+      return `${rule.field} >= ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER':
-      return `${rule.field} < ${formatSpelScalarValue(rule.value as never)}`;
+      return `${rule.field} < ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER_EQUAL':
-      return `${rule.field} <= ${formatSpelScalarValue(rule.value as never)}`;
+      return `${rule.field} <= ${formatFieldOrScalarValue(rule)}`;
     case 'IN':
       return `${formatSpelArrayValue(
         ensureArrayValue(rule.operator, rule.value)
@@ -92,21 +103,13 @@ export const formatSpelRule = (rule: IDenormalizedRuleNode): string => {
     case 'IS_NOT_NULL':
       return `${rule.field} != null`;
     case 'CONTAINS':
-      return `${rule.field}.contains(${quoteSpelString(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `${rule.field}.contains(${formatFieldOrStringValue(rule)})`;
     case 'NOT_CONTAINS':
-      return `!(${rule.field}.contains(${quoteSpelString(
-        ensureStringValue(rule.operator, rule.value)
-      )}))`;
+      return `!(${rule.field}.contains(${formatFieldOrStringValue(rule)}))`;
     case 'STARTS_WITH':
-      return `${rule.field}.startsWith(${quoteSpelString(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `${rule.field}.startsWith(${formatFieldOrStringValue(rule)})`;
     case 'ENDS_WITH':
-      return `${rule.field}.endsWith(${quoteSpelString(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `${rule.field}.endsWith(${formatFieldOrStringValue(rule)})`;
     case 'LIKE':
       return `${rule.field} matches ${quoteSpelString(
         `^${escapeSpelRegex(ensureStringValue(rule.operator, rule.value))}$`

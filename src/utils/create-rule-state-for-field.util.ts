@@ -7,6 +7,7 @@ export const createRuleStateForField = (field: IBuilderFieldProps) => {
     field: field.field,
     operator: nextOperator,
     operators: field.operators,
+    valueSource: 'value' as const,
   };
   const nextValue = createRuleValueForFieldOperator(field, nextOperator);
 
@@ -30,12 +31,14 @@ export const createRuleStateForField = (field: IBuilderFieldProps) => {
     case 'STATEMENT':
       return {
         field: field.field,
+        valueSource: 'value' as const,
         value: field.value,
       };
 
     default:
       return {
         field: field.field,
+        valueSource: 'value' as const,
       };
   }
 };

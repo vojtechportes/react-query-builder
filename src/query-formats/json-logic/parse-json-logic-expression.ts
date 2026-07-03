@@ -105,6 +105,17 @@ const parseSubstrRule = (rule: JsonLogicRule): IDenormalizedRuleNode | null => {
   return null;
 };
 
+const parseFieldComparisonRule = (
+  field: string,
+  operator: QueryOperator,
+  valueField: string
+): IDenormalizedRuleNode => ({
+  field,
+  operator,
+  valueSource: 'field',
+  valueField,
+});
+
 const parseSimpleRule = (rule: JsonLogicRule): IDenormalizedRuleNode | null => {
   if (!isJsonLogicObject(rule)) {
     return null;
@@ -153,6 +164,11 @@ const parseSimpleRule = (rule: JsonLogicRule): IDenormalizedRuleNode | null => {
       if (args[1] === null) {
         return { field: args[0].var, operator: 'IS_NULL' };
       }
+
+      if (isVarRule(args[1])) {
+        return parseFieldComparisonRule(args[0].var, 'EQUAL', args[1].var);
+      }
+
       return { field: args[0].var, operator: 'EQUAL', value: args[1] as never };
     }
 
@@ -160,6 +176,11 @@ const parseSimpleRule = (rule: JsonLogicRule): IDenormalizedRuleNode | null => {
       if (args[1] === null) {
         return { field: args[0].var, operator: 'IS_NOT_NULL' };
       }
+
+      if (isVarRule(args[1])) {
+        return parseFieldComparisonRule(args[0].var, 'NOT_EQUAL', args[1].var);
+      }
+
       return {
         field: args[0].var,
         operator: 'NOT_EQUAL',
@@ -173,6 +194,14 @@ const parseSimpleRule = (rule: JsonLogicRule): IDenormalizedRuleNode | null => {
       '<': 'SMALLER',
       '<=': 'SMALLER_EQUAL',
     };
+
+    if (isVarRule(args[1])) {
+      return parseFieldComparisonRule(
+        args[0].var,
+        operatorMap[operatorKey],
+        args[1].var
+      );
+    }
 
     return {
       field: args[0].var,
@@ -245,17 +274,17 @@ export const parseJsonLogicExpression = (value: unknown): DenormalizedNode[] => 
     if (childNodes.length === 1 && 'type' in childNodes[0]) {
       const child = childNodes[0];
 
-    if (child.type === 'GROUP') {
-      if ('value' in child && typeof child.value !== 'undefined') {
-        return [
-          {
-            type: 'GROUP',
-            value: child.value,
-            isNegated: !child.isNegated,
-            children: child.children,
-          },
-        ];
-      }
+      if (child.type === 'GROUP') {
+        if ('value' in child && typeof child.value !== 'undefined') {
+          return [
+            {
+              type: 'GROUP',
+              value: child.value,
+              isNegated: !child.isNegated,
+              children: child.children,
+            },
+          ];
+        }
 
         return [
           {

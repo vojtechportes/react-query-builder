@@ -11,6 +11,7 @@ describe('#utils/createRuleStateForField', () => {
 
     expect(createRuleStateForField(field)).toEqual({
       field: 'IS_ACTIVE',
+      valueSource: 'value',
       value: false,
     });
   });
@@ -27,6 +28,7 @@ describe('#utils/createRuleStateForField', () => {
       field: 'NAME',
       operator: 'BETWEEN',
       operators: ['BETWEEN'],
+      valueSource: 'value',
       value: ['', ''],
     });
   });
@@ -47,6 +49,7 @@ describe('#utils/createRuleStateForField', () => {
       field: 'STATUS',
       operator: 'EQUAL',
       operators: ['EQUAL'],
+      valueSource: 'value',
       value: 'draft',
     });
   });
@@ -64,6 +67,7 @@ describe('#utils/createRuleStateForField', () => {
       field: 'CITY',
       operator: 'EQUAL',
       operators: ['EQUAL'],
+      valueSource: 'value',
     });
   });
 
@@ -79,6 +83,7 @@ describe('#utils/createRuleStateForField', () => {
       field: 'PRICE',
       operator: 'EQUAL',
       operators: ['EQUAL'],
+      valueSource: 'value',
       value: 0,
     });
   });
@@ -95,6 +100,7 @@ describe('#utils/createRuleStateForField', () => {
       field: 'PRICE_RANGE',
       operator: 'BETWEEN',
       operators: ['BETWEEN'],
+      valueSource: 'value',
       value: [0, 0],
     });
   });
@@ -111,6 +117,7 @@ describe('#utils/createRuleStateForField', () => {
       field: 'DELETED_AT',
       operator: 'IS_NULL',
       operators: ['IS_NULL'],
+      valueSource: 'value',
     });
   });
 
@@ -124,6 +131,7 @@ describe('#utils/createRuleStateForField', () => {
 
     expect(createRuleStateForField(field)).toEqual({
       field: 'NOTE',
+      valueSource: 'value',
       value: 'Read only text',
     });
   });

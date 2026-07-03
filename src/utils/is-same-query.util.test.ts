@@ -45,4 +45,69 @@ describe('#utils/isSameQuery', () => {
 
     expect(isSameQuery(leftQuery, rightQuery)).toBe(false);
   });
+
+  it('Returns true for identical field comparison rules', () => {
+    const leftQuery: DenormalizedQuery = [
+      {
+        field: 'PRICE',
+        operator: 'LARGER',
+        valueSource: 'field',
+        valueField: 'COST',
+      },
+    ];
+
+    const rightQuery: DenormalizedQuery = [
+      {
+        field: 'PRICE',
+        operator: 'LARGER',
+        valueSource: 'field',
+        valueField: 'COST',
+      },
+    ];
+
+    expect(isSameQuery(leftQuery, rightQuery)).toBe(true);
+  });
+
+  it('Returns false when a rule changes from literal to field comparison', () => {
+    const leftQuery: DenormalizedQuery = [
+      {
+        field: 'PRICE',
+        operator: 'LARGER',
+        value: 100,
+      },
+    ];
+
+    const rightQuery: DenormalizedQuery = [
+      {
+        field: 'PRICE',
+        operator: 'LARGER',
+        valueSource: 'field',
+        valueField: 'COST',
+      },
+    ];
+
+    expect(isSameQuery(leftQuery, rightQuery)).toBe(false);
+  });
+
+  it('Returns false when field comparison rhs changes', () => {
+    const leftQuery: DenormalizedQuery = [
+      {
+        field: 'PRICE',
+        operator: 'LARGER',
+        valueSource: 'field',
+        valueField: 'COST',
+      },
+    ];
+
+    const rightQuery: DenormalizedQuery = [
+      {
+        field: 'PRICE',
+        operator: 'LARGER',
+        valueSource: 'field',
+        valueField: 'DISCOUNT',
+      },
+    ];
+
+    expect(isSameQuery(leftQuery, rightQuery)).toBe(false);
+  });
 });

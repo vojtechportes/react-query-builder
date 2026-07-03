@@ -2,12 +2,13 @@ import type {
   DenormalizedNode,
   IDenormalizedRuleNode,
 } from '../../utils/query-tree';
-import { inferRegexOperator } from './shared';
+import {
+  inferRegexOperator,
+  isMongoDocument,
+  parseMongoFieldReference,
+} from './shared';
 
 type MongoDocument = Record<string, unknown>;
-
-const isPlainObject = (value: unknown): value is MongoDocument =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const parseRegexExpression = (
   field: string,
@@ -24,6 +25,77 @@ const parseRegexExpression = (
     field,
     ...inferRegexOperator(pattern, negated),
   };
+};
+
+const parseExprExpression = (value: MongoDocument): IDenormalizedRuleNode => {
+  const operatorKeys = Object.keys(value);
+
+  if (operatorKeys.length !== 1) {
+    throw new Error('Mongo $expr must contain exactly one comparison operator.');
+  }
+
+  const [operatorKey] = operatorKeys;
+  const operands = value[operatorKey];
+
+  if (!Array.isArray(operands) || operands.length != 2) {
+    throw new Error(`Mongo $expr operator "${operatorKey}" must contain two operands.`);
+  }
+
+  const leftField = parseMongoFieldReference(operands[0]);
+  const rightField = parseMongoFieldReference(operands[1]);
+
+  if (!leftField || !rightField) {
+    throw new Error(
+      'Mongo $expr field-to-field comparisons must use field references on both sides.'
+    );
+  }
+
+  switch (operatorKey) {
+    case '$eq':
+      return {
+        field: leftField,
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: rightField,
+      };
+    case '$ne':
+      return {
+        field: leftField,
+        operator: 'NOT_EQUAL',
+        valueSource: 'field',
+        valueField: rightField,
+      };
+    case '$gt':
+      return {
+        field: leftField,
+        operator: 'LARGER',
+        valueSource: 'field',
+        valueField: rightField,
+      };
+    case '$gte':
+      return {
+        field: leftField,
+        operator: 'LARGER_EQUAL',
+        valueSource: 'field',
+        valueField: rightField,
+      };
+    case '$lt':
+      return {
+        field: leftField,
+        operator: 'SMALLER',
+        valueSource: 'field',
+        valueField: rightField,
+      };
+    case '$lte':
+      return {
+        field: leftField,
+        operator: 'SMALLER_EQUAL',
+        valueSource: 'field',
+        valueField: rightField,
+      };
+    default:
+      throw new Error(`Unsupported Mongo $expr operator "${operatorKey}".`);
+  }
 };
 
 const parseFieldOperatorExpression = (
@@ -81,7 +153,7 @@ const parseFieldOperatorExpression = (
       case '$regex':
         return [parseRegexExpression(field, value)];
       case '$not':
-        if (!isPlainObject(value.$not)) {
+        if (!isMongoDocument(value.$not)) {
           throw new Error(`Mongo $not for field "${field}" must wrap an object.`);
         }
 
@@ -130,7 +202,7 @@ const isSameFieldRangeBoundaryGroup = (
 
   const [first, second] = items;
 
-  if (!isPlainObject(first) || !isPlainObject(second)) {
+  if (!isMongoDocument(first) || !isMongoDocument(second)) {
     return false;
   }
 
@@ -142,8 +214,8 @@ const isSameFieldRangeBoundaryGroup = (
   }
 
   return (
-    isPlainObject(first[firstField]) &&
-    isPlainObject(second[secondField]) &&
+    isMongoDocument(first[firstField]) &&
+    isMongoDocument(second[secondField]) &&
     '$lt' in first[firstField] &&
     '$gt' in second[secondField]
   );
@@ -226,7 +298,15 @@ const parseRootDocument = (document: MongoDocument): DenormalizedNode[] =>
       return [createLogicalGroup('OR', value, true)];
     }
 
-    if (isPlainObject(value)) {
+    if (key === '$expr') {
+      if (!isMongoDocument(value)) {
+        throw new Error('Mongo $expr must be an object.');
+      }
+
+      return [parseExprExpression(value)];
+    }
+
+    if (isMongoDocument(value)) {
       return parseFieldOperatorExpression(key, value);
     }
 
@@ -240,7 +320,7 @@ const parseRootDocument = (document: MongoDocument): DenormalizedNode[] =>
   });
 
 export const parseMongoExpression = (value: unknown): DenormalizedNode[] => {
-  if (!isPlainObject(value)) {
+  if (!isMongoDocument(value)) {
     throw new Error('Mongo query must be a JSON object.');
   }
 

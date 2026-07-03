@@ -22,6 +22,7 @@ const builderSignature = `export interface IBuilderProps {
   cloneable?: boolean;
   draggable?: boolean;
   allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both';
   newNodePlacement?: 'append' | 'prepend';
@@ -227,6 +228,7 @@ const fieldBaseSignature = `interface IBuilderFieldBase<TType, TValue, TValidati
   operators?: BuilderFieldOperator[];
   usageLimit?: IBuilderFieldUsageLimit;
   validation?: TValidation;
+  fieldComparison?: IBuilderFieldComparisonConfig;
 }`;
 
 const fieldUsageLimitSignature = `export type BuilderFieldUsageLimitScope = 'global' | 'parent';
@@ -236,6 +238,17 @@ export interface IBuilderFieldUsageLimit {
   max: number;
   scope?: BuilderFieldUsageLimitScope;
   message?: BuilderValidationMessage;
+}`;
+
+const fieldComparisonConfigSignature = `export type BuilderFieldComparisonType =
+  | 'string'
+  | 'number'
+  | 'date'
+  | 'boolean';
+
+export interface IBuilderFieldComparisonConfig {
+  type?: BuilderFieldComparisonType;
+  comparableFields?: string[];
 }`;
 
 const fieldOptionTypesSignature = `export type BuilderFieldOption = {
@@ -268,15 +281,21 @@ export type IBuilderFieldDependencyEntry = IBuilderRuleDependencyEntry;
 export interface INearestFieldMatch {
   nodeId: string;
   field: string;
+  valueSource?: QueryRuleValueSource;
   value: QueryRuleValue | undefined;
+  valueField?: string;
   operator?: QueryOperator;
 }
 
 export interface IBuilderFieldChange {
   nodeId: string;
   field: string;
+  previousValueSource?: QueryRuleValueSource;
   previousValue: QueryRuleValue | undefined;
+  previousValueField?: string;
+  valueSource?: QueryRuleValueSource;
   value: QueryRuleValue | undefined;
+  valueField?: string;
   data: DenormalizedQuery;
 };`;
 
@@ -284,6 +303,7 @@ const queryTreeSignature = `export type QueryGroupValue = 'AND' | 'OR';
 export type QueryGroupType = 'with-modifiers' | 'without-modifiers';
 export type GroupReadOnlyTarget = 'negation' | 'combinator';
 export type RuleReadOnlyTarget = 'field' | 'operator' | 'value';
+export type QueryRuleValueSource = 'value' | 'field';
 
 export interface IGroupReadOnlyConfig {
   enabled: boolean;
@@ -303,15 +323,31 @@ export type QueryRuleValue =
   | number[]
   | boolean;
 
-export interface IDenormalizedRuleNode {
+export interface ILiteralRuleNode {
   id?: string;
   parent?: string;
   field: string;
+  valueSource?: 'value';
   value?: QueryRuleValue;
+  valueField?: undefined;
   operator?: QueryOperator;
   operators?: QueryOperator[];
   readOnly?: boolean | IRuleReadOnlyConfig;
 }
+
+export interface IFieldReferenceRuleNode {
+  id?: string;
+  parent?: string;
+  field: string;
+  valueSource: 'field';
+  value?: undefined;
+  valueField: string;
+  operator?: QueryOperator;
+  operators?: QueryOperator[];
+  readOnly?: boolean | IRuleReadOnlyConfig;
+}
+
+export type IDenormalizedRuleNode = ILiteralRuleNode | IFieldReferenceRuleNode;
 
 export interface IDenormalizedGroupNodeBase {
   id?: string;
@@ -792,6 +828,86 @@ const queryFormatSignature = `export type QueryFormat =
   | 'Dynamo'
   | 'Django';`;
 
+const builderFieldComparisonSnippet = `const data: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'ORDER_TOTAL',
+        operator: 'LARGER_EQUAL',
+        valueSource: 'field',
+        valueField: 'ORDER_APPROVAL_LIMIT',
+      },
+    ],
+  },
+];
+
+<Builder
+  allowFieldComparisons
+  fields={fields}
+  data={data}
+  onChange={setData}
+/>;`;
+
+const fieldsFieldComparisonSnippet = `const fields: IBuilderFieldProps[] = [
+  {
+    field: 'CUSTOMER_COUNTRY',
+    label: 'Customer country',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['DELIVERY_COUNTRY_CODE'],
+    },
+  },
+  {
+    field: 'DELIVERY_COUNTRY_CODE',
+    label: 'Delivery country code',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+  },
+];`;
+
+const dataFieldComparisonSnippet = `const rule: IDenormalizedRuleNode = {
+  field: 'ORDER_TOTAL',
+  operator: 'LARGER_EQUAL',
+  valueSource: 'field',
+  valueField: 'ORDER_APPROVAL_LIMIT',
+};`;
+
+const formatQueryFieldComparisonSnippet = `const sql = formatQuery(data, 'SQL', {
+  fields,
+  wrapWhereClause: true,
+});
+
+// WHERE ORDER_TOTAL >= ORDER_APPROVAL_LIMIT`;
+
+const parseQueryFieldComparisonSnippet = `const result = parseQuery(
+  'WHERE ORDER_TOTAL >= ORDER_APPROVAL_LIMIT',
+  'SQL'
+);
+
+console.log(result.data[0]);
+// {
+//   type: 'GROUP',
+//   value: 'AND',
+//   isNegated: false,
+//   children: [
+//     {
+//       field: 'ORDER_TOTAL',
+//       operator: 'LARGER_EQUAL',
+//       valueSource: 'field',
+//       valueField: 'ORDER_APPROVAL_LIMIT',
+//     },
+//   ],
+// }`;
+
 export interface IApiPage {
   path: string;
   title: string;
@@ -846,9 +962,9 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Core API',
     summary: '',
     description:
-      'Builder component API reference for IBuilderProps, controlled data flow, validation, and editing options.',
+      'Builder component API reference for IBuilderProps, controlled data flow, validation, editing options, and field-to-field comparisons.',
     searchText:
-      'Builder component IBuilderProps onChange controlled component defaults strings components validator history state change undo redo canUndo canRedo newNodePlacement append prepend',
+      'Builder component IBuilderProps onChange controlled component defaults strings components validator history state change undo redo canUndo canRedo newNodePlacement append prepend allowFieldComparisons field comparison valueSource valueField',
     content: (
       <>
         <CodeBlock code={builderSignature} language="ts" label="IBuilderProps" />
@@ -868,6 +984,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>cloneable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Renders clone controls for rules and groups and inserts the cloned node directly below the original.</li>
           <li><ItemTitle><InlineCode>draggable</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables drag-and-drop reordering and movement of query nodes.</li>
           <li><ItemTitle><InlineCode>allowGroupNegation</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. When set to <InlineCode>false</InlineCode>, group negation is disabled across the builder: the group-level <InlineCode>NOT</InlineCode> control is hidden, emitted groups are normalized to non-negated form, and SQL text mode rejects group-level <InlineCode>NOT (...)</InlineCode> expressions. Operator-level negation such as <InlineCode>NOT IN</InlineCode>, <InlineCode>NOT LIKE</InlineCode>, <InlineCode>IS NOT NULL</InlineCode>, and <InlineCode>NOT BETWEEN</InlineCode> remains supported.</li>
+          <li><ItemTitle><InlineCode>allowFieldComparisons</InlineCode>:</ItemTitle> Defaults to <InlineCode>false</InlineCode>. Enables the built-in value-source toggle so supported rules can compare one field against another through <InlineCode>valueSource: 'field'</InlineCode> and <InlineCode>valueField</InlineCode>.</li>
           <li><ItemTitle><InlineCode>singleRootGroup</InlineCode>:</ItemTitle> Defaults to <InlineCode>true</InlineCode>. Wraps root-level items into a single root group and prevents deleting that root group. Text mode requires this to stay enabled.</li>
           <li><ItemTitle><InlineCode>groupTypes</InlineCode>:</ItemTitle> Defaults to <InlineCode>'with-modifiers'</InlineCode>. Controls whether groups use combinator/negation controls, modifierless groups, or both. When text mode is active, builder-compatible SQL round-tripping uses groups with modifiers.</li>
           <li><ItemTitle><InlineCode>newNodePlacement</InlineCode>:</ItemTitle> Defaults to <InlineCode>'append'</InlineCode>. Controls whether newly added rules and groups are inserted at the end or the beginning of their parent when built-in add actions or imperative add methods omit an explicit index.</li>
@@ -880,6 +997,16 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>history</InlineCode>:</ItemTitle> Optional. Set to <InlineCode>true</InlineCode> to enable undo and redo with default settings, or pass <InlineCode>IBuilderHistoryConfig</InlineCode> to customize retention and built-in controls.</li>
           <li><ItemTitle><InlineCode>onChange</InlineCode>:</ItemTitle> Optional callback fired with the denormalized query tree after changes are emitted.</li>
         </List>
+        <SectionTitle>Field comparisons</SectionTitle>
+        <CodeBlock
+          code={builderFieldComparisonSnippet}
+          language="tsx"
+          label="Builder field comparison setup"
+        />
+        <List>
+          <li><ItemTitle>Opt-in:</ItemTitle> The default UI exposes field-to-field comparisons only when <InlineCode>allowFieldComparisons</InlineCode> is enabled.</li>
+          <li><ItemTitle>Persisted data:</ItemTitle> Preloaded field-comparison rules stay representable through <InlineCode>valueSource</InlineCode> and <InlineCode>valueField</InlineCode>, even though validation will block them when the prop is disabled.</li>
+        </List>
         <SectionTitle>Text mode behavior</SectionTitle>
         <CodeBlock code={textModeConfigSignature} language="ts" label="Text mode types" />
         <List>
@@ -887,6 +1014,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle>Config shape:</ItemTitle> <InlineCode>textMode</InlineCode> accepts either <InlineCode>true</InlineCode> or <InlineCode>{`{ format?: 'SQL'; defaultMode?: 'builder' | 'text' }`}</InlineCode>.</li>
           <li><ItemTitle>Default-mode precedence:</ItemTitle> If both <InlineCode>textMode.defaultMode</InlineCode> and the top-level <InlineCode>defaultMode</InlineCode> prop are provided, the top-level prop wins.</li>
           <li><ItemTitle>Syntax and semantic validation:</ItemTitle> The built-in editor highlights invalid SQL syntax plus builder-specific issues such as unknown fields, unsupported operators, and invalid select values.</li>
+          <li><ItemTitle>Field comparisons:</ItemTitle> When <InlineCode>allowFieldComparisons</InlineCode> is enabled, SQL text mode accepts builder-compatible right-hand-side field references such as <InlineCode>ORDER_TOTAL &gt;= ORDER_APPROVAL_LIMIT</InlineCode>. When disabled, the same expression is reported as a semantic validation issue.</li>
           <li><ItemTitle>Invalid text flow:</ItemTitle> Invalid text stays local to text mode, the last valid builder query is preserved, and <InlineCode>onChange</InlineCode> is fired only after a valid parse and semantic validation.</li>
           <li><ItemTitle>History:</ItemTitle> Valid text edits are committed into builder history. Invalid intermediate text is not committed into builder state or history.</li>
           <li><ItemTitle>Built-in editor:</ItemTitle> Included in the main package and suitable for freely editable SQL text mode.</li>
@@ -1016,9 +1144,9 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Core API',
     summary: '',
     description:
-      'Field definition API reference for IBuilderFieldProps, field types, operators, usageLimit, and validation metadata.',
+      'Field definition API reference for IBuilderFieldProps, field types, operators, usageLimit, validation metadata, and field-comparison configuration.',
     searchText:
-      'IBuilderFieldProps field label type value operators usageLimit validation BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState INearestFieldMatch IBuilderFieldChange dynamic field options',
+      'IBuilderFieldProps field label type value operators usageLimit validation fieldComparison comparableFields BOOLEAN TEXT DATE NUMBER STATEMENT LIST MULTI_LIST GROUP BuilderFieldOption BuilderFieldOptionsStatus IBuilderFieldOptionState INearestFieldMatch IBuilderFieldChange dynamic field options',
     content: (
       <>
         <CodeBlock code={fieldTypesSignature} language="ts" label="Field unions" />
@@ -1027,6 +1155,11 @@ export const apiPages: IApiPage[] = [
           code={fieldUsageLimitSignature}
           language="ts"
           label="Field usage limits"
+        />
+        <CodeBlock
+          code={fieldComparisonConfigSignature}
+          language="ts"
+          label="Field comparison config"
         />
         <CodeBlock
           code={fieldOptionTypesSignature}
@@ -1042,6 +1175,7 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional operator whitelist. When omitted, the builder falls back to the default operators for the field type.</li>
           <li><ItemTitle><InlineCode>usageLimit</InlineCode>:</ItemTitle> Optional structural constraint that limits how many rules may use this field or its shared usage bucket.</li>
           <li><ItemTitle><InlineCode>validation</InlineCode>:</ItemTitle> Optional validation config. The shape depends on field type.</li>
+          <li><ItemTitle><InlineCode>fieldComparison</InlineCode>:</ItemTitle> Optional semantic config for field-to-field comparisons, including a comparison type override and an allowlist of valid target fields.</li>
         </List>
         <SectionTitle>usageLimit</SectionTitle>
         <List>
@@ -1049,6 +1183,17 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>scope</InlineCode>:</ItemTitle> Optional. Defaults to <InlineCode>global</InlineCode>. Use <InlineCode>parent</InlineCode> to limit usage only within the same immediate parent group.</li>
           <li><ItemTitle><InlineCode>key</InlineCode>:</ItemTitle> Optional shared bucket identifier. When omitted, the builder uses the field&apos;s own <InlineCode>field</InlineCode> value.</li>
           <li><ItemTitle><InlineCode>message</InlineCode>:</ItemTitle> Optional custom validation message used when persisted or imported data exceeds the allowed limit.</li>
+        </List>
+        <SectionTitle>fieldComparison</SectionTitle>
+        <CodeBlock
+          code={fieldsFieldComparisonSnippet}
+          language="tsx"
+          label="Semantic field comparison metadata"
+        />
+        <List>
+          <li><ItemTitle><InlineCode>type</InlineCode>:</ItemTitle> Optional semantic comparison type. When omitted, <InlineCode>TEXT</InlineCode>, <InlineCode>NUMBER</InlineCode>, <InlineCode>DATE</InlineCode>, and <InlineCode>BOOLEAN</InlineCode> infer automatically, while <InlineCode>LIST</InlineCode> can infer from uniform option values.</li>
+          <li><ItemTitle><InlineCode>comparableFields</InlineCode>:</ItemTitle> Optional source-owned allowlist that restricts which fields may appear on the right-hand side.</li>
+          <li><ItemTitle>Operator support:</ItemTitle> Field comparisons are only offered for operators that have a direct single-value right-hand side. Range and set-style operators continue to use literal values.</li>
         </List>
         <SectionTitle>Type notes</SectionTitle>
         <List>
@@ -1074,17 +1219,24 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Core API',
     summary: '',
     description:
-      'Query data API reference for denormalized rule and group shapes, values, and read-only semantics.',
+      'Query data API reference for denormalized rule and group shapes, literal versus field-reference values, and read-only semantics.',
     searchText:
-      'DenormalizedQuery DenormalizedNode IDenormalizedRuleNode IDenormalizedGroupNode QueryRuleValue QueryGroupValue readOnly id parent',
+      'DenormalizedQuery DenormalizedNode IDenormalizedRuleNode IDenormalizedGroupNode QueryRuleValue QueryRuleValueSource valueSource valueField QueryGroupValue readOnly id parent',
     content: (
       <>
         <CodeBlock code={queryTreeSignature} language="ts" label="Query tree types" />
+        <CodeBlock
+          code={dataFieldComparisonSnippet}
+          language="ts"
+          label="Field-reference rule data"
+        />
         <SectionTitle>Rule props</SectionTitle>
         <List>
           <li><ItemTitle><InlineCode>field</InlineCode>:</ItemTitle> Required field identifier matching one of the configured fields.</li>
           <li><ItemTitle><InlineCode>operator</InlineCode>:</ItemTitle> Optional operator for the rule. Some field and operator combinations imply different value shapes.</li>
-          <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional rule value. Supported scalar/array forms are defined by <InlineCode>QueryRuleValue</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>valueSource</InlineCode>:</ItemTitle> Optional discriminant. Omit it or set <InlineCode>'value'</InlineCode> for literal comparisons, or set <InlineCode>'field'</InlineCode> for right-hand-side field references.</li>
+          <li><ItemTitle><InlineCode>value</InlineCode>:</ItemTitle> Optional literal rule value used when <InlineCode>valueSource</InlineCode> is omitted or set to <InlineCode>'value'</InlineCode>. Supported scalar and array forms are defined by <InlineCode>QueryRuleValue</InlineCode>.</li>
+          <li><ItemTitle><InlineCode>valueField</InlineCode>:</ItemTitle> Required when <InlineCode>valueSource</InlineCode> is <InlineCode>'field'</InlineCode>. Stores the compared field identifier instead of a literal value.</li>
           <li><ItemTitle><InlineCode>operators</InlineCode>:</ItemTitle> Optional rule-level operator override list.</li>
           <li><ItemTitle><InlineCode>readOnly</InlineCode>:</ItemTitle> Optional per-rule lock definition. Supported shapes are <InlineCode>false</InlineCode> or omitted, <InlineCode>true</InlineCode>, or <InlineCode>{`{ enabled: boolean; targets?: ('field' | 'operator' | 'value')[] }`}</InlineCode>.</li>
           <li><ItemTitle><InlineCode>readOnly.targets</InlineCode>:</ItemTitle> Part of the <InlineCode>readOnly</InlineCode> object config. Rule targets are <InlineCode>'field'</InlineCode>, <InlineCode>'operator'</InlineCode>, and <InlineCode>'value'</InlineCode>. Targeted controls stay visible but become non-editable.</li>
@@ -1496,9 +1648,9 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Query Conversion',
     summary: '',
     description:
-      'API reference for formatQuery, including supported formats and shared or format-specific options.',
+      'API reference for formatQuery, including supported formats, shared or format-specific options, and field-to-field serialization behavior.',
     searchText:
-      'formatQuery signature parameters value format options fields wrapWhereClause wrapFilterClause wrapQueryClause variableName rootlessCombinator modifierlessGroupCombinator',
+      'formatQuery signature parameters value format options fields wrapWhereClause wrapFilterClause wrapQueryClause variableName rootlessCombinator modifierlessGroupCombinator field comparison valueSource valueField',
     content: (
       <>
         <CodeBlock code={formatQuerySignature} language="ts" label="formatQuery signature" />
@@ -1529,6 +1681,17 @@ export const apiPages: IApiPage[] = [
           <li><ItemTitle><InlineCode>variableName</InlineCode>:</ItemTitle> Supported by AQL format options. Sets the document variable prefix used in generated expressions.</li>
           <li><ItemTitle><InlineCode>wrapQueryClause</InlineCode>:</ItemTitle> Supported by Elasticsearch format options. Wraps the generated expression in the outer query clause shape.</li>
         </List>
+        <SectionTitle>Field comparisons</SectionTitle>
+        <CodeBlock
+          code={formatQueryFieldComparisonSnippet}
+          language="ts"
+          label="Formatting a field-reference rule"
+        />
+        <List>
+          <li><ItemTitle>Native support:</ItemTitle> <InlineCode>SQL</InlineCode>, <InlineCode>Mongo</InlineCode>, <InlineCode>AQL</InlineCode>, <InlineCode>JSONata</InlineCode>, <InlineCode>JsonLogic</InlineCode>, <InlineCode>CEL</InlineCode>, <InlineCode>SpEL</InlineCode>, <InlineCode>Prisma</InlineCode>, <InlineCode>OData</InlineCode>, <InlineCode>Dynamo</InlineCode>, and <InlineCode>Django</InlineCode> serialize field comparisons when the operator has a direct right-hand-side field form.</li>
+          <li><ItemTitle><InlineCode>fields</InlineCode> option:</ItemTitle> Treat field metadata as strongly recommended here because formatter behavior depends on field semantics and operator compatibility.</li>
+          <li><ItemTitle>Explicit rejection:</ItemTitle> <InlineCode>Elasticsearch</InlineCode> and <InlineCode>RSQL</InlineCode> intentionally throw for <InlineCode>valueSource: 'field'</InlineCode> rules instead of inventing backend-only syntax.</li>
+        </List>
         <AlertBox title="See also" variant="info">
           For a live sandbox that exercises these formats, use{' '}
           <TextLink to="/documentation/parsing-and-formatting">
@@ -1545,9 +1708,9 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Query Conversion',
     summary: '',
     description:
-      'API reference for parseQuery, including supported input formats and the parse result shape.',
+      'API reference for parseQuery, including supported input formats, the parse result shape, and field-to-field inference.',
     searchText:
-      'parseQuery signature parameters value format IParseQueryResult fields data QueryFormat',
+      'parseQuery signature parameters value format IParseQueryResult fields data QueryFormat field comparison valueSource valueField',
     content: (
       <>
         <CodeBlock code={parseQuerySignature} language="ts" label="parseQuery signature" />
@@ -1562,6 +1725,17 @@ export const apiPages: IApiPage[] = [
         <List>
           <li><ItemTitle><InlineCode>fields</InlineCode>:</ItemTitle> <TextLink to="/api/fields">Field metadata</TextLink> inferred by the parser where possible. Some parsers can infer types and operator sets from the source expression.</li>
           <li><ItemTitle><InlineCode>data</InlineCode>:</ItemTitle> The <TextLink to="/api/data">denormalized query tree</TextLink> produced from the input string.</li>
+        </List>
+        <SectionTitle>Field comparisons</SectionTitle>
+        <CodeBlock
+          code={parseQueryFieldComparisonSnippet}
+          language="ts"
+          label="Parsing a field-reference rule"
+        />
+        <List>
+          <li><ItemTitle>Rule shape:</ItemTitle> When the source syntax uses a native right-hand-side field reference, the parsed rule uses <InlineCode>valueSource: 'field'</InlineCode> plus <InlineCode>valueField</InlineCode>.</li>
+          <li><ItemTitle>Supported native parsing:</ItemTitle> <InlineCode>SQL</InlineCode>, <InlineCode>Mongo</InlineCode>, <InlineCode>AQL</InlineCode>, <InlineCode>JSONata</InlineCode>, <InlineCode>JsonLogic</InlineCode>, <InlineCode>CEL</InlineCode>, <InlineCode>SpEL</InlineCode>, <InlineCode>Prisma</InlineCode>, <InlineCode>OData</InlineCode>, <InlineCode>Dynamo</InlineCode>, and <InlineCode>Django</InlineCode> can infer field comparisons from builder-compatible expressions.</li>
+          <li><ItemTitle>Guardrails:</ItemTitle> Unsupported or ambiguous shapes fail explicitly rather than being guessed as field references, including the intentionally unsupported <InlineCode>RSQL</InlineCode> and <InlineCode>Elasticsearch</InlineCode> cases.</li>
         </List>
         <AlertBox title="Documentation" variant="info">
           <TextLink to="/documentation/parsing-and-formatting">Parsing and Formatting</TextLink>.
@@ -1593,3 +1767,4 @@ export const findApiPage = (pathname: string) =>
   apiPages.find(page => page.path === pathname) ?? apiPages[0];
 
 export const apiOverviewPage = apiPages[0];
+

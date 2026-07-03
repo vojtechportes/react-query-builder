@@ -57,6 +57,7 @@ describe('validateBuilderQuery', () => {
     singleRootGroup: true,
     groupTypes: 'with-modifiers',
     allowGroupNegation: true,
+    allowFieldComparisons: false,
     strings,
   };
 
@@ -306,3 +307,124 @@ describe('validateBuilderQuery', () => {
     expect(result.issuesByRuleId['rule-3']).toBeUndefined();
   });
 });
+
+
+describe('validateBuilderQuery field comparisons', () => {
+  const fieldComparisonContext: IBuilderValidationContext = {
+    fields: [
+      {
+        field: 'TEXT_A',
+        label: 'Text A',
+        type: 'TEXT',
+        operators: ['EQUAL', 'BETWEEN'],
+        fieldComparison: {
+          type: 'string',
+          comparableFields: ['TEXT_B'],
+        },
+      },
+      {
+        field: 'TEXT_B',
+        label: 'Text B',
+        type: 'TEXT',
+        operators: ['EQUAL'],
+        fieldComparison: {
+          type: 'string',
+        },
+      },
+      {
+        field: 'NUMBER_A',
+        label: 'Number A',
+        type: 'NUMBER',
+        operators: ['EQUAL'],
+        fieldComparison: {
+          type: 'number',
+        },
+      },
+    ],
+    singleRootGroup: true,
+    groupTypes: 'with-modifiers',
+    allowGroupNegation: true,
+    allowFieldComparisons: true,
+    strings,
+  };
+
+  it('accepts valid field-to-field comparisons at the query-validation level', async () => {
+    const result = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              id: 'rule-field-ok',
+              field: 'TEXT_A',
+              operator: 'EQUAL',
+              valueSource: 'field',
+              valueField: 'TEXT_B',
+            },
+          ],
+        },
+      ],
+      fieldComparisonContext
+    );
+
+    expect(result.isValid).toEqual(true);
+    expect(result.issuesByRuleId['rule-field-ok']).toBeUndefined();
+  });
+
+  it('surfaces disabled and incompatible field-comparison issues at the query-validation level', async () => {
+    const disabledResult = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              id: 'rule-field-disabled',
+              field: 'TEXT_A',
+              operator: 'EQUAL',
+              valueSource: 'field',
+              valueField: 'TEXT_B',
+            },
+          ],
+        },
+      ],
+      {
+        ...fieldComparisonContext,
+        allowFieldComparisons: false,
+      }
+    );
+    const incompatibleResult = await validateBuilderQuery(
+      [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            {
+              id: 'rule-field-incompatible',
+              field: 'TEXT_A',
+              operator: 'EQUAL',
+              valueSource: 'field',
+              valueField: 'NUMBER_A',
+            },
+          ],
+        },
+      ],
+      fieldComparisonContext
+    );
+
+    expect(disabledResult.isValid).toEqual(false);
+    expect(disabledResult.issuesByRuleId['rule-field-disabled'][0].code).toEqual(
+      'field_comparison_disabled'
+    );
+    expect(incompatibleResult.isValid).toEqual(false);
+    expect(
+      incompatibleResult.issuesByRuleId['rule-field-incompatible'][0].code
+    ).toEqual('field_comparison_incompatible');
+  });
+});
+
+

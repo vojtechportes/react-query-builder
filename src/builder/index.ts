@@ -24,6 +24,7 @@ export type {
   BuilderValidationMessage,
   BuilderValidationSeverity,
   IBuilderTextModeConfig,
+  BuilderFieldComparisonType,
   BuilderFieldOperator,
   BuilderFieldOption,
   BuilderFieldOptionsStatus,
@@ -42,6 +43,7 @@ export type {
   IBooleanFieldValidation,
   IBuilderComponentsProps,
   IBuilderFieldChange,
+  IBuilderFieldComparisonConfig,
   IBuilderRuleDependencyEntry,
   IBuilderFieldDependencyEntry,
   IBuilderFieldProps,
@@ -95,3 +97,4 @@ export type {
   IBooleanValueValidationRule,
   IBuilderHistoryState,
 } from './types';
+

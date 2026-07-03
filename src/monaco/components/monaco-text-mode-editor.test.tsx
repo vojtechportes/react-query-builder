@@ -496,3 +496,40 @@ describe('MonacoTextModeEditor', () => {
     });
   });
 });
+
+describe('MonacoTextModeEditor diagnostics', () => {
+  it('renders field-comparison diagnostics as Monaco decorations', async () => {
+    const monacoMock = getMonacoMock();
+
+    render(
+      <MonacoTextModeEditor
+        value="LIST_FIELD = TEXT_FIELD"
+        diagnostics={[
+          {
+            code: 'field_comparison_not_allowed',
+            message:
+              'Field-to-field comparison is not allowed for field "LIST_FIELD" and operator "EQUAL"',
+            start: 13,
+            end: 23,
+          },
+        ]}
+        errorMessage={
+          'Field-to-field comparison is not allowed for field "LIST_FIELD" and operator "EQUAL"'
+        }
+        onChange={jest.fn()}
+      />
+    );
+
+    await waitFor(() => {
+      expect(
+        monacoMock
+          .getLastDecorations()
+          .filter(
+            decoration =>
+              decoration.options?.inlineClassName ===
+              'rqb-monaco-text-mode-diagnostic'
+          )
+      ).toHaveLength(1);
+    });
+  });
+});

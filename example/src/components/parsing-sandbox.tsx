@@ -9,7 +9,11 @@ import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
 import { parseQuery } from '../../../src/parseQuery';
 import { AlertBox } from './alert-box';
 import { CodeBlock } from './code-block';
-import { demoFields, defaultTheme, initialQueryTree } from '../constants/demo-data';
+import {
+  demoFields,
+  defaultTheme,
+  parsingSandboxInitialQueryTree,
+} from '../constants/demo-data';
 import { siteTheme } from '../constants/site-theme';
 import {
   formatQueryText,
@@ -116,11 +120,11 @@ export const ParsingSandbox: React.FC = () => {
   const [outputFormat, setOutputFormat] =
     React.useState<SupportedQueryFormat>('Mongo');
   const [builderData, setBuilderData] =
-    React.useState<DenormalizedQuery>(initialQueryTree);
+    React.useState<DenormalizedQuery>(parsingSandboxInitialQueryTree);
   const [builderFields, setBuilderFields] =
     React.useState<IBuilderFieldProps[]>(demoFields);
   const [inputText, setInputText] = React.useState(() =>
-    formatExample(initialQueryTree, 'SQL')
+    formatExample(parsingSandboxInitialQueryTree, 'SQL')
   );
   const [inputError, setInputError] = React.useState<string | null>(null);
   const [outputError, setOutputError] = React.useState<string | null>(null);
@@ -248,3 +252,4 @@ export const ParsingSandbox: React.FC = () => {
     </Root>
   );
 };
+

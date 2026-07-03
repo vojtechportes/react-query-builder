@@ -82,12 +82,18 @@ export type BuilderFieldValue =
   | Array<{ value: string | number; label: string }>;
 
 export type BuilderFieldUsageLimitScope = 'global' | 'parent';
+export type BuilderFieldComparisonType = 'string' | 'number' | 'date' | 'boolean';
 
 export interface IBuilderFieldUsageLimit {
   key?: string;
   max: number;
   scope?: BuilderFieldUsageLimitScope;
   message?: BuilderValidationMessage;
+}
+
+export interface IBuilderFieldComparisonConfig {
+  type?: BuilderFieldComparisonType;
+  comparableFields?: string[];
 }
 
 export interface IBuilderValidationMessageContext {
@@ -234,6 +240,7 @@ interface IBuilderFieldBase<
   operators?: BuilderFieldOperator[];
   validation?: TValidation;
   usageLimit?: IBuilderFieldUsageLimit;
+  fieldComparison?: IBuilderFieldComparisonConfig;
 }
 
 export type IBooleanFieldProps = IBuilderFieldBase<
@@ -311,6 +318,7 @@ export interface IBuilderValidationContext {
   singleRootGroup: boolean;
   groupTypes: BuilderGroupMode;
   allowGroupNegation: boolean;
+  allowFieldComparisons: boolean;
   strings: IStrings;
 }
 
@@ -406,6 +414,7 @@ export interface IBuilderProps {
   cloneable?: boolean;
   draggable?: boolean;
   allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
   singleRootGroup?: boolean;
   groupTypes?: BuilderGroupMode;
   newNodePlacement?: BuilderNewNodePlacement;
@@ -431,3 +440,5 @@ export type {
   BuilderRefListener,
   IBuilderRef,
 } from '../../hooks/use-builder-ref/types';
+
+

@@ -49,6 +49,8 @@ export const Boolean: FC<IBooleanProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = value;
       });
 
@@ -65,7 +67,12 @@ export const Boolean: FC<IBooleanProps> = ({
         id,
         currentRule.field,
         currentRule.value,
-        value
+        value,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
       );
       return;
     }
@@ -77,7 +84,9 @@ export const Boolean: FC<IBooleanProps> = ({
     dispatchAction(
       createReplaceNodeAction(id, {
         ...currentRule,
+        valueSource: 'value',
         value,
+        valueField: undefined,
       })
     );
     emitBuilderFieldChange(
@@ -87,12 +96,19 @@ export const Boolean: FC<IBooleanProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = value;
       }),
       id,
       currentRule.field,
       currentRule.value,
-      value
+      value,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: 'value',
+      }
     );
   };
 

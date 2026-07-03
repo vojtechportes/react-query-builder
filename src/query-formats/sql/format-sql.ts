@@ -7,6 +7,7 @@ import type {
 } from '../../utils/query-tree';
 import type { IBuilderFieldProps } from '../../builder';
 import type { IFormatSqlOptions } from '../types';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import {
   DEFAULT_MODIFIERLESS_GROUP_COMBINATOR,
   DEFAULT_ROOTLESS_COMBINATOR,
@@ -62,6 +63,20 @@ const formatArrayValueWithField = (
 ): string =>
   `(${value.map(item => formatValueWithField(item, field)).join(', ')})`;
 
+const formatRuleValue = (
+  rule: IDenormalizedRuleNode,
+  field?: IBuilderFieldProps
+): string => {
+  if (isFieldComparisonRule(rule)) {
+    return quoteIdentifier(rule.valueField);
+  }
+
+  return formatValueWithField(
+    rule.value as number | string | boolean,
+    field
+  );
+};
+
 const joinFragments = (
   fragments: string[],
   combinator: QueryGroupValue
@@ -91,10 +106,26 @@ const formatLikePattern = (
   return `${prefix}${rule.value}${suffix}`;
 };
 
+const ensureSqlSupportsRule = (rule: IDenormalizedRuleNode): void => {
+  if (!isFieldComparisonRule(rule)) {
+    return;
+  }
+
+  if (isSqlRuleFormattable(rule)) {
+    return;
+  }
+
+  throw new Error(
+    `SQL does not support field-to-field comparisons for field "${rule.field}" and operator "${rule.operator}".`
+  );
+};
+
 const formatRule = (
   rule: IDenormalizedRuleNode,
   fields?: IBuilderFieldProps[]
 ): string => {
+  ensureSqlSupportsRule(rule);
+
   if (!isSqlRuleFormattable(rule)) {
     return '';
   }
@@ -104,35 +135,17 @@ const formatRule = (
 
   switch (rule.operator) {
     case 'LARGER':
-      return `${field} > ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} > ${formatRuleValue(rule, fieldConfig)}`;
     case 'SMALLER':
-      return `${field} < ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} < ${formatRuleValue(rule, fieldConfig)}`;
     case 'LARGER_EQUAL':
-      return `${field} >= ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} >= ${formatRuleValue(rule, fieldConfig)}`;
     case 'SMALLER_EQUAL':
-      return `${field} <= ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} <= ${formatRuleValue(rule, fieldConfig)}`;
     case 'EQUAL':
-      return `${field} = ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} = ${formatRuleValue(rule, fieldConfig)}`;
     case 'NOT_EQUAL':
-      return `${field} <> ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} <> ${formatRuleValue(rule, fieldConfig)}`;
     case 'ALL_IN':
     case 'ANY_IN':
     case 'IN':
@@ -182,15 +195,9 @@ const formatRule = (
     case 'IS_NOT_NULL':
       return `${field} IS NOT NULL`;
     case 'LIKE':
-      return `${field} LIKE ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} LIKE ${formatRuleValue(rule, fieldConfig)}`;
     case 'NOT_LIKE':
-      return `${field} NOT LIKE ${formatValueWithField(
-        rule.value as number | string | boolean,
-        fieldConfig
-      )}`;
+      return `${field} NOT LIKE ${formatRuleValue(rule, fieldConfig)}`;
     case 'CONTAINS':
       return `${field} LIKE ${formatValueWithField(
         formatLikePattern(rule, '%', '%'),
@@ -303,3 +310,5 @@ export const formatSql = (
 
   return normalizedOptions.wrapWhereClause ? `WHERE ${sql}` : sql;
 };
+
+

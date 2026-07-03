@@ -1,6 +1,6 @@
 import { IDenormalizedRuleNode } from '../../../utils/query-tree';
 import { IParsedSqlRuleSource } from './parsed-sql-rule-source';
 
-export interface IParsedSqlRuleNode extends IDenormalizedRuleNode {
+export type IParsedSqlRuleNode = IDenormalizedRuleNode & {
   source: IParsedSqlRuleSource;
-}
+};

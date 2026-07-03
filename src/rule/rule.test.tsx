@@ -47,12 +47,20 @@ const fields: IBuilderFieldProps[] = [
     label: 'Mock Field 6',
     operators: ['EQUAL'],
     type: 'LIST',
+    value: [{ label: 'Text value', value: 'text-value' }],
+    fieldComparison: { type: 'string' },
   },
   {
     field: 'MOCK_FIELD_7',
     label: 'Mock Field 7',
     operators: ['EQUAL'],
     type: 'MULTI_LIST',
+  },
+  {
+    field: 'MOCK_FIELD_8',
+    label: 'Mock Field 8',
+    operators: ['EQUAL'],
+    type: 'TEXT',
   },
 ];
 const data: any[] = [
@@ -264,5 +272,42 @@ describe('#components/Rule', () => {
     expect(
       container.querySelector('[data-test="Switch"]')
     ).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('renders value-source and value-field selectors for field comparisons', () => {
+    const { container } = renderWithContext(
+      <>
+        <Rule
+          id="test-3"
+          field="MOCK_FIELD_2"
+          operator="EQUAL"
+          valueSource="field"
+          valueField="MOCK_FIELD_8"
+        />
+        <Rule
+          id="test-7"
+          field="MOCK_FIELD_6"
+          operator="EQUAL"
+          valueSource="field"
+          valueField="MOCK_FIELD_8"
+        />
+      </>,
+      {
+        allowFieldComparisons: true,
+      }
+    );
+
+    expect(
+      container.querySelector('#query-builder-rule-test-3-value-source-trigger')
+    ).toBeTruthy();
+    expect(
+      container.querySelector('#query-builder-rule-test-3-value-field-trigger')
+    ).toBeTruthy();
+    expect(
+      container.querySelector('#query-builder-rule-test-7-value-source-trigger')
+    ).toBeTruthy();
+    expect(
+      container.querySelector('#query-builder-rule-test-7-value-field-trigger')
+    ).toBeTruthy();
   });
 });

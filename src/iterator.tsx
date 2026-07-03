@@ -146,7 +146,7 @@ export const Iterator: FC<IIteratorProps> = ({
       ];
     }
 
-    const { field, value, id, operator } = item as IRuleProps;
+    const { field, value, valueSource, valueField, id, operator } = item as IRuleProps;
     const ruleReadOnly = resolveEffectiveRuleReadOnly(
       item.readOnly,
       inheritedReadOnly
@@ -158,6 +158,8 @@ export const Iterator: FC<IIteratorProps> = ({
         key={id}
         field={field}
         value={value}
+        valueSource={valueSource}
+        valueField={valueField}
         operator={operator}
         id={id}
         readOnly={isRuleReadOnly}

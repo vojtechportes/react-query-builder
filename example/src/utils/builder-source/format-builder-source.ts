@@ -16,6 +16,7 @@ export const formatBuilderSource = ({
   cloneable,
   draggable,
   allowGroupNegation,
+  allowFieldComparisons,
   newNodePlacement,
   history,
   textMode,
@@ -81,7 +82,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     .filter(Boolean)
     .join('\n');
 
-  const builderProps = [
+  const builderProps: string[] = [
     'data={data}',
     'fields={demoFields}',
     'onChange={setData}',
@@ -93,6 +94,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     cloneable ? 'cloneable' : null,
     draggable ? 'draggable' : null,
     allowGroupNegation ? null : 'allowGroupNegation={false}',
+    allowFieldComparisons ? 'allowFieldComparisons' : null,
     newNodePlacement === 'prepend'
       ? 'newNodePlacement="prepend"'
       : null,
@@ -108,7 +110,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     usesFluentUiAdapter ? 'components={fluentUiComponents}' : null,
     usesRadixAdapter ? 'components={radixComponents}' : null,
     usesBootstrapAdapter ? 'components={bootstrapComponents}' : null,
-  ].filter(Boolean);
+  ].filter((prop): prop is string => Boolean(prop));
 
   const componentExpression = useMonacoTextEditor
     ? usesMuiAdapter
@@ -148,7 +150,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     ? [
         '    <ThemeProvider',
         '      colors={',
-        formatThemeOverrides(themeOverrides)
+        formatThemeOverrides(themeOverrides!)
           .split('\n')
           .map(line => `      ${line}`)
           .join('\n'),
@@ -188,3 +190,6 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     .filter(line => line !== null)
     .join('\n');
 };
+
+
+

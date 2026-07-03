@@ -66,6 +66,61 @@ describe('parseQuery', () => {
     ]);
   });
 
+  it('parses field-to-field SQL comparisons and infers both fields', () => {
+    const result = parseQuery(
+      'price >= cost AND name LIKE name_pattern',
+      'SQL'
+    );
+
+    expect(result.data).toEqual([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'price',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'cost',
+          },
+          {
+            field: 'name',
+            operator: 'LIKE',
+            valueSource: 'field',
+            valueField: 'name_pattern',
+          },
+        ],
+      },
+    ]);
+    expect(result.fields).toEqual([
+      {
+        field: 'price',
+        label: 'price',
+        type: 'TEXT',
+        operators: ['LARGER_EQUAL'],
+      },
+      {
+        field: 'cost',
+        label: 'cost',
+        type: 'TEXT',
+        operators: ['LARGER_EQUAL'],
+      },
+      {
+        field: 'name',
+        label: 'name',
+        type: 'TEXT',
+        operators: ['LIKE'],
+      },
+      {
+        field: 'name_pattern',
+        label: 'name_pattern',
+        type: 'TEXT',
+        operators: ['LIKE'],
+      },
+    ]);
+  });
+
   it('throws on invalid SQL', () => {
     expect(() => parseQuery('status =', 'SQL')).toThrow(
       'Expected a scalar value'

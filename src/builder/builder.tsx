@@ -71,6 +71,33 @@ import {
 } from '../utils/remove-query-negation.util';
 import { removeNormalizedQueryNegation } from '../utils/remove-normalized-query-negation.util';
 
+const tryFormatBuilderTextState = (
+  data: DenormalizedQuery,
+  fields: IBuilderProps['fields'],
+  options?: Parameters<typeof formatBuilderSqlState>[2]
+): {
+  textState: ReturnType<typeof formatBuilderSqlState>;
+  errorMessage: string | null;
+} => {
+  try {
+    return {
+      textState: formatBuilderSqlState(data, fields, options),
+      errorMessage: null,
+    };
+  } catch (error) {
+    return {
+      textState: {
+        value: '',
+        protectedRanges: [],
+      },
+      errorMessage:
+        error instanceof Error
+          ? error.message
+          : 'Failed to format SQL text mode state.',
+    };
+  }
+};
+
 export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   data: originalData = [],
   fields,
@@ -82,6 +109,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   cloneable = false,
   draggable = false,
   allowGroupNegation = true,
+  allowFieldComparisons = false,
   singleRootGroup = true,
   groupTypes = 'with-modifiers',
   newNodePlacement = 'append',
@@ -131,29 +159,29 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   const initialData = initialTextModeEnabled
     ? normalizeBuilderTextModeQuery(compatibleOriginalData)
     : compatibleOriginalData;
+  const initialFormattedTextState = initialTextModeEnabled
+    ? tryFormatBuilderTextState(initialData, fields, {
+        protectGroupDeletionBoundaries: readOnlyProtectsDelete,
+      })
+    : {
+        textState: { value: '', protectedRanges: [] },
+        errorMessage: null,
+      };
   const [data, setData] = useState<NormalizedQuery>(() =>
     sanitizeNormalizedQuery(
       ingestQuery(initialData, initialRootGroupType, singleRootGroup)
     )
   );
   const [mode, setMode] = useState<'builder' | 'text'>(resolvedDefaultMode);
-  const [textValue, setTextValue] = useState<string>(() => {
-    if (!initialTextModeEnabled) {
-      return '';
-    }
-
-    return formatBuilderSqlState(initialData, fields).value;
-  });
+  const [textValue, setTextValue] = useState<string>(
+    () => initialFormattedTextState.textState.value
+  );
   const [textProtectedRanges, setTextProtectedRanges] = useState<
     ReturnType<typeof formatBuilderSqlState>['protectedRanges']
-  >(() =>
-    initialTextModeEnabled
-      ? formatBuilderSqlState(initialData, fields, {
-          protectGroupDeletionBoundaries: readOnlyProtectsDelete,
-        }).protectedRanges
-      : []
+  >(() => initialFormattedTextState.textState.protectedRanges);
+  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(
+    () => initialFormattedTextState.errorMessage
   );
-  const [textErrorMessage, setTextErrorMessage] = useState<string | null>(null);
   const [textDiagnostics, setTextDiagnostics] = useState<
     ReturnType<typeof parseBuilderSqlText>['diagnostics']
   >([]);
@@ -222,6 +250,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     singleRootGroup,
     groupTypes: effectiveGroupTypes,
     allowGroupNegation,
+    allowFieldComparisons,
     strings,
     validator,
     onStateChange,
@@ -334,8 +363,9 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
           field: '',
           id: createId(),
           parent: parentId,
+          valueSource: 'value',
           ...clone(rule),
-        };
+        } as INormalizedRuleNode;
 
         return commitData(
           createInsertSubtreeAction([nextRule], resolvedIndex, parentId)
@@ -523,7 +553,9 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
         return commitData(
           createReplaceNodeAction(ruleId, {
             ...ruleNode,
+            valueSource: 'value',
             value: nextValue,
+            valueField: undefined,
           })
         );
       },
@@ -645,7 +677,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       return;
     }
 
-    const nextTextState = formatBuilderSqlState(
+    const nextFormattedTextState = tryFormatBuilderTextState(
       normalizeBuilderTextModeQuery(sanitizeDenormalizedQuery(emitQuery(data))),
       fields,
       {
@@ -653,10 +685,10 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       }
     );
 
-    setTextValue(nextTextState.value);
-    setTextProtectedRanges(nextTextState.protectedRanges);
+    setTextValue(nextFormattedTextState.textState.value);
+    setTextProtectedRanges(nextFormattedTextState.textState.protectedRanges);
     setTextDiagnostics([]);
-    setTextErrorMessage(null);
+    setTextErrorMessage(nextFormattedTextState.errorMessage);
   }, [data, fields, mode, readOnlyProtectsDelete, sanitizeDenormalizedQuery, textModeEnabled]);
 
   const handleAddRootGroup = useCallback(() => {
@@ -696,7 +728,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
   }, []);
 
   const handleSwitchToTextMode = useCallback(() => {
-    const nextTextState = formatBuilderSqlState(
+    const nextFormattedTextState = tryFormatBuilderTextState(
       normalizeBuilderTextModeQuery(sanitizeDenormalizedQuery(emitQuery(data))),
       fields,
       {
@@ -704,10 +736,10 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       }
     );
 
-    setTextValue(nextTextState.value);
-    setTextProtectedRanges(nextTextState.protectedRanges);
+    setTextValue(nextFormattedTextState.textState.value);
+    setTextProtectedRanges(nextFormattedTextState.textState.protectedRanges);
     setTextDiagnostics([]);
-    setTextErrorMessage(null);
+    setTextErrorMessage(nextFormattedTextState.errorMessage);
     setMode('text');
   }, [data, fields, readOnlyProtectsDelete, sanitizeDenormalizedQuery]);
 
@@ -717,6 +749,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 
       const parseResult = parseBuilderSqlText(nextText, fields, strings, {
         allowGroupNegation,
+        allowFieldComparisons,
       });
       const currentQuery = sanitizeDenormalizedQuery(emitQuery(data));
       const readOnlyTargetDiagnostic =
@@ -786,6 +819,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
     },
     [
       allowGroupNegation,
+      allowFieldComparisons,
       commitData,
       data,
       readOnlyProtectsDelete,
@@ -860,6 +894,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
       cloneable={cloneable}
       draggable={draggable}
       allowGroupNegation={allowGroupNegation}
+      allowFieldComparisons={allowFieldComparisons}
       singleRootGroup={singleRootGroup}
       groupTypes={effectiveGroupTypes}
       newNodePlacement={newNodePlacement}
@@ -931,3 +966,6 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(({
 });
 
 Builder.displayName = 'Builder';
+
+
+

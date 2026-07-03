@@ -4,6 +4,7 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import { isDateString } from './shared';
 import { sqlOperatorOrder } from './sql-token.types';
 
@@ -87,22 +88,35 @@ export const inferSqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
   >();
 
-  collectSqlRules(data).forEach(rule => {
-    const currentField = fieldMap.get(rule.field);
-    const nextType = inferSqlFieldType(rule);
+  const mergeFieldConfig = (
+    fieldName: string,
+    type: IBuilderFieldProps['type'],
+    operator?: QueryOperator
+  ) => {
+    const currentField = fieldMap.get(fieldName);
 
     if (!currentField) {
-      fieldMap.set(rule.field, {
-        type: nextType,
-        operators: rule.operator ? [rule.operator] : [],
+      fieldMap.set(fieldName, {
+        type,
+        operators: operator ? [operator] : [],
       });
       return;
     }
 
-    currentField.type = mergeSqlFieldType(currentField.type, nextType);
+    currentField.type = mergeSqlFieldType(currentField.type, type);
 
-    if (rule.operator && !currentField.operators.includes(rule.operator)) {
-      currentField.operators.push(rule.operator);
+    if (operator && !currentField.operators.includes(operator)) {
+      currentField.operators.push(operator);
+    }
+  };
+
+  collectSqlRules(data).forEach(rule => {
+    const nextType = inferSqlFieldType(rule);
+
+    mergeFieldConfig(rule.field, nextType, rule.operator);
+
+    if (isFieldComparisonRule(rule)) {
+      mergeFieldConfig(rule.valueField, nextType, rule.operator);
     }
   });
 

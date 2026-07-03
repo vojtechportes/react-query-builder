@@ -6,6 +6,7 @@ import { validateBuilderSqlTextSemantics } from './validate-builder-sql-text-sem
 
 interface IParseBuilderSqlTextOptions {
   allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
 }
 
 export const parseBuilderSqlText = (
@@ -32,3 +33,4 @@ export const parseBuilderSqlText = (
     diagnostics: [...result.diagnostics, ...semanticDiagnostics],
   };
 };
+
