@@ -4,6 +4,7 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import { aqlOperatorOrder } from './aql-token.types';
 
 const inferAqlFieldType = (
@@ -62,22 +63,34 @@ export const inferAqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
   >();
 
-  collectAqlRules(data).forEach(rule => {
-    const currentField = fieldMap.get(rule.field);
-    const nextType = inferAqlFieldType(rule);
+  const mergeFieldConfig = (
+    fieldName: string,
+    type: IBuilderFieldProps['type'],
+    operator?: QueryOperator
+  ) => {
+    const currentField = fieldMap.get(fieldName);
 
     if (!currentField) {
-      fieldMap.set(rule.field, {
-        type: nextType,
-        operators: rule.operator ? [rule.operator] : [],
+      fieldMap.set(fieldName, {
+        type,
+        operators: operator ? [operator] : [],
       });
       return;
     }
 
-    currentField.type = mergeAqlFieldType(currentField.type, nextType);
+    currentField.type = mergeAqlFieldType(currentField.type, type);
 
-    if (rule.operator && !currentField.operators.includes(rule.operator)) {
-      currentField.operators.push(rule.operator);
+    if (operator && !currentField.operators.includes(operator)) {
+      currentField.operators.push(operator);
+    }
+  };
+
+  collectAqlRules(data).forEach(rule => {
+    const nextType = inferAqlFieldType(rule);
+    mergeFieldConfig(rule.field, nextType, rule.operator);
+
+    if (isFieldComparisonRule(rule)) {
+      mergeFieldConfig(rule.valueField, nextType, rule.operator);
     }
   });
 
@@ -90,4 +103,3 @@ export const inferAqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     ),
   })) as IBuilderFieldProps[];
 };
-

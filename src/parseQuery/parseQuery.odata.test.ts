@@ -43,4 +43,34 @@ describe('parseQuery OData', () => {
       },
     ]);
   });
+
+  it('parses native field-to-field string functions', () => {
+    const result = parseQuery(
+      '(contains(name,needle) and startswith(name,prefix) and endswith(name,suffix) and not contains(status,archived_status))',
+      'OData'
+    );
+
+    expect(result.data).toEqual([
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          { field: 'name', operator: 'CONTAINS', valueSource: 'field', valueField: 'needle' },
+          { field: 'name', operator: 'STARTS_WITH', valueSource: 'field', valueField: 'prefix' },
+          { field: 'name', operator: 'ENDS_WITH', valueSource: 'field', valueField: 'suffix' },
+          { field: 'status', operator: 'NOT_CONTAINS', valueSource: 'field', valueField: 'archived_status' },
+        ],
+      },
+    ]);
+  });
+
+  it('rejects computed rhs expressions for native field-to-field string functions', () => {
+    expect(() =>
+      parseQuery(
+        '(contains(name,startswith(prefix,\'A\')))',
+        'OData'
+      )
+    ).toThrow('Expected token "RPAREN" but found "(".');
+  });
 });

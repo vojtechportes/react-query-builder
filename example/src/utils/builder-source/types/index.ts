@@ -1,4 +1,4 @@
-import type { IColors } from '../../../../src/constants/colors';
+import type { IColors } from '../../../../../src/constants/colors';
 
 export type CustomizationMode =
   | 'default'
@@ -16,6 +16,7 @@ export interface IBuilderSourceOptions {
   cloneable: boolean;
   draggable: boolean;
   allowGroupNegation: boolean;
+  allowFieldComparisons: boolean;
   newNodePlacement: 'append' | 'prepend';
   history: boolean;
   textMode: boolean;
@@ -27,3 +28,5 @@ export interface IBuilderSourceOptions {
   themeColors: IColors;
   defaultThemeColors: IColors;
 }
+
+

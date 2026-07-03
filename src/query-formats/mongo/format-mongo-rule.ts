@@ -1,9 +1,11 @@
 import type {
+  IFieldReferenceRuleNode,
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
-import { escapeRegexPattern } from './shared';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
+import { createMongoFieldReference, escapeRegexPattern } from './shared';
 
 type MongoFieldValue = QueryRuleValue | Record<string, unknown>;
 
@@ -67,22 +69,46 @@ const createNotBetweenExpression = (
   ],
 });
 
+const createFieldComparisonExpression = (
+  rule: IFieldReferenceRuleNode,
+  operator: '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte'
+): Record<string, MongoFieldValue> => ({
+  $expr: {
+    [operator]: [
+      createMongoFieldReference(rule.field),
+      createMongoFieldReference(rule.valueField),
+    ],
+  },
+});
+
 export const formatMongoRule = (
   rule: IDenormalizedRuleNode
 ): Record<string, MongoFieldValue> => {
   switch (rule.operator) {
     case 'EQUAL':
-      return { [rule.field]: rule.value as QueryRuleValue };
+      return isFieldComparisonRule(rule)
+        ? createFieldComparisonExpression(rule, '$eq')
+        : { [rule.field]: rule.value as QueryRuleValue };
     case 'NOT_EQUAL':
-      return { [rule.field]: { $ne: rule.value } };
+      return isFieldComparisonRule(rule)
+        ? createFieldComparisonExpression(rule, '$ne')
+        : { [rule.field]: { $ne: rule.value } };
     case 'LARGER':
-      return { [rule.field]: { $gt: rule.value } };
+      return isFieldComparisonRule(rule)
+        ? createFieldComparisonExpression(rule, '$gt')
+        : { [rule.field]: { $gt: rule.value } };
     case 'LARGER_EQUAL':
-      return { [rule.field]: { $gte: rule.value } };
+      return isFieldComparisonRule(rule)
+        ? createFieldComparisonExpression(rule, '$gte')
+        : { [rule.field]: { $gte: rule.value } };
     case 'SMALLER':
-      return { [rule.field]: { $lt: rule.value } };
+      return isFieldComparisonRule(rule)
+        ? createFieldComparisonExpression(rule, '$lt')
+        : { [rule.field]: { $lt: rule.value } };
     case 'SMALLER_EQUAL':
-      return { [rule.field]: { $lte: rule.value } };
+      return isFieldComparisonRule(rule)
+        ? createFieldComparisonExpression(rule, '$lte')
+        : { [rule.field]: { $lte: rule.value } };
     case 'IN':
     case 'ANY_IN':
       return { [rule.field]: { $in: ensureArrayValue(rule.operator, rule.value) } };
@@ -147,4 +173,3 @@ export const formatMongoRule = (
       );
   }
 };
-

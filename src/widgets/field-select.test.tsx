@@ -13,15 +13,29 @@ const fields: IBuilderFieldProps[] = [
   { field: 'MOCK_FIELD_1', label: 'Mock Field', type: 'BOOLEAN' },
   { field: 'MOCK_FIELD_2', label: 'Mock Field', type: 'DATE', operators: ['BETWEEN'] },
   { field: 'MOCK_FIELD_3', label: 'Mock Field', type: 'DATE', operators: ['LARGER'] },
-  { field: 'MOCK_FIELD_4', label: 'Mock Field', type: 'TEXT', operators: ['EQUAL'] },
-  { field: 'MOCK_FIELD_5', label: 'Mock Field', type: 'TEXT', operators: ['BETWEEN'] },
+  {
+    field: 'MOCK_FIELD_4',
+    label: 'Mock Field',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    fieldComparison: { type: 'string' },
+  },
+  {
+    field: 'MOCK_FIELD_5',
+    label: 'Mock Field',
+    type: 'TEXT',
+    operators: ['BETWEEN'],
+    fieldComparison: { type: 'string' },
+  },
   { field: 'MOCK_FIELD_6', label: 'Mock Field', type: 'NUMBER', operators: ['EQUAL'] },
   { field: 'MOCK_FIELD_7', label: 'Mock Field', type: 'NUMBER', operators: ['BETWEEN'] },
   {
     field: 'MOCK_FIELD_8',
     label: 'Mock Field',
     type: 'LIST',
+    operators: ['EQUAL'],
     value: [{ label: 'test', value: 'test' }],
+    fieldComparison: { type: 'string' },
   },
   {
     field: 'MOCK_FIELD_9',
@@ -139,7 +153,97 @@ describe('#components/Widgets/FieldSelect', () => {
 
     fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
 
-    expect(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_1]')).toBeDisabled();
-    expect(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_2]')).not.toBeDisabled();
+    expect(
+      getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_1]').hasAttribute(
+        'disabled'
+      )
+    ).toBe(true);
+    expect(
+      getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_2]').hasAttribute(
+        'disabled'
+      )
+    ).toBe(false);
+  });
+
+  it('preserves field-comparison mode when the next field still supports it', () => {
+    const onFieldChange = jest.fn();
+    const fieldComparisonData: any[] = [
+      {
+        id: 'test',
+        field: 'MOCK_FIELD_4',
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: 'MOCK_FIELD_5',
+      },
+    ];
+    const { container } = renderWithContext(
+      <FieldSelect id="test" selectedValue="MOCK_FIELD_4" />,
+      {
+        data: fieldComparisonData,
+        allowFieldComparisons: true,
+        onFieldChange,
+      }
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_8]'));
+
+    expect(onFieldChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        field: 'MOCK_FIELD_8',
+        previousValueSource: 'field',
+        previousValueField: 'MOCK_FIELD_5',
+        valueSource: 'field',
+        valueField: 'MOCK_FIELD_5',
+        data: [
+          {
+            field: 'MOCK_FIELD_8',
+            operator: 'EQUAL',
+            valueSource: 'field',
+            valueField: 'MOCK_FIELD_5',
+          },
+        ],
+      })
+    );
+  });
+
+  it('emits source metadata when changing a field from a field-comparison rule', () => {
+    const onFieldChange = jest.fn();
+    const fieldComparisonData: any[] = [
+      {
+        id: 'test',
+        field: 'MOCK_FIELD_4',
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: 'MOCK_FIELD_5',
+      },
+    ];
+    const { container } = renderWithContext(
+      <FieldSelect id="test" selectedValue="MOCK_FIELD_4" />,
+      {
+        data: fieldComparisonData,
+        onFieldChange,
+      }
+    );
+
+    fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
+    fireEvent.click(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_1]'));
+
+    expect(onFieldChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        field: 'MOCK_FIELD_1',
+        previousValueSource: 'field',
+        previousValueField: 'MOCK_FIELD_5',
+        valueSource: 'value',
+        value: false,
+        data: [
+          {
+            field: 'MOCK_FIELD_1',
+            valueSource: 'value',
+            value: false,
+          },
+        ],
+      })
+    );
   });
 });

@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import {
   escapeCelRegex,
   formatCelArrayValue,
@@ -43,20 +44,30 @@ const ensureStringValue = (
   return value;
 };
 
+const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : formatCelScalarValue(rule.value as never);
+
+const formatFieldOrStringValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : quoteCelString(ensureStringValue(rule.operator, rule.value));
+
 export const formatCelRule = (rule: IDenormalizedRuleNode): string => {
   switch (rule.operator) {
     case 'EQUAL':
-      return `${rule.field} == ${formatCelScalarValue(rule.value as never)}`;
+      return `${rule.field} == ${formatFieldOrScalarValue(rule)}`;
     case 'NOT_EQUAL':
-      return `${rule.field} != ${formatCelScalarValue(rule.value as never)}`;
+      return `${rule.field} != ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER':
-      return `${rule.field} > ${formatCelScalarValue(rule.value as never)}`;
+      return `${rule.field} > ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER_EQUAL':
-      return `${rule.field} >= ${formatCelScalarValue(rule.value as never)}`;
+      return `${rule.field} >= ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER':
-      return `${rule.field} < ${formatCelScalarValue(rule.value as never)}`;
+      return `${rule.field} < ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER_EQUAL':
-      return `${rule.field} <= ${formatCelScalarValue(rule.value as never)}`;
+      return `${rule.field} <= ${formatFieldOrScalarValue(rule)}`;
     case 'IN':
       return `${rule.field} in ${formatCelArrayValue(
         ensureArrayValue(rule.operator, rule.value)
@@ -90,29 +101,25 @@ export const formatCelRule = (rule: IDenormalizedRuleNode): string => {
     case 'IS_NOT_NULL':
       return `${rule.field} != null`;
     case 'CONTAINS':
-      return `${rule.field}.contains(${quoteCelString(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `${rule.field}.contains(${formatFieldOrStringValue(rule)})`;
     case 'NOT_CONTAINS':
-      return `!(${rule.field}.contains(${quoteCelString(
-        ensureStringValue(rule.operator, rule.value)
-      )}))`;
+      return `!(${rule.field}.contains(${formatFieldOrStringValue(rule)}))`;
     case 'STARTS_WITH':
-      return `${rule.field}.startsWith(${quoteCelString(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `${rule.field}.startsWith(${formatFieldOrStringValue(rule)})`;
     case 'ENDS_WITH':
-      return `${rule.field}.endsWith(${quoteCelString(
-        ensureStringValue(rule.operator, rule.value)
-      )})`;
+      return `${rule.field}.endsWith(${formatFieldOrStringValue(rule)})`;
     case 'LIKE':
-      return `${rule.field}.matches(${quoteCelString(
-        `^${escapeCelRegex(ensureStringValue(rule.operator, rule.value))}$`
-      )})`;
+      return isFieldComparisonRule(rule)
+        ? `${rule.field}.matches(${rule.valueField})`
+        : `${rule.field}.matches(${quoteCelString(
+            `^${escapeCelRegex(ensureStringValue(rule.operator, rule.value))}$`
+          )})`;
     case 'NOT_LIKE':
-      return `!(${rule.field}.matches(${quoteCelString(
-        `^${escapeCelRegex(ensureStringValue(rule.operator, rule.value))}$`
-      )}))`;
+      return isFieldComparisonRule(rule)
+        ? `!(${rule.field}.matches(${rule.valueField}))`
+        : `!(${rule.field}.matches(${quoteCelString(
+            `^${escapeCelRegex(ensureStringValue(rule.operator, rule.value))}$`
+          )}))`;
     default:
       throw new Error(
         `Unsupported or missing operator "${rule.operator}" for field "${rule.field}".`

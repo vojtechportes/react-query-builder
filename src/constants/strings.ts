@@ -65,6 +65,9 @@ export interface IStrings {
   };
   form?: {
     selectYourValue?: string;
+    compareToValue?: string;
+    compareToField?: string;
+    selectField?: string;
   };
   operators?: {
     LARGER?: string;
@@ -123,6 +126,12 @@ export interface IStrings {
     negationNotAllowed?: string;
     usageLimitExceeded?: string;
     invalidTree?: string;
+    valueFieldRequired?: string;
+    valueFieldNotFound?: string;
+    fieldComparisonNotAllowed?: string;
+    fieldComparisonDisabled?: string;
+    fieldComparisonOperatorNotAllowed?: string;
+    fieldComparisonIncompatible?: string;
   };
 }
 
@@ -197,6 +206,9 @@ export const strings: IStrings = {
   },
   form: {
     selectYourValue: 'Select your value',
+    compareToValue: 'Value',
+    compareToField: 'Field',
+    selectField: 'Select field',
   },
   operators: {
     LARGER: 'Larger',
@@ -246,5 +258,17 @@ export const strings: IStrings = {
     negationNotAllowed: 'Negation is not allowed in this builder',
     usageLimitExceeded: 'Field "{field}" can appear at most {max} times in this scope',
     invalidTree: 'Input data tree is in invalid format',
+    valueFieldRequired: 'A comparison field is required',
+    valueFieldNotFound: 'Comparison field "{field}" was not found',
+    fieldComparisonNotAllowed:
+      'Field-to-field comparison is not allowed for field "{field}" and operator "{operator}"',
+    fieldComparisonDisabled:
+      'Field-to-field comparison is not allowed',
+    fieldComparisonOperatorNotAllowed:
+      'Operator "{operator}" does not support field-to-field comparison for field "{field}"',
+    fieldComparisonIncompatible:
+      'Comparison field "{valueField}" is not compatible with field "{field}" for operator "{operator}"',
   },
 };
+
+

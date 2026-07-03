@@ -3,6 +3,7 @@ import type {
   QueryGroupValue,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type {
   IJsonataToken,
   JsonataTokenType,
@@ -138,7 +139,9 @@ export class JsonataParser {
     }
 
     const operatorToken = this.expect('OPERATOR');
-    const value = this.parseScalarValue();
+    const nextToken = this.peek();
+    const valueField = nextToken.type === 'IDENTIFIER' ? this.parseIdentifier() : undefined;
+    const value = valueField ? undefined : this.parseScalarValue();
 
     if (operatorToken.value === '=' && value === null) {
       return { field, operator: 'IS_NULL' };
@@ -148,11 +151,18 @@ export class JsonataParser {
       return { field, operator: 'IS_NOT_NULL' };
     }
 
-    return {
-      field,
-      operator: this.mapOperator(operatorToken.value),
-      value: value as Exclude<typeof value, null>,
-    };
+    return valueField
+      ? {
+          field,
+          operator: this.mapOperator(operatorToken.value),
+          valueSource: 'field',
+          valueField,
+        }
+      : {
+          field,
+          operator: this.mapOperator(operatorToken.value),
+          value: value as Exclude<typeof value, null>,
+        };
   }
 
   private parseIdentifier(): string {
@@ -239,7 +249,13 @@ export class JsonataParser {
     left: ParsedJsonataNode,
     right: ParsedJsonataNode
   ): IDenormalizedRuleNode | null {
-    if (this.isRuleNode(left) && this.isRuleNode(right) && left.field === right.field) {
+    if (
+      this.isRuleNode(left) &&
+      this.isRuleNode(right) &&
+      left.field === right.field &&
+      !isFieldComparisonRule(left) &&
+      !isFieldComparisonRule(right)
+    ) {
       if (
         combinator === 'AND' &&
         left.operator === 'LARGER_EQUAL' &&
@@ -317,4 +333,3 @@ export class JsonataParser {
     return this.tokens[this.index];
   }
 }
-

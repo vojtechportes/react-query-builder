@@ -63,6 +63,8 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = nextValue;
       });
 
@@ -79,7 +81,12 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         id,
         currentRule.field,
         currentRule.value,
-        nextValue
+        nextValue,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
       );
       return;
     }
@@ -96,7 +103,9 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     dispatchAction(
       createReplaceNodeAction(id, {
         ...currentRule,
+        valueSource: 'value',
         value: nextValue,
+        valueField: undefined,
       })
     );
     emitBuilderFieldChange(
@@ -106,12 +115,19 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = nextValue;
       }),
       id,
       currentRule.field,
       currentRule.value,
-      nextValue
+      nextValue,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: 'value',
+      }
     );
   };
 
@@ -139,6 +155,8 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = nextValue;
       });
 
@@ -155,7 +173,12 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         id,
         currentRule.field,
         currentRule.value,
-        nextValue
+        nextValue,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
       );
       return;
     }
@@ -171,7 +194,9 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     dispatchAction(
       createReplaceNodeAction(id, {
         ...currentRule,
+        valueSource: 'value',
         value: nextValue,
+        valueField: undefined,
       })
     );
     emitBuilderFieldChange(
@@ -181,12 +206,19 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
           return;
         }
 
+        item.valueSource = 'value';
+        delete item.valueField;
         item.value = nextValue;
       }),
       id,
       currentRule.field,
       currentRule.value,
-      nextValue
+      nextValue,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: 'value',
+      }
     );
   };
 

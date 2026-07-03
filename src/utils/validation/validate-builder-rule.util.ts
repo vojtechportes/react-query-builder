@@ -35,6 +35,7 @@ import { resolveRangeBoundValidation } from './resolve-range-bound-validation.ut
 import { validateBooleanValue } from './validate-boolean-value.util';
 import { validateBuilderRange } from './validate-builder-range.util';
 import { validateDateValue } from './validate-date-value.util';
+import { validateFieldComparison } from './validate-field-comparison.util';
 import { validateListValue } from './validate-list-value.util';
 import { validateMultiListValue } from './validate-multi-list-value.util';
 import { validateNumberValue } from './validate-number-value.util';
@@ -298,6 +299,76 @@ const validateDateRule = (
   return issues;
 };
 
+const createFieldComparisonIssue = (
+  result: ReturnType<typeof validateFieldComparison>,
+  baseIssue: Omit<IBuilderValidationIssue, 'message'>,
+  validationContext: IBuilderValidationContext
+): IBuilderValidationIssue | null => {
+  if (!result) {
+    return null;
+  }
+
+  const { code, params } = result;
+
+  switch (code) {
+    case 'field_comparison_disabled':
+      return {
+        ...baseIssue,
+        code,
+        message: getValidationString(
+          validationContext.strings.validation,
+          'fieldComparisonDisabled',
+          'Field-to-field comparison is not allowed'
+        ),
+      };
+    case 'field_comparison_operator_not_allowed':
+      return {
+        ...baseIssue,
+        code,
+        message: getValidationString(
+          validationContext.strings.validation,
+          'fieldComparisonOperatorNotAllowed',
+          'Operator "{operator}" does not support field-to-field comparison for field "{field}"',
+          params
+        ),
+      };
+    case 'field_comparison_incompatible':
+      return {
+        ...baseIssue,
+        code,
+        message: getValidationString(
+          validationContext.strings.validation,
+          'fieldComparisonIncompatible',
+          'Comparison field "{valueField}" is not compatible with field "{field}" for operator "{operator}"',
+          params
+        ),
+      };
+    case 'value_field_required':
+      return {
+        ...baseIssue,
+        code,
+        message: getValidationString(
+          validationContext.strings.validation,
+          'valueFieldRequired',
+          'A comparison field is required'
+        ),
+      };
+    case 'value_field_not_found':
+      return {
+        ...baseIssue,
+        code,
+        message: getValidationString(
+          validationContext.strings.validation,
+          'valueFieldNotFound',
+          'Comparison field "{field}" was not found',
+          params
+        ),
+      };
+    default:
+      return null;
+  }
+};
+
 export const validateBuilderRule = (
   rule: IDenormalizedRuleNode,
   field: IBuilderValidationContext['fields'][number],
@@ -333,10 +404,6 @@ export const validateBuilderRule = (
     });
   }
 
-  if (!validation) {
-    return issues;
-  }
-
   if (!operatorRequiresValue(rule.operator)) {
     if (typeof rule.value !== 'undefined') {
       issues.push({
@@ -350,6 +417,34 @@ export const validateBuilderRule = (
       });
     }
 
+    return issues;
+  }
+
+  if (rule.valueSource === 'field') {
+    if (issues.some(issue => issue.code === 'operator_not_allowed')) {
+      return issues;
+    }
+
+    const fieldComparisonIssue = createFieldComparisonIssue(
+      validateFieldComparison({
+        allowFieldComparisons: validationContext.allowFieldComparisons,
+        field,
+        fields: validationContext.fields,
+        operator: rule.operator,
+        valueField: rule.valueField,
+      }),
+      baseIssue,
+      validationContext
+    );
+
+    if (fieldComparisonIssue) {
+      issues.push(fieldComparisonIssue);
+    }
+
+    return issues;
+  }
+
+  if (!validation) {
     return issues;
   }
 
@@ -527,3 +622,4 @@ export const validateBuilderRule = (
 
   return issues;
 };
+

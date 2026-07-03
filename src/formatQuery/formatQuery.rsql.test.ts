@@ -31,4 +31,19 @@ describe('formatQuery RSQL', () => {
       "(name==Stev*;status=in=(active,trial);(age=ge=18;age=le=30))"
     );
   });
+
+  it('throws explicitly for unsupported field-to-field comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        field: 'price',
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: 'cost',
+      },
+    ];
+
+    expect(() => formatQuery(query, 'RSQL')).toThrow(
+      'RSQL does not support field-to-field comparisons for field "price" and operator "EQUAL".'
+    );
+  });
 });

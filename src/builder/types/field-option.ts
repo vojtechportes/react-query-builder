@@ -1,4 +1,9 @@
-import { DenormalizedQuery, QueryOperator, QueryRuleValue } from '../../utils/query-tree';
+import {
+  DenormalizedQuery,
+  QueryOperator,
+  QueryRuleValue,
+  QueryRuleValueSource,
+} from '../../utils/query-tree';
 
 export type BuilderFieldOption = {
   value: string | number;
@@ -25,7 +30,9 @@ export interface IBuilderRuleValueReconciliationConfig {
 export interface INearestFieldMatch {
   nodeId: string;
   field: string;
+  valueSource?: QueryRuleValueSource;
   value: QueryRuleValue | undefined;
+  valueField?: string;
   operator?: QueryOperator;
 }
 
@@ -39,7 +46,11 @@ export type IBuilderFieldDependencyEntry = IBuilderRuleDependencyEntry;
 export interface IBuilderFieldChange {
   nodeId: string;
   field: string;
+  previousValueSource?: QueryRuleValueSource;
   previousValue: QueryRuleValue | undefined;
+  previousValueField?: string;
+  valueSource?: QueryRuleValueSource;
   value: QueryRuleValue | undefined;
+  valueField?: string;
   data: DenormalizedQuery;
 }

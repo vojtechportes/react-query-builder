@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import {
   formatAqlArrayValue,
   formatAqlScalarValue,
@@ -42,6 +43,14 @@ const ensureStringValue = (
   return value;
 };
 
+const formatFieldOrScalarValue = (
+  rule: IDenormalizedRuleNode,
+  variableName: string
+): string =>
+  isFieldComparisonRule(rule)
+    ? quoteAqlIdentifier(rule.valueField, variableName)
+    : formatAqlScalarValue(rule.value as never);
+
 export const formatAqlRule = (
   rule: IDenormalizedRuleNode,
   variableName: string
@@ -50,17 +59,17 @@ export const formatAqlRule = (
 
   switch (rule.operator) {
     case 'EQUAL':
-      return `${field} == ${formatAqlScalarValue(rule.value as never)}`;
+      return `${field} == ${formatFieldOrScalarValue(rule, variableName)}`;
     case 'NOT_EQUAL':
-      return `${field} != ${formatAqlScalarValue(rule.value as never)}`;
+      return `${field} != ${formatFieldOrScalarValue(rule, variableName)}`;
     case 'LARGER':
-      return `${field} > ${formatAqlScalarValue(rule.value as never)}`;
+      return `${field} > ${formatFieldOrScalarValue(rule, variableName)}`;
     case 'LARGER_EQUAL':
-      return `${field} >= ${formatAqlScalarValue(rule.value as never)}`;
+      return `${field} >= ${formatFieldOrScalarValue(rule, variableName)}`;
     case 'SMALLER':
-      return `${field} < ${formatAqlScalarValue(rule.value as never)}`;
+      return `${field} < ${formatFieldOrScalarValue(rule, variableName)}`;
     case 'SMALLER_EQUAL':
-      return `${field} <= ${formatAqlScalarValue(rule.value as never)}`;
+      return `${field} <= ${formatFieldOrScalarValue(rule, variableName)}`;
     case 'IN':
     case 'ANY_IN':
       return `${field} IN ${formatAqlArrayValue(
@@ -120,4 +129,3 @@ export const formatAqlRule = (
       );
   }
 };
-

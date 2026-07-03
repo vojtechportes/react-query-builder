@@ -1,5 +1,6 @@
 import { NormalizedQuery } from '../../utils/query-tree';
 import { INearestFieldMatch } from '../types/field-option';
+import { getRuleValueSource } from '../../utils/rule-value-source';
 
 export const getNearestFieldMatch = (
   data: NormalizedQuery,
@@ -42,7 +43,9 @@ export const getNearestFieldMatch = (
             return {
               nodeId: previousChildNode.id,
               field: previousChildNode.field,
+              valueSource: getRuleValueSource(previousChildNode),
               value: previousChildNode.value,
+              valueField: previousChildNode.valueField,
               operator: previousChildNode.operator,
             };
           }
@@ -61,7 +64,9 @@ export const getNearestFieldMatch = (
             return {
               nodeId: nextChildNode.id,
               field: nextChildNode.field,
+              valueSource: getRuleValueSource(nextChildNode),
               value: nextChildNode.value,
+              valueField: nextChildNode.valueField,
               operator: nextChildNode.operator,
             };
           }

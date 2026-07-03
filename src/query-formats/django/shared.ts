@@ -1,5 +1,7 @@
 import type { QueryOperator, QueryRuleValue } from '../../utils/query-tree';
 
+export const djangoFieldReferenceFunction = 'F';
+
 export const quoteDjangoString = (value: string): string =>
   `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 
@@ -16,6 +18,9 @@ export const formatDjangoScalarValue = (
 
   return quoteDjangoString(value);
 };
+
+export const formatDjangoFieldReference = (field: string): string =>
+  `${djangoFieldReferenceFunction}(${quoteDjangoString(field)})`;
 
 export const inferDjangoLookupOperator = (
   lookup: string,

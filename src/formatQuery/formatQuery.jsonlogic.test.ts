@@ -48,5 +48,55 @@ describe('formatQuery JsonLogic', () => {
       )
     );
   });
-});
 
+  it('formats supported field-to-field scalar comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'price',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'cost',
+          },
+          {
+            field: 'discount',
+            operator: 'SMALLER',
+            valueSource: 'field',
+            valueField: 'max_discount',
+          },
+          {
+            field: 'name',
+            operator: 'EQUAL',
+            valueSource: 'field',
+            valueField: 'fallback_name',
+          },
+          {
+            field: 'status',
+            operator: 'NOT_EQUAL',
+            valueSource: 'field',
+            valueField: 'archived_status',
+          },
+        ],
+      },
+    ];
+
+    expect(formatQuery(query, 'JsonLogic')).toEqual(
+      JSON.stringify(
+        {
+          and: [
+            { '>=': [{ var: 'price' }, { var: 'cost' }] },
+            { '<': [{ var: 'discount' }, { var: 'max_discount' }] },
+            { '==': [{ var: 'name' }, { var: 'fallback_name' }] },
+            { '!=': [{ var: 'status' }, { var: 'archived_status' }] },
+          ],
+        },
+        null,
+        2
+      )
+    );
+  });
+});

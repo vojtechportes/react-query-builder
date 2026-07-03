@@ -8,6 +8,7 @@ export type GroupReadOnly = boolean | IGroupReadOnlyConfig;
 export type RuleReadOnly = boolean | IRuleReadOnlyConfig;
 export type GroupReadOnlyTarget = 'negation' | 'combinator';
 export type RuleReadOnlyTarget = 'field' | 'operator' | 'value';
+export type QueryRuleValueSource = 'value' | 'field';
 
 export type QueryRuleValue =
   | string
@@ -27,15 +28,28 @@ export interface IRuleReadOnlyConfig {
   targets?: RuleReadOnlyTarget[];
 }
 
-export interface IDenormalizedRuleNode {
+interface IRuleNodeBase {
   id?: string;
   parent?: string;
   field: string;
-  value?: QueryRuleValue;
   operator?: QueryOperator;
   operators?: QueryOperator[];
   readOnly?: RuleReadOnly;
 }
+
+export interface ILiteralRuleNode extends IRuleNodeBase {
+  valueSource?: 'value';
+  value?: QueryRuleValue;
+  valueField?: undefined;
+}
+
+export interface IFieldReferenceRuleNode extends IRuleNodeBase {
+  valueSource: 'field';
+  value?: undefined;
+  valueField: string;
+}
+
+export type IDenormalizedRuleNode = ILiteralRuleNode | IFieldReferenceRuleNode;
 
 export interface IDenormalizedGroupNodeBase {
   id?: string;
@@ -63,10 +77,27 @@ export type DenormalizedGroupNode =
 
 export type DenormalizedNode = IDenormalizedRuleNode | DenormalizedGroupNode;
 
-export interface INormalizedRuleNode extends IDenormalizedRuleNode {
+interface INormalizedRuleNodeBase extends IRuleNodeBase {
   id: string;
   parent?: string;
 }
+
+export interface INormalizedLiteralRuleNode extends INormalizedRuleNodeBase {
+  valueSource?: 'value';
+  value?: QueryRuleValue;
+  valueField?: undefined;
+}
+
+export interface INormalizedFieldReferenceRuleNode
+  extends INormalizedRuleNodeBase {
+  valueSource: 'field';
+  value?: undefined;
+  valueField: string;
+}
+
+export type INormalizedRuleNode =
+  | INormalizedLiteralRuleNode
+  | INormalizedFieldReferenceRuleNode;
 
 export interface INormalizedGroupNodeBase {
   id: string;

@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import {
   escapeJsonataRegex,
   formatJsonataArrayValue,
@@ -54,20 +55,25 @@ const joinExpressions = (
   return `(${expressions.join(` ${combinator} `)})`;
 };
 
+const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : formatJsonataScalarValue(rule.value as never);
+
 export const formatJsonataRule = (rule: IDenormalizedRuleNode): string => {
   switch (rule.operator) {
     case 'EQUAL':
-      return `${rule.field} = ${formatJsonataScalarValue(rule.value as never)}`;
+      return `${rule.field} = ${formatFieldOrScalarValue(rule)}`;
     case 'NOT_EQUAL':
-      return `${rule.field} != ${formatJsonataScalarValue(rule.value as never)}`;
+      return `${rule.field} != ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER':
-      return `${rule.field} > ${formatJsonataScalarValue(rule.value as never)}`;
+      return `${rule.field} > ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER_EQUAL':
-      return `${rule.field} >= ${formatJsonataScalarValue(rule.value as never)}`;
+      return `${rule.field} >= ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER':
-      return `${rule.field} < ${formatJsonataScalarValue(rule.value as never)}`;
+      return `${rule.field} < ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER_EQUAL':
-      return `${rule.field} <= ${formatJsonataScalarValue(rule.value as never)}`;
+      return `${rule.field} <= ${formatFieldOrScalarValue(rule)}`;
     case 'IN':
       return `${rule.field} in ${formatJsonataArrayValue(
         ensureArrayValue(rule.operator, rule.value)
@@ -136,4 +142,3 @@ export const formatJsonataRule = (rule: IDenormalizedRuleNode): string => {
       );
   }
 };
-

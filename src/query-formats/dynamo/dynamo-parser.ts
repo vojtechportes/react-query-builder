@@ -3,6 +3,7 @@ import type {
   QueryGroupValue,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type {
   IDynamoToken,
   DynamoTokenType,
@@ -11,6 +12,8 @@ import type {
 } from './dynamo-token.types';
 import { inferDynamoStringOperator } from './shared';
 import { tokenizeDynamo } from './tokenize-dynamo';
+
+type DynamoFieldReference = { kind: 'field'; field: string };
 
 export class DynamoParser {
   private readonly tokens: IDynamoToken[];
@@ -152,7 +155,7 @@ export class DynamoParser {
     }
 
     const operator = this.expect('OPERATOR').value;
-    const value = this.parseScalarValue();
+    const value = this.parseComparisonValue();
 
     if (operator === '=' && value === null) {
       return { field, operator: 'IS_NULL' };
@@ -160,6 +163,15 @@ export class DynamoParser {
 
     if ((operator === '<>' || operator === '!=') && value === null) {
       return { field, operator: 'IS_NOT_NULL' };
+    }
+
+    if (this.isFieldReference(value)) {
+      return {
+        field,
+        operator: this.mapOperator(operator),
+        valueSource: 'field',
+        valueField: value.field,
+      };
     }
 
     return {
@@ -226,6 +238,19 @@ export class DynamoParser {
     }
 
     throw new Error(`Expected a scalar value but found "${token.value}".`);
+  }
+
+  private parseComparisonValue():
+    | string
+    | number
+    | boolean
+    | null
+    | DynamoFieldReference {
+    if (this.peek().type === 'IDENTIFIER') {
+      return { kind: 'field', field: this.parseIdentifier() };
+    }
+
+    return this.parseScalarValue();
   }
 
   private parseIdentifier(): string {
@@ -300,6 +325,10 @@ export class DynamoParser {
       return null;
     }
 
+    if (isFieldComparisonRule(left) || isFieldComparisonRule(right)) {
+      return null;
+    }
+
     if (
       combinator === 'OR' &&
       left.operator === 'SMALLER' &&
@@ -333,6 +362,15 @@ export class DynamoParser {
 
   private isParsedGroup(node: ParsedDynamoNode): node is IParsedDynamoGroup {
     return 'kind' in node && node.kind === 'group';
+  }
+
+  private isFieldReference(value: unknown): value is DynamoFieldReference {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'kind' in value &&
+      value.kind === 'field'
+    );
   }
 
   private isKeyword(value: string): boolean {

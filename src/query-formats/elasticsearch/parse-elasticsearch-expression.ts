@@ -8,6 +8,9 @@ type ElasticsearchDocument = Record<string, unknown>;
 const isPlainObject = (value: unknown): value is ElasticsearchDocument =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
+const isScalarValue = (value: unknown): value is string | number | boolean | null =>
+  value === null || ['string', 'number', 'boolean'].includes(typeof value);
+
 const wrapAndGroup = (children: DenormalizedNode[]): DenormalizedNode => ({
   type: 'GROUP',
   value: 'AND',
@@ -27,10 +30,21 @@ const createGroup = (
 });
 
 const parseTermExpression = (value: ElasticsearchDocument): DenormalizedNode[] => {
-  const [field, fieldValue] = Object.entries(value)[0] ?? [];
+  const [field, rawFieldValue] = Object.entries(value)[0] ?? [];
 
   if (!field) {
     throw new Error('Elasticsearch term query must contain a field.');
+  }
+
+  const fieldValue =
+    isPlainObject(rawFieldValue) && 'value' in rawFieldValue
+      ? rawFieldValue.value
+      : rawFieldValue;
+
+  if (!isScalarValue(fieldValue)) {
+    throw new Error(
+      `Elasticsearch term query for field "${field}" must use a scalar value.`
+    );
   }
 
   return [
@@ -47,6 +61,12 @@ const parseTermsExpression = (value: ElasticsearchDocument): DenormalizedNode[] 
 
   if (!field || !Array.isArray(fieldValue)) {
     throw new Error('Elasticsearch terms query must contain an array field value.');
+  }
+
+  if (!fieldValue.every(isScalarValue)) {
+    throw new Error(
+      `Elasticsearch terms query for field "${field}" must contain only scalar values.`
+    );
   }
 
   return [
@@ -67,7 +87,13 @@ const parseRangeExpression = (value: ElasticsearchDocument): DenormalizedNode[] 
 
   const keys = Object.keys(fieldValue);
 
-  if (keys.length === 2 && keys.includes('gte') && keys.includes('lte')) {
+  if (
+    keys.length === 2 &&
+    keys.includes('gte') &&
+    keys.includes('lte') &&
+    isScalarValue(fieldValue.gte) &&
+    isScalarValue(fieldValue.lte)
+  ) {
     return [
       {
         field,
@@ -79,6 +105,13 @@ const parseRangeExpression = (value: ElasticsearchDocument): DenormalizedNode[] 
 
   if (keys.length === 1) {
     const [key] = keys;
+    const scalarValue = fieldValue[key];
+
+    if (!isScalarValue(scalarValue)) {
+      throw new Error(
+        `Elasticsearch range query for field "${field}" must use scalar boundary values.`
+      );
+    }
 
     switch (key) {
       case 'gt':
@@ -229,38 +262,38 @@ export const parseElasticsearchExpression = (value: unknown): DenormalizedNode[]
     throw new Error('Elasticsearch query must be a JSON object.');
   }
 
-  const document = unwrapQueryContainer(value);
+  const normalized = unwrapQueryContainer(value);
 
-  if ('bool' in document) {
-    if (!isPlainObject(document.bool)) {
+  if ('bool' in normalized) {
+    if (!isPlainObject(normalized.bool)) {
       throw new Error('Elasticsearch bool query must be an object.');
     }
 
-    return parseBoolExpression(document.bool);
+    return parseBoolExpression(normalized.bool);
   }
 
-  if ('term' in document && isPlainObject(document.term)) {
-    return parseTermExpression(document.term);
+  if ('term' in normalized) {
+    return parseTermExpression(normalized.term as ElasticsearchDocument);
   }
 
-  if ('terms' in document && isPlainObject(document.terms)) {
-    return parseTermsExpression(document.terms);
+  if ('terms' in normalized) {
+    return parseTermsExpression(normalized.terms as ElasticsearchDocument);
   }
 
-  if ('range' in document && isPlainObject(document.range)) {
-    return parseRangeExpression(document.range);
+  if ('range' in normalized) {
+    return parseRangeExpression(normalized.range as ElasticsearchDocument);
   }
 
-  if ('exists' in document && isPlainObject(document.exists)) {
-    return parseExistsExpression(document.exists);
+  if ('exists' in normalized) {
+    return parseExistsExpression(normalized.exists as ElasticsearchDocument);
   }
 
-  if ('prefix' in document && isPlainObject(document.prefix)) {
-    return parsePrefixExpression(document.prefix);
+  if ('prefix' in normalized) {
+    return parsePrefixExpression(normalized.prefix as ElasticsearchDocument);
   }
 
-  if ('wildcard' in document && isPlainObject(document.wildcard)) {
-    return parseWildcardExpression(document.wildcard);
+  if ('wildcard' in normalized) {
+    return parseWildcardExpression(normalized.wildcard as ElasticsearchDocument);
   }
 
   throw new Error('Unsupported Elasticsearch query structure.');

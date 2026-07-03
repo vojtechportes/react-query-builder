@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type { JsonLogicRule } from './shared';
 import { createVarRule } from './shared';
 
@@ -39,6 +40,11 @@ const ensureStringValue = (
   return value;
 };
 
+const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): JsonLogicRule =>
+  isFieldComparisonRule(rule)
+    ? createVarRule(rule.valueField)
+    : (rule.value as JsonLogicRule);
+
 const createNegatedRule = (rule: JsonLogicRule): JsonLogicRule => ({
   '!': rule,
 });
@@ -50,17 +56,17 @@ export const formatJsonLogicRule = (
 
   switch (rule.operator) {
     case 'EQUAL':
-      return { '==': [field, rule.value as JsonLogicRule] };
+      return { '==': [field, formatFieldOrScalarValue(rule)] };
     case 'NOT_EQUAL':
-      return { '!=': [field, rule.value as JsonLogicRule] };
+      return { '!=': [field, formatFieldOrScalarValue(rule)] };
     case 'LARGER':
-      return { '>': [field, rule.value as JsonLogicRule] };
+      return { '>': [field, formatFieldOrScalarValue(rule)] };
     case 'LARGER_EQUAL':
-      return { '>=': [field, rule.value as JsonLogicRule] };
+      return { '>=': [field, formatFieldOrScalarValue(rule)] };
     case 'SMALLER':
-      return { '<': [field, rule.value as JsonLogicRule] };
+      return { '<': [field, formatFieldOrScalarValue(rule)] };
     case 'SMALLER_EQUAL':
-      return { '<=': [field, rule.value as JsonLogicRule] };
+      return { '<=': [field, formatFieldOrScalarValue(rule)] };
     case 'IN':
       return { in: [field, ensureArrayValue(rule.operator, rule.value)] };
     case 'NOT_IN':
@@ -123,4 +129,3 @@ export const formatJsonLogicRule = (
       );
   }
 };
-

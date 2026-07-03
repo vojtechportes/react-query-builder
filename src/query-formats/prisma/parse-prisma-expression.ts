@@ -1,5 +1,8 @@
-import type { DenormalizedNode } from '../../utils/query-tree';
-import { inferPrismaStringOperator } from './shared';
+import type { DenormalizedNode, QueryOperator } from '../../utils/query-tree';
+import {
+  inferPrismaStringOperator,
+  parsePrismaFieldReference,
+} from './shared';
 
 type PrismaDocument = Record<string, unknown>;
 
@@ -24,6 +27,32 @@ const createLogicalGroup = (
   children: items.flatMap(item => parsePrismaExpression(item)),
 });
 
+const createScalarComparisonNode = (
+  field: string,
+  operator: QueryOperator,
+  value: unknown
+): DenormalizedNode => {
+  const valueField = parsePrismaFieldReference(value);
+
+  if (valueField) {
+    return {
+      field,
+      operator,
+      valueSource: 'field',
+      valueField,
+    };
+  }
+
+  return {
+    field,
+    operator,
+    value: value as never,
+  };
+};
+
+const isLiteralRangeBoundaryValue = (value: unknown): boolean =>
+  parsePrismaFieldReference(value) === null;
+
 const parseFieldOperatorExpression = (
   field: string,
   value: PrismaDocument
@@ -37,7 +66,9 @@ const parseFieldOperatorExpression = (
   if (
     operatorKeys.length === 2 &&
     operatorKeys.includes('gte') &&
-    operatorKeys.includes('lte')
+    operatorKeys.includes('lte') &&
+    isLiteralRangeBoundaryValue(value.gte) &&
+    isLiteralRangeBoundaryValue(value.lte)
   ) {
     return [
       {
@@ -52,16 +83,28 @@ const parseFieldOperatorExpression = (
     const [operatorKey] = operatorKeys;
 
     switch (operatorKey) {
-      case 'equals':
-        return [{ field, operator: 'LIKE', value: value.equals as never }];
+      case 'equals': {
+        const valueField = parsePrismaFieldReference(value.equals);
+
+        return [
+          valueField
+            ? {
+                field,
+                operator: 'EQUAL',
+                valueSource: 'field',
+                valueField,
+              }
+            : { field, operator: 'LIKE', value: value.equals as never },
+        ];
+      }
       case 'gt':
-        return [{ field, operator: 'LARGER', value: value.gt as never }];
+        return [createScalarComparisonNode(field, 'LARGER', value.gt)];
       case 'gte':
-        return [{ field, operator: 'LARGER_EQUAL', value: value.gte as never }];
+        return [createScalarComparisonNode(field, 'LARGER_EQUAL', value.gte)];
       case 'lt':
-        return [{ field, operator: 'SMALLER', value: value.lt as never }];
+        return [createScalarComparisonNode(field, 'SMALLER', value.lt)];
       case 'lte':
-        return [{ field, operator: 'SMALLER_EQUAL', value: value.lte as never }];
+        return [createScalarComparisonNode(field, 'SMALLER_EQUAL', value.lte)];
       case 'in':
         return [{ field, operator: 'IN', value: value.in as never }];
       case 'notIn':
@@ -76,9 +119,22 @@ const parseFieldOperatorExpression = (
         return [{ field, operator: 'STARTS_WITH', value: value.startsWith as never }];
       case 'endsWith':
         return [{ field, operator: 'ENDS_WITH', value: value.endsWith as never }];
-      case 'not':
+      case 'not': {
         if (value.not === null) {
           return [{ field, operator: 'IS_NOT_NULL' }];
+        }
+
+        const fieldReference = parsePrismaFieldReference(value.not);
+
+        if (fieldReference) {
+          return [
+            {
+              field,
+              operator: 'NOT_EQUAL',
+              valueSource: 'field',
+              valueField: fieldReference,
+            },
+          ];
         }
 
         if (!isPlainObject(value.not)) {
@@ -88,7 +144,9 @@ const parseFieldOperatorExpression = (
         if (
           'lt' in value.not &&
           'gt' in value.not &&
-          Object.keys(value.not).length === 2
+          Object.keys(value.not).length === 2 &&
+          isLiteralRangeBoundaryValue(value.not.lt) &&
+          isLiteralRangeBoundaryValue(value.not.gt)
         ) {
           return [
             {
@@ -106,10 +164,11 @@ const parseFieldOperatorExpression = (
         }
 
         if ('equals' in value.not) {
-          return [{ field, operator: 'NOT_LIKE', value: value.not.equals as never }];
+          return [createScalarComparisonNode(field, 'NOT_LIKE', value.not.equals)];
         }
 
         throw new Error(`Unsupported Prisma not expression for field "${field}".`);
+      }
       default:
         throw new Error(`Unsupported Prisma operator "${operatorKey}" for field "${field}".`);
     }
@@ -144,7 +203,9 @@ const isSameFieldRangeBoundaryGroup = (
     isPlainObject(first[firstField]) &&
     isPlainObject(second[secondField]) &&
     'lt' in first[firstField] &&
-    'gt' in second[secondField]
+    'gt' in second[secondField] &&
+    isLiteralRangeBoundaryValue((first[firstField] as { lt: unknown }).lt) &&
+    isLiteralRangeBoundaryValue((second[secondField] as { gt: unknown }).gt)
   );
 };
 

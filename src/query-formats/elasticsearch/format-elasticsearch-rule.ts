@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import { escapeElasticsearchWildcard } from './shared';
 
 type ElasticsearchClause = Record<string, unknown>;
@@ -40,6 +41,14 @@ const ensureStringValue = (
   return value;
 };
 
+const ensureElasticsearchSupportsRule = (rule: IDenormalizedRuleNode): void => {
+  if (isFieldComparisonRule(rule)) {
+    throw new Error(
+      `Elasticsearch does not support field-to-field comparisons for field "${rule.field}" and operator "${rule.operator}".`
+    );
+  }
+};
+
 const createMustNotClause = (clause: ElasticsearchClause): ElasticsearchClause => ({
   bool: {
     must_not: [clause],
@@ -49,6 +58,8 @@ const createMustNotClause = (clause: ElasticsearchClause): ElasticsearchClause =
 export const formatElasticsearchRule = (
   rule: IDenormalizedRuleNode
 ): ElasticsearchClause => {
+  ensureElasticsearchSupportsRule(rule);
+
   switch (rule.operator) {
     case 'EQUAL':
       return { term: { [rule.field]: rule.value } };

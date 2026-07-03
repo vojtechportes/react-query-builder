@@ -3,6 +3,7 @@ import type {
   QueryGroupValue,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type {
   IAqlToken,
   AqlTokenType,
@@ -15,6 +16,8 @@ import {
   AQL_DEFAULT_VARIABLE_NAME,
   extractAqlLikeOperator,
 } from './shared';
+
+type AqlFieldReference = { kind: 'field'; field: string };
 
 export class AqlParser {
   private readonly tokens: IAqlToken[];
@@ -127,7 +130,7 @@ export class AqlParser {
     }
 
     const operatorToken = this.expect('OPERATOR');
-    const value = this.parseScalarValue();
+    const value = this.parseComparisonValue();
 
     return this.mapComparison(left, operatorToken.value, value);
   }
@@ -170,6 +173,19 @@ export class AqlParser {
     }
 
     throw new Error(`Expected a scalar value but found "${token.value}".`);
+  }
+
+  private parseComparisonValue():
+    | string
+    | number
+    | boolean
+    | null
+    | AqlFieldReference {
+    if (this.peek().type === 'IDENTIFIER') {
+      return { kind: 'field', field: this.parseIdentifier() };
+    }
+
+    return this.parseScalarValue();
   }
 
   private parseStringValue(): string {
@@ -218,7 +234,7 @@ export class AqlParser {
   private mapComparison(
     field: string,
     operator: string,
-    value: string | number | boolean | null
+    value: string | number | boolean | null | AqlFieldReference
   ): IDenormalizedRuleNode {
     if (operator === '==' && value === null) {
       return { field, operator: 'IS_NULL' };
@@ -226,6 +242,15 @@ export class AqlParser {
 
     if (operator === '!=' && value === null) {
       return { field, operator: 'IS_NOT_NULL' };
+    }
+
+    if (this.isFieldReference(value)) {
+      return {
+        field,
+        operator: this.mapOperator(operator),
+        valueSource: 'field',
+        valueField: value.field,
+      };
     }
 
     return {
@@ -308,6 +333,10 @@ export class AqlParser {
       return null;
     }
 
+    if (isFieldComparisonRule(left) || isFieldComparisonRule(right)) {
+      return null;
+    }
+
     if (
       combinator === 'AND' &&
       left.operator === 'LARGER_EQUAL' &&
@@ -333,6 +362,15 @@ export class AqlParser {
     }
 
     return null;
+  }
+
+  private isFieldReference(value: unknown): value is AqlFieldReference {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'kind' in value &&
+      value.kind === 'field'
+    );
   }
 
   private isKeyword(value: string): boolean {

@@ -7,9 +7,11 @@ import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
+import { getCompatibleValueFields, supportsFieldComparisonForOperator } from '../utils/field-comparison-support';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
 import { isRangeOperator } from '../utils/is-range-operator.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
+import { getRuleValueSource } from '../utils/rule-value-source';
 import { updateItem } from '../utils/update-item.util';
 
 export interface IOperatorSelectValuesProps {
@@ -65,11 +67,16 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       return;
     }
 
+    const currentValueSource = getRuleValueSource(currentRule);
     const getNextRuleValue = () => {
       const nextRequiresValue = operatorRequiresValue(value);
       const currentRequiresValue = operatorRequiresValue(currentRule.operator);
 
       if (!nextRequiresValue) {
+        return undefined;
+      }
+
+      if (currentValueSource === 'field') {
         return undefined;
       }
 
@@ -83,6 +90,16 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       return currentRule.value;
     };
     const nextRuleValue = getNextRuleValue();
+    const canKeepFieldComparison =
+      currentValueSource === 'field' &&
+      supportsFieldComparisonForOperator(nextField, value);
+    const shouldPreserveUnsupportedFieldComparison =
+      currentValueSource === 'field' && operatorRequiresValue(value);
+    const nextCompatibleFields = getCompatibleValueFields(fields, nextField, value);
+    const hasRuleValueChanged =
+      nextRuleValue !== currentRule.value ||
+      currentValueSource !== 'value' ||
+      typeof currentRule.valueField !== 'undefined';
 
     if (!dispatchAction && setData && onChange) {
       const nextData = updateItem(data, id, item => {
@@ -91,8 +108,26 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
         }
 
         if (typeof nextRuleValue === 'undefined') {
-          delete item.value;
+          if (canKeepFieldComparison && nextCompatibleFields.length > 0) {
+            item.valueSource = 'field';
+            item.valueField =
+              currentRule.valueField &&
+              nextCompatibleFields.some(fieldItem => fieldItem.field === currentRule.valueField)
+                ? currentRule.valueField
+                : nextCompatibleFields[0].field;
+            delete item.value;
+          } else if (shouldPreserveUnsupportedFieldComparison) {
+            item.valueSource = 'field';
+            item.valueField = currentRule.valueField;
+            delete item.value;
+          } else {
+            item.valueSource = 'value';
+            delete item.valueField;
+            delete item.value;
+          }
         } else {
+          item.valueSource = 'value';
+          delete item.valueField;
           item.value = nextRuleValue;
         }
 
@@ -111,7 +146,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       if (
         nextRule &&
         !isNormalizedGroupNode(nextRule) &&
-        nextRule.value !== currentRule.value
+        hasRuleValueChanged
       ) {
         emitBuilderFieldChange(
           onFieldChange,
@@ -119,7 +154,13 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
           id,
           currentRule.field,
           currentRule.value,
-          nextRule.value
+          nextRule.value,
+          {
+            previousValueSource: currentRule.valueSource ?? 'value',
+            previousValueField: currentRule.valueField,
+            valueSource: nextRule.valueSource ?? 'value',
+            valueField: nextRule.valueField,
+          }
         );
       }
       return;
@@ -131,15 +172,33 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
 
     const nextRule = { ...currentRule };
     if (typeof nextRuleValue === 'undefined') {
-      delete nextRule.value;
+      if (canKeepFieldComparison && nextCompatibleFields.length > 0) {
+        nextRule.valueSource = 'field';
+        nextRule.valueField =
+          currentRule.valueField &&
+          nextCompatibleFields.some(fieldItem => fieldItem.field === currentRule.valueField)
+            ? currentRule.valueField
+            : nextCompatibleFields[0].field;
+        delete nextRule.value;
+      } else if (shouldPreserveUnsupportedFieldComparison) {
+        nextRule.valueSource = 'field';
+        nextRule.valueField = currentRule.valueField;
+        delete nextRule.value;
+      } else {
+        nextRule.valueSource = 'value';
+        delete nextRule.valueField;
+        delete nextRule.value;
+      }
     } else {
+      nextRule.valueSource = 'value';
+      delete nextRule.valueField;
       nextRule.value = nextRuleValue;
     }
 
     nextRule.operator = value;
 
     dispatchAction(createReplaceNodeAction(id, nextRule));
-    if (nextRule.value !== currentRule.value) {
+    if (hasRuleValueChanged) {
       emitBuilderFieldChange(
         onFieldChange,
         updateItem(data, id, item => {
@@ -148,12 +207,25 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
           }
 
           item.operator = nextRule.operator;
-          item.value = nextRule.value;
+          item.valueSource = nextRule.valueSource;
+          if (nextRule.valueSource === 'field') {
+            item.valueField = nextRule.valueField;
+            delete item.value;
+          } else {
+            delete item.valueField;
+            item.value = nextRule.value;
+          }
         }),
         id,
         currentRule.field,
         currentRule.value,
-        nextRule.value
+        nextRule.value,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: nextRule.valueSource ?? 'value',
+          valueField: nextRule.valueField,
+        }
       );
     }
   };

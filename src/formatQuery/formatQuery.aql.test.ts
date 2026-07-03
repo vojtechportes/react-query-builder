@@ -34,5 +34,47 @@ describe('formatQuery AQL', () => {
       })
     ).toEqual('(doc.first_name == "Alice" OR doc.last_name == "Smith")');
   });
-});
 
+  it('formats supported field-to-field comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'price',
+            operator: 'LARGER_EQUAL',
+            valueSource: 'field',
+            valueField: 'cost',
+          },
+          {
+            field: 'discount',
+            operator: 'SMALLER',
+            valueSource: 'field',
+            valueField: 'max_discount',
+          },
+          {
+            field: 'name',
+            operator: 'EQUAL',
+            valueSource: 'field',
+            valueField: 'fallback_name',
+          },
+          {
+            field: 'status',
+            operator: 'NOT_EQUAL',
+            valueSource: 'field',
+            valueField: 'archived_status',
+          },
+        ],
+      },
+    ];
+
+    expect(
+      formatQuery(query, 'AQL', {
+        wrapFilterClause: false,
+        variableName: 'item',
+      })
+    ).toEqual('(item.price >= item.cost AND item.discount < item.max_discount AND item.name == item.fallback_name AND item.status != item.archived_status)');
+  });
+});

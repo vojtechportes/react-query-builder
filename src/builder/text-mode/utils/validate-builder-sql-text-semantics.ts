@@ -1,5 +1,7 @@
 import { IStrings } from '../../../constants/strings';
 import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
+import { getValidationString } from '../../../utils/validation/get-validation-string.util';
+import { validateFieldComparison } from '../../../utils/validation/validate-field-comparison.util';
 import { IBuilderFieldProps } from '../../types';
 import {
   resolveBuilderFieldUsageLimitKey,
@@ -17,7 +19,84 @@ import { resolveFieldAllowedValues } from './resolve-field-allowed-values';
 
 interface IValidateBuilderSqlTextSemanticsOptions {
   allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
 }
+
+const createFieldComparisonDiagnostic = (
+  result: ReturnType<typeof validateFieldComparison>,
+  start: number,
+  end: number,
+  strings: IStrings
+): ITextModeDiagnostic | null => {
+  if (!result) {
+    return null;
+  }
+
+  const { code, params } = result;
+
+  switch (code) {
+    case 'field_comparison_disabled':
+      return {
+        code,
+        message: getValidationString(
+          strings.validation,
+          'fieldComparisonDisabled',
+          'Field-to-field comparison is not allowed'
+        ),
+        start,
+        end,
+      };
+    case 'field_comparison_operator_not_allowed':
+      return {
+        code,
+        message: getValidationString(
+          strings.validation,
+          'fieldComparisonOperatorNotAllowed',
+          'Operator "{operator}" does not support field-to-field comparison for field "{field}"',
+          params
+        ),
+        start,
+        end,
+      };
+    case 'field_comparison_incompatible':
+      return {
+        code,
+        message: getValidationString(
+          strings.validation,
+          'fieldComparisonIncompatible',
+          'Comparison field "{valueField}" is not compatible with field "{field}" for operator "{operator}"',
+          params
+        ),
+        start,
+        end,
+      };
+    case 'value_field_required':
+      return {
+        code,
+        message: getValidationString(
+          strings.validation,
+          'valueFieldRequired',
+          'A comparison field is required'
+        ),
+        start,
+        end,
+      };
+    case 'value_field_not_found':
+      return {
+        code,
+        message: getValidationString(
+          strings.validation,
+          'valueFieldNotFound',
+          'Comparison field "{field}" was not found',
+          params
+        ),
+        start,
+        end,
+      };
+    default:
+      return null;
+  }
+};
 
 export const validateBuilderSqlTextSemantics = (
   nodes: ParsedNode[],
@@ -100,6 +179,33 @@ export const validateBuilderSqlTextSemantics = (
       return;
     }
 
+    if (rule.valueSource === 'field') {
+      const valueFieldRange = rule.source.valueField || rule.source.value;
+
+      if (!valueFieldRange) {
+        return;
+      }
+
+      const diagnostic = createFieldComparisonDiagnostic(
+        validateFieldComparison({
+          allowFieldComparisons: options.allowFieldComparisons !== false,
+          field,
+          fields,
+          operator,
+          valueField: rule.valueField,
+        }),
+        valueFieldRange.start,
+        valueFieldRange.end,
+        strings
+      );
+
+      if (diagnostic) {
+        diagnostics.push(diagnostic);
+      }
+
+      return;
+    }
+
     if (field.type !== 'LIST' && field.type !== 'MULTI_LIST') {
       return;
     }
@@ -146,3 +252,4 @@ export const validateBuilderSqlTextSemantics = (
 
   return diagnostics;
 };
+

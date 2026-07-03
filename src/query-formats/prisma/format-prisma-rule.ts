@@ -3,6 +3,8 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
+import { createPrismaFieldReference } from './shared';
 
 type PrismaClause = Record<string, unknown>;
 
@@ -39,20 +41,29 @@ const ensureStringValue = (
   return value;
 };
 
+const formatPrismaScalarComparisonValue = (
+  rule: IDenormalizedRuleNode
+): QueryRuleValue | Record<string, string> | undefined =>
+  isFieldComparisonRule(rule)
+    ? createPrismaFieldReference(rule.valueField)
+    : rule.value;
+
 export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
   switch (rule.operator) {
     case 'EQUAL':
-      return { [rule.field]: rule.value as QueryRuleValue };
+      return isFieldComparisonRule(rule)
+        ? { [rule.field]: { equals: createPrismaFieldReference(rule.valueField) } }
+        : { [rule.field]: rule.value as QueryRuleValue };
     case 'NOT_EQUAL':
-      return { [rule.field]: { not: rule.value } };
+      return { [rule.field]: { not: formatPrismaScalarComparisonValue(rule) } };
     case 'LARGER':
-      return { [rule.field]: { gt: rule.value } };
+      return { [rule.field]: { gt: formatPrismaScalarComparisonValue(rule) } };
     case 'LARGER_EQUAL':
-      return { [rule.field]: { gte: rule.value } };
+      return { [rule.field]: { gte: formatPrismaScalarComparisonValue(rule) } };
     case 'SMALLER':
-      return { [rule.field]: { lt: rule.value } };
+      return { [rule.field]: { lt: formatPrismaScalarComparisonValue(rule) } };
     case 'SMALLER_EQUAL':
-      return { [rule.field]: { lte: rule.value } };
+      return { [rule.field]: { lte: formatPrismaScalarComparisonValue(rule) } };
     case 'IN':
     case 'ANY_IN':
       return { [rule.field]: { in: ensureArrayValue(rule.operator, rule.value) } };

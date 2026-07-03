@@ -29,6 +29,10 @@ It also supports an optional SQL text mode for `Builder`, with built-in syntax
 and semantic validation, plus an optional Monaco-based advanced editor
 integration for protected locked ranges.
 
+Field-to-field comparisons are also supported through
+`allowFieldComparisons`, per-field `fieldComparison` metadata, and
+`valueSource: 'field'` / `valueField` rule data.
+
 Full documentation, API reference, and the interactive demo are available on
 the project website:
 
@@ -418,6 +422,11 @@ The library also provides parser and formatter helpers through subpath exports:
 
 Supported formats are documented on the website:
 
+Field-to-field comparisons are supported in the builder model and in native
+query formats that have a direct right-hand-side field-reference form. See the
+supported-formats documentation for the current list and unsupported cases such
+as `Elasticsearch` and `RSQL`.
+
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting" target="_blank" rel="noopener noreferrer">Documentation: Parsing and Formatting</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats" target="_blank" rel="noopener noreferrer">Documentation: Supported Formats</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/format-query" target="_blank" rel="noopener noreferrer">API: formatQuery</a>
@@ -436,3 +445,4 @@ Responsive behavior is documented in more detail on the website:
 
 - <a href="https://vojtechportes.github.io/react-query-builder/documentation/components" target="_blank" rel="noopener noreferrer">Documentation: Components</a>
 - <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
+

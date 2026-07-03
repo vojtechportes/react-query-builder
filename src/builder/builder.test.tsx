@@ -16,7 +16,7 @@ import {
   IBuilderRef,
   useBuilderRef,
 } from './index';
-import { DenormalizedQuery, INormalizedRuleNode } from '../utils/query-tree';
+import { DenormalizedQuery } from '../utils/query-tree';
 
 export const fields: IBuilderFieldProps[] = [
   {
@@ -1878,7 +1878,14 @@ describe('#components/Builder', () => {
         type: 'GROUP',
         value: 'AND',
         isNegated: false,
-        children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
+        ],
       },
     ]);
 
@@ -1900,7 +1907,14 @@ describe('#components/Builder', () => {
         type: 'GROUP',
         value: 'AND',
         isNegated: false,
-        children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+        children: [
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
+        ],
       },
     ]);
   });
@@ -2460,7 +2474,14 @@ describe('#components/Builder', () => {
         type: 'GROUP',
         value: 'AND',
         isNegated: false,
-        children: [{ field: 'MOCK_NUMBER', value: 42.5, operator: 'EQUAL' }],
+        children: [
+          {
+            field: 'MOCK_NUMBER',
+            value: 42.5,
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
+        ],
       },
     ]);
   });
@@ -3327,7 +3348,12 @@ describe('#components/Builder', () => {
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3349,7 +3375,12 @@ describe('#components/Builder', () => {
           },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3367,7 +3398,12 @@ describe('#components/Builder', () => {
           { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3375,7 +3411,7 @@ describe('#components/Builder', () => {
     act(() => {
       expect(
         getBuilderRef().updateNode(secondRuleId, (node) =>
-          'field' in node
+          'field' in node && node.valueSource !== 'field'
             ? {
                 ...node,
                 value: 10,
@@ -3393,7 +3429,12 @@ describe('#components/Builder', () => {
           { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3413,7 +3454,12 @@ describe('#components/Builder', () => {
           { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3430,7 +3476,12 @@ describe('#components/Builder', () => {
           { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3451,7 +3502,12 @@ describe('#components/Builder', () => {
         children: [
           { field: 'MOCK_NUMBER', value: 10, operator: 'NOT_EQUAL' },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
         ],
       },
     ]);
@@ -3669,10 +3725,14 @@ describe('#components/Builder', () => {
 
     act(() => {
       expect(
-        builderRef?.current?.updateNode(firstRuleId as string, (node) => ({
-          ...(node as INormalizedRuleNode),
-          value: 'beta',
-        }))
+        builderRef?.current?.updateNode(firstRuleId as string, (node) =>
+          'field' in node && node.valueSource !== 'field'
+            ? {
+                ...node,
+                value: 'beta',
+              }
+            : node
+        )
       ).toBe(true);
     });
 
@@ -3902,10 +3962,14 @@ describe('#components/Builder', () => {
 
     act(() => {
       expect(
-        builderRef?.current?.updateNode(firstCountryRuleId as string, (node) => ({
-          ...(node as INormalizedRuleNode),
-          value: 'SK',
-        }))
+        builderRef?.current?.updateNode(firstCountryRuleId as string, (node) =>
+          'field' in node && node.valueSource !== 'field'
+            ? {
+                ...node,
+                value: 'SK',
+              }
+            : node
+        )
       ).toBe(true);
     });
 
@@ -4029,10 +4093,14 @@ describe('#components/Builder', () => {
 
     act(() => {
       expect(
-        builderRef?.current?.updateNode(firstCountryRuleId as string, (node) => ({
-          ...(node as INormalizedRuleNode),
-          value: 'SK',
-        }))
+        builderRef?.current?.updateNode(firstCountryRuleId as string, (node) =>
+          'field' in node && node.valueSource !== 'field'
+            ? {
+                ...node,
+                value: 'SK',
+              }
+            : node
+        )
       ).toBe(true);
     });
 
@@ -4583,7 +4651,12 @@ describe('#components/Builder', () => {
             value: 'AND',
             isNegated: false,
             children: [
-              { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+              {
+                field: 'MOCK_FIELD',
+                value: 'beta',
+                valueSource: 'value',
+                operator: 'EQUAL',
+              },
             ],
           },
         ],
@@ -4647,7 +4720,12 @@ describe('#components/Builder', () => {
         value: 'AND',
         isNegated: false,
         children: [
-          { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+          {
+            field: 'MOCK_FIELD',
+            value: 'beta',
+            valueSource: 'value',
+            operator: 'EQUAL',
+          },
           { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
           { field: 'MOCK_NUMBER', value: 5, operator: 'NOT_EQUAL' },
         ],
@@ -4905,3 +4983,123 @@ describe('#components/Builder', () => {
     expect(queryByDataTest(container, 'Remove')).not.toBeNull();
   });
 });
+
+describe('field-comparison validation surfaces', () => {
+  it('renders field-comparison validation errors for unsupported operators in builder mode', async () => {
+    render(
+      <Builder
+        fields={[
+          {
+            field: 'TEXT_A',
+            label: 'Text A',
+            type: 'TEXT',
+            operators: ['EQUAL', 'BETWEEN'],
+          },
+          {
+            field: 'TEXT_B',
+            label: 'Text B',
+            type: 'TEXT',
+            operators: ['EQUAL', 'BETWEEN'],
+          },
+        ]}
+        data={[
+          {
+            type: 'GROUP',
+            value: 'AND',
+            isNegated: false,
+            children: [
+              {
+                field: 'TEXT_A',
+                operator: 'BETWEEN',
+                valueSource: 'field',
+                valueField: 'TEXT_B',
+              },
+            ],
+          },
+        ]}
+        showValidation
+      />
+    );
+
+    expect(
+      await screen.findByText('Field-to-field comparison is not allowed')
+    ).toBeInTheDocument();
+  });
+
+  it('shows field-comparison semantic errors in the basic text editor', () => {
+    const { container } = render(
+      <Builder
+        fields={[
+          {
+            field: 'LIST_FIELD',
+            label: 'List Field',
+            type: 'LIST',
+            value: [{ value: 'alpha', label: 'Alpha' }],
+            operators: ['EQUAL'],
+          },
+          {
+            field: 'TEXT_FIELD',
+            label: 'Text Field',
+            type: 'TEXT',
+            operators: ['EQUAL'],
+          },
+        ]}
+        data={[]}
+        textMode
+        defaultMode="text"
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.change(getByDataTest(container, 'TextModeEditor'), {
+      target: { value: 'LIST_FIELD = TEXT_FIELD' },
+    });
+
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'Field-to-field comparison is not allowed'
+    );
+    expect(queryByDataTest(container, 'TextModeDiagnostic[0]')).not.toBeNull();
+  });
+  it('reports unsupported SQL field-to-field comparisons clearly in text mode', () => {
+    const comparisonFields: IBuilderFieldProps[] = [
+      {
+        field: 'MOCK_FIELD',
+        label: 'Mock Field',
+        type: 'TEXT',
+        operators: ['STARTS_WITH'],
+        fieldComparison: { type: 'string' },
+      },
+      {
+        field: 'PREFIX_FIELD',
+        label: 'Prefix Field',
+        type: 'TEXT',
+        operators: ['EQUAL'],
+        fieldComparison: { type: 'string' },
+      },
+    ];
+
+    const { container } = render(
+      <Builder
+        fields={comparisonFields}
+        data={[
+          {
+            field: 'MOCK_FIELD',
+            operator: 'STARTS_WITH',
+            valueSource: 'field',
+            valueField: 'PREFIX_FIELD',
+          },
+        ]}
+        textMode
+        onChange={jest.fn()}
+      />
+    );
+
+    fireEvent.click(getByDataTest(container, 'TextModeToggle'));
+
+    expect(getByDataTest(container, 'TextModeError').textContent).toContain(
+      'SQL does not support field-to-field comparisons for field "MOCK_FIELD" and operator "STARTS_WITH".'
+    );
+  });
+});
+
+

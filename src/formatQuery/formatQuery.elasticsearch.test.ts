@@ -59,4 +59,19 @@ describe('formatQuery Elasticsearch', () => {
       )
     );
   });
+
+  it('throws explicitly for unsupported field-to-field comparisons', () => {
+    const query: DenormalizedQuery = [
+      {
+        field: 'price',
+        operator: 'LARGER_EQUAL',
+        valueSource: 'field',
+        valueField: 'cost',
+      },
+    ];
+
+    expect(() => formatQuery(query, 'Elasticsearch')).toThrow(
+      'Elasticsearch does not support field-to-field comparisons for field "price" and operator "LARGER_EQUAL".'
+    );
+  });
 });

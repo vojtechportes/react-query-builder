@@ -1,20 +1,32 @@
 import React, { FC, useContext } from 'react';
 import { BuilderContext } from '../builder-context';
+import { isBuilderFieldUsageExhausted } from '../builder/utils/resolve-builder-field-usage.util';
 import { Select as DefaultSelect } from '../form/select';
 import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleStateForField } from '../utils/create-rule-state-for-field.util';
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
+import { getCompatibleValueFields } from '../utils/field-comparison-support';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
+import { QueryRuleValue, QueryRuleValueSource } from '../utils/query-tree';
+import { getRuleValueSource } from '../utils/rule-value-source';
 import { updateItem } from '../utils/update-item.util';
-import { isBuilderFieldUsageExhausted } from '../builder/utils/resolve-builder-field-usage.util';
 
 export interface IFieldSelectProps {
   selectedValue: string;
   id: string;
   disabled?: boolean;
 }
+
+type NextRuleState = {
+  field: string;
+  operator?: any;
+  operators?: any;
+  valueSource: QueryRuleValueSource;
+  value?: QueryRuleValue;
+  valueField?: string;
+};
 
 export const FieldSelect: FC<IFieldSelectProps> = ({
   selectedValue,
@@ -31,6 +43,7 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
     components,
     strings,
     readOnly,
+    allowFieldComparisons = false,
     onFieldChange,
   } = useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
@@ -39,20 +52,54 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
   const parentId =
     currentRule && !isNormalizedGroupNode(currentRule) ? currentRule.parent : undefined;
 
+  const createNextRuleState = (value: string) => {
+    const nextField = fields.find(item => item.field === value);
+    const currentRuleNode = findNodeById(data, id);
+
+    if (!nextField || !currentRuleNode || isNormalizedGroupNode(currentRuleNode)) {
+      return null;
+    }
+
+    const nextRuleState: NextRuleState = {
+      ...createRuleStateForField(nextField),
+    };
+    const currentValueSource = getRuleValueSource(currentRuleNode);
+    const nextCompatibleFields =
+      allowFieldComparisons && nextRuleState.operator
+        ? getCompatibleValueFields(fields, nextField, nextRuleState.operator as any)
+        : [];
+
+    if (currentValueSource === 'field' && nextCompatibleFields.length > 0) {
+      nextRuleState.valueSource = 'field';
+      nextRuleState.valueField =
+        currentRuleNode.valueField &&
+        nextCompatibleFields.some(fieldItem => fieldItem.field === currentRuleNode.valueField)
+          ? currentRuleNode.valueField
+          : nextCompatibleFields[0].field;
+      delete nextRuleState.value;
+    }
+
+    return {
+      currentRule: currentRuleNode,
+      nextField,
+      nextRuleState,
+    };
+  };
+
   const handleChange = (value: string) => {
     if (isDisabled) {
       return;
     }
 
-    const nextField = fields.find(item => item.field === value);
-    const currentRule = findNodeById(data, id);
+    const nextState = createNextRuleState(value);
 
-    if (!nextField || !currentRule || isNormalizedGroupNode(currentRule)) {
+    if (!nextState) {
       return;
     }
 
+    const { currentRule, nextField, nextRuleState } = nextState;
+
     if (!dispatchAction && setData && onChange) {
-      const nextRuleState = createRuleStateForField(nextField);
       const nextData = updateItem(data, id, item => {
         if (isNormalizedGroupNode(item)) {
           return;
@@ -79,7 +126,13 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
         id,
         nextField.field,
         currentRule.value,
-        nextRuleState.value
+        nextRuleState.value,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: nextRuleState.valueSource ?? 'value',
+          valueField: nextRuleState.valueField,
+        }
       );
       return;
     }
@@ -88,15 +141,16 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
       return;
     }
 
-    const nextRuleState = createRuleStateForField(nextField);
-
     dispatchAction(
-      createReplaceNodeAction(id, {
-        id: currentRule.id,
-        parent: currentRule.parent,
-        readOnly: currentRule.readOnly,
-        ...nextRuleState,
-      })
+      createReplaceNodeAction(
+        id,
+        {
+          id: currentRule.id,
+          parent: currentRule.parent,
+          readOnly: currentRule.readOnly,
+          ...nextRuleState,
+        } as any
+      )
     );
     emitBuilderFieldChange(
       onFieldChange,
@@ -115,11 +169,17 @@ export const FieldSelect: FC<IFieldSelectProps> = ({
       id,
       nextField.field,
       currentRule.value,
-      nextRuleState.value
+      nextRuleState.value,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: nextRuleState.valueSource ?? 'value',
+        valueField: nextRuleState.valueField,
+      }
     );
   };
 
-  const fieldNames = fields.map((field) => ({
+  const fieldNames = fields.map(field => ({
     value: field.field,
     label: field.label,
     disabled:

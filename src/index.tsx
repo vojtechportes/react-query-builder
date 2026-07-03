@@ -15,6 +15,7 @@ export type {
   BuilderValidationSeverity,
   BuilderDefaultMode,
   IBuilderTextModeConfig,
+  BuilderFieldComparisonType,
   BuilderFieldOperator,
   BuilderFieldOption,
   BuilderFieldOptionsStatus,
@@ -31,6 +32,7 @@ export type {
   IBooleanFieldValidation,
   IBuilderComponentsProps,
   IBuilderFieldChange,
+  IBuilderFieldComparisonConfig,
   IBuilderRuleDependencyEntry,
   IBuilderFieldDependencyEntry,
   IBuilderFieldProps,
@@ -139,20 +141,29 @@ export type {
 export { strings } from './constants/strings';
 export type { IStrings } from './constants/strings';
 export { queryOperators } from './utils/query-operators';
+export {
+  getRuleValueSource,
+  isFieldComparisonRule,
+  isLiteralComparisonRule,
+} from './utils/rule-value-source';
 export type {
   DenormalizedNode,
   DenormalizedQuery,
   GroupReadOnly,
   GroupReadOnlyTarget,
+  IFieldReferenceRuleNode,
   IGroupReadOnlyConfig,
   IRuleReadOnlyConfig,
   IDenormalizedGroupNodeBase,
   IDenormalizedGroupNodeWithModifiers,
   IDenormalizedGroupNodeWithoutModifiers,
   IDenormalizedRuleNode,
+  ILiteralRuleNode,
+  INormalizedFieldReferenceRuleNode,
   INormalizedGroupNodeBase,
   INormalizedGroupNodeWithModifiers,
   INormalizedGroupNodeWithoutModifiers,
+  INormalizedLiteralRuleNode,
   INormalizedRuleNode,
   NormalizedGroupNode,
   NormalizedNode,
@@ -161,6 +172,8 @@ export type {
   QueryGroupValue,
   QueryOperator,
   QueryRuleValue,
+  QueryRuleValueSource,
   RuleReadOnly,
   RuleReadOnlyTarget,
 } from './utils/query-tree';
+

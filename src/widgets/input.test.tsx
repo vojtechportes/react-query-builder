@@ -69,4 +69,56 @@ describe('#components/Widgets/Input', () => {
 
     expect(container.querySelector('input')).toBeTruthy();
   });
+
+  it('resets field-comparison rules back to literal mode in the non-dispatch path', () => {
+    const onChange = jest.fn();
+    const onFieldChange = jest.fn();
+    const fieldComparisonData: any[] = [
+      {
+        id: 'test',
+        field: 'MOCK_FIELD',
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: 'OTHER_FIELD',
+      },
+    ];
+    const { container } = renderWithContext(
+      <Input id="test" value="" type="text" />,
+      {
+        data: fieldComparisonData,
+        onChange,
+        onFieldChange,
+      }
+    );
+
+    fireEvent.change(container.querySelector('input') as HTMLElement, {
+      target: { value: 'next' },
+    });
+
+    expect(onChange).toHaveBeenCalledWith([
+      {
+        id: 'test',
+        field: 'MOCK_FIELD',
+        operator: 'EQUAL',
+        valueSource: 'value',
+        value: 'next',
+      },
+    ]);
+    expect(onFieldChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        previousValueSource: 'field',
+        previousValueField: 'OTHER_FIELD',
+        valueSource: 'value',
+        value: 'next',
+        data: [
+          {
+            field: 'MOCK_FIELD',
+            operator: 'EQUAL',
+            valueSource: 'value',
+            value: 'next',
+          },
+        ],
+      })
+    );
+  });
 });

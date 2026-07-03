@@ -165,6 +165,11 @@ const Tab = styled.button<{ $active: boolean }>`
   color: ${({ $active }) => ($active ? siteTheme.primaryDark : '#475569')};
   font-weight: 600;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 `;
 
 const OutputCard = styled.section`
@@ -252,6 +257,13 @@ export interface IDemoPlaygroundProps {
   initialData?: DenormalizedQuery;
 }
 
+const containsFieldComparisons = (query: DenormalizedQuery): boolean =>
+  query.some(node =>
+    'type' in node ? containsFieldComparisons(node.children) : node.valueSource === 'field'
+  );
+
+const unsupportedFieldComparisonFormats: OutputFormat[] = ['Elasticsearch', 'RSQL'];
+
 export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   initialData = initialQueryTree,
 }) => {
@@ -265,6 +277,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [allowGroupNegation, setAllowGroupNegation] = React.useState(true);
+  const [allowFieldComparisons, setAllowFieldComparisons] = React.useState(true);
   const [newNodePlacement, setNewNodePlacement] = React.useState<
     'append' | 'prepend'
   >('append');
@@ -334,6 +347,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     onChange: setData,
     draggable,
     allowGroupNegation,
+    allowFieldComparisons,
     newNodePlacement,
     history,
     textMode,
@@ -343,6 +357,19 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     showValidation,
     ...(builderComponents ? { components: builderComponents } : {}),
   };
+
+  const hasFieldComparisons = React.useMemo(() => containsFieldComparisons(data), [data]);
+  const isOutputFormatDisabled = React.useCallback(
+    (format: OutputFormat) =>
+      hasFieldComparisons && unsupportedFieldComparisonFormats.includes(format),
+    [hasFieldComparisons]
+  );
+
+  React.useEffect(() => {
+    if (isOutputFormatDisabled(outputFormat)) {
+      setOutputFormat('Native');
+    }
+  }, [isOutputFormatDisabled, outputFormat]);
 
   const outputText = React.useMemo(() => {
     if (outputFormat === 'Native') {
@@ -361,6 +388,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         cloneable,
         draggable,
         allowGroupNegation,
+        allowFieldComparisons,
         newNodePlacement,
         history,
         textMode,
@@ -379,6 +407,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       cloneable,
       draggable,
       allowGroupNegation,
+      allowFieldComparisons,
       newNodePlacement,
       history,
       textMode,
@@ -451,6 +480,15 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               onChange={event => setAllowGroupNegation(event.target.checked)}
             />
             <span>Allow group negation</span>
+          </ToggleRow>
+
+          <ToggleRow>
+            <Toggle
+              type="checkbox"
+              checked={allowFieldComparisons}
+              onChange={event => setAllowFieldComparisons(event.target.checked)}
+            />
+            <span>Allow field comparisons</span>
           </ToggleRow>
 
           <ToggleRow>
@@ -717,6 +755,12 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                 <Tab
                   key={format}
                   $active={outputFormat === format}
+                  disabled={isOutputFormatDisabled(format)}
+                  title={
+                    isOutputFormatDisabled(format)
+                      ? 'Disabled because the current query contains field-to-field comparisons.'
+                      : undefined
+                  }
                   onClick={() => setOutputFormat(format)}
                 >
                   {formatLabels[format]}
@@ -735,3 +779,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     </Layout>
   );
 };
+
+
+
+

@@ -3,6 +3,7 @@ import type {
   QueryOperator,
   QueryRuleValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import { formatDynamoScalarValue } from './shared';
 
 const ensureArrayValue = (
@@ -38,20 +39,25 @@ const ensureStringValue = (
   return value;
 };
 
+const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): string =>
+  isFieldComparisonRule(rule)
+    ? rule.valueField
+    : formatDynamoScalarValue(rule.value as never);
+
 export const formatDynamoRule = (rule: IDenormalizedRuleNode): string => {
   switch (rule.operator) {
     case 'EQUAL':
-      return `${rule.field} = ${formatDynamoScalarValue(rule.value as never)}`;
+      return `${rule.field} = ${formatFieldOrScalarValue(rule)}`;
     case 'NOT_EQUAL':
-      return `${rule.field} <> ${formatDynamoScalarValue(rule.value as never)}`;
+      return `${rule.field} <> ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER':
-      return `${rule.field} > ${formatDynamoScalarValue(rule.value as never)}`;
+      return `${rule.field} > ${formatFieldOrScalarValue(rule)}`;
     case 'LARGER_EQUAL':
-      return `${rule.field} >= ${formatDynamoScalarValue(rule.value as never)}`;
+      return `${rule.field} >= ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER':
-      return `${rule.field} < ${formatDynamoScalarValue(rule.value as never)}`;
+      return `${rule.field} < ${formatFieldOrScalarValue(rule)}`;
     case 'SMALLER_EQUAL':
-      return `${rule.field} <= ${formatDynamoScalarValue(rule.value as never)}`;
+      return `${rule.field} <= ${formatFieldOrScalarValue(rule)}`;
     case 'IN':
     case 'ANY_IN':
       return `${rule.field} IN (${ensureArrayValue(rule.operator, rule.value)

@@ -1,4 +1,4 @@
-import type { IColors } from '../../../../src/constants/colors';
+import type { IColors } from '../../../../../src/constants/colors';
 
 export const formatThemeOverrides = (themeOverrides: Partial<IColors>): string => {
   const lines = Object.entries(themeOverrides).flatMap(([key, value]) => {
@@ -20,3 +20,4 @@ export const formatThemeOverrides = (themeOverrides: Partial<IColors>): string =
 
   return ['{', '    ...colors,', ...lines, '  }'].join('\n');
 };
+

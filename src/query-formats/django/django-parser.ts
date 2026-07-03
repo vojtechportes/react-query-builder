@@ -2,14 +2,20 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 import type {
   DjangoTokenType,
   IDjangoToken,
   IParsedDjangoGroup,
   ParsedDjangoNode,
 } from './django-token.types';
-import { inferDjangoLookupOperator } from './shared';
+import {
+  djangoFieldReferenceFunction,
+  inferDjangoLookupOperator,
+} from './shared';
 import { tokenizeDjango } from './tokenize-django';
+
+type DjangoFieldReference = { kind: 'field'; field: string };
 
 export class DjangoParser {
   private readonly tokens: IDjangoToken[];
@@ -129,7 +135,7 @@ export class DjangoParser {
 
   private createRuleFromLookup(
     lookup: string,
-    value: string | number | boolean | null | string[] | number[]
+    value: string | number | boolean | null | string[] | number[] | DjangoFieldReference
   ): IDenormalizedRuleNode {
     const parts = lookup.split('__');
     const field = parts[0];
@@ -158,6 +164,32 @@ export class DjangoParser {
       };
     }
 
+    if (this.isFieldReference(value)) {
+      if (
+        ![
+          'exact',
+          'gt',
+          'gte',
+          'lt',
+          'lte',
+          'contains',
+          'startswith',
+          'endswith',
+        ].includes(suffix)
+      ) {
+        throw new Error(
+          `Django F() field references are supported only for native direct-reference lookups, found "${suffix}".`
+        );
+      }
+
+      return {
+        field,
+        operator: inferDjangoLookupOperator(suffix, value.field),
+        valueSource: 'field',
+        valueField: value.field,
+      };
+    }
+
     if (value === null) {
       return {
         field,
@@ -168,15 +200,19 @@ export class DjangoParser {
     return {
       field,
       operator: inferDjangoLookupOperator(suffix, value),
-      value: value as Exclude<typeof value, null>,
+      value: value as Exclude<typeof value, null | DjangoFieldReference>,
     };
   }
 
-  private parseValue(): string | number | boolean | null | string[] | number[] {
+  private parseValue(): string | number | boolean | null | string[] | number[] | DjangoFieldReference {
     const token = this.peek();
 
     if (token.type === 'LBRACKET') {
       return this.parseList();
+    }
+
+    if (token.type === 'IDENTIFIER' && token.value === djangoFieldReferenceFunction) {
+      return this.parseFieldReference();
     }
 
     this.consume();
@@ -204,6 +240,28 @@ export class DjangoParser {
     throw new Error(`Expected a Django scalar value but found "${token.value}".`);
   }
 
+  private parseFieldReference(): DjangoFieldReference {
+    const identifier = this.consume();
+
+    if (identifier.type !== 'IDENTIFIER' || identifier.value !== djangoFieldReferenceFunction) {
+      throw new Error(`Expected Django field reference function "${djangoFieldReferenceFunction}".`);
+    }
+
+    this.expect('LPAREN');
+    const fieldToken = this.consume();
+
+    if (fieldToken.type !== 'STRING') {
+      throw new Error('Django F() references must contain a quoted field name.');
+    }
+
+    this.expect('RPAREN');
+
+    return {
+      kind: 'field',
+      field: fieldToken.value,
+    };
+  }
+
   private parseList(): string[] | number[] {
     this.expect('LBRACKET');
     const values: Array<string | number> = [];
@@ -211,7 +269,12 @@ export class DjangoParser {
     while (this.peek().type !== 'RBRACKET') {
       const value = this.parseValue();
 
-      if (typeof value === 'boolean' || value === null || Array.isArray(value)) {
+      if (
+        typeof value === 'boolean' ||
+        value === null ||
+        Array.isArray(value) ||
+        this.isFieldReference(value)
+      ) {
         throw new Error('Django lists currently support only string and number values.');
       }
 
@@ -307,7 +370,12 @@ export class DjangoParser {
   private tryCollapseAndRules(
     rules: IDenormalizedRuleNode[]
   ): IDenormalizedRuleNode | null {
-    if (rules.length !== 2 || rules[0].field !== rules[1].field) {
+    if (
+      rules.length !== 2 ||
+      rules[0].field !== rules[1].field ||
+      isFieldComparisonRule(rules[0]) ||
+      isFieldComparisonRule(rules[1])
+    ) {
       return null;
     }
 
@@ -330,7 +398,13 @@ export class DjangoParser {
     left: ParsedDjangoNode,
     right: ParsedDjangoNode
   ): IDenormalizedRuleNode | null {
-    if (!this.isRuleNode(left) || !this.isRuleNode(right) || left.field !== right.field) {
+    if (
+      !this.isRuleNode(left) ||
+      !this.isRuleNode(right) ||
+      left.field !== right.field ||
+      isFieldComparisonRule(left) ||
+      isFieldComparisonRule(right)
+    ) {
       return null;
     }
 
@@ -368,6 +442,17 @@ export class DjangoParser {
     return 'kind' in node && node.kind === 'group';
   }
 
+  private isFieldReference(value: unknown): value is DjangoFieldReference {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      'kind' in value &&
+      value.kind === 'field' &&
+      'field' in value &&
+      typeof value.field === 'string'
+    );
+  }
+
   private expect(type: DjangoTokenType): IDjangoToken {
     const token = this.consume();
 
@@ -396,3 +481,4 @@ export class DjangoParser {
     return this.tokens[this.index];
   }
 }
+

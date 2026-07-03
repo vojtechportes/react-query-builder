@@ -102,6 +102,53 @@ const result = parseQuery(
 console.log(result.fields);
 console.log(result.data);`;
 
+const fieldComparisonFormatSnippet = `import { type DenormalizedQuery } from '@vojtechportes/react-query-builder';
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+const data: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'ORDER_TOTAL',
+        operator: 'LARGER_EQUAL',
+        valueSource: 'field',
+        valueField: 'ORDER_APPROVAL_LIMIT',
+      },
+    ],
+  },
+];
+
+const sql = formatQuery(data, 'SQL', {
+  fields,
+  wrapWhereClause: true,
+});
+
+// WHERE ORDER_TOTAL >= ORDER_APPROVAL_LIMIT`;
+
+const fieldComparisonParseSnippet = `import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
+
+const result = parseQuery(
+  'WHERE ORDER_TOTAL >= ORDER_APPROVAL_LIMIT',
+  'SQL'
+);
+
+console.log(result.data[0]);
+// {
+//   type: 'GROUP',
+//   value: 'AND',
+//   isNegated: false,
+//   children: [
+//     {
+//       field: 'ORDER_TOTAL',
+//       operator: 'LARGER_EQUAL',
+//       valueSource: 'field',
+//       valueField: 'ORDER_APPROVAL_LIMIT',
+//     },
+//   ],
+// }`;
 const themeSnippet = `import { ThemeProvider } from '@vojtechportes/react-query-builder/theme-provider';
 import { colors } from '@vojtechportes/react-query-builder';
 
@@ -568,6 +615,86 @@ const usageLimitSnippet = `const fields: IBuilderFieldProps[] = [
   onChange={setData}
 />;`;
 
+const fieldComparisonSnippet = `import React, { useState } from 'react';
+import {
+  Builder,
+  type DenormalizedQuery,
+  type IBuilderFieldProps,
+} from '@vojtechportes/react-query-builder';
+
+const fields: IBuilderFieldProps[] = [
+  {
+    field: 'ORDER_TOTAL',
+    label: 'Order total',
+    type: 'NUMBER',
+    operators: ['LARGER_EQUAL'],
+    fieldComparison: {
+      type: 'number',
+      comparableFields: ['ORDER_APPROVAL_LIMIT'],
+    },
+  },
+  {
+    field: 'ORDER_APPROVAL_LIMIT',
+    label: 'Approval limit',
+    type: 'NUMBER',
+    operators: ['LARGER_EQUAL'],
+  },
+  {
+    field: 'CUSTOMER_COUNTRY',
+    label: 'Customer country',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [
+      { value: 'CZ', label: 'Czech Republic' },
+      { value: 'SK', label: 'Slovakia' },
+    ],
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['DELIVERY_COUNTRY_CODE'],
+    },
+  },
+  {
+    field: 'DELIVERY_COUNTRY_CODE',
+    label: 'Delivery country code',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+  },
+];
+
+const initialData: DenormalizedQuery = [
+  {
+    type: 'GROUP',
+    value: 'AND',
+    isNegated: false,
+    children: [
+      {
+        field: 'ORDER_TOTAL',
+        operator: 'LARGER_EQUAL',
+        valueSource: 'field',
+        valueField: 'ORDER_APPROVAL_LIMIT',
+      },
+      {
+        field: 'CUSTOMER_COUNTRY',
+        operator: 'EQUAL',
+        valueSource: 'field',
+        valueField: 'DELIVERY_COUNTRY_CODE',
+      },
+    ],
+  },
+];
+
+export const FieldComparisonBuilder = () => {
+  const [data, setData] = useState(initialData);
+
+  return (
+    <Builder
+      allowFieldComparisons
+      fields={fields}
+      data={data}
+      onChange={setData}
+    />
+  );
+};`;
 const builderBehaviorSnippet = `<Builder
   fields={fields}
   data={data}
@@ -1445,6 +1572,7 @@ export const documentationPages: IDocumentationPage[] = [
         <List>
           <li>Start with installation and the first controlled builder example.</li>
           <li>Use <TextLink to="/documentation/dynamic-field-options">Dynamic Field Options</TextLink> when list values need to come from async or dependent data sources.</li>
+          <li><TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink> shows how to compare one field against another field.</li>
           <li>Move to parsing and formatting when you need interoperability with external query syntaxes.</li>
           <li>Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine, Fluent UI, or Radix Themes.</li>
           <li>
@@ -1501,25 +1629,149 @@ export const documentationPages: IDocumentationPage[] = [
           to show that locking can live directly in the query data without changing
           the rest of the builder configuration.
         </p>
-        <AlertBox title="API reference" variant="info">
-          <TextLink to="/api/builder">Builder</TextLink>,{' '}
-          <TextLink to="/api/fields">Fields</TextLink>, and{' '}
-          <TextLink to="/api/data">Data</TextLink>.
+        <AlertBox title="Related guide" variant="info">
+          Need a rule to compare against another field instead of a literal value? Visit{' '}
+          <TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink>.
         </AlertBox>
         <AlertBox title="Next step" variant="tip">
           Continue with{' '}
+          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>{' '}
+          for imperative control,{' '}
+          <TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink>{' '}
+          for cross-field rules,{' '}
           <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>{' '}
           or <TextLink to="/documentation/text-mode">Text Mode</TextLink>{' '}
           or <TextLink to="/documentation/history">Undo and Redo</TextLink>{' '}
           for editing workflows, or{' '}
-          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>{' '}
-          for imperative control, or{' '}
           <TextLink to="/documentation/dynamic-field-options">
             Dynamic Field Options
           </TextLink>{' '}
           for async select data, or{' '}
           <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
           for partial locking.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/builder-behavior',
+    title: 'Builder Behavior',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Documentation for clone controls, drag-and-drop, insertion placement, root-group behavior, and group mode configuration.',
+    searchText:
+      'builder behavior cloneable clone controls draggable drag and drop allowGroupNegation group negation not groups readOnlyProtectsDelete newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
+    content: (
+      <>
+        <p>
+          A few builder props shape the overall editing model more than the
+          field or query data itself. These are worth deciding early because
+          they affect how users add, move, and organize rules.
+        </p>
+        <CodeBlock code={builderBehaviorSnippet} language="tsx" label="Builder behavior" />
+        <SectionTitle>cloneable</SectionTitle>
+        <List>
+          <li>Defaults to <InlineCode>false</InlineCode> and renders built-in clone controls for rules and groups.</li>
+          <li>The clone button appears immediately to the left of the lock button when both controls are enabled.</li>
+          <li>Cloning a rule inserts a duplicate directly below that rule.</li>
+          <li>Cloning a group duplicates the entire subtree and inserts the clone directly below that group.</li>
+          <li>When <InlineCode>singleRootGroup</InlineCode> is enabled, the synthetic root group does not expose a clone control.</li>
+        </List>
+        <SectionTitle>draggable</SectionTitle>
+        <List>
+          <li>Use <InlineCode>lockable</InlineCode> to expose lock controls directly in the UI.</li>
+          <li>Enables drag-and-drop reordering and movement for editable rules and groups.</li>
+          <li>Read-only rules and groups are excluded from dragging.</li>
+          <li>When the entire builder is read-only, drag-and-drop is disabled as well.</li>
+          <li>Empty groups expose a dedicated drop zone so items can be moved into them.</li>
+        </List>
+        <SectionTitle>readOnlyProtectsDelete</SectionTitle>
+        <List>
+          <li>Defaults to <InlineCode>true</InlineCode>.</li>
+          <li>When enabled, deleting a group is blocked if that would indirectly remove read-only protected descendants.</li>
+          <li>Set it to <InlineCode>false</InlineCode> when your product wants only directly protected nodes to be non-deletable, while still allowing parent-group deletes around them.</li>
+        </List>
+        <SectionTitle>singleRootGroup</SectionTitle>
+        <List>
+          <li>
+            Defaults to <InlineCode>true</InlineCode>, which means the builder
+            maintains a single root group around the visible tree.
+          </li>
+          <li>
+            The root group cannot be deleted while <InlineCode>singleRootGroup</InlineCode>{' '}
+            is enabled.
+          </li>
+          <li>
+            Set it to <InlineCode>false</InlineCode> when your application
+            wants multiple top-level nodes instead of one wrapped root group.
+          </li>
+        </List>
+        <SectionTitle>newNodePlacement</SectionTitle>
+        <List>
+          <li>
+            Defaults to <InlineCode>'append'</InlineCode>, which inserts newly
+            added rules and groups at the end of their parent.
+          </li>
+          <li>
+            Set it to <InlineCode>'prepend'</InlineCode> to insert new rules
+            and groups at the beginning of their parent instead.
+          </li>
+          <li>
+            This affects built-in Add Rule and Add Group controls, root-level
+            add controls, and imperative ref methods when no explicit index is
+            provided.
+          </li>
+          <li>
+            It does not change cloning or drag-and-drop behavior, since those
+            actions already use explicit target positions.
+          </li>
+        </List>
+        <SectionTitle>groupTypes</SectionTitle>
+        <List>
+          <li>
+            <InlineCode>with-modifiers</InlineCode> shows group controls such as{' '}
+            <InlineCode>AND</InlineCode>, <InlineCode>OR</InlineCode>, and negation.
+          </li>
+          <li>
+            <InlineCode>without-modifiers</InlineCode> creates structural groups
+            that do not render combinator or negation controls.
+          </li>
+          <li>
+            <InlineCode>both</InlineCode> lets users choose which group kind to
+            insert when adding a new group.
+          </li>
+        </List>
+        <SectionTitle>allowGroupNegation</SectionTitle>
+        <List>
+          <li>
+            Set <InlineCode>allowGroupNegation={false}</InlineCode> when you want
+            groups to keep combinators like <InlineCode>AND</InlineCode> and{' '}
+            <InlineCode>OR</InlineCode> but remove the group-level{' '}
+            <InlineCode>NOT</InlineCode> option.
+          </li>
+          <li>
+            This is narrower than <InlineCode>groupTypes</InlineCode>: it only
+            disables negating whole groups and does not affect whether groups
+            render combinator controls.
+          </li>
+          <li>
+            Operator-level negation still works normally, including{' '}
+            <InlineCode>NOT IN</InlineCode>, <InlineCode>NOT LIKE</InlineCode>,{' '}
+            <InlineCode>IS NOT NULL</InlineCode>, and{' '}
+            <InlineCode>NOT BETWEEN</InlineCode>.
+          </li>
+          <li>
+            When disabled, incoming negated groups are normalized to non-negated
+            form so the builder output stays consistent with the visible UI.
+          </li>
+        </List>
+        <AlertBox title="Related docs" variant="info">
+          <TextLink to="/documentation/history">Undo and Redo</TextLink>,{' '}
+          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
+          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
+          and <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
       </>
     ),
@@ -1597,6 +1849,60 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/documentation/dynamic-field-options">
             Dynamic Field Options
           </TextLink>.
+        </AlertBox>
+      </>
+    ),
+  },
+  {
+    path: '/documentation/field-comparisons',
+    title: 'Field Comparisons',
+    sectionKey: 'getting-started',
+    sectionTitle: 'Getting Started',
+    summary: '',
+    description:
+      'Enable rules that compare one field against another field, including configuration, data shape, and format support.',
+    searchText:
+      'field comparisons field-to-field allowFieldComparisons valueSource valueField comparableFields fieldComparison formatQuery parseQuery',
+    content: (
+      <>
+        <p>
+          Enable <InlineCode>allowFieldComparisons</InlineCode> on{' '}
+          <TextLink to="/api/builder">Builder</TextLink> when a rule should be
+          able to compare against another field instead of a literal value.
+        </p>
+        <CodeBlock
+          code={fieldComparisonSnippet}
+          language="tsx"
+          label="Enable field comparisons"
+        />
+        <SectionTitle>How It Works</SectionTitle>
+        <List>
+          <li>
+            <InlineCode>valueSource: 'field'</InlineCode> plus{' '}
+            <InlineCode>valueField</InlineCode> stores the selected comparison
+            field in query data.
+          </li>
+          <li>
+            <InlineCode>fieldComparison.type</InlineCode> lets semantically
+            compatible fields compare even when their builder UI types differ,
+            such as <InlineCode>LIST</InlineCode> to <InlineCode>TEXT</InlineCode>.
+          </li>
+          <li>
+            <InlineCode>fieldComparison.comparableFields</InlineCode> narrows
+            the right-hand-side selector to an explicit allowlist owned by the
+            source field.
+          </li>
+        </List>
+        <AlertBox title="API reference" variant="info">
+          <TextLink to="/api/builder">Builder</TextLink>,{' '}
+          <TextLink to="/api/fields">Fields</TextLink>,{' '}
+          <TextLink to="/api/data">Data</TextLink>,{' '}
+          <TextLink to="/api/format-query">formatQuery</TextLink>, and{' '}
+          <TextLink to="/api/parse-query">parseQuery</TextLink>.
+        </AlertBox>
+        <AlertBox title="Parsing and formatting" variant="tip">
+          Native field-to-field formatting and parsing examples are documented in{' '}
+          <TextLink to="/documentation/parsing-and-formatting/supported-formats">Supported Formats</TextLink>.
         </AlertBox>
       </>
     ),
@@ -1825,129 +2131,6 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
           <TextLink to="/demo">Demo</TextLink>, and{' '}
           <TextLink to="/api/builder">Builder</TextLink>.
-        </AlertBox>
-      </>
-    ),
-  },
-  {
-    path: '/documentation/builder-behavior',
-    title: 'Builder Behavior',
-    sectionKey: 'getting-started',
-    sectionTitle: 'Getting Started',
-    summary: '',
-    description:
-      'Documentation for clone controls, drag-and-drop, insertion placement, root-group behavior, and group mode configuration.',
-    searchText:
-      'builder behavior cloneable clone controls draggable drag and drop allowGroupNegation group negation not groups readOnlyProtectsDelete newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
-    content: (
-      <>
-        <p>
-          A few builder props shape the overall editing model more than the
-          field or query data itself. These are worth deciding early because
-          they affect how users add, move, and organize rules.
-        </p>
-        <CodeBlock code={builderBehaviorSnippet} language="tsx" label="Builder behavior" />
-        <SectionTitle>cloneable</SectionTitle>
-        <List>
-          <li>Defaults to <InlineCode>false</InlineCode> and renders built-in clone controls for rules and groups.</li>
-          <li>The clone button appears immediately to the left of the lock button when both controls are enabled.</li>
-          <li>Cloning a rule inserts a duplicate directly below that rule.</li>
-          <li>Cloning a group duplicates the entire subtree and inserts the clone directly below that group.</li>
-          <li>When <InlineCode>singleRootGroup</InlineCode> is enabled, the synthetic root group does not expose a clone control.</li>
-        </List>
-        <SectionTitle>draggable</SectionTitle>
-        <List>
-          <li>Use <InlineCode>lockable</InlineCode> to expose lock controls directly in the UI.</li>
-          <li>Enables drag-and-drop reordering and movement for editable rules and groups.</li>
-          <li>Read-only rules and groups are excluded from dragging.</li>
-          <li>When the entire builder is read-only, drag-and-drop is disabled as well.</li>
-          <li>Empty groups expose a dedicated drop zone so items can be moved into them.</li>
-        </List>
-        <SectionTitle>readOnlyProtectsDelete</SectionTitle>
-        <List>
-          <li>Defaults to <InlineCode>true</InlineCode>.</li>
-          <li>When enabled, deleting a group is blocked if that would indirectly remove read-only protected descendants.</li>
-          <li>Set it to <InlineCode>false</InlineCode> when your product wants only directly protected nodes to be non-deletable, while still allowing parent-group deletes around them.</li>
-        </List>
-        <SectionTitle>singleRootGroup</SectionTitle>
-        <List>
-          <li>
-            Defaults to <InlineCode>true</InlineCode>, which means the builder
-            maintains a single root group around the visible tree.
-          </li>
-          <li>
-            The root group cannot be deleted while <InlineCode>singleRootGroup</InlineCode>{' '}
-            is enabled.
-          </li>
-          <li>
-            Set it to <InlineCode>false</InlineCode> when your application
-            wants multiple top-level nodes instead of one wrapped root group.
-          </li>
-        </List>
-        <SectionTitle>newNodePlacement</SectionTitle>
-        <List>
-          <li>
-            Defaults to <InlineCode>'append'</InlineCode>, which inserts newly
-            added rules and groups at the end of their parent.
-          </li>
-          <li>
-            Set it to <InlineCode>'prepend'</InlineCode> to insert new rules
-            and groups at the beginning of their parent instead.
-          </li>
-          <li>
-            This affects built-in Add Rule and Add Group controls, root-level
-            add controls, and imperative ref methods when no explicit index is
-            provided.
-          </li>
-          <li>
-            It does not change cloning or drag-and-drop behavior, since those
-            actions already use explicit target positions.
-          </li>
-        </List>
-        <SectionTitle>groupTypes</SectionTitle>
-        <List>
-          <li>
-            <InlineCode>with-modifiers</InlineCode> shows group controls such as{' '}
-            <InlineCode>AND</InlineCode>, <InlineCode>OR</InlineCode>, and negation.
-          </li>
-          <li>
-            <InlineCode>without-modifiers</InlineCode> creates structural groups
-            that do not render combinator or negation controls.
-          </li>
-          <li>
-            <InlineCode>both</InlineCode> lets users choose which group kind to
-            insert when adding a new group.
-          </li>
-        </List>
-        <SectionTitle>allowGroupNegation</SectionTitle>
-        <List>
-          <li>
-            Set <InlineCode>allowGroupNegation={false}</InlineCode> when you want
-            groups to keep combinators like <InlineCode>AND</InlineCode> and{' '}
-            <InlineCode>OR</InlineCode> but remove the group-level{' '}
-            <InlineCode>NOT</InlineCode> option.
-          </li>
-          <li>
-            This is narrower than <InlineCode>groupTypes</InlineCode>: it only
-            disables negating whole groups and does not affect whether groups
-            render combinator controls.
-          </li>
-          <li>
-            Operator-level negation still works normally, including{' '}
-            <InlineCode>NOT IN</InlineCode>, <InlineCode>NOT LIKE</InlineCode>,{' '}
-            <InlineCode>IS NOT NULL</InlineCode>, and{' '}
-            <InlineCode>NOT BETWEEN</InlineCode>.
-          </li>
-          <li>
-            When disabled, incoming negated groups are normalized to non-negated
-            form so the builder output stays consistent with the visible UI.
-          </li>
-        </List>
-        <AlertBox title="Related docs" variant="info">
-          <TextLink to="/documentation/history">Undo and Redo</TextLink>,{' '}
-          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
-          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
-          and <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
       </>
     ),
@@ -2186,6 +2369,50 @@ export const documentationPages: IDocumentationPage[] = [
         <List>
           <li>API and datastore integrations with format-specific output conventions.</li>
         </List>
+        <SectionTitle>Advanced: Field-To-Field Comparisons</SectionTitle>
+        <p>
+          Most formats on this page can be explored with ordinary literal-based
+          rules. If you specifically need one field to compare against another,
+          start with <TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink>{' '}
+          and then use the native field-reference support only in formats that
+          have a direct right-hand-side field form.
+        </p>
+        <List>
+          <li>
+            Supported native field-to-field formats in this feature are{' '}
+            <InlineCode>SQL</InlineCode>, <InlineCode>Mongo</InlineCode>,{' '}
+            <InlineCode>AQL</InlineCode>, <InlineCode>JSONata</InlineCode>,{' '}
+            <InlineCode>JsonLogic</InlineCode>, <InlineCode>CEL</InlineCode>,{' '}
+            <InlineCode>SpEL</InlineCode>, <InlineCode>Prisma</InlineCode>,{' '}
+            <InlineCode>OData</InlineCode>, <InlineCode>Dynamo</InlineCode>,
+            and <InlineCode>Django</InlineCode>.
+          </li>
+          <li>
+            String-style field references are also supported where the target
+            format has a native form for them, such as{' '}
+            <InlineCode>contains</InlineCode>,{' '}
+            <InlineCode>startsWith</InlineCode>, and{' '}
+            <InlineCode>endsWith</InlineCode> in{' '}
+            <InlineCode>CEL</InlineCode>, <InlineCode>OData</InlineCode>,{' '}
+            <InlineCode>Django</InlineCode>, and <InlineCode>SpEL</InlineCode>.
+          </li>
+          <li>
+            <InlineCode>Elasticsearch</InlineCode> and{' '}
+            <InlineCode>RSQL</InlineCode> intentionally reject field
+            comparisons because supporting them would require invented syntax or
+            non-native backend semantics.
+          </li>
+        </List>
+        <CodeBlock
+          code={fieldComparisonFormatSnippet}
+          language="ts"
+          label="Formatting a field comparison"
+        />
+        <CodeBlock
+          code={fieldComparisonParseSnippet}
+          language="ts"
+          label="Parsing a field comparison"
+        />
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/format-query">formatQuery</TextLink> and{' '}
           <TextLink to="/api/parse-query">parseQuery</TextLink>.

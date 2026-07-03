@@ -4,6 +4,7 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
 } from '../../utils/query-tree';
+import { isFieldComparisonRule } from '../../utils/rule-value-source';
 
 const inferPrismaFieldType = (
   rule: IDenormalizedRuleNode
@@ -46,24 +47,36 @@ export const inferPrismaFields = (data: DenormalizedQuery): IBuilderFieldProps[]
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
   >();
 
-  collectPrismaRules(data).forEach(rule => {
-    const current = fieldMap.get(rule.field);
-    const nextType = inferPrismaFieldType(rule);
+  const mergeFieldConfig = (
+    fieldName: string,
+    type: IBuilderFieldProps['type'],
+    operator?: QueryOperator
+  ) => {
+    const current = fieldMap.get(fieldName);
 
     if (!current) {
-      fieldMap.set(rule.field, {
-        type: nextType,
-        operators: rule.operator ? [rule.operator] : [],
+      fieldMap.set(fieldName, {
+        type,
+        operators: operator ? [operator] : [],
       });
       return;
     }
 
-    if (current.type !== nextType) {
+    if (current.type !== type) {
       current.type = 'TEXT';
     }
 
-    if (rule.operator && !current.operators.includes(rule.operator)) {
-      current.operators.push(rule.operator);
+    if (operator && !current.operators.includes(operator)) {
+      current.operators.push(operator);
+    }
+  };
+
+  collectPrismaRules(data).forEach(rule => {
+    const nextType = inferPrismaFieldType(rule);
+    mergeFieldConfig(rule.field, nextType, rule.operator);
+
+    if (isFieldComparisonRule(rule)) {
+      mergeFieldConfig(rule.valueField, nextType, rule.operator);
     }
   });
 

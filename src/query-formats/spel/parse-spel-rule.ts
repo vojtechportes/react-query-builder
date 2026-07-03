@@ -43,6 +43,16 @@ const parseScalarValue = (
   return undefined;
 };
 
+const parseFieldReference = (value: string): string | undefined => {
+  const trimmed = value.trim();
+
+  if (trimmed === 'true' || trimmed === 'false' || trimmed === 'null') {
+    return undefined;
+  }
+
+  return new RegExp(`^${FIELD_PATTERN}$`).test(trimmed) ? trimmed : undefined;
+};
+
 const splitInlineList = (value: string): string[] => {
   const items: string[] = [];
   let inString = false;
@@ -206,8 +216,9 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   if (match) {
     const [, field, operator, rawValue] = match;
     const parsedValue = parseScalarValue(rawValue);
+    const valueField = parseFieldReference(rawValue);
 
-    if (typeof parsedValue === 'undefined') {
+    if (typeof parsedValue === 'undefined' && !valueField) {
       return null;
     }
 
@@ -228,11 +239,18 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
       '<=': 'SMALLER_EQUAL',
     } as const;
 
-    return {
-      field,
-      operator: operatorMap[operator as keyof typeof operatorMap],
-      value: parsedValue as Exclude<typeof parsedValue, null>,
-    };
+    return valueField
+      ? {
+          field,
+          operator: operatorMap[operator as keyof typeof operatorMap],
+          valueSource: 'field',
+          valueField,
+        }
+      : {
+          field,
+          operator: operatorMap[operator as keyof typeof operatorMap],
+          value: parsedValue as Exclude<typeof parsedValue, null>,
+        };
   }
 
   match = normalized.match(
@@ -242,12 +260,15 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   if (match) {
     const [, field, rawValue] = match;
     const parsedValue = parseStringLiteral(rawValue);
+    const valueField = parseFieldReference(rawValue);
 
-    if (parsedValue === null) {
+    if (parsedValue === null && !valueField) {
       return null;
     }
 
-    return { field, operator: 'CONTAINS', value: parsedValue };
+    return valueField
+      ? { field, operator: 'CONTAINS', valueSource: 'field', valueField }
+      : { field, operator: 'CONTAINS', value: parsedValue as string };
   }
 
   match = normalized.match(
@@ -257,12 +278,15 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   if (match) {
     const [, field, rawValue] = match;
     const parsedValue = parseStringLiteral(rawValue);
+    const valueField = parseFieldReference(rawValue);
 
-    if (parsedValue === null) {
+    if (parsedValue === null && !valueField) {
       return null;
     }
 
-    return { field, operator: 'STARTS_WITH', value: parsedValue };
+    return valueField
+      ? { field, operator: 'STARTS_WITH', valueSource: 'field', valueField }
+      : { field, operator: 'STARTS_WITH', value: parsedValue as string };
   }
 
   match = normalized.match(
@@ -272,12 +296,15 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   if (match) {
     const [, field, rawValue] = match;
     const parsedValue = parseStringLiteral(rawValue);
+    const valueField = parseFieldReference(rawValue);
 
-    if (parsedValue === null) {
+    if (parsedValue === null && !valueField) {
       return null;
     }
 
-    return { field, operator: 'ENDS_WITH', value: parsedValue };
+    return valueField
+      ? { field, operator: 'ENDS_WITH', valueSource: 'field', valueField }
+      : { field, operator: 'ENDS_WITH', value: parsedValue as string };
   }
 
   match = normalized.match(
@@ -320,10 +347,10 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   );
 
   if (match) {
-    const [, rawList, field] = match;
+    const [, rawList, field, size] = match;
     const parsedList = parseInlineList(rawList);
 
-    if (!parsedList) {
+    if (!parsedList || parsedList.length !== Number(size)) {
       return null;
     }
 
@@ -349,3 +376,4 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
 
   return null;
 };
+

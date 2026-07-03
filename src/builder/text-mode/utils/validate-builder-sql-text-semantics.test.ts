@@ -8,7 +8,36 @@ const fields: IBuilderFieldProps[] = [
     field: 'MOCK_FIELD',
     label: 'Mock Field',
     type: 'TEXT',
-    operators: ['EQUAL', 'IS_NOT_NULL', 'NOT_IN'],
+    operators: ['EQUAL', 'IS_NOT_NULL', 'LIKE', 'NOT_IN'],
+    fieldComparison: { type: 'string', comparableFields: ['OTHER_TEXT_FIELD', 'LIST_FIELD'] },
+  },
+  {
+    field: 'OTHER_TEXT_FIELD',
+    label: 'Other Text Field',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    fieldComparison: { type: 'string' },
+  },
+  {
+    field: 'THIRD_TEXT_FIELD',
+    label: 'Third Text Field',
+    type: 'TEXT',
+    operators: ['EQUAL'],
+    fieldComparison: { type: 'string' },
+  },
+  {
+    field: 'NUMBER_FIELD',
+    label: 'Number Field',
+    type: 'NUMBER',
+    operators: ['EQUAL'],
+  },
+  {
+    field: 'LIST_FIELD',
+    label: 'List Field',
+    type: 'LIST',
+    operators: ['EQUAL'],
+    value: [{ value: 'alpha', label: 'Alpha' }],
+    fieldComparison: { type: 'string' },
   },
 ];
 
@@ -81,4 +110,88 @@ describe('validateBuilderSqlTextSemantics', () => {
     expect(isNotNullDiagnostics).toEqual([]);
     expect(notInDiagnostics).toEqual([]);
   });
+
+  it('allows supported field-to-field comparisons when enabled', () => {
+    const diagnostics = validateBuilderSqlTextSemantics(
+      parseNodes('MOCK_FIELD = OTHER_TEXT_FIELD'),
+      fields,
+      strings,
+      { allowFieldComparisons: true }
+    );
+
+    expect(diagnostics).toEqual([]);
+  });
+
+  it('rejects field comparisons when the Builder flag is disabled', () => {
+    const diagnostics = validateBuilderSqlTextSemantics(
+      parseNodes('MOCK_FIELD = OTHER_TEXT_FIELD'),
+      fields,
+      strings,
+      { allowFieldComparisons: false }
+    );
+
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'field_comparison_disabled',
+      })
+    );
+  });
+
+  it('reports missing comparison fields', () => {
+    const diagnostics = validateBuilderSqlTextSemantics(
+      parseNodes('MOCK_FIELD = UNKNOWN_FIELD'),
+      fields,
+      strings,
+      { allowFieldComparisons: true }
+    );
+
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'value_field_not_found',
+      })
+    );
+  });
+
+  it('reports incompatible comparison fields', () => {
+    const typeMismatchDiagnostics = validateBuilderSqlTextSemantics(
+      parseNodes('MOCK_FIELD = NUMBER_FIELD'),
+      fields,
+      strings,
+      { allowFieldComparisons: true }
+    );
+    const selfComparisonDiagnostics = validateBuilderSqlTextSemantics(
+      parseNodes('MOCK_FIELD = MOCK_FIELD'),
+      fields,
+      strings,
+      { allowFieldComparisons: true }
+    );
+
+    expect(typeMismatchDiagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'field_comparison_incompatible',
+      })
+    );
+    expect(selfComparisonDiagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'field_comparison_incompatible',
+      })
+    );
+  });
+
+  it('reports allowlist-incompatible comparison fields', () => {
+    const diagnostics = validateBuilderSqlTextSemantics(
+      parseNodes('MOCK_FIELD = THIRD_TEXT_FIELD'),
+      fields,
+      strings,
+      { allowFieldComparisons: true }
+    );
+
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'field_comparison_incompatible',
+      })
+    );
+  });
 });
+
+

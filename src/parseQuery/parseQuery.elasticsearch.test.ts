@@ -57,4 +57,34 @@ describe('parseQuery Elasticsearch', () => {
       },
     ]);
   });
+
+  it('rejects non-native object rhs shapes instead of treating them as field-to-field comparisons', () => {
+    expect(() =>
+      parseQuery(
+        JSON.stringify({
+          term: {
+            price: {
+              value: { field: 'cost' },
+            },
+          },
+        }),
+        'Elasticsearch'
+      )
+    ).toThrow('Elasticsearch term query for field "price" must use a scalar value.');
+
+    expect(() =>
+      parseQuery(
+        JSON.stringify({
+          range: {
+            price: {
+              gte: { field: 'min_price' },
+            },
+          },
+        }),
+        'Elasticsearch'
+      )
+    ).toThrow(
+      'Elasticsearch range query for field "price" must use scalar boundary values.'
+    );
+  });
 });
