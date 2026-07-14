@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { siteTheme } from '../../constants/site-theme';
+import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
 
 const Hero = styled.section`
@@ -126,11 +127,10 @@ const Code = styled.code`
     monospace;
 `;
 
+const seoPage = findSeoPage('/');
+
 export const HomePage: React.FC = () => {
-  usePageMetadata(
-    'Home',
-    'Highly configurable TypeScript library for visual and text-based query editing, validation, theming, UI customization, and query parsing and formatting.'
-  );
+  usePageMetadata(seoPage.title, seoPage.description, seoPage);
 
   return (
     <Hero>

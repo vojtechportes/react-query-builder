@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { ContentArticle } from '../../components/content-article';
 import { DocumentationSidebar } from '../../components/documentation-sidebar';
+import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
 import {
   apiGroups,
@@ -41,7 +42,8 @@ const Summary = styled.p`
 export const ApiPage: React.FC = () => {
   const location = useLocation();
   const page = findApiPage(location.pathname);
-  usePageMetadata(page.title, page.description);
+  const seoPage = findSeoPage(page.path);
+  usePageMetadata(seoPage.title, seoPage.description, seoPage);
 
   return (
     <Layout>
