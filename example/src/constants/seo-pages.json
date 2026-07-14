@@ -1,0 +1,293 @@
+{
+  "siteName": "React Query Builder",
+  "siteUrl": "https://vojtechportes.github.io/react-query-builder/",
+  "pages": [
+    {
+      "path": "/",
+      "title": "React Query Builder for TypeScript Apps",
+      "description": "React Query Builder is a configurable TypeScript query builder component with visual editing, SQL text mode, validation, adapters, and query parsing and formatting.",
+      "keywords": "React, Query, Builder, query, builder, component, TypeScript, filter, rule, SQL, parser, formatter, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Home"
+    },
+    {
+      "path": "/api",
+      "title": "React Query Builder API Reference",
+      "description": "API overview covering core builder types, customization points, and query conversion exports.",
+      "keywords": "API, overview, builder, props, fields, data, components, adapters, bootstrap, formatQuery, parseQuery, exports, types, shapes, reference, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters",
+      "title": "React Query Builder Adapters API",
+      "description": "API overview for packaged UI adapter entrypoints, shared exports, and how adapters map onto the components override surface.",
+      "keywords": "Adapters, API, mui, material, ui, antd, ant, design, bootstrap, mantine, fluent, radix, themes, components, object, adapter, entrypoints, customization, shared, exports, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters/antd",
+      "title": "ANTD React Query Builder Adapter API",
+      "description": "API reference for the Ant Design adapter entrypoints, exports, and createAntdComponents helper.",
+      "keywords": "ANTD, adapter, API, ant, design, antd, v6, v5, createAntdComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters/bootstrap",
+      "title": "Bootstrap React Query Builder Adapter API",
+      "description": "API reference for the Bootstrap adapter entrypoint, exports, and createBootstrapComponents helper.",
+      "keywords": "Bootstrap, adapter, API, bootstrap, v5, createBootstrapComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters/fluentui",
+      "title": "Fluent UI React Query Builder Adapter API",
+      "description": "API reference for the Fluent UI adapter entrypoint, exports, and createFluentUiComponents helper.",
+      "keywords": "Fluent, UI, adapter, API, fluentui, v8, createFluentUiComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters/mantine",
+      "title": "Mantine React Query Builder Adapter API",
+      "description": "API reference for the Mantine adapter entrypoints, exports, and createMantineComponents helper.",
+      "keywords": "Mantine, adapter, API, mantine, v9, v8, createMantineComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters/mui",
+      "title": "MUI React Query Builder Adapter API",
+      "description": "API reference for the Material UI adapter entrypoints, exports, and createMuiComponents helper.",
+      "keywords": "MUI, adapter, API, material, ui, mui, v9, v7, createMuiComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/adapters/radix",
+      "title": "Radix React Query Builder Adapter API",
+      "description": "API reference for the Radix Themes adapter entrypoint, exports, and createRadixComponents helper.",
+      "keywords": "Radix, adapter, API, radix, themes, v1, createRadixComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/builder",
+      "title": "React Query Builder Builder API",
+      "description": "Builder component API reference for IBuilderProps, controlled data flow, validation, editing options, and field-to-field comparisons.",
+      "keywords": "Builder, component, IBuilderProps, onChange, controlled, defaults, strings, components, validator, history, state, change, undo, redo, canUndo, canRedo, newNodePlacement, append, prepend, allowFieldComparisons, field, comparison, valueSource, valueField, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/builder-ref",
+      "title": "React Query Builder Builder Ref API",
+      "description": "API reference for useBuilderRef, IBuilderRef, and the imperative builder methods for node operations and history access.",
+      "keywords": "useBuilderRef, useBuilderRuleDependencies, bindRuleOptions, IBuilderRef, BuilderRef, BuilderRefListener, BuilderRuleDependenciesListener, imperative, ref, subscribe, subscribeToRuleDependencies, cloneNode, deleteNode, replaceNode, updateNode, insertNodes, addNode, addGroup, addRule, moveNode, setNodeLock, lockNode, unlockNode, getNodeById, getNearestField, getNodes, getData, getHistory, setHistory, undo, redo, isFieldInUse, getFieldOptionState, getRuleOptionState, setFieldOptions, setRuleOptions, setFieldOptionsStatus, setRuleOptionsStatus, invalidateFieldOptions, invalidateRuleOptions, reloadFieldOptions, reloadRuleOptions, clearFieldOptions, clearRuleOptions, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/components",
+      "title": "React Query Builder Components API",
+      "description": "Component override API reference for replacing built-in builder controls, containers, and popovers.",
+      "keywords": "IBuilderComponentsProps, Select, SelectMulti, Switch, Input, Remove, Add, Rule, Group, GroupHeaderOption, Text, DropZone, EmptyGroupDropZone, Popover, PopoverItem, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/data",
+      "title": "React Query Builder Data API",
+      "description": "Query data API reference for denormalized rule and group shapes, literal versus field-reference values, and read-only semantics.",
+      "keywords": "DenormalizedQuery, DenormalizedNode, IDenormalizedRuleNode, IDenormalizedGroupNode, QueryRuleValue, QueryRuleValueSource, valueSource, valueField, QueryGroupValue, readOnly, id, parent, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/fields",
+      "title": "React Query Builder Fields API",
+      "description": "Field definition API reference for IBuilderFieldProps, field types, operators, usageLimit, validation metadata, and field-comparison configuration.",
+      "keywords": "IBuilderFieldProps, field, label, type, value, operators, usageLimit, validation, fieldComparison, comparableFields, BOOLEAN, TEXT, DATE, NUMBER, STATEMENT, LIST, MULTI_LIST, GROUP, BuilderFieldOption, BuilderFieldOptionsStatus, IBuilderFieldOptionState, INearestFieldMatch, IBuilderFieldChange, dynamic, options, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/format-query",
+      "title": "React Query Builder formatQuery API",
+      "description": "API reference for formatQuery, including supported formats, shared or format-specific options, and field-to-field serialization behavior.",
+      "keywords": "formatQuery, signature, parameters, value, format, options, fields, wrapWhereClause, wrapFilterClause, wrapQueryClause, variableName, rootlessCombinator, modifierlessGroupCombinator, field, comparison, valueSource, valueField, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/parse-query",
+      "title": "React Query Builder parseQuery API",
+      "description": "API reference for parseQuery, including supported input formats, the parse result shape, and field-to-field inference.",
+      "keywords": "parseQuery, signature, parameters, value, format, IParseQueryResult, fields, data, QueryFormat, field, comparison, valueSource, valueField, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/api/theming",
+      "title": "React Query Builder Theming API",
+      "description": "Theming API reference for ThemeProvider, IThemeProviderProps, IColors, and exported color tokens.",
+      "keywords": "ThemeProvider, IThemeProviderProps, IThemeProps, IColors, colors, primary, secondary, grey, white, theme, customization, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
+      "path": "/demo",
+      "title": "Interactive React Query Builder Demo",
+      "description": "Try an interactive React Query Builder demo with configuration toggles, undo and redo history, theme editing, validation, and SQL or JSON output previews.",
+      "keywords": "React, Query, Builder, demo, interactive, query, builder, filter, SQL, playground, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Demo"
+    },
+    {
+      "path": "/documentation",
+      "title": "React Query Builder Documentation",
+      "description": "Documentation overview for installation, usage, parsing and formatting, customization, adapters, and localization.",
+      "keywords": "Documentation, overview, installation, usage, parsing, formatting, configuration, theming, localization, adapters, bootstrap, demo, query, builder, react, library, website, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters",
+      "title": "React Query Builder Adapters Guide",
+      "description": "Documentation overview for packaged UI adapters, versioned entrypoints, adapter-specific subpages, and shared customization patterns.",
+      "keywords": "Adapters, customization, mui, material, ui, antd, ant, design, bootstrap, mantine, fluent, versioned, adapter, entrypoints, overview, create, components, pages, ready, made, overrides, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters/antd",
+      "title": "ANTD React Query Builder Adapter Guide",
+      "description": "Documentation for the Ant Design adapter, including antd/v6, legacy antd/v5 support, installation, and component merging.",
+      "keywords": "ANTD, adapter, ant, design, antd, v6, v5, install, createAntdComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters/bootstrap",
+      "title": "Bootstrap React Query Builder Adapter Guide",
+      "description": "Documentation for the Bootstrap adapter, including bootstrap/v5 installation, stylesheet setup, usage, and component merging.",
+      "keywords": "Bootstrap, adapter, bootstrap, v5, install, stylesheet, createBootstrapComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters/fluentui",
+      "title": "Fluent UI React Query Builder Adapter Guide",
+      "description": "Documentation for the Fluent UI adapter, including fluentui/v8 installation, usage, and component merging.",
+      "keywords": "Fluent, UI, adapter, fluentui, v8, install, createFluentUiComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters/mantine",
+      "title": "Mantine React Query Builder Adapter Guide",
+      "description": "Documentation for the Mantine adapter, including mantine/v9, legacy mantine/v8 support, installation, provider setup, and component merging.",
+      "keywords": "Mantine, adapter, mantine, v9, v8, install, MantineProvider, createMantineComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters/mui",
+      "title": "MUI React Query Builder Adapter Guide",
+      "description": "Documentation for the Material UI adapter, including mui/v9, legacy mui/v7 support, installation, and component merging.",
+      "keywords": "MUI, adapter, material, ui, mui, v9, v7, install, createMuiComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/adapters/radix",
+      "title": "Radix React Query Builder Adapter Guide",
+      "description": "Documentation for the Radix Themes adapter, including radix/v1 installation, provider setup, usage, and component merging.",
+      "keywords": "Radix, adapter, radix, themes, v1, install, Theme, createRadixComponents, components, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/builder-behavior",
+      "title": "React Query Builder Builder Behavior Guide",
+      "description": "Documentation for clone controls, drag-and-drop, insertion placement, root-group behavior, and group mode configuration.",
+      "keywords": "builder, behavior, cloneable, clone, controls, draggable, drag, and, drop, allowGroupNegation, group, negation, not, groups, readOnlyProtectsDelete, newNodePlacement, append, prepend, singleRootGroup, groupTypes, with, modifiers, without, both, root, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/builder-ref",
+      "title": "React Query Builder Builder Ref Guide",
+      "description": "Documentation for the imperative builderRef API exposed through useBuilderRef, including reads, mutations, and history access.",
+      "keywords": "builderRef, useBuilderRef, forwardRef, imperative, api, clone, lock, unlock, delete, update, replace, insert, add, move, getNodeById, getNodes, getData, getHistory, setHistory, undo, redo, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/components",
+      "title": "React Query Builder Components Guide",
+      "description": "Documentation for replacing built-in builder controls and containers with custom components.",
+      "keywords": "Components, component, overrides, custom, controls, renderers, builder, customization, add, remove, select, input, group, rule, responsive, responsiveness, compact, layout, multiselect, summary, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/dynamic-field-options",
+      "title": "React Query Builder Dynamic Field Options Guide",
+      "description": "Documentation for field-scoped and rule-scoped imperative list options, including shared-option and dependency-aware live demos plus a TanStack React Query example.",
+      "keywords": "dynamic, field, options, builderRef, subscribe, subscribeToRuleDependencies, useBuilderRuleDependencies, setFieldOptions, setRuleOptions, getNearestField, invalidateFieldOptions, invalidateRuleOptions, clearFieldOptions, clearRuleOptions, getFieldOptionState, getRuleOptionState, onFieldChange, onRuleOptionsReload, tanstack, react-query, async, select, live, demo, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/field-comparisons",
+      "title": "React Query Builder Field Comparisons Guide",
+      "description": "Enable rules that compare one field against another field, including configuration, data shape, and format support.",
+      "keywords": "field, comparisons, field-to-field, allowFieldComparisons, valueSource, valueField, comparableFields, fieldComparison, formatQuery, parseQuery, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/history",
+      "title": "React Query Builder Undo and Redo Guide",
+      "description": "Documentation for enabling inverse-history undo and redo, built-in controls, state callbacks, and drag-and-drop coverage.",
+      "keywords": "undo, redo, history, inverse, maxEntries, controls, canUndo, canRedo, onStateChange, drag, and, drop, clone, delete, edit, builder, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/installation",
+      "title": "React Query Builder Installation Guide",
+      "description": "Package installation details for React Query Builder and React version requirements.",
+      "keywords": "Installation, npm, install, React, Query, Builder, react, 18, peer, dependencies, package, import, library, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/localization",
+      "title": "React Query Builder Localization Guide",
+      "description": "Documentation for localizing field labels, option labels, and built-in UI strings.",
+      "keywords": "Localization, localized, labels, fields, translated, copy, internationalization, i18n, query, builder, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/locking-and-read-only",
+      "title": "React Query Builder Locking and Read-only Guide",
+      "description": "Documentation for builder-level, rule-level, and group-level read-only behavior, including targeted read-only and group inheritance semantics.",
+      "keywords": "readOnly, locking, locked, rule, group, targets, field, operator, value, combinator, negation, inheritToChildren, inheritance, read, only, builder, drag, delete, add, controls, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/parsing-and-formatting",
+      "title": "Parsing and Formatting Guide",
+      "description": "Overview of parsing and formatting query data across supported external formats.",
+      "keywords": "Parsing, formatting, SQL, Mongo, AQL, JSONata, JsonLogic, CEL, Elasticsearch, SpEL, Prisma, OData, RSQL, Dynamo, Django, parseQuery, formatQuery, interoperability, sandbox, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/parsing-and-formatting/supported-formats",
+      "title": "Supported Formats Query Format Guide",
+      "description": "Supported query conversion formats including SQL, Mongo, AQL, JSONata, JsonLogic, CEL, Elasticsearch, SpEL, Prisma, OData, RSQL, Dynamo, and Django.",
+      "keywords": "SQL, Mongo, AQL, JSONata, JsonLogic, CEL, Elasticsearch, SpEL, Prisma, OData, RSQL, Dynamo, Django, supported, formats, parser, formatter, query, builder, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/text-mode",
+      "title": "React Query Builder Text Mode Guide",
+      "description": "Documentation for SQL text mode, syntax and semantic validation, default mode selection, and the optional Monaco text editor integration.",
+      "keywords": "Text, mode, SQL, text, editor, monaco, createMonacoComponents, syntax, highlighting, validation, semantic, locked, rules, groups, defaultMode, singleRootGroup, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/theming",
+      "title": "React Query Builder Theming Guide",
+      "description": "Documentation for customizing builder colors with ThemeProvider and shared theme tokens.",
+      "keywords": "Theming, theme, provider, colors, primary, secondary, grey, tokens, design, system, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/usage",
+      "title": "React Query Builder Usage Guide",
+      "description": "Basic controlled usage with Builder, field definitions, query data, and onChange handling.",
+      "keywords": "Usage, Builder, controlled, component, fields, data, onChange, React, useState, denormalized, query, builder, example, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
+      "path": "/documentation/validation",
+      "title": "React Query Builder Validation Guide",
+      "description": "Built-in validation for fields and rules, structural usageLimit constraints, validation rendering with showValidation, and custom validator integration.",
+      "keywords": "Validation, built-in, validation, validator, usageLimit, showValidation, onStateChange, required, minLength, maxLength, minItems, maxItems, range, rules, fields, builder, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    }
+  ]
+}

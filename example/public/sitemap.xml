@@ -4,22 +4,103 @@
     <loc>https://vojtechportes.github.io/react-query-builder/</loc>
   </url>
   <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/antd</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/bootstrap</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/fluentui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/mantine</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/mui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/radix</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/builder</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/builder-ref</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/components</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/data</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/fields</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/format-query</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/parse-query</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/api/theming</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/demo</loc>
+  </url>
+  <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/installation</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/usage</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/antd</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/validation</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/bootstrap</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/fluentui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/mantine</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/mui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/radix</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/builder-behavior</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/builder-ref</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/components</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/dynamic-field-options</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/field-comparisons</loc>
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/history</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/builder-behavior</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/installation</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/localization</loc>
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/locking-and-read-only</loc>
@@ -31,75 +112,15 @@
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/components</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/mui</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/antd</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/bootstrap</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/mantine</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/adapters/fluentui</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/text-mode</loc>
   </url>
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/theming</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/documentation/localization</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/usage</loc>
   </url>
   <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/builder</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/fields</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/data</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/components</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/mui</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/antd</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/bootstrap</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/mantine</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/adapters/fluentui</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/theming</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/format-query</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/api/parse-query</loc>
-  </url>
-  <url>
-    <loc>https://vojtechportes.github.io/react-query-builder/demo</loc>
+    <loc>https://vojtechportes.github.io/react-query-builder/documentation/validation</loc>
   </url>
 </urlset>

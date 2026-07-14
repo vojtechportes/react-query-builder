@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { DemoPlayground } from '../../components/demo-playground';
+import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
 
 const Root = styled.section`
@@ -13,11 +14,10 @@ const Title = styled.h1`
   font-size: clamp(2rem, 4vw, 3rem);
 `;
 
+const seoPage = findSeoPage('/demo');
+
 export const DemoPage: React.FC = () => {
-  usePageMetadata(
-    'Demo',
-    'Interactive demo of React Query Builder with configuration toggles, undo and redo history, theme editing, and output previews.'
-  );
+  usePageMetadata(seoPage.title, seoPage.description, seoPage);
 
   return (
     <Root>

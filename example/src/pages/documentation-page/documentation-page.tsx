@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { ContentArticle } from '../../components/content-article';
 import { DocumentationSidebar } from '../../components/documentation-sidebar';
 import { ParsingSandbox } from '../../components/parsing-sandbox';
+import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
 import {
   documentationGroups,
@@ -42,7 +43,8 @@ const Summary = styled.p`
 export const DocumentationPage: React.FC = () => {
   const location = useLocation();
   const page = findDocumentationPage(location.pathname);
-  usePageMetadata(page.title, page.description);
+  const seoPage = findSeoPage(page.path);
+  usePageMetadata(seoPage.title, seoPage.description, seoPage);
 
   return (
     <Layout>
