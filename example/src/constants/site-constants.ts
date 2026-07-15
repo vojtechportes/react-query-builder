@@ -11,4 +11,5 @@ export const TOP_LEVEL_NAV = [
   { label: 'Documentation', to: '/documentation' },
   { label: 'API', to: '/api' },
   { label: 'Demo', to: '/demo' },
+  { label: 'Recipes', to: '/recipes' },
 ] as const;

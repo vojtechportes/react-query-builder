@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import { ContentArticle } from '../../components/content-article';
 import { DocumentationSidebar } from '../../components/documentation-sidebar';
 import { ParsingSandbox } from '../../components/parsing-sandbox';
+import { RelatedRecipes } from '../../components/related-recipes';
+import { relatedRecipesByPath } from '../../constants/related-recipes-by-path';
 import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
 import {
@@ -58,6 +60,7 @@ export const DocumentationPage: React.FC = () => {
         <Title>{page.title}</Title>
         {page.summary ? <Summary>{page.summary}</Summary> : null}
         {page.content}
+        <RelatedRecipes links={relatedRecipesByPath[page.path]} />
         {page.path === '/documentation/parsing-and-formatting' ? (
           <ParsingSandbox />
         ) : null}

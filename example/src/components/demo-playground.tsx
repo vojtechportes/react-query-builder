@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import styled from 'styled-components';
 import '@radix-ui/themes/styles.css';
 import {
@@ -17,8 +17,13 @@ import { Theme as RadixTheme } from '@radix-ui/themes';
 import { components as radixComponents } from '@vojtechportes/react-query-builder/radix/v1';
 import type { IColors } from '../../../src/constants/colors';
 import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
-import { demoFields, defaultTheme, initialQueryTree } from '../constants/demo-data';
+import {
+  demoFields,
+  defaultTheme,
+  initialQueryTree,
+} from '../constants/demo-data';
 import { siteTheme } from '../constants/site-theme';
+import { BuilderSurface } from './builder-surface';
 import {
   formatLabels,
   formatBuilderSource,
@@ -132,7 +137,6 @@ const Main = styled.div`
 `;
 
 const BuilderCard = styled.section`
-  overflow-x: auto;
   overflow-y: hidden;
   padding: 1.5rem;
   border: 1px solid #dbe4f0;
@@ -145,12 +149,6 @@ const BuilderCard = styled.section`
   }
 `;
 
-const BuilderSurface = styled.div`
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  line-height: normal;
-`;
-
 const Tabs = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -159,9 +157,11 @@ const Tabs = styled.div`
 
 const Tab = styled.button<{ $active: boolean }>`
   padding: 0.65rem 0.95rem;
-  border: 1px solid ${({ $active }) => ($active ? siteTheme.primary : '#dbe4f0')};
+  border: 1px solid
+    ${({ $active }) => ($active ? siteTheme.primary : '#dbe4f0')};
   border-radius: 999px;
-  background: ${({ $active }) => ($active ? siteTheme.primarySurfaceStrong : '#fff')};
+  background: ${({ $active }) =>
+    $active ? siteTheme.primarySurfaceStrong : '#fff'};
   color: ${({ $active }) => ($active ? siteTheme.primaryDark : '#475569')};
   font-weight: 600;
   cursor: pointer;
@@ -199,14 +199,8 @@ const SourceButton = styled.button`
 const mantineScopeClassName = 'mantine-demo-scope';
 
 const scopedMantineStyles = mantineStyles
-  .replace(
-    /:root,\s*:host/g,
-    `.${mantineScopeClassName}`
-  )
-  .replace(
-    /body,\s*:host/g,
-    `.${mantineScopeClassName}`
-  )
+  .replace(/:root,\s*:host/g, `.${mantineScopeClassName}`)
+  .replace(/body,\s*:host/g, `.${mantineScopeClassName}`)
   .replace(
     /:root\[data-mantine-color-scheme='dark'\],\s*:host\(\[data-mantine-color-scheme='dark'\]\)/g,
     `.${mantineScopeClassName}[data-mantine-color-scheme='dark']`
@@ -258,18 +252,24 @@ export interface IDemoPlaygroundProps {
 }
 
 const containsFieldComparisons = (query: DenormalizedQuery): boolean =>
-  query.some(node =>
-    'type' in node ? containsFieldComparisons(node.children) : node.valueSource === 'field'
+  query.some((node) =>
+    'type' in node
+      ? containsFieldComparisons(node.children)
+      : node.valueSource === 'field'
   );
 
-const unsupportedFieldComparisonFormats: OutputFormat[] = ['Elasticsearch', 'RSQL'];
+const unsupportedFieldComparisonFormats: OutputFormat[] = [
+  'Elasticsearch',
+  'RSQL',
+];
 
 export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   initialData = initialQueryTree,
 }) => {
   const mantineRootRef = React.useRef<HTMLDivElement>(null);
   const [data, setData] = React.useState<DenormalizedQuery>(initialData);
-  const [outputFormat, setOutputFormat] = React.useState<OutputFormat>('Native');
+  const [outputFormat, setOutputFormat] =
+    React.useState<OutputFormat>('Native');
   const [readOnly, setReadOnly] = React.useState(false);
   const [readOnlyProtectsDelete, setReadOnlyProtectsDelete] =
     React.useState(true);
@@ -277,13 +277,16 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [cloneable, setCloneable] = React.useState(false);
   const [draggable, setDraggable] = React.useState(false);
   const [allowGroupNegation, setAllowGroupNegation] = React.useState(true);
-  const [allowFieldComparisons, setAllowFieldComparisons] = React.useState(true);
+  const [allowFieldComparisons, setAllowFieldComparisons] =
+    React.useState(true);
   const [newNodePlacement, setNewNodePlacement] = React.useState<
     'append' | 'prepend'
   >('append');
   const [history, setHistory] = React.useState(false);
   const [textMode, setTextMode] = React.useState(false);
-  const [defaultMode, setDefaultMode] = React.useState<'builder' | 'text'>('builder');
+  const [defaultMode, setDefaultMode] = React.useState<'builder' | 'text'>(
+    'builder'
+  );
   const [useMonacoTextEditor, setUseMonacoTextEditor] = React.useState(false);
   const [singleRootGroup, setSingleRootGroup] = React.useState(true);
   const [showValidation, setShowValidation] = React.useState(true);
@@ -358,7 +361,10 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     ...(builderComponents ? { components: builderComponents } : {}),
   };
 
-  const hasFieldComparisons = React.useMemo(() => containsFieldComparisons(data), [data]);
+  const hasFieldComparisons = React.useMemo(
+    () => containsFieldComparisons(data),
+    [data]
+  );
   const isOutputFormatDisabled = React.useCallback(
     (format: OutputFormat) =>
       hasFieldComparisons && unsupportedFieldComparisonFormats.includes(format),
@@ -430,7 +436,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={readOnly}
-              onChange={event => setReadOnly(event.target.checked)}
+              onChange={(event) => setReadOnly(event.target.checked)}
             />
             <span>Read-only mode</span>
           </ToggleRow>
@@ -439,7 +445,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={lockable}
-              onChange={event => setLockable(event.target.checked)}
+              onChange={(event) => setLockable(event.target.checked)}
             />
             <span>Lock controls</span>
           </ToggleRow>
@@ -448,7 +454,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={readOnlyProtectsDelete}
-              onChange={event =>
+              onChange={(event) =>
                 setReadOnlyProtectsDelete(event.target.checked)
               }
             />
@@ -459,7 +465,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={cloneable}
-              onChange={event => setCloneable(event.target.checked)}
+              onChange={(event) => setCloneable(event.target.checked)}
             />
             <span>Clone controls</span>
           </ToggleRow>
@@ -468,7 +474,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={draggable}
-              onChange={event => setDraggable(event.target.checked)}
+              onChange={(event) => setDraggable(event.target.checked)}
             />
             <span>Draggable nodes</span>
           </ToggleRow>
@@ -477,7 +483,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={allowGroupNegation}
-              onChange={event => setAllowGroupNegation(event.target.checked)}
+              onChange={(event) => setAllowGroupNegation(event.target.checked)}
             />
             <span>Allow group negation</span>
           </ToggleRow>
@@ -486,7 +492,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={allowFieldComparisons}
-              onChange={event => setAllowFieldComparisons(event.target.checked)}
+              onChange={(event) =>
+                setAllowFieldComparisons(event.target.checked)
+              }
             />
             <span>Allow field comparisons</span>
           </ToggleRow>
@@ -495,7 +503,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={history}
-              onChange={event => setHistory(event.target.checked)}
+              onChange={(event) => setHistory(event.target.checked)}
             />
             <span>Undo / redo history</span>
           </ToggleRow>
@@ -506,7 +514,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               checked={textMode}
               disabled={!singleRootGroup}
               $disabled={!singleRootGroup}
-              onChange={event => setTextMode(event.target.checked)}
+              onChange={(event) => setTextMode(event.target.checked)}
             />
             <span>
               Text editor mode
@@ -520,7 +528,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               checked={defaultMode === 'text'}
               disabled={!textMode}
               $disabled={!textMode}
-              onChange={event =>
+              onChange={(event) =>
                 setDefaultMode(event.target.checked ? 'text' : 'builder')
               }
             />
@@ -536,7 +544,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               checked={useMonacoTextEditor}
               disabled={!textMode}
               $disabled={!textMode}
-              onChange={event => setUseMonacoTextEditor(event.target.checked)}
+              onChange={(event) => setUseMonacoTextEditor(event.target.checked)}
             />
             <span>
               Monaco text editor
@@ -548,7 +556,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={singleRootGroup}
-              onChange={event => setSingleRootGroup(event.target.checked)}
+              onChange={(event) => setSingleRootGroup(event.target.checked)}
             />
             <span>Single root group</span>
           </ToggleRow>
@@ -557,7 +565,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <Toggle
               type="checkbox"
               checked={showValidation}
-              onChange={event => setShowValidation(event.target.checked)}
+              onChange={(event) => setShowValidation(event.target.checked)}
             />
             <span>Show validation errors</span>
           </ToggleRow>
@@ -566,7 +574,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             <SelectFieldLabel>New node placement</SelectFieldLabel>
             <SelectControl
               value={newNodePlacement}
-              onChange={event =>
+              onChange={(event) =>
                 setNewNodePlacement(event.target.value as 'append' | 'prepend')
               }
             >
@@ -663,13 +671,13 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                   ? 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.'
                   : isMantineMode
                     ? 'ThemeProvider colors style the default builder components only. The Mantine adapter uses Mantine styling instead.'
-                  : isFluentUiMode
-                    ? 'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.'
-                  : isRadixMode
-                    ? 'ThemeProvider colors style the default builder components only. The Radix adapter uses Radix Themes styling instead.'
-                  : isBootstrapMode
-                    ? 'ThemeProvider colors style the default builder components only. The Bootstrap adapter uses Bootstrap styling instead.'
-                    : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
+                    : isFluentUiMode
+                      ? 'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.'
+                      : isRadixMode
+                        ? 'ThemeProvider colors style the default builder components only. The Radix adapter uses Radix Themes styling instead.'
+                        : isBootstrapMode
+                          ? 'ThemeProvider colors style the default builder components only. The Bootstrap adapter uses Bootstrap styling instead.'
+                          : 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.'
                 : undefined
             }
           />
@@ -679,7 +687,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       <Main>
         <OutputCard>
           <SourceActions>
-            <SourceButton onClick={() => setShowSourceCode(current => !current)}>
+            <SourceButton
+              onClick={() => setShowSourceCode((current) => !current)}
+            >
               {showSourceCode ? 'Hide Builder source' : 'Show Builder source'}
             </SourceButton>
           </SourceActions>
@@ -723,7 +733,9 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               </BuilderSurface>
             </>
           ) : (
-            <BuilderSurface className={isBootstrapMode ? bootstrapScopeClassName : undefined}>
+            <BuilderSurface
+              className={isBootstrapMode ? bootstrapScopeClassName : undefined}
+            >
               {isBootstrapMode ? <style>{scopedBootstrapStyles}</style> : null}
               {isMuiMode ? (
                 <Builder {...builderProps} />
@@ -748,7 +760,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
 
         <OutputCard>
           <Tabs>
-            {Object.keys(formatLabels).map(key => {
+            {Object.keys(formatLabels).map((key) => {
               const format = key as OutputFormat;
 
               return (
@@ -779,7 +791,3 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     </Layout>
   );
 };
-
-
-
-
