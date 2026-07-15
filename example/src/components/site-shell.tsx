@@ -37,6 +37,10 @@ const GlobalStyle = createGlobalStyle`
       linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
   }
 
+  h1 {
+    line-height: 1.25;
+  }
+
   a {
     color: inherit;
     text-decoration: none;
@@ -368,10 +372,10 @@ export const SiteShell: React.FC = () => {
             </DesktopOnly>
 
             <MobileActions>
-              <IconLink href={GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub">
+              <IconLink href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                 <GithubIcon />
               </IconLink>
-              <IconLink href={NPM_URL} target="_blank" rel="noreferrer" aria-label="npm">
+              <IconLink href={NPM_URL} target="_blank" rel="noopener noreferrer" aria-label="npm">
                 <NpmIcon />
               </IconLink>
               <MobileMenuTrigger
@@ -387,10 +391,10 @@ export const SiteShell: React.FC = () => {
             </MobileActions>
 
             <DesktopOnly>
-              <IconLink href={GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub">
+              <IconLink href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                 <GithubIcon />
               </IconLink>
-              <IconLink href={NPM_URL} target="_blank" rel="noreferrer" aria-label="npm">
+              <IconLink href={NPM_URL} target="_blank" rel="noopener noreferrer" aria-label="npm">
                 <NpmIcon />
               </IconLink>
             </DesktopOnly>

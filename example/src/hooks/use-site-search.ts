@@ -2,6 +2,7 @@ import * as React from 'react';
 import MiniSearch from 'minisearch';
 import { apiPages } from '../pages/api-page/pages/api-content';
 import { documentationPages } from '../pages/documentation-page/pages/documentation-content';
+import { recipes } from '../pages/recipes-page/pages/recipes-content';
 
 interface ISearchDocument {
   id: string;
@@ -30,41 +31,45 @@ const searchDocuments: ISearchDocument[] = [
     content:
       'Demo interactive builder controls readOnly draggable singleRootGroup output formats theme editor',
   },
-  ...documentationPages.map(page => ({
+  ...documentationPages.map((page) => ({
     id: page.path,
     title: page.title,
     path: page.path,
     summary: page.description,
     content: `${page.title} ${page.description} ${page.searchText}`,
   })),
-  ...apiPages.map(page => ({
+  ...apiPages.map((page) => ({
     id: page.path,
     title: page.title,
     path: page.path,
     summary: page.description,
     content: `${page.title} ${page.description} ${page.searchText}`,
+  })),
+  ...recipes.map((page) => ({
+    id: page.path,
+    title: page.title,
+    path: page.path,
+    summary: page.description,
+    content: `${page.title} ${page.description} ${page.primaryKeyword} ${page.secondaryKeywords.join(' ')} ${page.searchText}`,
   })),
 ];
 
 export const useSiteSearch = (query: string) => {
-  const miniSearch = React.useMemo(
-    () => {
-      const search = new MiniSearch<ISearchDocument>({
-        fields: ['title', 'content'],
-        storeFields: ['title', 'path', 'summary'],
-        searchOptions: {
-          boost: { title: 3 },
-          fuzzy: 0.15,
-          prefix: true,
-        },
-      });
+  const miniSearch = React.useMemo(() => {
+    const search = new MiniSearch<ISearchDocument>({
+      fields: ['title', 'content'],
+      storeFields: ['title', 'path', 'summary'],
+      searchOptions: {
+        boost: { title: 3 },
+        fuzzy: 0.15,
+        prefix: true,
+      },
+    });
 
-      search.addAll(searchDocuments);
+    search.addAll(searchDocuments);
 
-      return search;
-    },
-    []
-  );
+    return search;
+  }, []);
 
   return React.useMemo(() => {
     const trimmed = query.trim();

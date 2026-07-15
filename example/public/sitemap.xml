@@ -123,4 +123,46 @@
   <url>
     <loc>https://vojtechportes.github.io/react-query-builder/documentation/validation</loc>
   </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/ag-grid-query-builder</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/ai-assisted-filter-creation</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/dynamic-operators-by-field-type</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/export-to-mongodb-query</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/export-to-prisma-where-clause</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/mui-datagrid-advanced-filtering</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/persist-filters-in-url</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/prisma-filter-ui</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/react-hook-form-query-builder</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/save-load-filter-presets</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/server-side-filtering</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/sql-where-to-react-query-builder</loc>
+  </url>
+  <url>
+    <loc>https://vojtechportes.github.io/react-query-builder/recipes/tanstack-table-filtering</loc>
+  </url>
 </urlset>

@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 const srcRoot = fileURLToPath(new URL('../src', import.meta.url));
+const testReactRoot = fileURLToPath(
+  new URL('../node_modules/react', import.meta.url)
+);
+const testReactDomRoot = fileURLToPath(
+  new URL('../node_modules/react-dom', import.meta.url)
+);
 const exampleMantineCoreRoot = fileURLToPath(
   new URL('./node_modules/@mantine/core', import.meta.url)
 );
@@ -13,6 +19,12 @@ const exampleMantineHooksRoot = fileURLToPath(
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
   plugins: [react()],
+  test: {
+    alias: {
+      react: testReactRoot,
+      'react-dom': testReactDomRoot,
+    },
+  },
   resolve: {
     alias: [
       {

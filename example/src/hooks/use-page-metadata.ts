@@ -15,6 +15,8 @@ export interface IPageMetadataOptions {
   path?: string;
   keywords?: string;
   section?: string;
+  breadcrumbs?: { name: string; path: string }[];
+  faqs?: { question: string; answer: string }[];
 }
 
 const ensureDescriptionMeta = () => {
@@ -60,7 +62,8 @@ const ensureMetaByProperty = (property: string) => {
 };
 
 const ensureCanonicalLink = () => {
-  let element = document.head.querySelector<HTMLLinkElement>(CANONICAL_SELECTOR);
+  let element =
+    document.head.querySelector<HTMLLinkElement>(CANONICAL_SELECTOR);
 
   if (!element) {
     element = document.createElement('link');
@@ -97,54 +100,88 @@ const createStructuredData = ({
   keywords,
   pageTitle,
   section,
+  breadcrumbs,
+  faqs,
 }: {
   canonicalUrl: string;
   description: string;
   keywords?: string;
   pageTitle: string;
   section?: string;
-}) => [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: SITE_NAME,
-    url: SITE_URL,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareSourceCode',
-    name: SITE_NAME,
-    description,
-    codeRepository: GITHUB_URL,
-    programmingLanguage: 'TypeScript',
-    runtimePlatform: 'React',
-    url: canonicalUrl,
-    image: SITE_IMAGE_URL,
-    keywords,
-    sameAs: [GITHUB_URL, NPM_URL],
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': section === 'Home' || section === 'Demo' ? 'WebPage' : 'TechArticle',
-    headline: pageTitle,
-    name: pageTitle,
-    description,
-    url: canonicalUrl,
-    image: SITE_IMAGE_URL,
-    about: SITE_NAME,
-    keywords,
-    isPartOf: {
+  breadcrumbs?: { name: string; path: string }[];
+  faqs?: { question: string; answer: string }[];
+}) => {
+  const structuredData: Record<string, unknown>[] = [
+    {
+      '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: SITE_NAME,
       url: SITE_URL,
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${SITE_URL}?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
     },
-  },
-];
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareSourceCode',
+      name: SITE_NAME,
+      description,
+      codeRepository: GITHUB_URL,
+      programmingLanguage: 'TypeScript',
+      runtimePlatform: 'React',
+      url: canonicalUrl,
+      image: SITE_IMAGE_URL,
+      keywords,
+      sameAs: [GITHUB_URL, NPM_URL],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type':
+        section === 'Home' || section === 'Demo' ? 'WebPage' : 'TechArticle',
+      headline: pageTitle,
+      name: pageTitle,
+      description,
+      url: canonicalUrl,
+      image: SITE_IMAGE_URL,
+      about: SITE_NAME,
+      keywords,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+  ];
+
+  if (breadcrumbs) {
+    structuredData.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((breadcrumb, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: breadcrumb.name,
+        item: createCanonicalUrl(breadcrumb.path),
+      })),
+    });
+  }
+
+  if (faqs?.length) {
+    structuredData.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+      })),
+    });
+  }
+
+  return structuredData;
+};
 
 export const usePageMetadata = (
   pageTitle: string,
@@ -178,7 +215,17 @@ export const usePageMetadata = (
         keywords: options.keywords,
         pageTitle,
         section: options.section,
+        breadcrumbs: options.breadcrumbs,
+        faqs: options.faqs,
       })
     );
-  }, [description, options.keywords, options.path, options.section, pageTitle]);
+  }, [
+    description,
+    options.breadcrumbs,
+    options.faqs,
+    options.keywords,
+    options.path,
+    options.section,
+    pageTitle,
+  ]);
 };

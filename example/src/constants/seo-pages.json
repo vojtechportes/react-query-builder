@@ -288,6 +288,508 @@
       "description": "Built-in validation for fields and rules, structural usageLimit constraints, validation rendering with showValidation, and custom validator integration.",
       "keywords": "Validation, built-in, validation, validator, usageLimit, showValidation, onStateChange, required, minLength, maxLength, minItems, maxItems, range, rules, fields, builder, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
       "section": "Documentation"
+    },
+    {
+      "path": "/recipes",
+      "title": "React Query Builder Recipes and Integration Guides",
+      "description": "Explore practical React Query Builder recipes for tables, forms, URL state, backend filtering, SQL parsing, MongoDB, Prisma, and dynamic fields.",
+      "keywords": "React Query Builder recipes, React filter builder examples, TypeScript query builder, integration guides",
+      "section": "Recipes",
+      "primaryKeyword": "React Query Builder recipes",
+      "secondaryKeywords": [
+        "React filter builder examples",
+        "TypeScript query builder integrations"
+      ],
+      "searchText": "recipes integrations tables forms URL presets server SQL MongoDB Prisma dynamic AI",
+      "summary": "Practical patterns for integrating React Query Builder into real applications.",
+      "capabilities": [
+        "Framework and data integrations",
+        "State and backend workflows",
+        "Parsing and export recipes",
+        "Advanced patterns"
+      ],
+      "safetyNotes": [
+        "Security-sensitive recipes identify browser filters as untrusted input."
+      ],
+      "productionNotes": [
+        "Choose a recipe by framework, state workflow, or output format."
+      ]
+    },
+    {
+      "path": "/recipes/ag-grid-query-builder",
+      "title": "Build an AG Grid Query Builder Filter Panel",
+      "description": "Use React Query Builder as an external AG Grid filter panel, then translate its nested rules into AG Grid filtering callbacks.",
+      "keywords": "AG Grid query builder, AG Grid advanced filter, React grid filter panel, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "AG Grid query builder",
+      "secondaryKeywords": [
+        "AG Grid advanced filter",
+        "React grid filter panel"
+      ],
+      "searchText": "AG Grid external filter isExternalFilterPresent doesExternalFilterPass nested rules",
+      "faqs": [
+        {
+          "question": "Can I use Builder together with AG Grid column filters?",
+          "answer": "Yes. Decide whether rows must match both filters or only one of them, then apply that rule consistently."
+        },
+        {
+          "question": "When should filtering move to the server?",
+          "answer": "Use server filtering when the dataset is too large to load in the browser or contains records the current user should not receive."
+        }
+      ],
+      "summary": "Use an external panel to build nested filters for AG Grid.",
+      "capabilities": [
+        "An external panel for building advanced AG Grid filters.",
+        "A small conversion function applies nested AND/OR rules to each row.",
+        "The same filter data can be sent to your server when rows are not loaded in the browser."
+      ],
+      "safetyNotes": [
+        "Browser-side filtering only hides rows; it does not control which rows a user is allowed to access.",
+        "For server-side row models, validate field names, operators, values, group depth, and page limits."
+      ],
+      "productionNotes": [
+        "Rebuild the row-matching function only when the filter changes.",
+        "For large datasets, validate and apply the query on the server instead of scanning rows in the browser."
+      ]
+    },
+    {
+      "path": "/recipes/ai-assisted-filter-creation",
+      "title": "Experimental AI-assisted Filter Creation",
+      "description": "Build an experimental AI-assisted filter flow that turns natural language into draft rules, checks their structure, and asks the user to confirm them.",
+      "keywords": "AI-assisted filter creation, natural language query builder, AI React filters, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "AI-assisted filter creation",
+      "secondaryKeywords": [
+        "natural language query builder",
+        "AI React filters"
+      ],
+      "searchText": "experimental AI natural language draft schema validation allowlist human review confirmation apply",
+      "faqs": [
+        {
+          "question": "Should an AI-created filter run immediately?",
+          "answer": "No. Check it first, show it as an editable draft, and let the user confirm it."
+        },
+        {
+          "question": "What if the AI returns an unsupported field or operator?",
+          "answer": "Reject that part of the filter and show a clear error. Only accept fields and operators provided by your application."
+        },
+        {
+          "question": "Do I need a specific AI provider?",
+          "answer": "No. The Builder only needs valid filter data. Your backend can create that data with any provider or SDK."
+        }
+      ],
+      "summary": "Turn natural language into a draft query, validate it, preview it, and require user confirmation.",
+      "capabilities": [
+        "Natural-language input produces a draft, not an active filter.",
+        "Only supported fields and operators pass validation before rendering.",
+        "Editable preview plus explicit human confirmation."
+      ],
+      "safetyNotes": [
+        "Experimental: model output is untrusted and may be incorrect or adversarial.",
+        "Keep AI credentials on the server and validate every generated field, operator, and value.",
+        "Check what the user is allowed to access separately, and require confirmation before applying a generated filter."
+      ],
+      "productionNotes": [
+        "Show a plain-language explanation and warnings with the draft.",
+        "If you collect edits or outcomes, get user consent and avoid storing sensitive prompts by default."
+      ]
+    },
+    {
+      "path": "/recipes/dynamic-operators-by-field-type",
+      "title": "Dynamic Query Operators by Field Type",
+      "description": "Configure React Query Builder so each field shows suitable operators and inputs for text, numbers, dates, yes/no values, lists, empty-value checks, and field comparisons.",
+      "keywords": "dynamic operators by field type, query builder field operators, React dynamic filter fields, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "dynamic operators by field type",
+      "secondaryKeywords": [
+        "query builder field operators",
+        "React dynamic filter fields"
+      ],
+      "searchText": "text number date boolean enum nullable field comparison comparableFields operators value options",
+      "faqs": [
+        {
+          "question": "What happens when a user changes the field in an existing rule?",
+          "answer": "Check whether the current operator and value still work with the new field. Clear or replace them when they do not."
+        },
+        {
+          "question": "Can the value options depend on another field?",
+          "answer": "Yes. Update the available options when the related field changes, then clear or replace values that are no longer valid."
+        }
+      ],
+      "summary": "Choose suitable operators and inputs for text, number, date, yes/no, list, empty-value, and field-to-field comparisons.",
+      "capabilities": [
+        "Operators that match each field data type.",
+        "Static lists plus options that can change for a field or individual rule.",
+        "Optional comparisons between compatible fields."
+      ],
+      "safetyNotes": [
+        "Your server should check that each field is used only with supported operators.",
+        "Treat hidden or disabled UI choices as presentation, not access control."
+      ],
+      "productionNotes": [
+        "Define how your application treats null and empty values.",
+        "Clear or replace values that are no longer valid when available options change."
+      ]
+    },
+    {
+      "path": "/recipes/export-to-mongodb-query",
+      "title": "Export React Filters to a MongoDB Query",
+      "description": "Export React Query Builder filters to MongoDB query syntax with formatQuery, typed fields, expected output, and server-side safety guidance.",
+      "keywords": "export to MongoDB query, MongoDB filter builder React, React query to Mongo syntax, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "export to MongoDB query",
+      "secondaryKeywords": [
+        "MongoDB filter builder React",
+        "React query to Mongo syntax"
+      ],
+      "searchText": "Mongo formatQuery export $and $gte collection find allowlist injection",
+      "faqs": [
+        {
+          "question": "Where should the MongoDB query be checked and run?",
+          "answer": "On the server. Treat the browser output as input, check every field, operator, and value, then build and run the MongoDB query there."
+        },
+        {
+          "question": "What if a Builder operator has no MongoDB equivalent?",
+          "answer": "Support only the operators your app can convert. Show a validation message for the others instead of sending an incomplete query."
+        }
+      ],
+      "summary": "Preview visual filter rules as MongoDB query syntax before validating them on your server.",
+      "capabilities": [
+        "A readable MongoDB export preview.",
+        "Number fields stay as numbers in the generated query.",
+        "Builder data sent to the backend for validation before formatting or execution."
+      ],
+      "safetyNotes": [
+        "Do not run the MongoDB object created in the browser.",
+        "On the server, rebuild the query using only fields and operators your application supports.",
+        "Also check value types, limit query size, and add access rules on the server."
+      ],
+      "productionNotes": [
+        "Send the original builder data to the server and format it only after validation.",
+        "Decide how filters should handle empty values, arrays, and uppercase or lowercase text."
+      ]
+    },
+    {
+      "path": "/recipes/export-to-prisma-where-clause",
+      "title": "Export to a Prisma Where Clause",
+      "description": "Export existing React Query Builder data to a Prisma where clause with formatQuery, typed fields, expected output, and backend validation notes.",
+      "keywords": "export to Prisma where clause, Prisma query formatter, React filter to Prisma, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "export to Prisma where clause",
+      "secondaryKeywords": ["Prisma query formatter", "React filter to Prisma"],
+      "searchText": "Prisma formatQuery wrapWhereClause concise formatter equals gte where input",
+      "faqs": [
+        {
+          "question": "What if a Builder operator has no Prisma equivalent?",
+          "answer": "Support only the operators your app can convert. Show a validation message for unsupported operators instead of creating an incomplete where object."
+        },
+        {
+          "question": "Where should the Prisma where object be created?",
+          "answer": "Create and check it on the server before passing it to Prisma Client. A browser preview is useful for learning, but it should not run the database query."
+        }
+      ],
+      "summary": "Format an existing builder query as a Prisma filter.",
+      "capabilities": [
+        "A short example that converts existing Builder data.",
+        "Prisma where wrapper output.",
+        "A focused conversion example for apps that already have a filter UI."
+      ],
+      "safetyNotes": [
+        "Validate and rebuild filters on the server before passing them to Prisma.",
+        "Add filters for the current user or organization on the server; never accept those filters from the browser."
+      ],
+      "productionNotes": [
+        "Keep application fields mapped to exact Prisma model fields.",
+        "Test related records, empty values, and lists used by your Prisma schema."
+      ]
+    },
+    {
+      "path": "/recipes/mui-datagrid-advanced-filtering",
+      "title": "MUI DataGrid Advanced Filtering with React Query Builder",
+      "description": "Use the Material UI adapter to style React Query Builder, then convert its rules into the filter format used by MUI DataGrid.",
+      "keywords": "MUI DataGrid advanced filtering, MUI query builder, React DataGrid filter builder, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "MUI DataGrid advanced filtering",
+      "secondaryKeywords": [
+        "MUI query builder",
+        "React DataGrid filter builder"
+      ],
+      "searchText": "Material UI Data Grid filterModel items logicOperator toolbar external panel",
+      "faqs": [
+        {
+          "question": "Do I need to install MUI DataGrid separately?",
+          "answer": "Yes. The React Query Builder adapter provides MUI styling for Builder, but it does not include MUI DataGrid."
+        },
+        {
+          "question": "What happens to nested AND and OR groups?",
+          "answer": "MUI DataGrid cannot represent every nested combination in its filter model. Keep complex groups for server filtering, or clearly define how your app simplifies them."
+        }
+      ],
+      "summary": "Style the Builder with MUI and convert its rules into the format DataGrid expects.",
+      "capabilities": [
+        "MUI-styled builder controls next to a DataGrid.",
+        "A conversion function maps Builder fields and operators to DataGrid.",
+        "One React state value can drive filtering in the browser or on the server."
+      ],
+      "safetyNotes": [
+        "DataGrid filter models control the UI; they do not enforce data access.",
+        "Validate remote-filter requests on the server before querying protected data."
+      ],
+      "productionNotes": [
+        "Create the MUI components once, and use useMemo when converting filters for DataGrid.",
+        "Choose how to handle nested groups because DataGrid may not represent them exactly."
+      ]
+    },
+    {
+      "path": "/recipes/persist-filters-in-url",
+      "title": "Persist React Filters in URL Query Parameters",
+      "description": "Persist React Query Builder filters in URL query parameters, check decoded data before using it, update browser history, and create shareable links.",
+      "keywords": "persist React filters in URL, query builder URL state, shareable filter URL, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "persist React filters in URL",
+      "secondaryKeywords": ["query builder URL state", "shareable filter URL"],
+      "searchText": "URLSearchParams base64 encode decode history replaceState restore share link",
+      "faqs": [
+        {
+          "question": "Can every filter be stored in the URL?",
+          "answer": "URL length limits vary by browser. A large React Query Builder filter can exceed that limit, so be careful with this approach. For complex filters, store the filter elsewhere and put only its preset ID in the URL."
+        }
+      ],
+      "summary": "Encode validated filter state in a shareable URL and restore it on navigation.",
+      "capabilities": [
+        "Back/forward-friendly filter state.",
+        "Shareable links with a safe fallback.",
+        "A single decoder that can migrate older URL formats later."
+      ],
+      "safetyNotes": [
+        "Treat URL data as untrusted and reject unknown fields, operators, excessive depth, and oversized values.",
+        "Never put secrets or access-control rules in the URL."
+      ],
+      "productionNotes": [
+        "Use replaceState while editing so every change does not add a browser-history entry. Use pushState when the user explicitly saves a search.",
+        "Move large filters to saved server-side presets and keep only the preset ID in the URL."
+      ]
+    },
+    {
+      "path": "/recipes/prisma-filter-ui",
+      "title": "Build a Prisma Filter UI with React Query Builder",
+      "description": "Build a Prisma filter UI in React with field definitions, editable rules, a Prisma where-clause preview, and server-side validation guidance.",
+      "keywords": "Prisma filter UI, React Prisma query builder, Prisma where filter, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "Prisma filter UI",
+      "secondaryKeywords": [
+        "React Prisma query builder",
+        "Prisma where filter"
+      ],
+      "searchText": "Prisma product catalog controlled form where AND server validation",
+      "faqs": [
+        {
+          "question": "Where should the Prisma query run?",
+          "answer": "On the server. Send the Builder data to your API, check it there, and then create and run the Prisma query."
+        },
+        {
+          "question": "Can users change a required filter, such as their organization ID?",
+          "answer": "You can lock the rule in the UI, but the server must add or verify required filters because browser data can be changed."
+        }
+      ],
+      "summary": "Build a product filter and preview the Prisma where object before validating it on your server.",
+      "capabilities": [
+        "A product filter with list, number, and yes/no fields.",
+        "Filter rules that users can review before sending them.",
+        "A clear separation between browser filter state and server-side Prisma execution."
+      ],
+      "safetyNotes": [
+        "Treat the browser-produced object as untrusted input.",
+        "On the server, accept only supported fields and operators, then validate value types and query depth.",
+        "On the server, add filters that restrict records to the current user or organization."
+      ],
+      "productionNotes": [
+        "Wait briefly after the user stops editing before updating expensive previews, and require a Submit action for expensive searches.",
+        "Keep Prisma Client and database credentials on the server."
+      ]
+    },
+    {
+      "path": "/recipes/react-hook-form-query-builder",
+      "title": "React Hook Form Query Builder Integration",
+      "description": "Integrate React Query Builder with React Hook Form for validated query state, change tracking, submission, and reliable resets.",
+      "keywords": "React Hook Form query builder, filter form React, query builder form validation, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "React Hook Form query builder",
+      "secondaryKeywords": [
+        "filter form React",
+        "query builder form validation"
+      ],
+      "searchText": "React Hook Form Controller useForm dirty reset submit controlled builder",
+      "faqs": [
+        {
+          "question": "Why use Controller instead of register?",
+          "answer": "Builder does not behave like a native text input. Controller passes its value and changes to React Hook Form for you."
+        },
+        {
+          "question": "Will React Hook Form reset update Builder too?",
+          "answer": "Yes, as long as Builder receives its value from Controller. React Hook Form restores defaultValues and passes the restored filter back to Builder."
+        }
+      ],
+      "summary": "Treat the query as a form field with validation, change tracking, submission, and reset.",
+      "capabilities": [
+        "Query data participates in form validation and change tracking.",
+        "Submit and reset use the same default values.",
+        "Builder validation remains visible beside form errors."
+      ],
+      "safetyNotes": [
+        "Validate submitted query data again when it reaches your API.",
+        "Client-side validation only checks the form values. Your server must still decide what the user is allowed to access."
+      ],
+      "productionNotes": [
+        "Keep defaultValues stable and call reset after a successful save.",
+        "Do not copy the same form value into a separate useState. Let Controller manage it."
+      ]
+    },
+    {
+      "path": "/recipes/save-load-filter-presets",
+      "title": "Save and Load React Filter Presets",
+      "description": "Save and load reusable React filter presets with versioned query data, validation, rename and reset flows, and safe API boundaries.",
+      "keywords": "save filter presets, load query builder filters, reusable React filters, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "save filter presets",
+      "secondaryKeywords": [
+        "load query builder filters",
+        "reusable React filters"
+      ],
+      "searchText": "preset save load rename delete version migration local storage API",
+      "faqs": [
+        {
+          "question": "Should presets store formatted SQL?",
+          "answer": "Prefer builder data so it remains editable and can be formatted for different targets."
+        },
+        {
+          "question": "Can localStorage be used?",
+          "answer": "Yes for presets saved on one device, but validate browser storage just like server data."
+        }
+      ],
+      "summary": "Persist named, versioned filters and safely restore, rename, or delete them.",
+      "capabilities": [
+        "Named filters users can save, load, rename, and delete.",
+        "A version field for future migrations.",
+        "Validation before restored data reaches the builder."
+      ],
+      "safetyNotes": [
+        "Check preset ownership every time a preset is read or changed.",
+        "Accept only supported fields and operators. Reject presets with too many nested groups or unusually large values."
+      ],
+      "productionNotes": [
+        "If the UI shows a new name before the server confirms it, restore the old name when the request fails.",
+        "Define explicit migrations for old versions instead of guessing their structure."
+      ]
+    },
+    {
+      "path": "/recipes/server-side-filtering",
+      "title": "Server-side Filtering with React Query Builder",
+      "description": "Implement server-side filtering with checks for incoming filter data, page-size limits, and access rules enforced by the server.",
+      "keywords": "server-side filtering React, query builder API, backend filter validation, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "server-side filtering React",
+      "secondaryKeywords": ["query builder API", "backend filter validation"],
+      "searchText": "server API contract mocked backend validate allowlist pagination tenant authorization",
+      "faqs": [
+        {
+          "question": "What should the server check before applying a filter?",
+          "answer": "Check every field, operator, and value. Also reject filters with too many nested groups or rules, and requests outside your pagination limits."
+        },
+        {
+          "question": "Is a locked rule enough to protect restricted records?",
+          "answer": "No. A locked rule can explain the filter in the UI, but the server must still decide which records the user can access."
+        }
+      ],
+      "summary": "Send filter rules to an API, validate them, and return matching rows.",
+      "capabilities": [
+        "A predictable request and response format.",
+        "Backend validation demonstrated with a replaceable mock API.",
+        "Each request includes a page number and page size, and limits how complex the filter can be."
+      ],
+      "safetyNotes": [
+        "Treat every filter sent by the browser as untrusted. It must never decide which records a user is allowed to access.",
+        "Check supported fields, operators, and value types, and reject filters that are too large or deeply nested.",
+        "Always add user or organization access rules on the server."
+      ],
+      "productionNotes": [
+        "Return structured validation errors without echoing secrets.",
+        "Log rejected filter shape and request ids, not sensitive values."
+      ]
+    },
+    {
+      "path": "/recipes/sql-where-to-react-query-builder",
+      "title": "Convert SQL WHERE to React Query Builder Data",
+      "description": "Convert a SQL WHERE clause to React Query Builder data with parseQuery, review the detected fields, validate the result, and render it for editing.",
+      "keywords": "SQL WHERE to React Query Builder, parse SQL filter React, SQL query parser TypeScript, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "SQL WHERE to React Query Builder",
+      "secondaryKeywords": [
+        "parse SQL filter React",
+        "SQL query parser TypeScript"
+      ],
+      "searchText": "parseQuery SQL WHERE import inferred fields editable visual rules",
+      "faqs": [
+        {
+          "question": "What happens when the SQL contains unsupported syntax?",
+          "answer": "Do not replace the current filter. Show a clear error and let the user edit the SQL or return to the visual Builder."
+        },
+        {
+          "question": "Can imported SQL be sent directly to the database?",
+          "answer": "No. Check the parsed filter on the server and use query parameters when creating the database query. Never insert pasted SQL directly into a query string."
+        }
+      ],
+      "summary": "Parse a SQL WHERE clause into editable typed fields and nested builder data.",
+      "capabilities": [
+        "SQL import that turns an existing WHERE clause into editable filters.",
+        "Detected fields that you can replace with definitions from your application.",
+        "Nested filter data ready to display in the Builder."
+      ],
+      "safetyNotes": [
+        "Parsing does not make SQL safe to execute.",
+        "Use query parameters provided by your database library instead of inserting values directly into SQL strings. Accept only supported fields and operators on the server."
+      ],
+      "productionNotes": [
+        "Replace the detected field labels and types with definitions from your schema.",
+        "Show parse errors and keep the previous valid query while users correct input."
+      ]
+    },
+    {
+      "path": "/recipes/tanstack-table-filtering",
+      "title": "TanStack Table Filtering with React Query Builder",
+      "description": "Connect React Query Builder to TanStack Table so nested AND/OR rules decide which rows are shown.",
+      "keywords": "TanStack Table filtering, React Table query builder, TanStack advanced filters, React Query Builder, React filter builder, TypeScript query builder",
+      "section": "Recipes",
+      "primaryKeyword": "TanStack Table filtering",
+      "secondaryKeywords": [
+        "React Table query builder",
+        "TanStack advanced filters"
+      ],
+      "searchText": "TanStack Table useReactTable globalFilterFn controlled state rows columns",
+      "faqs": [
+        {
+          "question": "Why does the table not update when the Builder filter changes?",
+          "answer": "Pass the Builder data to TanStack Table as its globalFilter value and provide a globalFilterFn that checks whether each row matches."
+        },
+        {
+          "question": "Does this work with server pagination?",
+          "answer": "Yes; enable manual filtering and send the validated builder data with each request."
+        }
+      ],
+      "summary": "Use nested Builder rules to decide which TanStack Table rows to show.",
+      "capabilities": [
+        "React state keeps the Builder and table filters in sync.",
+        "One table filter checks nested AND/OR conditions across several columns.",
+        "Filter data that can be evaluated in the browser or sent to a server."
+      ],
+      "safetyNotes": [
+        "Client filtering only controls display and cannot protect records.",
+        "Filter protected rows on the server before sending them to the browser."
+      ],
+      "productionNotes": [
+        "Use the useMemo hook so the row-matching function is not rebuilt on every render.",
+        "For server-side pagination, enable manualFiltering in TanStack Table and send the filters with each request."
+      ]
     }
   ]
 }

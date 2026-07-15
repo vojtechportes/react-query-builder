@@ -3,13 +3,11 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { ContentArticle } from '../../components/content-article';
 import { DocumentationSidebar } from '../../components/documentation-sidebar';
+import { RelatedRecipes } from '../../components/related-recipes';
+import { relatedRecipesByPath } from '../../constants/related-recipes-by-path';
 import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
-import {
-  apiGroups,
-  apiOverviewPage,
-  findApiPage,
-} from './pages/api-content';
+import { apiGroups, apiOverviewPage, findApiPage } from './pages/api-content';
 
 const Layout = styled.div`
   display: grid;
@@ -57,6 +55,7 @@ export const ApiPage: React.FC = () => {
         <Title>{page.title}</Title>
         {page.summary ? <Summary>{page.summary}</Summary> : null}
         {page.content}
+        <RelatedRecipes links={relatedRecipesByPath[page.path]} />
       </ContentArticle>
     </Layout>
   );
