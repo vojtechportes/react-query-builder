@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <a href="https://vojtechportes.github.io/react-query-builder/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
+  <a href="https://www.react-query-builder.com/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
   ·
-  <a href="https://vojtechportes.github.io/react-query-builder/demo" target="_blank" rel="noopener noreferrer">Demo</a>
+  <a href="https://www.react-query-builder.com/demo" target="_blank" rel="noopener noreferrer">Demo</a>
 </p>
 
 ![React Query Builder](https://github.com/vojtechportes/react-query-builder/blob/master/example.png)
@@ -36,9 +36,9 @@ Field-to-field comparisons are also supported through
 Full documentation, API reference, and the interactive demo are available on
 the project website:
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api" target="_blank" rel="noopener noreferrer">API</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/demo" target="_blank" rel="noopener noreferrer">Demo</a>
+- <a href="https://www.react-query-builder.com/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
+- <a href="https://www.react-query-builder.com/api" target="_blank" rel="noopener noreferrer">API</a>
+- <a href="https://www.react-query-builder.com/demo" target="_blank" rel="noopener noreferrer">Demo</a>
 
 ## Installation
 
@@ -155,8 +155,8 @@ When a usage limit is exhausted, the field becomes disabled in the selector,
 and the built-in Add Rule action is disabled when no selectable fields remain
 in the current scope.
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/validation" target="_blank" rel="noopener noreferrer">Documentation: Validation</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/fields" target="_blank" rel="noopener noreferrer">API: Fields</a>
+- <a href="https://www.react-query-builder.com/documentation/validation" target="_blank" rel="noopener noreferrer">Documentation: Validation</a>
+- <a href="https://www.react-query-builder.com/api/fields" target="_blank" rel="noopener noreferrer">API: Fields</a>
 
 ## Dynamic Field Options
 
@@ -190,7 +190,7 @@ state:
 See the Dynamic Field Options documentation for the full concept, live example,
 and React Query integration example:
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/dynamic-field-options" target="_blank" rel="noopener noreferrer">Dynamic Field Options Documentation</a>
+- <a href="https://www.react-query-builder.com/documentation/dynamic-field-options" target="_blank" rel="noopener noreferrer">Dynamic Field Options Documentation</a>
 
 ## UI Adapters
 
@@ -362,8 +362,8 @@ libraries.
 
 More adapter details:
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/adapters" target="_blank" rel="noopener noreferrer">Documentation: Adapters</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/adapters" target="_blank" rel="noopener noreferrer">API: Adapters</a>
+- <a href="https://www.react-query-builder.com/documentation/adapters" target="_blank" rel="noopener noreferrer">Documentation: Adapters</a>
+- <a href="https://www.react-query-builder.com/api/adapters" target="_blank" rel="noopener noreferrer">API: Adapters</a>
 
 ## Text Mode
 
@@ -388,9 +388,9 @@ Set `allowGroupNegation={false}` to remove the group-level `NOT` toggle and
 reject `NOT (...)` groups in text mode, while still allowing operator-level
 negation such as `NOT IN` or `IS NOT NULL`.
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
+- <a href="https://www.react-query-builder.com/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
+- <a href="https://www.react-query-builder.com/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
+- <a href="https://www.react-query-builder.com/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
 
 ## Read-only and Protected Editing
 
@@ -408,10 +408,10 @@ By default, deleting a group is also blocked when that delete would indirectly
 remove read-only protected descendants. Set `readOnlyProtectsDelete={false}` on
 `Builder` if you want to disable that subtree delete protection.
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/locking-and-read-only" target="_blank" rel="noopener noreferrer">Documentation: Locking and Read-only</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/data" target="_blank" rel="noopener noreferrer">API: Data</a>
+- <a href="https://www.react-query-builder.com/documentation/locking-and-read-only" target="_blank" rel="noopener noreferrer">Documentation: Locking and Read-only</a>
+- <a href="https://www.react-query-builder.com/documentation/text-mode" target="_blank" rel="noopener noreferrer">Documentation: Text Mode</a>
+- <a href="https://www.react-query-builder.com/api/builder" target="_blank" rel="noopener noreferrer">API: Builder</a>
+- <a href="https://www.react-query-builder.com/api/data" target="_blank" rel="noopener noreferrer">API: Data</a>
 
 ## Query Conversion
 
@@ -427,10 +427,10 @@ query formats that have a direct right-hand-side field-reference form. See the
 supported-formats documentation for the current list and unsupported cases such
 as `Elasticsearch` and `RSQL`.
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting" target="_blank" rel="noopener noreferrer">Documentation: Parsing and Formatting</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/parsing-and-formatting/supported-formats" target="_blank" rel="noopener noreferrer">Documentation: Supported Formats</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/format-query" target="_blank" rel="noopener noreferrer">API: formatQuery</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/parse-query" target="_blank" rel="noopener noreferrer">API: parseQuery</a>
+- <a href="https://www.react-query-builder.com/documentation/parsing-and-formatting" target="_blank" rel="noopener noreferrer">Documentation: Parsing and Formatting</a>
+- <a href="https://www.react-query-builder.com/documentation/parsing-and-formatting/supported-formats" target="_blank" rel="noopener noreferrer">Documentation: Supported Formats</a>
+- <a href="https://www.react-query-builder.com/api/format-query" target="_blank" rel="noopener noreferrer">API: formatQuery</a>
+- <a href="https://www.react-query-builder.com/api/parse-query" target="_blank" rel="noopener noreferrer">API: parseQuery</a>
 
 ## Responsive Behavior
 
@@ -443,6 +443,6 @@ The default builder components include a compact responsive layout for medium-wi
 
 Responsive behavior is documented in more detail on the website:
 
-- <a href="https://vojtechportes.github.io/react-query-builder/documentation/components" target="_blank" rel="noopener noreferrer">Documentation: Components</a>
-- <a href="https://vojtechportes.github.io/react-query-builder/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
+- <a href="https://www.react-query-builder.com/documentation/components" target="_blank" rel="noopener noreferrer">Documentation: Components</a>
+- <a href="https://www.react-query-builder.com/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
 
