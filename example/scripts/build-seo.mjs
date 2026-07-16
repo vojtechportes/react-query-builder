@@ -196,6 +196,7 @@ const createRecipeFallback = (page) => {
 };
 const createPageHtml = (page) => {
   const canonicalUrl = canonicalUrlForPath(page.path);
+  const imageUrl = canonicalUrlForPath('/favicon.png');
   const title = `${page.title} | ${seoConfig.siteName}`;
   let html = baseHtml.replace(
     /<title>[\s\S]*?<\/title>/i,
@@ -214,11 +215,21 @@ const createPageHtml = (page) => {
   html = setMetaProperty(html, 'og:title', title);
   html = setMetaProperty(html, 'og:description', page.description);
   html = setMetaProperty(html, 'og:url', canonicalUrl);
+  html = setMetaProperty(html, 'og:image', imageUrl);
   html = setMetaName(html, 'twitter:card', 'summary');
   html = setMetaName(html, 'twitter:title', title);
   html = setMetaName(html, 'twitter:description', page.description);
+  html = setMetaName(html, 'twitter:image', imageUrl);
   html = setCanonical(html, canonicalUrl);
   html = setStructuredData(html, page, canonicalUrl);
+
+  if (
+    !html.includes('property="og:image" content="' + imageUrl + '"') ||
+    !html.includes('name="twitter:image" content="' + imageUrl + '"')
+  ) {
+    throw new Error('Generated metadata contains incorrect social image URLs.');
+  }
+
   if (page.section === 'Recipes') {
     html = html.replace(
       '<div id="root"></div>',
