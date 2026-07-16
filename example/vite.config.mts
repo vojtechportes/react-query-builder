@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+import { createGoogleTagManagerPlugin } from './vite-plugins/create-google-tag-manager-plugin';
 
 const srcRoot = fileURLToPath(new URL('../src', import.meta.url));
 const testReactRoot = fileURLToPath(
@@ -18,7 +19,7 @@ const exampleMantineHooksRoot = fileURLToPath(
 
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
-  plugins: [react()],
+  plugins: [react(), createGoogleTagManagerPlugin(process.env.VITE_SITE_URL)],
   test: {
     alias: {
       react: testReactRoot,
