@@ -13,6 +13,15 @@ const seoConfigPath = path.join(
 );
 const indexPath = path.join(distRoot, 'index.html');
 const seoConfig = JSON.parse(fs.readFileSync(seoConfigPath, 'utf8'));
+const configuredSiteUrl = process.env.VITE_SITE_URL || seoConfig.siteUrl;
+
+try {
+  seoConfig.siteUrl = new URL(configuredSiteUrl).toString();
+} catch {
+  throw new Error(
+    `VITE_SITE_URL must be an absolute URL, received: ${configuredSiteUrl}`
+  );
+}
 const baseHtml = fs.readFileSync(indexPath, 'utf8');
 
 const escapeHtml = (value) =>

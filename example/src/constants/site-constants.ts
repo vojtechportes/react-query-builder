@@ -1,5 +1,7 @@
 export const SITE_NAME = 'React Query Builder';
-export const SITE_URL = 'https://vojtechportes.github.io/react-query-builder/';
+export const SITE_URL =
+  import.meta.env.VITE_SITE_URL ||
+  'https://vojtechportes.github.io/react-query-builder/';
 export const SITE_IMAGE_URL = `${SITE_URL}favicon.png`;
 export const GITHUB_URL =
   'https://github.com/vojtechportes/react-query-builder';
