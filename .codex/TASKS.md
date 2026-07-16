@@ -1,4 +1,4 @@
-﻿This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
+This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
 
 ## Status Legend
 
@@ -256,3 +256,32 @@
 - Existing recipe SEO, sitemap coverage, structured data, static fallback content, and direct-route behavior remain valid.
 - No catch-all demo component, multi-utility file, root-library runtime dependency, or unnecessary abstraction is introduced.
 - Formatting, build, validation, focused tests, responsive checks, and final review pass.
+
+### T004 - Add Google Analytics to the production website
+
+**Status:** `[x]` Done
+
+**Goal:** Add Google Tag Manager analytics to the website hosted at
+`www.react-query-builder.com` without loading it on GitHub Pages or local builds.
+
+**Scope:**
+
+- Add the `GTM-WPZDH54F` head script and opening-body noscript fallback.
+- Include the snippets only when `VITE_SITE_URL` targets
+  `www.react-query-builder.com`.
+- Keep the deployment-specific HTML transformation isolated from the Vite
+  configuration.
+
+**Acceptance criteria:**
+
+- The production website build includes both Google Tag Manager snippets.
+- The GitHub Pages build and local builds contain no Google Tag Manager markup.
+- The example website build succeeds.
+
+**Verification:**
+
+- Build the example website with the production website URL and inspect the
+  generated HTML.
+- Build the example website with the GitHub Pages URL and confirm the generated
+  HTML contains no Google Tag Manager markup.
+- Run Prettier on all modified code.
