@@ -12,7 +12,8 @@ permissions:
 
 concurrency:
   group: ftp-deploy
-  cancel-in-progress: true
+  # Never interrupt a deployment while it may be swapping the live directory.
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -39,7 +40,7 @@ jobs:
         env:
           VITE_SITE_URL: https://react-query-builder.com/
 
-      - name: Deploy example to FTP
+      - name: Upload example to staging directory
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOSTNAME }}
@@ -48,5 +49,13 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./example/dist/
-          server-dir: /www/
+          server-dir: /www-new/
           dangerous-clean-slate: true
+
+      - name: Activate staged deployment
+        run: python .github/scripts/swap-ftp-directories.py
+        env:
+          FTP_HOSTNAME: ${{ secrets.FTP_HOSTNAME }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PORT: 21
