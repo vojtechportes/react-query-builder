@@ -285,3 +285,32 @@ This backlog is derived from `AGENTS.md`. Keep tasks incremental and update stat
 - Build the example website with the GitHub Pages URL and confirm the generated
   HTML contains no Google Tag Manager markup.
 - Run Prettier on all modified code.
+
+### T005 - Add cookie consent for Google Analytics
+
+**Status:** `[x]` Done
+
+**Goal:** Require an explicit visitor choice before Google Analytics storage is
+enabled on the production website.
+
+**Scope:**
+
+- Add a cookie consent bar using `react-cookie-consent`.
+- Default Google Tag Manager consent to denied before the container loads.
+- Update Google consent state when analytics cookies are accepted or declined.
+- Keep the consent UI and analytics consent utilities focused and isolated.
+
+**Acceptance criteria:**
+
+- New visitors can accept or decline analytics cookies from an accessible consent
+  bar.
+- Analytics storage remains denied until consent is accepted.
+- A saved choice is restored without prompting the visitor on every page load.
+- Google Tag Manager remains restricted to the production website build.
+- The example website build succeeds.
+
+**Verification:**
+
+- Run focused consent tests.
+- Build the example website and inspect the production consent-mode markup.
+- Run Prettier on all modified code.

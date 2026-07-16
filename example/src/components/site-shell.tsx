@@ -2,10 +2,16 @@ import * as React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { colors } from '../../../src';
-import { GITHUB_URL, NPM_URL, SITE_NAME, TOP_LEVEL_NAV } from '../constants/site-constants';
+import {
+  GITHUB_URL,
+  NPM_URL,
+  SITE_NAME,
+  TOP_LEVEL_NAV,
+} from '../constants/site-constants';
 import { siteTheme } from '../constants/site-theme';
 import { CloseIcon, GithubIcon, MenuIcon, NpmIcon } from './icons';
 import { HeaderSearch } from './header-search';
+import { CookieConsentBanner } from './cookie-consent-banner';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -353,13 +359,15 @@ export const SiteShell: React.FC = () => {
               <ReactText>React</ReactText>
               <QueryBuilderText>Query Builder</QueryBuilderText>
             </BrandText>
-            <VersionBadge aria-label="Documentation version">Docs v1</VersionBadge>
+            <VersionBadge aria-label="Documentation version">
+              Docs v1
+            </VersionBadge>
           </Brand>
 
           <Right>
             <DesktopOnly>
               <Nav>
-                {TOP_LEVEL_NAV.map(item => (
+                {TOP_LEVEL_NAV.map((item) => (
                   <NavItem key={item.to} to={item.to} end={item.to === '/'}>
                     {item.label}
                   </NavItem>
@@ -372,10 +380,20 @@ export const SiteShell: React.FC = () => {
             </DesktopOnly>
 
             <MobileActions>
-              <IconLink href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <IconLink
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
                 <GithubIcon />
               </IconLink>
-              <IconLink href={NPM_URL} target="_blank" rel="noopener noreferrer" aria-label="npm">
+              <IconLink
+                href={NPM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="npm"
+              >
                 <NpmIcon />
               </IconLink>
               <MobileMenuTrigger
@@ -391,10 +409,20 @@ export const SiteShell: React.FC = () => {
             </MobileActions>
 
             <DesktopOnly>
-              <IconLink href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <IconLink
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
                 <GithubIcon />
               </IconLink>
-              <IconLink href={NPM_URL} target="_blank" rel="noopener noreferrer" aria-label="npm">
+              <IconLink
+                href={NPM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="npm"
+              >
                 <NpmIcon />
               </IconLink>
             </DesktopOnly>
@@ -408,7 +436,11 @@ export const SiteShell: React.FC = () => {
         $open={mobileMenuOpen}
         onClick={() => setMobileMenuOpen(false)}
       />
-      <MobilePanel id="mobile-site-panel" $open={mobileMenuOpen} aria-hidden={!mobileMenuOpen}>
+      <MobilePanel
+        id="mobile-site-panel"
+        $open={mobileMenuOpen}
+        aria-hidden={!mobileMenuOpen}
+      >
         <MobilePanelContent>
           <MobilePanelHeader>
             <MenuButton
@@ -423,7 +455,7 @@ export const SiteShell: React.FC = () => {
             <HeaderSearch />
           </MobileSearchWrap>
           <MobileNav>
-            {TOP_LEVEL_NAV.map(item => (
+            {TOP_LEVEL_NAV.map((item) => (
               <MobileNavItem key={item.to} to={item.to} end={item.to === '/'}>
                 {item.label}
               </MobileNavItem>
@@ -436,9 +468,10 @@ export const SiteShell: React.FC = () => {
         <Outlet />
       </Main>
       <Footer>
-        &copy; Vojtěch Václav Porteš {year} - All library contents are available under the
-        MIT license.
+        &copy; Vojtěch Václav Porteš {year} - All library contents are available
+        under the MIT license.
       </Footer>
+      <CookieConsentBanner />
     </Page>
   );
 };

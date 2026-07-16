@@ -29,6 +29,7 @@
     "minisearch": "^7.2.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.6",
+    "react-cookie-consent": "^10.0.1",
     "react-dom": "^19.2.6",
     "react-hook-form": "7.81.0",
     "react-router-dom": "^7.15.1",
