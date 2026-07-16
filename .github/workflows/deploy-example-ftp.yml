@@ -38,7 +38,7 @@ jobs:
       - name: Build example
         run: npm run build --workspace example
         env:
-          VITE_SITE_URL: https://react-query-builder.com/
+          VITE_SITE_URL: https://www.react-query-builder.com/
 
       - name: Upload example to staging directory
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
