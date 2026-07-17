@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { ISelectProps } from '../../../form/select';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { getMuiSelectPlaceholder, useMuiBuilderStrings } from './copy';
 import { menuPaperSx } from './styles';
 
@@ -36,21 +37,41 @@ export const MuiSelect: FC<ISelectProps> = ({
     >
       <Select
         value={selectedValue || ''}
+        sx={{
+          ...muiControlDensitySx,
+          '& .MuiSelect-select': {
+            boxSizing: 'border-box',
+            display: 'block',
+            height: '100%',
+            padding: '6px 32px 6px 14px',
+            overflow: 'hidden',
+            fontSize: muiControlDensitySx.fontSize,
+            lineHeight: '20px',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }}
         displayEmpty
         input={<OutlinedInput id={id} name={name} />}
         onChange={(event: SelectChangeEvent<string>) =>
           onChange(event.target.value)
         }
-        renderValue={selected => {
+        renderValue={(selected) => {
           if (!selected) {
             return (
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: muiControlDensitySx.fontSize }}
+              >
                 {placeholder}
               </Typography>
             );
           }
 
-          return values.find(({ value }) => value === selected)?.label || selected;
+          return (
+            values.find(({ value }) => value === selected)?.label || selected
+          );
         }}
         inputProps={{ 'data-test': 'SelectTrigger' }}
         MenuProps={{ slotProps: { paper: { sx: menuPaperSx } } }}
@@ -60,6 +81,11 @@ export const MuiSelect: FC<ISelectProps> = ({
             key={value}
             value={value}
             data-test={`SelectOption[${value}]`}
+            dense
+            sx={{
+              minHeight: muiControlDensitySx.height,
+              fontSize: muiControlDensitySx.fontSize,
+            }}
           >
             {label}
           </MenuItem>

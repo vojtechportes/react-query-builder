@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { ITextModeInputProps } from '../../../builder/text-mode/types/text-mode-input-props';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 
 const Root = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -33,6 +34,7 @@ const Textarea = styled('textarea')({
   resize: 'vertical',
   background: 'transparent',
   outline: 'none',
+  fontSize: muiControlDensitySx.fontSize,
 });
 
 export const MuiTextModeInput: FC<ITextModeInputProps> = ({
@@ -55,7 +57,7 @@ export const MuiTextModeInput: FC<ITextModeInputProps> = ({
     >
       <Textarea
         value={value}
-        onChange={event => onChange(event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         className={inputClassName}

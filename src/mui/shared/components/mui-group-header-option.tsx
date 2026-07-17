@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { ButtonBase } from '@mui/material';
+import { ToggleButton } from '@mui/material';
 import { IOptionProps } from '../../../group/option';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 
 export const MuiGroupHeaderOption: FC<IOptionProps> = ({
   children,
@@ -10,27 +11,16 @@ export const MuiGroupHeaderOption: FC<IOptionProps> = ({
   isSelected,
   className,
 }) => (
-  <ButtonBase
+  <ToggleButton
+    value={value}
+    selected={isSelected}
+    disabled={disabled}
     className={className}
-    onClick={() => {
-      if (!disabled) {
-        onClick(value);
-      }
-    }}
-    sx={{
-      px: 1.5,
-      py: 1,
-      minHeight: '2rem',
-      border: 1,
-      borderColor: isSelected ? 'primary.main' : 'grey.500',
-      bgcolor: isSelected ? 'primary.main' : 'grey.500',
-      color: 'primary.contrastText',
-      fontWeight: 700,
-      fontSize: '0.7rem',
-      textTransform: 'uppercase',
-      opacity: disabled ? 0.7 : 1,
-    }}
+    color="primary"
+    size="small"
+    sx={muiControlDensitySx}
+    onClick={() => onClick(value)}
   >
     {children}
-  </ButtonBase>
+  </ToggleButton>
 );

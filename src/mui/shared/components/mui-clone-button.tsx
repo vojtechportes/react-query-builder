@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { IconButton } from '@mui/material';
 import { ICloneButtonProps } from '../../../clone-button';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { CloneIcon } from '../icons';
 import { getMuiCloneTitle, useMuiBuilderStrings } from './copy';
 
@@ -24,7 +25,14 @@ export const MuiCloneButton: FC<ICloneButtonProps> = ({
       title={resolvedTitle}
       aria-label={resolvedTitle}
       data-test={dataTest}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1 }}
+      sx={{
+        ...muiControlDensitySx,
+        width: muiControlDensitySx.height,
+        minWidth: muiControlDensitySx.height,
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: 1,
+      }}
     >
       <CloneIcon fontSize="small" />
     </IconButton>
