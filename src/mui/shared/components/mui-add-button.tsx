@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Button } from '@mui/material';
 import { IButtonProps } from '../../../button';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { resolveButtonContent } from './button-utils';
 
 export const MuiAddButton: FC<IButtonProps> = (props) => (
@@ -12,7 +13,11 @@ export const MuiAddButton: FC<IButtonProps> = (props) => (
     className={props.className}
     data-test={props['data-test']}
     size="small"
-    sx={{ textTransform: 'uppercase', whiteSpace: 'nowrap', minHeight: '2rem' }}
+    sx={{
+      ...muiControlDensitySx,
+      textTransform: 'uppercase',
+      whiteSpace: 'nowrap',
+    }}
   >
     {resolveButtonContent(props)}
   </Button>

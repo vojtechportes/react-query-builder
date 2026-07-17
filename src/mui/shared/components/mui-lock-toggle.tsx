@@ -5,6 +5,7 @@ import {
   getNextGroupLockState,
   getNextRuleLockState,
 } from '../../../utils/lock-state';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { LockStateIcon } from '../icons';
 import { getMuiLockTitle, useMuiBuilderStrings } from './copy';
 
@@ -38,6 +39,9 @@ export const MuiLockToggle: FC<ILockToggleProps> = ({
       aria-label={resolvedTitle}
       data-test={dataTest}
       sx={{
+        ...muiControlDensitySx,
+        width: muiControlDensitySx.height,
+        minWidth: muiControlDensitySx.height,
         border: 1,
         borderColor: state === 'unlocked' ? 'divider' : 'primary.main',
         color: state === 'unlocked' ? 'text.secondary' : 'primary.main',

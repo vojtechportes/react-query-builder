@@ -24,6 +24,7 @@ import {
 } from '../constants/demo-data';
 import { siteTheme } from '../constants/site-theme';
 import { BuilderSurface } from './builder-surface';
+import { MuiBuilderSurface } from './mui-builder-surface';
 import {
   formatLabels,
   formatBuilderSource,
@@ -302,6 +303,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const isFluentUiMode = customizationMode === 'fluentui';
   const isRadixMode = customizationMode === 'radix';
   const isBootstrapMode = customizationMode === 'bootstrap';
+  const BuilderDemoSurface = isMuiMode ? MuiBuilderSurface : BuilderSurface;
   const usesAdapterMode =
     isMuiMode ||
     isAntdMode ||
@@ -733,7 +735,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
               </BuilderSurface>
             </>
           ) : (
-            <BuilderSurface
+            <BuilderDemoSurface
               className={isBootstrapMode ? bootstrapScopeClassName : undefined}
             >
               {isBootstrapMode ? <style>{scopedBootstrapStyles}</style> : null}
@@ -754,7 +756,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
                   <Builder {...builderProps} />
                 </ThemeProvider>
               )}
-            </BuilderSurface>
+            </BuilderDemoSurface>
           )}
         </BuilderCard>
 

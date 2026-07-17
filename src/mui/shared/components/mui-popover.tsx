@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, Menu } from '@mui/material';
 import { IPopoverProps } from '../../../popover';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { menuPaperSx } from './styles';
 
 export const MuiPopover: FC<IPopoverProps> = ({
@@ -21,7 +22,11 @@ export const MuiPopover: FC<IPopoverProps> = ({
         className={className}
         data-test={dataTest}
         size="small"
-        sx={{ textTransform: 'uppercase', whiteSpace: 'nowrap', minHeight: '2rem' }}
+        sx={{
+          ...muiControlDensitySx,
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap',
+        }}
       >
         {label}
       </Button>
@@ -31,7 +36,7 @@ export const MuiPopover: FC<IPopoverProps> = ({
         onClose={() => setAnchorEl(null)}
         slotProps={{ paper: { sx: menuPaperSx } }}
       >
-        {React.Children.map(children, child => {
+        {React.Children.map(children, (child) => {
           if (!React.isValidElement(child)) {
             return child;
           }

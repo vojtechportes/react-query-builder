@@ -13,6 +13,7 @@ import {
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { ISelectMultiProps } from '../../../form/select-multi';
 import { createSummary } from '../../../widgets/select-multi/utils/create-summary.util';
+import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { getMuiSelectPlaceholder, useMuiBuilderStrings } from './copy';
 import { menuPaperSx } from './styles';
 
@@ -41,13 +42,13 @@ export const MuiSelectMulti: FC<ISelectMultiProps> = ({
         : event.target.value;
 
     for (const removedValue of selectedValue.filter(
-      value => !nextValues.includes(value)
+      (value) => !nextValues.includes(value)
     )) {
       onDelete(removedValue);
     }
 
     for (const addedValue of nextValues.filter(
-      value => !selectedValue.includes(value)
+      (value) => !selectedValue.includes(value)
     )) {
       onChange(addedValue);
     }
@@ -72,11 +73,29 @@ export const MuiSelectMulti: FC<ISelectMultiProps> = ({
         value={selectedValue}
         onChange={handleChange}
         input={<OutlinedInput id={id} name={name} />}
+        sx={{
+          ...muiControlDensitySx,
+          '& .MuiSelect-select': {
+            boxSizing: 'border-box',
+            display: 'block',
+            height: '100%',
+            padding: '6px 32px 6px 14px',
+            overflow: 'hidden',
+            fontSize: muiControlDensitySx.fontSize,
+            lineHeight: '20px',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+        }}
         displayEmpty
         renderValue={() => {
           if (!summary.text) {
             return (
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: muiControlDensitySx.fontSize }}
+              >
                 {placeholder}
               </Typography>
             );
@@ -84,11 +103,27 @@ export const MuiSelectMulti: FC<ISelectMultiProps> = ({
 
           return (
             <Box
-              sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                minWidth: 0,
+                maxWidth: '100%',
+              }}
               title={title}
               data-test="SelectMultiTrigger"
             >
-              <Typography variant="body2" noWrap>
+              <Typography
+                variant="body2"
+                sx={{
+                  flex: '1 1 auto',
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  fontSize: muiControlDensitySx.fontSize,
+                  textOverflow: 'ellipsis',
+                }}
+                noWrap
+              >
                 {summary.text}
               </Typography>
               {summary.hiddenCount > 0 ? (
@@ -96,7 +131,13 @@ export const MuiSelectMulti: FC<ISelectMultiProps> = ({
                   badgeContent={`+${summary.hiddenCount}`}
                   color="primary"
                   data-test="SelectMultiSummaryBadge"
-                />
+                  sx={{
+                    flex: '0 0 32px',
+                    '& .MuiBadge-badge': { right: 12 },
+                  }}
+                >
+                  <Box component="span" sx={{ width: '100%', height: 1 }} />
+                </Badge>
               ) : null}
             </Box>
           );
@@ -109,9 +150,21 @@ export const MuiSelectMulti: FC<ISelectMultiProps> = ({
             key={value}
             value={value}
             data-test={`SelectMultiOption[${value}]`}
+            dense
+            sx={{
+              minHeight: muiControlDensitySx.height,
+              fontSize: muiControlDensitySx.fontSize,
+            }}
           >
-            <Checkbox checked={selectedValue.includes(value)} />
-            <ListItemText primary={label} />
+            <Checkbox size="small" checked={selectedValue.includes(value)} />
+            <ListItemText
+              primary={label}
+              sx={{
+                '& .MuiListItemText-primary': {
+                  fontSize: muiControlDensitySx.fontSize,
+                },
+              }}
+            />
           </MenuItem>
         ))}
       </Select>

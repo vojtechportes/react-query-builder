@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Paper } from '@mui/material';
 import { IGroupProps } from '../../../group/group-container';
+import { MuiGroupHeaderControls } from './mui-group-header-controls';
 
 export const MuiGroup: FC<IGroupProps> = ({
   controlsLeft,
@@ -28,11 +29,13 @@ export const MuiGroup: FC<IGroupProps> = ({
       }}
     >
       {dragHandle}
-      <Box sx={{ position: 'relative', p: 1.4 }}>
+      <Box data-test="MuiGroupBody" sx={{ position: 'relative', p: '12px' }}>
         {hasHeader ? (
           <Box
+            data-test="MuiGroupHeader"
             sx={{
               display: 'grid',
+              alignItems: 'center',
               gap: 2,
               gridTemplateColumns: 'minmax(0, 1fr) auto',
               pb: 1,
@@ -45,22 +48,14 @@ export const MuiGroup: FC<IGroupProps> = ({
             }}
           >
             {hasControlsLeft ? (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridAutoColumns: 'min-content',
-                  gridAutoFlow: 'column',
-                  alignSelf: 'end',
-                  justifySelf: 'start',
-                }}
-              >
-                {controlsLeft}
-              </Box>
+              <MuiGroupHeaderControls>{controlsLeft}</MuiGroupHeaderControls>
             ) : null}
             {hasControlsRight ? (
               <Box
+                data-test="MuiGroupHeaderActions"
                 sx={{
                   display: 'grid',
+                  alignItems: 'center',
                   gridAutoColumns: 'min-content',
                   gridAutoFlow: 'column',
                   gap: 1,

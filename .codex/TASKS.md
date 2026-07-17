@@ -1,4 +1,4 @@
-This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
+﻿This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
 
 ## Status Legend
 
@@ -314,3 +314,34 @@ enabled on the production website.
 - Run focused consent tests.
 - Build the example website and inspect the production consent-mode markup.
 - Run Prettier on all modified code.
+### T006 - Improve MUI adapter density and isolate demo styles
+
+**Status:** `[x]` Done
+
+**Goal:** Make the MUI adapter use consistent 32px-high controls with 14px typography and prevent the example website's styles from affecting MUI demo components.
+
+**Scope:**
+
+- Use MUI's smallest native variants and enforce a 32px height with 14px typography for single-line adapter inputs, selects, and buttons; align switches within the same control row while preserving MUI's native small geometry.
+- Render the NOT, AND, and OR controls as a small primary MUI toggle button group while preserving independent negation and combinator behavior.
+- Remove adapter sizing overrides that enlarge native small controls.
+- Use integer group-body spacing and vertically center root and nested group-header controls.
+- Isolate MUI demo rendering from inherited example-site typography and control styles.
+- Add focused tests for compact variants, toggle grouping, and interaction behavior.
+
+**Acceptance criteria:**
+
+- MUI adapter single-line form and action controls render at 32px high with 14px typography in both v7 and v9 mappings, while switches retain MUI small-size geometry.
+- NOT, AND, and OR render as small primary MUI toggle buttons in one group.
+- Toggling NOT does not change AND or OR, and changing AND or OR does not change NOT.
+- Disabled and read-only toggle behavior remains intact.
+- Root and nested MUI group headers use consistent integer vertical positioning for their controls.
+- Example-site styles do not override the MUI demo's component baseline.
+- No public Builder or adapter API changes are introduced.
+
+**Verification:**
+
+- Run focused MUI adapter tests.
+- Run lint, library build, and example build.
+- Run Prettier on all modified code and task files.
+- Review the final diff against repository structure and testing rules.
