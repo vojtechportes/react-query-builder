@@ -530,3 +530,58 @@ the existing English `strings` export from the package root.
   the tarball in temporary ESM and CommonJS consumers over importing `dist` directly.
 - Run the full test suite, lint, Prettier check, library build, and example build.
 - Review the final diff against repository naming, placement, API, and testing rules.
+
+### T008 - Normalize FTP URLs and add static SEO fallbacks
+
+**Status:** `[~]` In progress
+
+**Goal:** Make every canonical example-site URL resolve consistently on the FTP-hosted
+production domain and ship meaningful crawlable HTML for every canonical route before
+the React application loads.
+
+**Scope:**
+
+- Add an Apache `.htaccess` configuration that is included only in the FTP deployment;
+  it must not be copied into ordinary local builds or the GitHub Pages artifact.
+- Keep the existing non-trailing-slash canonical URL convention and serve canonical
+  directory routes without a redirect through HTTP.
+- Redirect trailing-slash route variants directly to their HTTPS, `www`, non-trailing-
+  slash canonical URL in one hop, while leaving the site root and real static files
+  untouched.
+- Prevent directory listing on the FTP host.
+- Extend the SEO build so every canonical Home, Documentation, API, Demo, and Recipes
+  route contains a route-specific static fallback with an H1, description, and useful
+  navigation before React replaces the fallback.
+- Preserve the richer capabilities, safety, production, and FAQ fallback content already
+  generated for recipe pages.
+- Extend SEO validation so future canonical routes cannot be built without crawlable
+  fallback content.
+
+**Acceptance criteria:**
+
+- The FTP artifact contains `.htaccess`; the GitHub Pages artifact and a normal example
+  build do not.
+- Every sitemap URL is the directly served canonical URL on the FTP host after deployment,
+  without an HTTPS-to-HTTP redirect.
+- A trailing-slash page URL redirects once to the corresponding HTTPS `www` canonical URL.
+- `robots.txt`, `sitemap.xml`, assets, and the root URL remain directly accessible.
+- All canonical generated HTML files contain a unique H1, the page description, and a
+  `data-seo-fallback` marker.
+- Recipe pages retain their existing detailed static fallback sections and FAQ content.
+- The generated fallback navigation uses deployment-aware canonical URLs for both the
+  custom production domain and the GitHub Pages base path.
+- SEO validation, recipe validation, the example production build, and the GitHub Pages
+  build pass.
+
+**Verification:**
+
+- Run `npm run seo:validate --workspace example` before and after building.
+- Build with `VITE_SITE_URL=https://www.react-query-builder.com/` and verify all canonical
+  route HTML files, sitemap entries, robots output, and static fallbacks.
+- Copy the FTP-only hosting configuration as the workflow does and verify the resulting
+  artifact contains `.htaccess`.
+- Build with the GitHub Pages base path/site URL and verify `.htaccess` is absent and all
+  generated links use the repository base path.
+- After deployment, crawl all sitemap URLs without following redirects and verify they
+  return `200`; verify representative trailing-slash variants redirect directly to HTTPS
+  canonical URLs.

@@ -40,6 +40,9 @@ jobs:
         env:
           VITE_SITE_URL: https://www.react-query-builder.com/
 
+      - name: Add FTP hosting configuration
+        run: cp .github/deploy/ftp/.htaccess example/dist/.htaccess
+
       - name: Upload example to staging directory
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:

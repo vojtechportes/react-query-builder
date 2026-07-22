@@ -1,0 +1,17 @@
+Options -Indexes
+DirectorySlash Off
+
+RewriteEngine On
+
+# Keep the root URL intact, but normalize directory route variants to the
+# non-trailing-slash canonical URLs emitted by the SEO build.
+RewriteCond %{REQUEST_URI} !^/$
+RewriteCond %{REQUEST_URI} /$
+RewriteRule ^(.+)/$ https://www.react-query-builder.com/$1 [R=301,L,NE]
+
+# Serve generated route directories at their canonical URL without allowing
+# mod_dir to redirect through the proxy's internal HTTP scheme.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME}/index.html -f
+RewriteRule ^(.+)$ $1/index.html [L]
+

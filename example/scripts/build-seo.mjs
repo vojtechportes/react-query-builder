@@ -171,6 +171,28 @@ const setStructuredData = (html, page, canonicalUrl) => {
   );
 };
 
+const fallbackNavigation = [
+  { label: 'Home', path: '/' },
+  { label: 'Documentation', path: '/documentation' },
+  { label: 'API', path: '/api' },
+  { label: 'Demo', path: '/demo' },
+  { label: 'Recipes', path: '/recipes' },
+];
+
+const createFallbackNavigation = () =>
+  `<nav aria-label="Explore React Query Builder">
+    <h2>Explore React Query Builder</h2>
+    <ul>${fallbackNavigation
+      .map(
+        (item) =>
+          `<li><a href="${escapeHtml(canonicalUrlForPath(item.path))}">${escapeHtml(item.label)}</a></li>`
+      )
+      .join('')}</ul>
+  </nav>`;
+
+const fallbackKindForPage = (page) =>
+  page.section === 'Recipes' ? 'recipe' : page.section.toLowerCase();
+
 const createRecipeFallback = (page) => {
   const list = (items) =>
     `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
@@ -192,8 +214,25 @@ const createRecipeFallback = (page) => {
     <h2>Validation and safety</h2>${list(page.safetyNotes)}
     <h2>Production notes</h2>${list(page.productionNotes)}
     ${faq}
+    ${createFallbackNavigation()}
   </article></main>`;
 };
+
+const createPageFallback = (page) => {
+  if (page.section === 'Recipes') return createRecipeFallback(page);
+
+  return `<main data-seo-fallback="${escapeHtml(fallbackKindForPage(page))}"><article>
+    <p>${escapeHtml(
+      page.section === 'Home'
+        ? seoConfig.siteName
+        : `${page.section} · ${seoConfig.siteName}`
+    )}</p>
+    <h1>${escapeHtml(page.title)}</h1>
+    <p>${escapeHtml(page.description)}</p>
+    ${createFallbackNavigation()}
+  </article></main>`;
+};
+
 const createPageHtml = (page) => {
   const canonicalUrl = canonicalUrlForPath(page.path);
   const imageUrl = canonicalUrlForPath('/favicon.png');
@@ -230,12 +269,15 @@ const createPageHtml = (page) => {
     throw new Error('Generated metadata contains incorrect social image URLs.');
   }
 
-  if (page.section === 'Recipes') {
-    html = html.replace(
-      '<div id="root"></div>',
-      `<div id="root">${createRecipeFallback(page)}</div>`
-    );
+  const emptyRoot = '<div id="root"></div>';
+  if (!html.includes(emptyRoot)) {
+    throw new Error('Example HTML template is missing the empty root element.');
   }
+
+  html = html.replace(
+    emptyRoot,
+    `<div id="root">${createPageFallback(page)}</div>`
+  );
 
   return html;
 };
@@ -268,23 +310,25 @@ for (const page of seoConfig.pages) {
   writeRouteHtml(page);
 }
 
-for (const page of seoConfig.pages.filter(
-  (item) => item.section === 'Recipes'
-)) {
+for (const page of seoConfig.pages) {
   const outputPath =
     page.path === '/'
       ? indexPath
       : path.join(distRoot, page.path.replace(/^\//, ''), 'index.html');
   const html = fs.readFileSync(outputPath, 'utf8');
+  const fallbackMarker = `data-seo-fallback="${fallbackKindForPage(page)}"`;
   if (
     !html.includes(`<h1>${escapeHtml(page.title)}</h1>`) ||
-    !html.includes('data-seo-fallback="recipe"')
+    !html.includes(`<p>${escapeHtml(page.description)}</p>`) ||
+    !html.includes(fallbackMarker)
   ) {
     throw new Error(
-      `Generated recipe HTML is missing crawlable content for ${page.path}.`
+      `Generated HTML is missing crawlable fallback content for ${page.path}.`
     );
   }
+
   if (
+    page.section === 'Recipes' &&
     page.faqs?.length &&
     !html.includes('<h2>Frequently asked questions</h2>')
   ) {
