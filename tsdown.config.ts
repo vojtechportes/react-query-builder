@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsdown';
+﻿import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   clean: true,
@@ -18,6 +18,16 @@ export default defineConfig({
     'mui/v7/index': 'src/mui/v7/index.ts',
     'mui/v9/index': 'src/mui/v9/index.ts',
     'radix/v1/index': 'src/radix/v1/index.ts',
+    'locale/en-US/index': 'src/locales/en-us/index.ts',
+    'locale/fr-FR/index': 'src/locales/fr-fr/index.ts',
+    'locale/it-IT/index': 'src/locales/it-it/index.ts',
+    'locale/de-DE/index': 'src/locales/de-de/index.ts',
+    'locale/es-ES/index': 'src/locales/es-es/index.ts',
+    'locale/pt-PT/index': 'src/locales/pt-pt/index.ts',
+    'locale/cs-CZ/index': 'src/locales/cs-cz/index.ts',
+    'locale/sk-SK/index': 'src/locales/sk-sk/index.ts',
+    'locale/zh-CN/index': 'src/locales/zh-cn/index.ts',
+    'locale/zh-TW/index': 'src/locales/zh-tw/index.ts',
     'monaco/index': 'src/monaco/index.ts',
   },
   format: ['esm', 'cjs'],

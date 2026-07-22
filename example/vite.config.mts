@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+﻿import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { createGoogleTagManagerPlugin } from './vite-plugins/create-google-tag-manager-plugin';
@@ -28,6 +28,46 @@ export default defineConfig({
   },
   resolve: {
     alias: [
+      {
+        find: '@vojtechportes/react-query-builder/locale/en-US',
+        replacement: srcRoot + '/locales/en-us',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/fr-FR',
+        replacement: srcRoot + '/locales/fr-fr',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/it-IT',
+        replacement: srcRoot + '/locales/it-it',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/de-DE',
+        replacement: srcRoot + '/locales/de-de',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/es-ES',
+        replacement: srcRoot + '/locales/es-es',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/pt-PT',
+        replacement: srcRoot + '/locales/pt-pt',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/cs-CZ',
+        replacement: srcRoot + '/locales/cs-cz',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/sk-SK',
+        replacement: srcRoot + '/locales/sk-sk',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/zh-CN',
+        replacement: srcRoot + '/locales/zh-cn',
+      },
+      {
+        find: '@vojtechportes/react-query-builder/locale/zh-TW',
+        replacement: srcRoot + '/locales/zh-tw',
+      },
       {
         find: '@vojtechportes/react-query-builder/parseQuery',
         replacement: `${srcRoot}/parseQuery`,

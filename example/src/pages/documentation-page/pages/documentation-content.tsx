@@ -1546,6 +1546,16 @@ const stringsSnippet = `import { strings } from '@vojtechportes/react-query-buil
 // You can override only the keys you need.
 // Unspecified labels fall back to the built-in defaults.`;
 
+const firstPartyLocaleSnippet = `import { Builder } from '@vojtechportes/react-query-builder';
+import { strings } from '@vojtechportes/react-query-builder/locale/fr-FR';
+
+<Builder
+  fields={fields}
+  data={data}
+  strings={strings}
+  onChange={setData}
+/>;`;
+
 const localizationSnippet = `const fields: IBuilderFieldProps[] = [
   {
     field: 'STATE',
@@ -1570,19 +1580,40 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <List>
-          <li>Start with installation and the first controlled builder example.</li>
-          <li>Use <TextLink to="/documentation/dynamic-field-options">Dynamic Field Options</TextLink> when list values need to come from async or dependent data sources.</li>
-          <li><TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink> shows how to compare one field against another field.</li>
-          <li>Move to parsing and formatting when you need interoperability with external query syntaxes.</li>
-          <li>Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine, Fluent UI, or Radix Themes.</li>
+          <li>
+            Start with installation and the first controlled builder example.
+          </li>
+          <li>
+            Use{' '}
+            <TextLink to="/documentation/dynamic-field-options">
+              Dynamic Field Options
+            </TextLink>{' '}
+            when list values need to come from async or dependent data sources.
+          </li>
+          <li>
+            <TextLink to="/documentation/field-comparisons">
+              Field Comparisons
+            </TextLink>{' '}
+            shows how to compare one field against another field.
+          </li>
+          <li>
+            Move to parsing and formatting when you need interoperability with
+            external query syntaxes.
+          </li>
+          <li>
+            Visit <TextLink to="/documentation/adapters">Adapters</TextLink> if
+            you want ready-made mappings for MUI, ANTD, Bootstrap, Mantine,
+            Fluent UI, or Radix Themes.
+          </li>
           <li>
             Use the <TextLink to="/api">API reference</TextLink> when you need
             prop, data-shape, or export-level details.
           </li>
         </List>
         <AlertBox title="Recommended path" variant="tip">
-          If you are evaluating the library, visit the <TextLink to="/demo">Demo</TextLink>{' '}
-          first and then continue with <TextLink to="/documentation/usage">Usage</TextLink>.
+          If you are evaluating the library, visit the{' '}
+          <TextLink to="/demo">Demo</TextLink> first and then continue with{' '}
+          <TextLink to="/documentation/usage">Usage</TextLink>.
         </AlertBox>
       </>
     ),
@@ -1599,7 +1630,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Installation npm install React Query Builder react 18 peer dependencies package import library',
     content: (
       <>
-        <p>Install the package and use it with React <InlineCode>18+</InlineCode>.</p>
+        <p>
+          Install the package and use it with React <InlineCode>18+</InlineCode>
+          .
+        </p>
         <CodeBlock code={installationSnippet} language="bash" label="npm" />
         <AlertBox title="Peer dependencies" variant="info">
           The package expects compatible <InlineCode>react</InlineCode> and{' '}
@@ -1623,31 +1657,46 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>Basic controlled usage.</p>
-        <CodeBlock code={basicUsageSnippet} language="tsx" label="Basic setup" />
+        <CodeBlock
+          code={basicUsageSnippet}
+          language="tsx"
+          label="Basic setup"
+        />
         <p>
-          The example includes a single rule with <InlineCode>readOnly: true</InlineCode>{' '}
-          to show that locking can live directly in the query data without changing
-          the rest of the builder configuration.
+          The example includes a single rule with{' '}
+          <InlineCode>readOnly: true</InlineCode> to show that locking can live
+          directly in the query data without changing the rest of the builder
+          configuration.
         </p>
         <AlertBox title="Related guide" variant="info">
-          Need a rule to compare against another field instead of a literal value? Visit{' '}
-          <TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink>.
+          Need a rule to compare against another field instead of a literal
+          value? Visit{' '}
+          <TextLink to="/documentation/field-comparisons">
+            Field Comparisons
+          </TextLink>
+          .
         </AlertBox>
         <AlertBox title="Next step" variant="tip">
           Continue with{' '}
-          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>{' '}
-          for imperative control,{' '}
-          <TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink>{' '}
+          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink> for
+          imperative control,{' '}
+          <TextLink to="/documentation/field-comparisons">
+            Field Comparisons
+          </TextLink>{' '}
           for cross-field rules,{' '}
-          <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>{' '}
-          or <TextLink to="/documentation/text-mode">Text Mode</TextLink>{' '}
-          or <TextLink to="/documentation/history">Undo and Redo</TextLink>{' '}
-          for editing workflows, or{' '}
+          <TextLink to="/documentation/builder-behavior">
+            Builder Behavior
+          </TextLink>{' '}
+          or <TextLink to="/documentation/text-mode">Text Mode</TextLink> or{' '}
+          <TextLink to="/documentation/history">Undo and Redo</TextLink> for
+          editing workflows, or{' '}
           <TextLink to="/documentation/dynamic-field-options">
             Dynamic Field Options
           </TextLink>{' '}
           for async select data, or{' '}
-          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
+          <TextLink to="/documentation/locking-and-read-only">
+            Locking and Read-only
+          </TextLink>{' '}
           for partial locking.
         </AlertBox>
       </>
@@ -1670,28 +1719,65 @@ export const documentationPages: IDocumentationPage[] = [
           field or query data itself. These are worth deciding early because
           they affect how users add, move, and organize rules.
         </p>
-        <CodeBlock code={builderBehaviorSnippet} language="tsx" label="Builder behavior" />
+        <CodeBlock
+          code={builderBehaviorSnippet}
+          language="tsx"
+          label="Builder behavior"
+        />
         <SectionTitle>cloneable</SectionTitle>
         <List>
-          <li>Defaults to <InlineCode>false</InlineCode> and renders built-in clone controls for rules and groups.</li>
-          <li>The clone button appears immediately to the left of the lock button when both controls are enabled.</li>
+          <li>
+            Defaults to <InlineCode>false</InlineCode> and renders built-in
+            clone controls for rules and groups.
+          </li>
+          <li>
+            The clone button appears immediately to the left of the lock button
+            when both controls are enabled.
+          </li>
           <li>Cloning a rule inserts a duplicate directly below that rule.</li>
-          <li>Cloning a group duplicates the entire subtree and inserts the clone directly below that group.</li>
-          <li>When <InlineCode>singleRootGroup</InlineCode> is enabled, the synthetic root group does not expose a clone control.</li>
+          <li>
+            Cloning a group duplicates the entire subtree and inserts the clone
+            directly below that group.
+          </li>
+          <li>
+            When <InlineCode>singleRootGroup</InlineCode> is enabled, the
+            synthetic root group does not expose a clone control.
+          </li>
         </List>
         <SectionTitle>draggable</SectionTitle>
         <List>
-          <li>Use <InlineCode>lockable</InlineCode> to expose lock controls directly in the UI.</li>
-          <li>Enables drag-and-drop reordering and movement for editable rules and groups.</li>
+          <li>
+            Use <InlineCode>lockable</InlineCode> to expose lock controls
+            directly in the UI.
+          </li>
+          <li>
+            Enables drag-and-drop reordering and movement for editable rules and
+            groups.
+          </li>
           <li>Read-only rules and groups are excluded from dragging.</li>
-          <li>When the entire builder is read-only, drag-and-drop is disabled as well.</li>
-          <li>Empty groups expose a dedicated drop zone so items can be moved into them.</li>
+          <li>
+            When the entire builder is read-only, drag-and-drop is disabled as
+            well.
+          </li>
+          <li>
+            Empty groups expose a dedicated drop zone so items can be moved into
+            them.
+          </li>
         </List>
         <SectionTitle>readOnlyProtectsDelete</SectionTitle>
         <List>
-          <li>Defaults to <InlineCode>true</InlineCode>.</li>
-          <li>When enabled, deleting a group is blocked if that would indirectly remove read-only protected descendants.</li>
-          <li>Set it to <InlineCode>false</InlineCode> when your product wants only directly protected nodes to be non-deletable, while still allowing parent-group deletes around them.</li>
+          <li>
+            Defaults to <InlineCode>true</InlineCode>.
+          </li>
+          <li>
+            When enabled, deleting a group is blocked if that would indirectly
+            remove read-only protected descendants.
+          </li>
+          <li>
+            Set it to <InlineCode>false</InlineCode> when your product wants
+            only directly protected nodes to be non-deletable, while still
+            allowing parent-group deletes around them.
+          </li>
         </List>
         <SectionTitle>singleRootGroup</SectionTitle>
         <List>
@@ -1700,12 +1786,12 @@ export const documentationPages: IDocumentationPage[] = [
             maintains a single root group around the visible tree.
           </li>
           <li>
-            The root group cannot be deleted while <InlineCode>singleRootGroup</InlineCode>{' '}
-            is enabled.
+            The root group cannot be deleted while{' '}
+            <InlineCode>singleRootGroup</InlineCode> is enabled.
           </li>
           <li>
-            Set it to <InlineCode>false</InlineCode> when your application
-            wants multiple top-level nodes instead of one wrapped root group.
+            Set it to <InlineCode>false</InlineCode> when your application wants
+            multiple top-level nodes instead of one wrapped root group.
           </li>
         </List>
         <SectionTitle>newNodePlacement</SectionTitle>
@@ -1715,8 +1801,8 @@ export const documentationPages: IDocumentationPage[] = [
             added rules and groups at the end of their parent.
           </li>
           <li>
-            Set it to <InlineCode>'prepend'</InlineCode> to insert new rules
-            and groups at the beginning of their parent instead.
+            Set it to <InlineCode>'prepend'</InlineCode> to insert new rules and
+            groups at the beginning of their parent instead.
           </li>
           <li>
             This affects built-in Add Rule and Add Group controls, root-level
@@ -1732,7 +1818,8 @@ export const documentationPages: IDocumentationPage[] = [
         <List>
           <li>
             <InlineCode>with-modifiers</InlineCode> shows group controls such as{' '}
-            <InlineCode>AND</InlineCode>, <InlineCode>OR</InlineCode>, and negation.
+            <InlineCode>AND</InlineCode>, <InlineCode>OR</InlineCode>, and
+            negation.
           </li>
           <li>
             <InlineCode>without-modifiers</InlineCode> creates structural groups
@@ -1746,9 +1833,9 @@ export const documentationPages: IDocumentationPage[] = [
         <SectionTitle>allowGroupNegation</SectionTitle>
         <List>
           <li>
-            Set <InlineCode>allowGroupNegation={false}</InlineCode> when you want
-            groups to keep combinators like <InlineCode>AND</InlineCode> and{' '}
-            <InlineCode>OR</InlineCode> but remove the group-level{' '}
+            Set <InlineCode>allowGroupNegation={false}</InlineCode> when you
+            want groups to keep combinators like <InlineCode>AND</InlineCode>{' '}
+            and <InlineCode>OR</InlineCode> but remove the group-level{' '}
             <InlineCode>NOT</InlineCode> option.
           </li>
           <li>
@@ -1770,7 +1857,9 @@ export const documentationPages: IDocumentationPage[] = [
         <AlertBox title="Related docs" variant="info">
           <TextLink to="/documentation/history">Undo and Redo</TextLink>,{' '}
           <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
-          <TextLink to="/documentation/locking-and-read-only">Locking and Read-only</TextLink>{' '}
+          <TextLink to="/documentation/locking-and-read-only">
+            Locking and Read-only
+          </TextLink>{' '}
           and <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
       </>
@@ -1789,34 +1878,91 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Use <InlineCode>useBuilderRef()</InlineCode> with the <TextLink to="/api/builder">Builder</TextLink>{' '}
-          ref to access internal node actions and history from custom toolbars,
-          menus, keyboard shortcuts, or surrounding workflow logic.
+          Use <InlineCode>useBuilderRef()</InlineCode> with the{' '}
+          <TextLink to="/api/builder">Builder</TextLink> ref to access internal
+          node actions and history from custom toolbars, menus, keyboard
+          shortcuts, or surrounding workflow logic.
         </p>
-        <CodeBlock code={builderRefBasicSnippet} language="tsx" label="Basic builderRef setup" />
+        <CodeBlock
+          code={builderRefBasicSnippet}
+          language="tsx"
+          label="Basic builderRef setup"
+        />
         <SectionTitle>When to use it</SectionTitle>
         <List>
-          <li>Trigger builder changes from controls rendered outside the builder.</li>
-          <li>Implement keyboard shortcuts for clone, delete, undo, or redo.</li>
-          <li>Insert preconfigured rules or groups from business-specific UI flows.</li>
-          <li>Inspect normalized nodes or history without reimplementing builder internals.</li>
+          <li>
+            Trigger builder changes from controls rendered outside the builder.
+          </li>
+          <li>
+            Implement keyboard shortcuts for clone, delete, undo, or redo.
+          </li>
+          <li>
+            Insert preconfigured rules or groups from business-specific UI
+            flows.
+          </li>
+          <li>
+            Inspect normalized nodes or history without reimplementing builder
+            internals.
+          </li>
         </List>
         <SectionTitle>Read methods</SectionTitle>
-        <CodeBlock code={builderRefReadSnippet} language="tsx" label="Reading builder state" />
+        <CodeBlock
+          code={builderRefReadSnippet}
+          language="tsx"
+          label="Reading builder state"
+        />
         <List>
-          <li><InlineCode>getNodeById(id)</InlineCode> returns one normalized node by id.</li>
-          <li><InlineCode>getNodes()</InlineCode> returns the current normalized node array.</li>
-          <li><InlineCode>getData()</InlineCode> returns the denormalized public query shape.</li>
-          <li><InlineCode>isFieldInUse(field)</InlineCode> tells you whether a field is currently present in the query.</li>
-          <li><InlineCode>getFieldOptionState(field)</InlineCode> returns runtime options and the current option status for that field.</li>
+          <li>
+            <InlineCode>getNodeById(id)</InlineCode> returns one normalized node
+            by id.
+          </li>
+          <li>
+            <InlineCode>getNodes()</InlineCode> returns the current normalized
+            node array.
+          </li>
+          <li>
+            <InlineCode>getData()</InlineCode> returns the denormalized public
+            query shape.
+          </li>
+          <li>
+            <InlineCode>isFieldInUse(field)</InlineCode> tells you whether a
+            field is currently present in the query.
+          </li>
+          <li>
+            <InlineCode>getFieldOptionState(field)</InlineCode> returns runtime
+            options and the current option status for that field.
+          </li>
         </List>
         <SectionTitle>Mutation methods</SectionTitle>
-        <CodeBlock code={builderRefMutationSnippet} language="tsx" label="Mutating nodes" />
+        <CodeBlock
+          code={builderRefMutationSnippet}
+          language="tsx"
+          label="Mutating nodes"
+        />
         <List>
-          <li><InlineCode>cloneNode</InlineCode>, <InlineCode>deleteNode</InlineCode>, and <InlineCode>moveNode</InlineCode> follow the same behavior as the built-in UI controls.</li>
-          <li><InlineCode>addNode</InlineCode>, <InlineCode>addGroup</InlineCode>, <InlineCode>addRule</InlineCode>, and <InlineCode>insertNodes</InlineCode> let you build structure imperatively.</li>
-          <li><InlineCode>replaceNode</InlineCode> swaps a node directly, while <InlineCode>updateNode</InlineCode> is useful when you want the next value to depend on the current node.</li>
-          <li><InlineCode>setNodeLock</InlineCode>, <InlineCode>lockNode</InlineCode>, and <InlineCode>unlockNode</InlineCode> write the same read-only states as the lock UI.</li>
+          <li>
+            <InlineCode>cloneNode</InlineCode>,{' '}
+            <InlineCode>deleteNode</InlineCode>, and{' '}
+            <InlineCode>moveNode</InlineCode> follow the same behavior as the
+            built-in UI controls.
+          </li>
+          <li>
+            <InlineCode>addNode</InlineCode>, <InlineCode>addGroup</InlineCode>,{' '}
+            <InlineCode>addRule</InlineCode>, and{' '}
+            <InlineCode>insertNodes</InlineCode> let you build structure
+            imperatively.
+          </li>
+          <li>
+            <InlineCode>replaceNode</InlineCode> swaps a node directly, while{' '}
+            <InlineCode>updateNode</InlineCode> is useful when you want the next
+            value to depend on the current node.
+          </li>
+          <li>
+            <InlineCode>setNodeLock</InlineCode>,{' '}
+            <InlineCode>lockNode</InlineCode>, and{' '}
+            <InlineCode>unlockNode</InlineCode> write the same read-only states
+            as the lock UI.
+          </li>
         </List>
         <SectionTitle>Dynamic field options</SectionTitle>
         <CodeBlock
@@ -1825,17 +1971,46 @@ export const documentationPages: IDocumentationPage[] = [
           label="Managing field options"
         />
         <List>
-          <li><InlineCode>setFieldOptionsStatus(field, status)</InlineCode> lets surrounding app code reflect loading, success, idle, or error state.</li>
-          <li><InlineCode>setFieldOptions(field, options)</InlineCode> replaces the runtime option set without changing the original <InlineCode>fields</InlineCode> array.</li>
-          <li><InlineCode>invalidateFieldOptions(field)</InlineCode> drops runtime options and falls back to the static options defined in <InlineCode>field.value</InlineCode>.</li>
-          <li><InlineCode>clearFieldOptions(field)</InlineCode> removes the runtime state entirely, which is useful when a dependent field leaves scope.</li>
+          <li>
+            <InlineCode>setFieldOptionsStatus(field, status)</InlineCode> lets
+            surrounding app code reflect loading, success, idle, or error state.
+          </li>
+          <li>
+            <InlineCode>setFieldOptions(field, options)</InlineCode> replaces
+            the runtime option set without changing the original{' '}
+            <InlineCode>fields</InlineCode> array.
+          </li>
+          <li>
+            <InlineCode>invalidateFieldOptions(field)</InlineCode> drops runtime
+            options and falls back to the static options defined in{' '}
+            <InlineCode>field.value</InlineCode>.
+          </li>
+          <li>
+            <InlineCode>clearFieldOptions(field)</InlineCode> removes the
+            runtime state entirely, which is useful when a dependent field
+            leaves scope.
+          </li>
         </List>
         <SectionTitle>History methods</SectionTitle>
-        <CodeBlock code={builderRefHistorySnippet} language="tsx" label="History access" />
+        <CodeBlock
+          code={builderRefHistorySnippet}
+          language="tsx"
+          label="History access"
+        />
         <List>
-          <li><InlineCode>undo()</InlineCode> and <InlineCode>redo()</InlineCode> use the same history engine as the built-in controls.</li>
-          <li><InlineCode>getHistory()</InlineCode> returns the current <InlineCode>past</InlineCode> and <InlineCode>future</InlineCode> stacks.</li>
-          <li><InlineCode>setHistory()</InlineCode> lets you replace or clear the internal history state.</li>
+          <li>
+            <InlineCode>undo()</InlineCode> and <InlineCode>redo()</InlineCode>{' '}
+            use the same history engine as the built-in controls.
+          </li>
+          <li>
+            <InlineCode>getHistory()</InlineCode> returns the current{' '}
+            <InlineCode>past</InlineCode> and <InlineCode>future</InlineCode>{' '}
+            stacks.
+          </li>
+          <li>
+            <InlineCode>setHistory()</InlineCode> lets you replace or clear the
+            internal history state.
+          </li>
         </List>
         <AlertBox title="Data shapes" variant="info">
           Most imperative methods use normalized nodes because that matches the
@@ -1848,7 +2023,8 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/api/data">Data</TextLink>, and{' '}
           <TextLink to="/documentation/dynamic-field-options">
             Dynamic Field Options
-          </TextLink>.
+          </TextLink>
+          .
         </AlertBox>
       </>
     ),
@@ -1885,7 +2061,8 @@ export const documentationPages: IDocumentationPage[] = [
           <li>
             <InlineCode>fieldComparison.type</InlineCode> lets semantically
             compatible fields compare even when their builder UI types differ,
-            such as <InlineCode>LIST</InlineCode> to <InlineCode>TEXT</InlineCode>.
+            such as <InlineCode>LIST</InlineCode> to{' '}
+            <InlineCode>TEXT</InlineCode>.
           </li>
           <li>
             <InlineCode>fieldComparison.comparableFields</InlineCode> narrows
@@ -1901,8 +2078,12 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/api/parse-query">parseQuery</TextLink>.
         </AlertBox>
         <AlertBox title="Parsing and formatting" variant="tip">
-          Native field-to-field formatting and parsing examples are documented in{' '}
-          <TextLink to="/documentation/parsing-and-formatting/supported-formats">Supported Formats</TextLink>.
+          Native field-to-field formatting and parsing examples are documented
+          in{' '}
+          <TextLink to="/documentation/parsing-and-formatting/supported-formats">
+            Supported Formats
+          </TextLink>
+          .
         </AlertBox>
       </>
     ),
@@ -1927,15 +2108,60 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <SectionTitle>Choose The Scope</SectionTitle>
         <List>
-          <li><InlineCode>field.value</InlineCode> still defines the initial static option set and remains the backwards-compatible fallback.</li>
-          <li>Field-level methods such as <InlineCode>setFieldOptions(field, options)</InlineCode> are for dynamic data where every rule of the same field should share the same option set.</li>
-          <li>Rule-level methods such as <InlineCode>setRuleOptions(ruleId, options)</InlineCode> are for internal or external dependencies where each rule instance may need different options.</li>
-          <li><InlineCode>getNearestField(currentNodeId, targetFieldName)</InlineCode> helps dependent rules resolve the closest matching context, such as the nearest country for a city rule.</li>
-          <li><InlineCode>builderRef.bindRuleOptions(field, config)</InlineCode> is the simplest way to hydrate dependency-aware options and keep them in sync with the nearest matching rules.</li>
-          <li><InlineCode>builderRef.subscribeToRuleDependencies(field, dependencyFields, listener)</InlineCode> stays available when you want to own the orchestration yourself.</li>
-          <li><InlineCode>useBuilderRuleDependencies(builderRef, field, dependencyFields)</InlineCode> is the easiest React entrypoint when you want to feed dependency-aware rules into <InlineCode>useQueries()</InlineCode> or other hook-based data layers.</li>
-          <li><InlineCode>builderRef.subscribeToFieldOptionState(...)</InlineCode> and <InlineCode>builderRef.subscribeToRuleOptionState(...)</InlineCode> let external UI react to loading and success state when you need it.</li>
-          <li><InlineCode>onFieldChange</InlineCode> is useful for targeted reactive reloads when one dependency should refresh only a subset of rules.</li>
+          <li>
+            <InlineCode>field.value</InlineCode> still defines the initial
+            static option set and remains the backwards-compatible fallback.
+          </li>
+          <li>
+            Field-level methods such as{' '}
+            <InlineCode>setFieldOptions(field, options)</InlineCode> are for
+            dynamic data where every rule of the same field should share the
+            same option set.
+          </li>
+          <li>
+            Rule-level methods such as{' '}
+            <InlineCode>setRuleOptions(ruleId, options)</InlineCode> are for
+            internal or external dependencies where each rule instance may need
+            different options.
+          </li>
+          <li>
+            <InlineCode>
+              getNearestField(currentNodeId, targetFieldName)
+            </InlineCode>{' '}
+            helps dependent rules resolve the closest matching context, such as
+            the nearest country for a city rule.
+          </li>
+          <li>
+            <InlineCode>builderRef.bindRuleOptions(field, config)</InlineCode>{' '}
+            is the simplest way to hydrate dependency-aware options and keep
+            them in sync with the nearest matching rules.
+          </li>
+          <li>
+            <InlineCode>
+              builderRef.subscribeToRuleDependencies(field, dependencyFields,
+              listener)
+            </InlineCode>{' '}
+            stays available when you want to own the orchestration yourself.
+          </li>
+          <li>
+            <InlineCode>
+              useBuilderRuleDependencies(builderRef, field, dependencyFields)
+            </InlineCode>{' '}
+            is the easiest React entrypoint when you want to feed
+            dependency-aware rules into <InlineCode>useQueries()</InlineCode> or
+            other hook-based data layers.
+          </li>
+          <li>
+            <InlineCode>builderRef.subscribeToFieldOptionState(...)</InlineCode>{' '}
+            and{' '}
+            <InlineCode>builderRef.subscribeToRuleOptionState(...)</InlineCode>{' '}
+            let external UI react to loading and success state when you need it.
+          </li>
+          <li>
+            <InlineCode>onFieldChange</InlineCode> is useful for targeted
+            reactive reloads when one dependency should refresh only a subset of
+            rules.
+          </li>
         </List>
         <SectionTitle>Field-Level API</SectionTitle>
         <p>
@@ -1959,7 +2185,10 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <p>
           The live example exposes that field-scoped state through{' '}
-          <InlineCode>builderRef.subscribeToFieldOptionState('CITY', listener)</InlineCode>.
+          <InlineCode>
+            builderRef.subscribeToFieldOptionState('CITY', listener)
+          </InlineCode>
+          .
         </p>
         <SharedFieldOptionsDemo />
         <SectionTitle>Rule-Level API</SectionTitle>
@@ -1981,7 +2210,8 @@ export const documentationPages: IDocumentationPage[] = [
           <InlineCode>builderRef.bindRuleOptions(...)</InlineCode>.
         </p>
         <p>
-          The extra <InlineCode>builderRef.reconcileRuleValueWithOptions(...)</InlineCode>{' '}
+          The extra{' '}
+          <InlineCode>builderRef.reconcileRuleValueWithOptions(...)</InlineCode>{' '}
           call is optional and useful when you want strict select semantics,
           such as clearing a now-invalid city after the nearest country changes.
         </p>
@@ -1990,8 +2220,9 @@ export const documentationPages: IDocumentationPage[] = [
         <p>
           If your app already uses TanStack React Query, keep caching there and
           use the builder only for rule lookup and option storage. For
-          dependency-heavy cases, <InlineCode>useBuilderRuleDependencies(...)</InlineCode>{' '}
-          fits naturally with <InlineCode>useQueries(...)</InlineCode>.
+          dependency-heavy cases,{' '}
+          <InlineCode>useBuilderRuleDependencies(...)</InlineCode> fits
+          naturally with <InlineCode>useQueries(...)</InlineCode>.
         </p>
         <CodeBlock
           code={dynamicFieldOptionsReactQuerySnippet}
@@ -2025,38 +2256,95 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Built-in validation is defined in <TextLink to="/api/fields">field metadata</TextLink>{' '}
-          and evaluated by <TextLink to="/api/builder">Builder</TextLink>.
+          Built-in validation is defined in{' '}
+          <TextLink to="/api/fields">field metadata</TextLink> and evaluated by{' '}
+          <TextLink to="/api/builder">Builder</TextLink>.
         </p>
         <List>
-          <li>Use <InlineCode>validation.common</InlineCode> for operator-agnostic rules such as required values.</li>
-          <li>Use <InlineCode>validation.rules</InlineCode> for operator-specific rules.</li>
-          <li>Use <InlineCode>showValidation</InlineCode> to render built-in validation messages in the UI.</li>
-          <li>Use <InlineCode>onStateChange</InlineCode> when query data and validation state need to be read together.</li>
+          <li>
+            Use <InlineCode>validation.common</InlineCode> for operator-agnostic
+            rules such as required values.
+          </li>
+          <li>
+            Use <InlineCode>validation.rules</InlineCode> for operator-specific
+            rules.
+          </li>
+          <li>
+            Use <InlineCode>showValidation</InlineCode> to render built-in
+            validation messages in the UI.
+          </li>
+          <li>
+            Use <InlineCode>onStateChange</InlineCode> when query data and
+            validation state need to be read together.
+          </li>
         </List>
-        <CodeBlock code={validationSnippet} language="tsx" label="Built-in validation" />
+        <CodeBlock
+          code={validationSnippet}
+          language="tsx"
+          label="Built-in validation"
+        />
         <SectionTitle>Built-in rule types</SectionTitle>
         <List>
-          <li>Text fields support rules such as <InlineCode>minLength</InlineCode> and <InlineCode>maxLength</InlineCode>.</li>
-          <li>Number and date fields support boundary rules such as <InlineCode>min</InlineCode>, <InlineCode>max</InlineCode>, <InlineCode>minDate</InlineCode>, and <InlineCode>maxDate</InlineCode>.</li>
-          <li>List and multi-list fields support item-count constraints such as <InlineCode>minItems</InlineCode> and <InlineCode>maxItems</InlineCode>.</li>
-          <li>Range operators such as <InlineCode>BETWEEN</InlineCode> can use <InlineCode>range</InlineCode> validation to validate both values together.</li>
+          <li>
+            Text fields support rules such as <InlineCode>minLength</InlineCode>{' '}
+            and <InlineCode>maxLength</InlineCode>.
+          </li>
+          <li>
+            Number and date fields support boundary rules such as{' '}
+            <InlineCode>min</InlineCode>, <InlineCode>max</InlineCode>,{' '}
+            <InlineCode>minDate</InlineCode>, and{' '}
+            <InlineCode>maxDate</InlineCode>.
+          </li>
+          <li>
+            List and multi-list fields support item-count constraints such as{' '}
+            <InlineCode>minItems</InlineCode> and{' '}
+            <InlineCode>maxItems</InlineCode>.
+          </li>
+          <li>
+            Range operators such as <InlineCode>BETWEEN</InlineCode> can use{' '}
+            <InlineCode>range</InlineCode> validation to validate both values
+            together.
+          </li>
         </List>
         <SectionTitle>Structural usage limits</SectionTitle>
         <p>
-          Use <InlineCode>usageLimit</InlineCode> when a constraint depends on how
-          many rules already use a field or a shared usage bucket. This is separate
-          from value validation because it governs query structure rather than the
-          validity of a single rule value.
+          Use <InlineCode>usageLimit</InlineCode> when a constraint depends on
+          how many rules already use a field or a shared usage bucket. This is
+          separate from value validation because it governs query structure
+          rather than the validity of a single rule value.
         </p>
-        <CodeBlock code={usageLimitSnippet} language="tsx" label="Field usage limits" />
+        <CodeBlock
+          code={usageLimitSnippet}
+          language="tsx"
+          label="Field usage limits"
+        />
         <List>
-          <li><InlineCode>max</InlineCode> defines how many matching rules are allowed inside the selected scope.</li>
-          <li><InlineCode>scope=&quot;global&quot;</InlineCode> limits usage across the whole query tree.</li>
-          <li><InlineCode>scope=&quot;parent&quot;</InlineCode> limits usage only among sibling rules in the same immediate parent group.</li>
-          <li><InlineCode>key</InlineCode> lets multiple different fields share the same quota bucket.</li>
-          <li>Exhausted fields are disabled in the field selector, and the Add Rule button is disabled when no selectable fields remain in the current scope.</li>
-          <li><InlineCode>showValidation</InlineCode> still surfaces an issue when data arrives in an already invalid state, such as external input or text mode edits.</li>
+          <li>
+            <InlineCode>max</InlineCode> defines how many matching rules are
+            allowed inside the selected scope.
+          </li>
+          <li>
+            <InlineCode>scope=&quot;global&quot;</InlineCode> limits usage
+            across the whole query tree.
+          </li>
+          <li>
+            <InlineCode>scope=&quot;parent&quot;</InlineCode> limits usage only
+            among sibling rules in the same immediate parent group.
+          </li>
+          <li>
+            <InlineCode>key</InlineCode> lets multiple different fields share
+            the same quota bucket.
+          </li>
+          <li>
+            Exhausted fields are disabled in the field selector, and the Add
+            Rule button is disabled when no selectable fields remain in the
+            current scope.
+          </li>
+          <li>
+            <InlineCode>showValidation</InlineCode> still surfaces an issue when
+            data arrives in an already invalid state, such as external input or
+            text mode edits.
+          </li>
         </List>
         <AlertBox title="Custom validator" variant="info">
           Use <InlineCode>validator</InlineCode> when validation depends on
@@ -2083,32 +2371,63 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Set <InlineCode>history</InlineCode> on <TextLink to="/api/builder">Builder</TextLink>{' '}
-          to enable built-in undo and redo support for structural edits and value
-          changes. The builder records inverse actions internally, so history stays
-          smaller than full-query snapshots and still works with drag-and-drop,
-          cloning, deletes, and inline edits.
+          Set <InlineCode>history</InlineCode> on{' '}
+          <TextLink to="/api/builder">Builder</TextLink> to enable built-in undo
+          and redo support for structural edits and value changes. The builder
+          records inverse actions internally, so history stays smaller than
+          full-query snapshots and still works with drag-and-drop, cloning,
+          deletes, and inline edits.
         </p>
-        <CodeBlock code={historySnippet} language="tsx" label="History support" />
+        <CodeBlock
+          code={historySnippet}
+          language="tsx"
+          label="History support"
+        />
         <SectionTitle>How to enable it</SectionTitle>
         <List>
-          <li><InlineCode>history={true}</InlineCode> enables history with default behavior.</li>
-          <li><InlineCode>history={`{{ maxEntries, controls }}`}</InlineCode> enables history with custom configuration.</li>
-          <li><InlineCode>maxEntries</InlineCode> limits how many undo steps are kept in memory.</li>
-          <li><InlineCode>controls</InlineCode> controls whether the built-in Undo and Redo buttons are rendered.</li>
+          <li>
+            <InlineCode>history={true}</InlineCode> enables history with default
+            behavior.
+          </li>
+          <li>
+            <InlineCode>history={`{{ maxEntries, controls }}`}</InlineCode>{' '}
+            enables history with custom configuration.
+          </li>
+          <li>
+            <InlineCode>maxEntries</InlineCode> limits how many undo steps are
+            kept in memory.
+          </li>
+          <li>
+            <InlineCode>controls</InlineCode> controls whether the built-in Undo
+            and Redo buttons are rendered.
+          </li>
         </List>
         <SectionTitle>What gets tracked</SectionTitle>
         <List>
           <li>Adding, removing, cloning, and editing rules.</li>
           <li>Adding, removing, cloning, and editing groups.</li>
           <li>Drag-and-drop reordering and movement between groups.</li>
-          <li>Changes driven through the builder UI that emit through <InlineCode>onChange</InlineCode>.</li>
+          <li>
+            Changes driven through the builder UI that emit through{' '}
+            <InlineCode>onChange</InlineCode>.
+          </li>
         </List>
         <SectionTitle>State callbacks</SectionTitle>
         <List>
-          <li><InlineCode>onStateChange</InlineCode> includes <InlineCode>canUndo</InlineCode> and <InlineCode>canRedo</InlineCode> so custom toolbars can stay in sync.</li>
-          <li>The built-in controls already use those flags and render disabled when no action is available.</li>
-          <li>Redo history is cleared after a new forward edit, which matches standard editor behavior.</li>
+          <li>
+            <InlineCode>onStateChange</InlineCode> includes{' '}
+            <InlineCode>canUndo</InlineCode> and{' '}
+            <InlineCode>canRedo</InlineCode> so custom toolbars can stay in
+            sync.
+          </li>
+          <li>
+            The built-in controls already use those flags and render disabled
+            when no action is available.
+          </li>
+          <li>
+            Redo history is cleared after a new forward edit, which matches
+            standard editor behavior.
+          </li>
         </List>
         <SectionTitle>Custom HistoryControls</SectionTitle>
         <p>
@@ -2122,13 +2441,27 @@ export const documentationPages: IDocumentationPage[] = [
           label="HistoryControls override"
         />
         <List>
-          <li>The override receives ready-to-render <InlineCode>undoButton</InlineCode> and <InlineCode>redoButton</InlineCode> nodes.</li>
-          <li>It also receives <InlineCode>canUndo</InlineCode>, <InlineCode>canRedo</InlineCode>, <InlineCode>onUndo</InlineCode>, and <InlineCode>onRedo</InlineCode> when you need custom wrappers or auxiliary UI.</li>
-          <li>This lets you reorder, wrap, or annotate the default buttons without having to rebuild their disabled-state logic.</li>
+          <li>
+            The override receives ready-to-render{' '}
+            <InlineCode>undoButton</InlineCode> and{' '}
+            <InlineCode>redoButton</InlineCode> nodes.
+          </li>
+          <li>
+            It also receives <InlineCode>canUndo</InlineCode>,{' '}
+            <InlineCode>canRedo</InlineCode>, <InlineCode>onUndo</InlineCode>,
+            and <InlineCode>onRedo</InlineCode> when you need custom wrappers or
+            auxiliary UI.
+          </li>
+          <li>
+            This lets you reorder, wrap, or annotate the default buttons without
+            having to rebuild their disabled-state logic.
+          </li>
         </List>
         <AlertBox title="Related docs" variant="info">
-          <TextLink to="/documentation/builder-behavior">Builder Behavior</TextLink>,{' '}
-          <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
+          <TextLink to="/documentation/builder-behavior">
+            Builder Behavior
+          </TextLink>
+          , <TextLink to="/documentation/builder-ref">Builder Ref</TextLink>,{' '}
           <TextLink to="/demo">Demo</TextLink>, and{' '}
           <TextLink to="/api/builder">Builder</TextLink>.
         </AlertBox>
@@ -2156,34 +2489,73 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <SectionTitle>GUI Locking</SectionTitle>
         <p>
-          Set <InlineCode>lockable</InlineCode> on <TextLink to="/api/builder">Builder</TextLink>{' '}
-          to render lock controls directly in the UI. The built-in controls update
-          the same <InlineCode>readOnly</InlineCode> fields that are already part of
-          the query data model, so the resulting lock state is preserved in output.
+          Set <InlineCode>lockable</InlineCode> on{' '}
+          <TextLink to="/api/builder">Builder</TextLink> to render lock controls
+          directly in the UI. The built-in controls update the same{' '}
+          <InlineCode>readOnly</InlineCode> fields that are already part of the
+          query data model, so the resulting lock state is preserved in output.
           If a node already has <InlineCode>readOnly.targets</InlineCode>, the
           lock toggle preserves those targets and only changes whether the lock
           is enabled and, for groups, whether it inherits to descendants.
         </p>
-        <CodeBlock code={lockingGuiSnippet} language="tsx" label="GUI locking" />
+        <CodeBlock
+          code={lockingGuiSnippet}
+          language="tsx"
+          label="GUI locking"
+        />
         <List>
           <li>Rules cycle through two states: unlocked and locked.</li>
-          <li>Groups cycle through three states: unlocked, locked group only, and locked group with descendants.</li>
-          <li>The default group cycle maps to <InlineCode>false</InlineCode>, <InlineCode>true</InlineCode>, and <InlineCode>{`{ enabled: true, inheritToChildren: true }`}</InlineCode>.</li>
-          <li>When a parent group inherits a lock to descendants, child lock controls render disabled because descendants cannot override that inherited state.</li>
-          <li>When <InlineCode>cloneable</InlineCode> is also enabled, the clone button renders immediately to the left of the lock button.</li>
+          <li>
+            Groups cycle through three states: unlocked, locked group only, and
+            locked group with descendants.
+          </li>
+          <li>
+            The default group cycle maps to <InlineCode>false</InlineCode>,{' '}
+            <InlineCode>true</InlineCode>, and{' '}
+            <InlineCode>{`{ enabled: true, inheritToChildren: true }`}</InlineCode>
+            .
+          </li>
+          <li>
+            When a parent group inherits a lock to descendants, child lock
+            controls render disabled because descendants cannot override that
+            inherited state.
+          </li>
+          <li>
+            When <InlineCode>cloneable</InlineCode> is also enabled, the clone
+            button renders immediately to the left of the lock button.
+          </li>
         </List>
         <SectionTitle>Targeted read-only</SectionTitle>
         <p>
-          Use object-based <InlineCode>readOnly</InlineCode> configs when you want
-          to keep specific controls visible but non-editable instead of locking
-          the entire rule or group.
+          Use object-based <InlineCode>readOnly</InlineCode> configs when you
+          want to keep specific controls visible but non-editable instead of
+          locking the entire rule or group.
         </p>
-        <CodeBlock code={targetedReadOnlySnippet} language="tsx" label="Targeted read-only" />
+        <CodeBlock
+          code={targetedReadOnlySnippet}
+          language="tsx"
+          label="Targeted read-only"
+        />
         <List>
-          <li>Rule targets are <InlineCode>field</InlineCode>, <InlineCode>operator</InlineCode>, and <InlineCode>value</InlineCode>.</li>
-          <li>Group targets are <InlineCode>combinator</InlineCode> and <InlineCode>negation</InlineCode>.</li>
-          <li>If <InlineCode>enabled</InlineCode> is <InlineCode>true</InlineCode> and <InlineCode>targets</InlineCode> is omitted, the whole node is read-only.</li>
-          <li>If <InlineCode>enabled</InlineCode> is <InlineCode>false</InlineCode>, the config stays dormant until the node is locked again.</li>
+          <li>
+            Rule targets are <InlineCode>field</InlineCode>,{' '}
+            <InlineCode>operator</InlineCode>, and{' '}
+            <InlineCode>value</InlineCode>.
+          </li>
+          <li>
+            Group targets are <InlineCode>combinator</InlineCode> and{' '}
+            <InlineCode>negation</InlineCode>.
+          </li>
+          <li>
+            If <InlineCode>enabled</InlineCode> is <InlineCode>true</InlineCode>{' '}
+            and <InlineCode>targets</InlineCode> is omitted, the whole node is
+            read-only.
+          </li>
+          <li>
+            If <InlineCode>enabled</InlineCode> is{' '}
+            <InlineCode>false</InlineCode>, the config stays dormant until the
+            node is locked again.
+          </li>
         </List>
         <SectionTitle>How each level behaves</SectionTitle>
         <List>
@@ -2215,32 +2587,67 @@ export const documentationPages: IDocumentationPage[] = [
             locks the group and all descendant rules and groups.
           </li>
         </List>
-        <CodeBlock code={lockingSnippet} language="tsx" label="Locking examples" />
+        <CodeBlock
+          code={lockingSnippet}
+          language="tsx"
+          label="Locking examples"
+        />
         <SectionTitle>Custom Lock Control</SectionTitle>
         <p>
           The default lock button can be replaced through{' '}
           <InlineCode>components.LockToggle</InlineCode>.
         </p>
-        <CodeBlock code={lockToggleSnippet} language="tsx" label="LockToggle override" />
+        <CodeBlock
+          code={lockToggleSnippet}
+          language="tsx"
+          label="LockToggle override"
+        />
         <SectionTitle>Custom Clone Control</SectionTitle>
         <p>
           The default clone button can be replaced through{' '}
           <InlineCode>components.CloneButton</InlineCode>.
         </p>
-        <CodeBlock code={cloneButtonSnippet} language="tsx" label="CloneButton override" />
+        <CodeBlock
+          code={cloneButtonSnippet}
+          language="tsx"
+          label="CloneButton override"
+        />
         <SectionTitle>What &quot;locked&quot; means in the UI</SectionTitle>
         <List>
-          <li>Read-only targets stay visible. They become disabled, not hidden.</li>
-          <li>Locked rules cannot change field, operator, or value, and cannot be deleted.</li>
-          <li>Targeted rule read-only also blocks deleting that rule, even if only one target such as <InlineCode>field</InlineCode> is protected.</li>
-          <li>Locked groups cannot change their group operator, negation, add actions, or delete action.</li>
-          <li>By default, groups also cannot be deleted when that would remove protected descendants indirectly.</li>
-          <li>Set <InlineCode>Builder.readOnlyProtectsDelete={false}</InlineCode> to disable that subtree delete protection while keeping direct node-level read-only deletion rules.</li>
-          <li>Locked rules and groups are removed from drag-and-drop interactions.</li>
-          <li>Clone controls render only for editable rules and groups. Cloned nodes preserve their read-only configuration.</li>
           <li>
-            A locked group without inheritance still renders editable descendants
-            when those descendants are not otherwise locked.
+            Read-only targets stay visible. They become disabled, not hidden.
+          </li>
+          <li>
+            Locked rules cannot change field, operator, or value, and cannot be
+            deleted.
+          </li>
+          <li>
+            Targeted rule read-only also blocks deleting that rule, even if only
+            one target such as <InlineCode>field</InlineCode> is protected.
+          </li>
+          <li>
+            Locked groups cannot change their group operator, negation, add
+            actions, or delete action.
+          </li>
+          <li>
+            By default, groups also cannot be deleted when that would remove
+            protected descendants indirectly.
+          </li>
+          <li>
+            Set <InlineCode>Builder.readOnlyProtectsDelete={false}</InlineCode>{' '}
+            to disable that subtree delete protection while keeping direct
+            node-level read-only deletion rules.
+          </li>
+          <li>
+            Locked rules and groups are removed from drag-and-drop interactions.
+          </li>
+          <li>
+            Clone controls render only for editable rules and groups. Cloned
+            nodes preserve their read-only configuration.
+          </li>
+          <li>
+            A locked group without inheritance still renders editable
+            descendants when those descendants are not otherwise locked.
           </li>
         </List>
         <SectionTitle>Inheritance and precedence</SectionTitle>
@@ -2252,16 +2659,19 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
           <li>
             Once a parent group inherits read-only to descendants, child nodes
-            cannot opt back into editability with <InlineCode>readOnly: false</InlineCode>.
+            cannot opt back into editability with{' '}
+            <InlineCode>readOnly: false</InlineCode>.
           </li>
           <li>
-            Descendants may still add their own local <InlineCode>readOnly</InlineCode>{' '}
-            flags, but they cannot override an inherited lock from an ancestor.
+            Descendants may still add their own local{' '}
+            <InlineCode>readOnly</InlineCode> flags, but they cannot override an
+            inherited lock from an ancestor.
           </li>
           <li>
             Group target inheritance preserves only the group-level semantics of
             the inherited lock. It does not turn rule-specific controls such as{' '}
-            <InlineCode>field</InlineCode> or <InlineCode>value</InlineCode> into inherited targets.
+            <InlineCode>field</InlineCode> or <InlineCode>value</InlineCode>{' '}
+            into inherited targets.
           </li>
         </List>
         <AlertBox title="API reference" variant="info">
@@ -2295,14 +2705,17 @@ export const documentationPages: IDocumentationPage[] = [
             <TextLink to="/api/parse-query">parseQuery</TextLink> converts
             supported syntaxes back into builder state.
           </li>
-          <li>The documentation sandbox on this page lets you experiment with every supported format live.</li>
+          <li>
+            The documentation sandbox on this page lets you experiment with
+            every supported format live.
+          </li>
         </List>
         <CodeBlock code={sqlSnippet} language="ts" label="Formatting to SQL" />
         <CodeBlock code={parseSnippet} language="ts" label="Parsing from SQL" />
         <AlertBox title="Round-tripping" variant="info">
-          Some formats are more expressive than others. A round-trip is best when
-          the source expression stays within the subset that maps cleanly to the
-          builder model.
+          Some formats are more expressive than others. A round-trip is best
+          when the source expression stays within the subset that maps cleanly
+          to the builder model.
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/format-query">formatQuery</TextLink> and{' '}
@@ -2323,11 +2736,12 @@ export const documentationPages: IDocumentationPage[] = [
       'SQL Mongo AQL JSONata JsonLogic CEL Elasticsearch SpEL Prisma OData RSQL Dynamo Django supported formats parser formatter query builder',
     content: (
       <>
-        <p>
-          Supported formats and their primary use cases.
-        </p>
+        <p>Supported formats and their primary use cases.</p>
         <SectionTitle>SQL</SectionTitle>
-        <p>Formatting and predicate parsing for builder-compatible SQL expressions.</p>
+        <p>
+          Formatting and predicate parsing for builder-compatible SQL
+          expressions.
+        </p>
         <CodeBlock code={sqlSnippet} language="ts" label="SQL formatter" />
         <AlertBox title="Parsing scope" variant="warning">
           SQL support is aimed at builder-compatible predicates. It is not meant
@@ -2337,8 +2751,8 @@ export const documentationPages: IDocumentationPage[] = [
         <SectionTitle>Mongo</SectionTitle>
         <p>
           Formatting returns a serialized JSON filter document. Parsing expects
-          a JSON object string and can infer <TextLink to="/api/fields">fields</TextLink>{' '}
-          from the document shape.
+          a JSON object string and can infer{' '}
+          <TextLink to="/api/fields">fields</TextLink> from the document shape.
         </p>
         <CodeBlock
           code={`const mongo = formatQuery(data, 'Mongo');\n// { "$and": [ ... ] }`}
@@ -2351,15 +2765,24 @@ export const documentationPages: IDocumentationPage[] = [
         </AlertBox>
         <SectionTitle>AQL</SectionTitle>
         <List>
-          <li>ArangoDB-style filter expressions with optional filter-clause wrapping and configurable variable names.</li>
+          <li>
+            ArangoDB-style filter expressions with optional filter-clause
+            wrapping and configurable variable names.
+          </li>
         </List>
         <SectionTitle>JSONata and JsonLogic</SectionTitle>
         <List>
-          <li>JSON-oriented expression formats for rules evaluated against object-shaped data.</li>
+          <li>
+            JSON-oriented expression formats for rules evaluated against
+            object-shaped data.
+          </li>
         </List>
         <SectionTitle>CEL and SpEL</SectionTitle>
         <List>
-          <li>Expression languages used in application and policy evaluation environments.</li>
+          <li>
+            Expression languages used in application and policy evaluation
+            environments.
+          </li>
         </List>
         <SectionTitle>Prisma and Django</SectionTitle>
         <List>
@@ -2367,13 +2790,19 @@ export const documentationPages: IDocumentationPage[] = [
         </List>
         <SectionTitle>OData, RSQL, Dynamo, and Elasticsearch</SectionTitle>
         <List>
-          <li>API and datastore integrations with format-specific output conventions.</li>
+          <li>
+            API and datastore integrations with format-specific output
+            conventions.
+          </li>
         </List>
         <SectionTitle>Advanced: Field-To-Field Comparisons</SectionTitle>
         <p>
           Most formats on this page can be explored with ordinary literal-based
           rules. If you specifically need one field to compare against another,
-          start with <TextLink to="/documentation/field-comparisons">Field Comparisons</TextLink>{' '}
+          start with{' '}
+          <TextLink to="/documentation/field-comparisons">
+            Field Comparisons
+          </TextLink>{' '}
           and then use the native field-reference support only in formats that
           have a direct right-hand-side field form.
         </p>
@@ -2384,23 +2813,23 @@ export const documentationPages: IDocumentationPage[] = [
             <InlineCode>AQL</InlineCode>, <InlineCode>JSONata</InlineCode>,{' '}
             <InlineCode>JsonLogic</InlineCode>, <InlineCode>CEL</InlineCode>,{' '}
             <InlineCode>SpEL</InlineCode>, <InlineCode>Prisma</InlineCode>,{' '}
-            <InlineCode>OData</InlineCode>, <InlineCode>Dynamo</InlineCode>,
-            and <InlineCode>Django</InlineCode>.
+            <InlineCode>OData</InlineCode>, <InlineCode>Dynamo</InlineCode>, and{' '}
+            <InlineCode>Django</InlineCode>.
           </li>
           <li>
             String-style field references are also supported where the target
             format has a native form for them, such as{' '}
             <InlineCode>contains</InlineCode>,{' '}
             <InlineCode>startsWith</InlineCode>, and{' '}
-            <InlineCode>endsWith</InlineCode> in{' '}
-            <InlineCode>CEL</InlineCode>, <InlineCode>OData</InlineCode>,{' '}
-            <InlineCode>Django</InlineCode>, and <InlineCode>SpEL</InlineCode>.
+            <InlineCode>endsWith</InlineCode> in <InlineCode>CEL</InlineCode>,{' '}
+            <InlineCode>OData</InlineCode>, <InlineCode>Django</InlineCode>, and{' '}
+            <InlineCode>SpEL</InlineCode>.
           </li>
           <li>
             <InlineCode>Elasticsearch</InlineCode> and{' '}
-            <InlineCode>RSQL</InlineCode> intentionally reject field
-            comparisons because supporting them would require invented syntax or
-            non-native backend semantics.
+            <InlineCode>RSQL</InlineCode> intentionally reject field comparisons
+            because supporting them would require invented syntax or non-native
+            backend semantics.
           </li>
         </List>
         <CodeBlock
@@ -2433,21 +2862,27 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Text mode lets the builder switch between the visual query UI and a SQL
-          editor view of the same query.
+          Text mode lets the builder switch between the visual query UI and a
+          SQL editor view of the same query.
         </p>
-        <CodeBlock code={textModeSnippet} language="tsx" label="Enable built-in text mode" />
+        <CodeBlock
+          code={textModeSnippet}
+          language="tsx"
+          label="Enable built-in text mode"
+        />
         <SectionTitle>Current scope</SectionTitle>
         <List>
           <li>Text mode currently uses SQL as the editable text format.</li>
           <li>
-            It requires <InlineCode>singleRootGroup</InlineCode> to stay enabled.
-            If <InlineCode>singleRootGroup</InlineCode> is <InlineCode>false</InlineCode>,
-            text mode is unavailable and the builder stays in visual mode.
+            It requires <InlineCode>singleRootGroup</InlineCode> to stay
+            enabled. If <InlineCode>singleRootGroup</InlineCode> is{' '}
+            <InlineCode>false</InlineCode>, text mode is unavailable and the
+            builder stays in visual mode.
           </li>
           <li>
             When text mode is enabled, modifierless groups are normalized to{' '}
-            <InlineCode>AND</InlineCode> groups so the query can round-trip through SQL.
+            <InlineCode>AND</InlineCode> groups so the query can round-trip
+            through SQL.
           </li>
         </List>
         <SectionTitle>Opening mode</SectionTitle>
@@ -2467,36 +2902,74 @@ export const documentationPages: IDocumentationPage[] = [
         />
         <SectionTitle>Validation</SectionTitle>
         <List>
-          <li>Missing brackets, quotes, commas, and other SQL syntax mistakes are highlighted directly in the editor.</li>
+          <li>
+            Missing brackets, quotes, commas, and other SQL syntax mistakes are
+            highlighted directly in the editor.
+          </li>
           <li>Unknown fields are highlighted on the field token.</li>
-          <li>Unsupported operators for a field are highlighted on the operator token.</li>
-          <li>Invalid <InlineCode>LIST</InlineCode> values are highlighted on the invalid value token.</li>
-          <li>Invalid <InlineCode>MULTI_LIST</InlineCode> values are highlighted on the invalid value token.</li>
-          <li>Read-only negation changes are rejected after parsing and shown as below-editor semantic errors.</li>
+          <li>
+            Unsupported operators for a field are highlighted on the operator
+            token.
+          </li>
+          <li>
+            Invalid <InlineCode>LIST</InlineCode> values are highlighted on the
+            invalid value token.
+          </li>
+          <li>
+            Invalid <InlineCode>MULTI_LIST</InlineCode> values are highlighted
+            on the invalid value token.
+          </li>
+          <li>
+            Read-only negation changes are rejected after parsing and shown as
+            below-editor semantic errors.
+          </li>
         </List>
         <SectionTitle>Invalid text behavior</SectionTitle>
         <List>
-          <li>Invalid text stays local to the text editor until the SQL becomes valid again.</li>
-          <li>The last valid builder query is preserved while the user is fixing text-mode errors.</li>
-          <li><InlineCode>onChange</InlineCode> is fired only after a valid parse and successful semantic validation.</li>
+          <li>
+            Invalid text stays local to the text editor until the SQL becomes
+            valid again.
+          </li>
+          <li>
+            The last valid builder query is preserved while the user is fixing
+            text-mode errors.
+          </li>
+          <li>
+            <InlineCode>onChange</InlineCode> is fired only after a valid parse
+            and successful semantic validation.
+          </li>
         </List>
         <SectionTitle>History behavior</SectionTitle>
         <List>
-          <li>Valid text edits are committed into builder history, so they can be undone and redone.</li>
-          <li>Invalid intermediate text is not committed into builder state or history.</li>
+          <li>
+            Valid text edits are committed into builder history, so they can be
+            undone and redone.
+          </li>
+          <li>
+            Invalid intermediate text is not committed into builder state or
+            history.
+          </li>
         </List>
         <SectionTitle>Choosing an editor</SectionTitle>
         <List>
-          <li><ItemTitle>Choose the built-in editor:</ItemTitle> when you want lightweight SQL editing, built-in validation, and no extra dependencies.</li>
-          <li><ItemTitle>Choose Monaco:</ItemTitle> when locked or targeted read-only query segments must stay protected in text mode, or when you want a more advanced editor experience.</li>
+          <li>
+            <ItemTitle>Choose the built-in editor:</ItemTitle> when you want
+            lightweight SQL editing, built-in validation, and no extra
+            dependencies.
+          </li>
+          <li>
+            <ItemTitle>Choose Monaco:</ItemTitle> when locked or targeted
+            read-only query segments must stay protected in text mode, or when
+            you want a more advanced editor experience.
+          </li>
         </List>
         <SectionTitle>Built-in editor vs Monaco</SectionTitle>
         <List>
           <li>
-            <ItemTitle>Built-in text mode:</ItemTitle> Included in the core package,
-            uses the default <InlineCode>TextModeEditor</InlineCode>, and supports
-            SQL formatting, syntax highlighting, syntax validation, and semantic
-            validation without extra dependencies.
+            <ItemTitle>Built-in text mode:</ItemTitle> Included in the core
+            package, uses the default <InlineCode>TextModeEditor</InlineCode>,
+            and supports SQL formatting, syntax highlighting, syntax validation,
+            and semantic validation without extra dependencies.
           </li>
           <li>
             <ItemTitle>Built-in editor limitation:</ItemTitle> Locked rules,
@@ -2508,30 +2981,34 @@ export const documentationPages: IDocumentationPage[] = [
             <ItemTitle>Monaco text mode:</ItemTitle> Optional advanced editor
             integration exposed from{' '}
             <InlineCode>@vojtechportes/react-query-builder/monaco</InlineCode>.
-            It preserves locked and targeted read-only query segments by rendering
-            them as protected ranges.
+            It preserves locked and targeted read-only query segments by
+            rendering them as protected ranges.
           </li>
           <li>
-            <ItemTitle>Monaco protected behavior:</ItemTitle> Protected SQL fragments
-            are dimmed, protected from edits, and expose their lock explanation on hover.
+            <ItemTitle>Monaco protected behavior:</ItemTitle> Protected SQL
+            fragments are dimmed, protected from edits, and expose their lock
+            explanation on hover.
           </li>
           <li>
             <ItemTitle>Localized read-only protection:</ItemTitle> Rule field,
-            operator, and value segments can be protected inline, while read-only
-            negation is additionally enforced semantically and reported below the editor when changed.
+            operator, and value segments can be protected inline, while
+            read-only negation is additionally enforced semantically and
+            reported below the editor when changed.
           </li>
           <li>
             <ItemTitle>Group negation validation:</ItemTitle> When{' '}
             <InlineCode>allowGroupNegation={false}</InlineCode>, the text editor
             rejects group-level <InlineCode>NOT (...)</InlineCode> expressions
-            and highlights the offending <InlineCode>NOT</InlineCode> token, while
-            still allowing operator-level negation such as{' '}
-            <InlineCode>NOT IN</InlineCode> or <InlineCode>IS NOT NULL</InlineCode>.
+            and highlights the offending <InlineCode>NOT</InlineCode> token,
+            while still allowing operator-level negation such as{' '}
+            <InlineCode>NOT IN</InlineCode> or{' '}
+            <InlineCode>IS NOT NULL</InlineCode>.
           </li>
           <li>
             <ItemTitle>Monaco packaging:</ItemTitle>{' '}
-            <InlineCode>monaco-editor</InlineCode> is an optional peer dependency.
-            Consumers only need to install it when they actually want the Monaco editor.
+            <InlineCode>monaco-editor</InlineCode> is an optional peer
+            dependency. Consumers only need to install it when they actually
+            want the Monaco editor.
           </li>
         </List>
         <SectionTitle>Using Monaco text mode</SectionTitle>
@@ -2561,19 +3038,43 @@ export const documentationPages: IDocumentationPage[] = [
           label="Custom text-mode strings"
         />
         <List>
-          <li><InlineCode>strings.textMode.toggleToText</InlineCode> customizes the button label for entering text mode.</li>
-          <li><InlineCode>strings.textMode.toggleToBuilder</InlineCode> customizes the button label for returning to the visual builder.</li>
-          <li><InlineCode>strings.textMode.syntaxError</InlineCode> customizes the syntax error prefix.</li>
-          <li><InlineCode>strings.textMode.locksUnsupported</InlineCode> customizes the built-in alert shown when the basic editor cannot open a locked or targeted read-only query.</li>
-          <li><InlineCode>strings.textMode.lockedRangesHover</InlineCode> customizes the hover message shown for protected Monaco ranges.</li>
-          <li><InlineCode>strings.textMode.sql</InlineCode> customizes SQL parser and syntax-validation messages such as missing brackets, missing quotes, missing keywords, and unexpected tokens.</li>
+          <li>
+            <InlineCode>strings.textMode.toggleToText</InlineCode> customizes
+            the button label for entering text mode.
+          </li>
+          <li>
+            <InlineCode>strings.textMode.toggleToBuilder</InlineCode> customizes
+            the button label for returning to the visual builder.
+          </li>
+          <li>
+            <InlineCode>strings.textMode.syntaxError</InlineCode> customizes the
+            syntax error prefix.
+          </li>
+          <li>
+            <InlineCode>strings.textMode.locksUnsupported</InlineCode>{' '}
+            customizes the built-in alert shown when the basic editor cannot
+            open a locked or targeted read-only query.
+          </li>
+          <li>
+            <InlineCode>strings.textMode.lockedRangesHover</InlineCode>{' '}
+            customizes the hover message shown for protected Monaco ranges.
+          </li>
+          <li>
+            <InlineCode>strings.textMode.sql</InlineCode> customizes SQL parser
+            and syntax-validation messages such as missing brackets, missing
+            quotes, missing keywords, and unexpected tokens.
+          </li>
         </List>
         <SectionTitle>Installing Monaco</SectionTitle>
-        <CodeBlock code={monacoInstallSnippet} language="bash" label="Monaco peer dependency" />
+        <CodeBlock
+          code={monacoInstallSnippet}
+          language="bash"
+          label="Monaco peer dependency"
+        />
         <AlertBox title="Locks and Monaco" variant="info">
           The built-in text editor blocks locked and targeted read-only queries.
-          Monaco is the intended path when protected query segments need to remain
-          editable only around their unlocked ranges.
+          Monaco is the intended path when protected query segments need to
+          remain editable only around their unlocked ranges.
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink> and{' '}
@@ -2598,7 +3099,11 @@ export const documentationPages: IDocumentationPage[] = [
           Replace built-in controls and containers through the{' '}
           <InlineCode>components</InlineCode> prop.
         </p>
-        <CodeBlock code={componentsSnippet} language="tsx" label="Component overrides" />
+        <CodeBlock
+          code={componentsSnippet}
+          language="tsx"
+          label="Component overrides"
+        />
         <SectionTitle>Override contracts</SectionTitle>
         <List>
           <li>
@@ -2611,9 +3116,10 @@ export const documentationPages: IDocumentationPage[] = [
             control regions rather than raw builder state.
           </li>
           <li>
-            <InlineCode>DropZone</InlineCode> and <InlineCode>EmptyGroupDropZone</InlineCode>{' '}
-            are drag-and-drop render hooks. They receive ids, indices, parent
-            ids, drag state, and active state.
+            <InlineCode>DropZone</InlineCode> and{' '}
+            <InlineCode>EmptyGroupDropZone</InlineCode> are drag-and-drop render
+            hooks. They receive ids, indices, parent ids, drag state, and active
+            state.
           </li>
           <li>
             Button-like overrides such as <InlineCode>Add</InlineCode>,{' '}
@@ -2632,21 +3138,24 @@ export const documentationPages: IDocumentationPage[] = [
             other advanced editors.
           </li>
           <li>
-            <InlineCode>TextModeInput</InlineCode> replaces only the input control
-            used by the built-in text editor. It is useful when you want the
-            built-in overlay editor behavior but need a UI-library-specific input shell.
+            <InlineCode>TextModeInput</InlineCode> replaces only the input
+            control used by the built-in text editor. It is useful when you want
+            the built-in overlay editor behavior but need a UI-library-specific
+            input shell.
           </li>
           <li>
-            <InlineCode>TextModeToggleContent</InlineCode>, <InlineCode>OutlinedButton</InlineCode>,
-            and <InlineCode>Alert</InlineCode> let you align text-mode controls
-            and warnings with your design system.
+            <InlineCode>TextModeToggleContent</InlineCode>,{' '}
+            <InlineCode>OutlinedButton</InlineCode>, and{' '}
+            <InlineCode>Alert</InlineCode> let you align text-mode controls and
+            warnings with your design system.
           </li>
         </List>
         <SectionTitle>Responsive behavior</SectionTitle>
         <List>
           <li>
-            The built-in <InlineCode>Rule</InlineCode> and <InlineCode>Group</InlineCode>{' '}
-            components include a compact responsive layout for medium-width screens.
+            The built-in <InlineCode>Rule</InlineCode> and{' '}
+            <InlineCode>Group</InlineCode> components include a compact
+            responsive layout for medium-width screens.
           </li>
           <li>
             Multi-select controls use a summarized closed state so selected
@@ -2664,11 +3173,12 @@ export const documentationPages: IDocumentationPage[] = [
         </List>
         <AlertBox title="Adapter packages" variant="info">
           If you want ready-made component mappings instead of wiring every
-          override by hand, see <TextLink to="/documentation/adapters">Adapters</TextLink>.
+          override by hand, see{' '}
+          <TextLink to="/documentation/adapters">Adapters</TextLink>.
         </AlertBox>
         <AlertBox title="Related docs" variant="info">
-          <TextLink to="/documentation/text-mode">Text Mode</TextLink> covers the
-          built-in SQL editor and the optional Monaco editor integration.
+          <TextLink to="/documentation/text-mode">Text Mode</TextLink> covers
+          the built-in SQL editor and the optional Monaco editor integration.
         </AlertBox>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/components">Components</TextLink>.
@@ -2689,37 +3199,91 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Adapters provide pre-mapped <InlineCode>components</InlineCode> objects
-          for UI libraries so you do not need to implement every override in{' '}
-          <TextLink to="/documentation/components">Components</TextLink> yourself.
+          Adapters provide pre-mapped <InlineCode>components</InlineCode>{' '}
+          objects for UI libraries so you do not need to implement every
+          override in{' '}
+          <TextLink to="/documentation/components">Components</TextLink>{' '}
+          yourself.
         </p>
         <SectionTitle>Adapter guides</SectionTitle>
         <List>
-          <li><TextLink to="/documentation/adapters/mui">MUI</TextLink> covers <InlineCode>mui/v9</InlineCode>, legacy <InlineCode>mui/v7</InlineCode>, install steps, and merge patterns.</li>
-          <li><TextLink to="/documentation/adapters/antd">ANTD</TextLink> covers <InlineCode>antd/v6</InlineCode>, legacy <InlineCode>antd/v5</InlineCode>, install steps, and merge patterns.</li>
-          <li><TextLink to="/documentation/adapters/fluentui">Fluent UI</TextLink> covers <InlineCode>fluentui/v8</InlineCode>, install steps, and merge patterns.</li>
-          <li><TextLink to="/documentation/adapters/mantine">Mantine</TextLink> covers <InlineCode>mantine/v9</InlineCode>, legacy <InlineCode>mantine/v8</InlineCode>, install steps, provider usage, and merge patterns.</li>
-          <li><TextLink to="/documentation/adapters/bootstrap">Bootstrap</TextLink> covers <InlineCode>bootstrap/v5</InlineCode>, stylesheet setup, and merge patterns.</li>
-          <li><TextLink to="/documentation/adapters/radix">Radix</TextLink> covers <InlineCode>radix/v1</InlineCode>, stylesheet and provider setup, and merge patterns.</li>
+          <li>
+            <TextLink to="/documentation/adapters/mui">MUI</TextLink> covers{' '}
+            <InlineCode>mui/v9</InlineCode>, legacy{' '}
+            <InlineCode>mui/v7</InlineCode>, install steps, and merge patterns.
+          </li>
+          <li>
+            <TextLink to="/documentation/adapters/antd">ANTD</TextLink> covers{' '}
+            <InlineCode>antd/v6</InlineCode>, legacy{' '}
+            <InlineCode>antd/v5</InlineCode>, install steps, and merge patterns.
+          </li>
+          <li>
+            <TextLink to="/documentation/adapters/fluentui">Fluent UI</TextLink>{' '}
+            covers <InlineCode>fluentui/v8</InlineCode>, install steps, and
+            merge patterns.
+          </li>
+          <li>
+            <TextLink to="/documentation/adapters/mantine">Mantine</TextLink>{' '}
+            covers <InlineCode>mantine/v9</InlineCode>, legacy{' '}
+            <InlineCode>mantine/v8</InlineCode>, install steps, provider usage,
+            and merge patterns.
+          </li>
+          <li>
+            <TextLink to="/documentation/adapters/bootstrap">
+              Bootstrap
+            </TextLink>{' '}
+            covers <InlineCode>bootstrap/v5</InlineCode>, stylesheet setup, and
+            merge patterns.
+          </li>
+          <li>
+            <TextLink to="/documentation/adapters/radix">Radix</TextLink> covers{' '}
+            <InlineCode>radix/v1</InlineCode>, stylesheet and provider setup,
+            and merge patterns.
+          </li>
         </List>
         <SectionTitle>Extending an adapter</SectionTitle>
         <List>
-          <li>Start with the exported adapter <InlineCode>components</InlineCode> object.</li>
-          <li>Override only the pieces you want to replace, such as a single select or button component.</li>
-          <li>This keeps your app aligned with future adapter updates while still allowing local customization.</li>
+          <li>
+            Start with the exported adapter <InlineCode>components</InlineCode>{' '}
+            object.
+          </li>
+          <li>
+            Override only the pieces you want to replace, such as a single
+            select or button component.
+          </li>
+          <li>
+            This keeps your app aligned with future adapter updates while still
+            allowing local customization.
+          </li>
         </List>
-        <CodeBlock code={muiCreateComponentsSnippet} language="tsx" label="Merging adapter defaults" />
+        <CodeBlock
+          code={muiCreateComponentsSnippet}
+          language="tsx"
+          label="Merging adapter defaults"
+        />
         <SectionTitle>Shared behavior</SectionTitle>
         <List>
-          <li>Adapters are versioned entrypoints so the package can support multiple major UI-library versions in parallel.</li>
-          <li>Each adapter exports a ready-to-pass <InlineCode>components</InlineCode> object plus a merge helper that preserves nested <InlineCode>form</InlineCode> overrides.</li>
-          <li>Choose the adapter subpage that matches your UI library for exact installation commands and code samples.</li>
+          <li>
+            Adapters are versioned entrypoints so the package can support
+            multiple major UI-library versions in parallel.
+          </li>
+          <li>
+            Each adapter exports a ready-to-pass{' '}
+            <InlineCode>components</InlineCode> object plus a merge helper that
+            preserves nested <InlineCode>form</InlineCode> overrides.
+          </li>
+          <li>
+            Choose the adapter subpage that matches your UI library for exact
+            installation commands and code samples.
+          </li>
         </List>
         <AlertBox title="Monaco text mode" variant="info">
-          When you want Monaco text mode together with MUI, ANTD, Bootstrap, Mantine, Fluent UI, or Radix, compose the
-          adapter <InlineCode>components</InlineCode> object with{' '}
+          When you want Monaco text mode together with MUI, ANTD, Bootstrap,
+          Mantine, Fluent UI, or Radix, compose the adapter{' '}
+          <InlineCode>components</InlineCode> object with{' '}
           <InlineCode>createMonacoComponents(...)</InlineCode>. See{' '}
-          <TextLink to="/documentation/text-mode">Text Mode</TextLink> for examples.
+          <TextLink to="/documentation/text-mode">Text Mode</TextLink> for
+          examples.
         </AlertBox>
         <AlertBox title="Related docs" variant="info">
           <TextLink to="/documentation/components">Components</TextLink>,{' '}
@@ -2748,21 +3312,32 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <SectionTitle>Available entrypoints</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode> is the recommended entrypoint for new Material UI projects and the one used in the demo.</li>
-          <li><InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode> is available for applications that are still on Material UI 7.</li>
+          <li>
+            <InlineCode>@vojtechportes/react-query-builder/mui/v9</InlineCode>{' '}
+            is the recommended entrypoint for new Material UI projects and the
+            one used in the demo.
+          </li>
+          <li>
+            <InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>{' '}
+            is available for applications that are still on Material UI 7.
+          </li>
         </List>
         <SectionTitle>Installing MUI</SectionTitle>
         <p>
-          Install the MUI peer dependencies that match the adapter version you want
-          to use. For new setups, prefer <InlineCode>mui/v9</InlineCode>.
+          Install the MUI peer dependencies that match the adapter version you
+          want to use. For new setups, prefer <InlineCode>mui/v9</InlineCode>.
         </p>
-        <CodeBlock code={adaptersInstallSnippet} language="bash" label="MUI v9 peers" />
+        <CodeBlock
+          code={adaptersInstallSnippet}
+          language="bash"
+          label="MUI v9 peers"
+        />
         <SectionTitle>Using MUI v9</SectionTitle>
         <CodeBlock code={muiSnippet} language="tsx" label="MUI v9 adapter" />
         <SectionTitle>Supporting MUI v7</SectionTitle>
         <p>
-          If your application is still on Material UI 7, switch the import path to{' '}
-          <InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>.
+          If your application is still on Material UI 7, switch the import path
+          to <InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>.
         </p>
         <CodeBlock
           code={muiOverrideSnippet}
@@ -2797,26 +3372,39 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Use the ANTD adapter when your application uses Ant Design and you want
-          the builder controls to match the surrounding system components.
+          Use the ANTD adapter when your application uses Ant Design and you
+          want the builder controls to match the surrounding system components.
         </p>
         <SectionTitle>Available entrypoints</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode> is the recommended entrypoint for new Ant Design projects and is available in the demo.</li>
-          <li><InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode> is available for applications that are still on Ant Design 5.</li>
+          <li>
+            <InlineCode>@vojtechportes/react-query-builder/antd/v6</InlineCode>{' '}
+            is the recommended entrypoint for new Ant Design projects and is
+            available in the demo.
+          </li>
+          <li>
+            <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>{' '}
+            is available for applications that are still on Ant Design 5.
+          </li>
         </List>
         <SectionTitle>Installing ANTD</SectionTitle>
         <p>
-          Install the Ant Design peer dependencies that match the adapter version
-          you want to use. For new setups, prefer <InlineCode>antd/v6</InlineCode>.
+          Install the Ant Design peer dependencies that match the adapter
+          version you want to use. For new setups, prefer{' '}
+          <InlineCode>antd/v6</InlineCode>.
         </p>
-        <CodeBlock code={antdAdaptersInstallSnippet} language="bash" label="ANTD v6 peers" />
+        <CodeBlock
+          code={antdAdaptersInstallSnippet}
+          language="bash"
+          label="ANTD v6 peers"
+        />
         <SectionTitle>Using ANTD v6</SectionTitle>
         <CodeBlock code={antdSnippet} language="tsx" label="ANTD v6 adapter" />
         <SectionTitle>Supporting ANTD v5</SectionTitle>
         <p>
-          If your application is still on Ant Design 5, switch the import path to{' '}
-          <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>.
+          If your application is still on Ant Design 5, switch the import path
+          to <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>
+          .
         </p>
         <SectionTitle>Extending the ANTD adapter</SectionTitle>
         <CodeBlock
@@ -2851,11 +3439,18 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <SectionTitle>Available entrypoint</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/fluentui/v8</InlineCode> targets <InlineCode>@fluentui/react</InlineCode> 8.x and is available in the demo.</li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/fluentui/v8
+            </InlineCode>{' '}
+            targets <InlineCode>@fluentui/react</InlineCode> 8.x and is
+            available in the demo.
+          </li>
         </List>
         <SectionTitle>Installing Fluent UI</SectionTitle>
         <p>
-          Install the matching Fluent UI peer dependency before using the adapter.
+          Install the matching Fluent UI peer dependency before using the
+          adapter.
         </p>
         <CodeBlock
           code={fluentUiAdaptersInstallSnippet}
@@ -2863,7 +3458,11 @@ export const documentationPages: IDocumentationPage[] = [
           label="Fluent UI v8 peers"
         />
         <SectionTitle>Using Fluent UI v8</SectionTitle>
-        <CodeBlock code={fluentUiSnippet} language="tsx" label="Fluent UI v8 adapter" />
+        <CodeBlock
+          code={fluentUiSnippet}
+          language="tsx"
+          label="Fluent UI v8 adapter"
+        />
         <SectionTitle>Extending the Fluent UI adapter</SectionTitle>
         <CodeBlock
           code={fluentUiCreateComponentsSnippet}
@@ -2873,7 +3472,8 @@ export const documentationPages: IDocumentationPage[] = [
         <AlertBox title="Related docs" variant="info">
           <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
           <TextLink to="/documentation/components">Components</TextLink>, and{' '}
-          <TextLink to="/api/adapters/fluentui">Fluent UI adapter API</TextLink>.
+          <TextLink to="/api/adapters/fluentui">Fluent UI adapter API</TextLink>
+          .
         </AlertBox>
       </>
     ),
@@ -2897,13 +3497,25 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <SectionTitle>Available entrypoints</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/mantine/v9</InlineCode> is the recommended entrypoint for new Mantine projects and the one used in the demo.</li>
-          <li><InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode> is available for applications that are still on Mantine 8.</li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/mantine/v9
+            </InlineCode>{' '}
+            is the recommended entrypoint for new Mantine projects and the one
+            used in the demo.
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/mantine/v8
+            </InlineCode>{' '}
+            is available for applications that are still on Mantine 8.
+          </li>
         </List>
         <SectionTitle>Installing Mantine</SectionTitle>
         <p>
           Install the Mantine peer dependencies that match the adapter version
-          you want to use. For new setups, prefer <InlineCode>mantine/v9</InlineCode>.
+          you want to use. For new setups, prefer{' '}
+          <InlineCode>mantine/v9</InlineCode>.
         </p>
         <CodeBlock
           code={mantineAdaptersInstallSnippet}
@@ -2911,9 +3523,10 @@ export const documentationPages: IDocumentationPage[] = [
           label="Mantine v9 peers"
         />
         <AlertBox title="React version note" variant="info">
-          Mantine 9 requires React 19. The library website runs on React 19 so it can
-          exercise <InlineCode>mantine/v9</InlineCode> directly, while the
-          library package itself keeps broad React 18 and 19 peer compatibility.
+          Mantine 9 requires React 19. The library website runs on React 19 so
+          it can exercise <InlineCode>mantine/v9</InlineCode> directly, while
+          the library package itself keeps broad React 18 and 19 peer
+          compatibility.
         </AlertBox>
         <AlertBox title="Stylesheet required" variant="info">
           Import <InlineCode>@mantine/core/styles.css</InlineCode> once in your
@@ -2921,11 +3534,16 @@ export const documentationPages: IDocumentationPage[] = [
           their expected styling.
         </AlertBox>
         <SectionTitle>Using Mantine v9</SectionTitle>
-        <CodeBlock code={mantineSnippet} language="tsx" label="Mantine v9 adapter" />
+        <CodeBlock
+          code={mantineSnippet}
+          language="tsx"
+          label="Mantine v9 adapter"
+        />
         <SectionTitle>Supporting Mantine v8</SectionTitle>
         <p>
           If your application is still on Mantine 8, switch the import path to{' '}
-          <InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode>.
+          <InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode>
+          .
         </p>
         <SectionTitle>Extending the Mantine adapter</SectionTitle>
         <CodeBlock
@@ -2955,16 +3573,23 @@ export const documentationPages: IDocumentationPage[] = [
     content: (
       <>
         <p>
-          Use the Bootstrap adapter when your application already ships Bootstrap 5
-          styles and you want the builder controls mapped to Bootstrap-flavored UI.
+          Use the Bootstrap adapter when your application already ships
+          Bootstrap 5 styles and you want the builder controls mapped to
+          Bootstrap-flavored UI.
         </p>
         <SectionTitle>Available entrypoint</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/bootstrap/v5</InlineCode> is the Bootstrap 5 adapter and is available in the demo.</li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/bootstrap/v5
+            </InlineCode>{' '}
+            is the Bootstrap 5 adapter and is available in the demo.
+          </li>
         </List>
         <SectionTitle>Installing Bootstrap</SectionTitle>
         <p>
-          Install Bootstrap and import its stylesheet before rendering the adapter.
+          Install Bootstrap and import its stylesheet before rendering the
+          adapter.
         </p>
         <CodeBlock
           code={bootstrapAdaptersInstallSnippet}
@@ -2972,14 +3597,20 @@ export const documentationPages: IDocumentationPage[] = [
           label="Bootstrap 5 peer"
         />
         <AlertBox title="Stylesheet required" variant="info">
-          Import <InlineCode>bootstrap/dist/css/bootstrap.min.css</InlineCode> in
-          your application entrypoint or the specific subtree where the adapter is
-          rendered. Also import <InlineCode>bootstrap-icons/font/bootstrap-icons.css</InlineCode>{' '}
-          so the adapter icon buttons render with the official Bootstrap Icons package.
-          Without these stylesheets, the adapter falls back to unstyled HTML.
+          Import <InlineCode>bootstrap/dist/css/bootstrap.min.css</InlineCode>{' '}
+          in your application entrypoint or the specific subtree where the
+          adapter is rendered. Also import{' '}
+          <InlineCode>bootstrap-icons/font/bootstrap-icons.css</InlineCode> so
+          the adapter icon buttons render with the official Bootstrap Icons
+          package. Without these stylesheets, the adapter falls back to unstyled
+          HTML.
         </AlertBox>
         <SectionTitle>Using Bootstrap v5</SectionTitle>
-        <CodeBlock code={bootstrapSnippet} language="tsx" label="Bootstrap v5 adapter" />
+        <CodeBlock
+          code={bootstrapSnippet}
+          language="tsx"
+          label="Bootstrap v5 adapter"
+        />
         <SectionTitle>Extending the Bootstrap adapter</SectionTitle>
         <CodeBlock
           code={bootstrapCreateComponentsSnippet}
@@ -2989,7 +3620,10 @@ export const documentationPages: IDocumentationPage[] = [
         <AlertBox title="Related docs" variant="info">
           <TextLink to="/documentation/adapters">Adapters</TextLink>,{' '}
           <TextLink to="/documentation/components">Components</TextLink>, and{' '}
-          <TextLink to="/api/adapters/bootstrap">Bootstrap adapter API</TextLink>.
+          <TextLink to="/api/adapters/bootstrap">
+            Bootstrap adapter API
+          </TextLink>
+          .
         </AlertBox>
       </>
     ),
@@ -3013,7 +3647,11 @@ export const documentationPages: IDocumentationPage[] = [
         </p>
         <SectionTitle>Available entrypoint</SectionTitle>
         <List>
-          <li><InlineCode>@vojtechportes/react-query-builder/radix/v1</InlineCode> targets <InlineCode>@radix-ui/themes</InlineCode> 1.x and is available in the demo.</li>
+          <li>
+            <InlineCode>@vojtechportes/react-query-builder/radix/v1</InlineCode>{' '}
+            targets <InlineCode>@radix-ui/themes</InlineCode> 1.x and is
+            available in the demo.
+          </li>
         </List>
         <SectionTitle>Installing Radix Themes</SectionTitle>
         <p>
@@ -3032,16 +3670,20 @@ export const documentationPages: IDocumentationPage[] = [
           <InlineCode>@radix-ui/themes</InlineCode>.
         </AlertBox>
         <AlertBox title="Stylesheet required" variant="info">
-          Import <InlineCode>@radix-ui/themes/styles.css</InlineCode> once in your
-          application entrypoint so Radix Themes components render with the expected
-          styling.
+          Import <InlineCode>@radix-ui/themes/styles.css</InlineCode> once in
+          your application entrypoint so Radix Themes components render with the
+          expected styling.
         </AlertBox>
         <AlertBox title="Provider required" variant="info">
-          Render the builder inside <InlineCode>Theme</InlineCode> so Radix Themes
-          tokens and component styles are available to the adapter.
+          Render the builder inside <InlineCode>Theme</InlineCode> so Radix
+          Themes tokens and component styles are available to the adapter.
         </AlertBox>
         <SectionTitle>Using Radix v1</SectionTitle>
-        <CodeBlock code={radixSnippet} language="tsx" label="Radix v1 adapter" />
+        <CodeBlock
+          code={radixSnippet}
+          language="tsx"
+          label="Radix v1 adapter"
+        />
         <SectionTitle>Extending the Radix adapter</SectionTitle>
         <CodeBlock
           code={radixCreateComponentsSnippet}
@@ -3070,7 +3712,8 @@ export const documentationPages: IDocumentationPage[] = [
       <>
         <p>
           Use the theme provider to override builder color tokens. For control
-          and container replacement, see <TextLink to="/documentation/components">Components</TextLink>.
+          and container replacement, see{' '}
+          <TextLink to="/documentation/components">Components</TextLink>.
         </p>
         <CodeBlock code={themeSnippet} language="tsx" label="Theme provider" />
         <AlertBox title="Adapters and theming" variant="info">
@@ -3079,8 +3722,10 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/documentation/adapters">Adapters</TextLink>, such as{' '}
           <InlineCode>mui/v7</InlineCode>, <InlineCode>mui/v9</InlineCode>,{' '}
           <InlineCode>antd/v5</InlineCode>, <InlineCode>antd/v6</InlineCode>,{' '}
-          <InlineCode>bootstrap/v5</InlineCode>, <InlineCode>fluentui/v8</InlineCode>,{' '}
-          <InlineCode>mantine/v8</InlineCode>, <InlineCode>mantine/v9</InlineCode>, or{' '}
+          <InlineCode>bootstrap/v5</InlineCode>,{' '}
+          <InlineCode>fluentui/v8</InlineCode>,{' '}
+          <InlineCode>mantine/v8</InlineCode>,{' '}
+          <InlineCode>mantine/v9</InlineCode>, or{' '}
           <InlineCode>radix/v1</InlineCode>, these theme tokens do not affect
           the adapter UI.
         </AlertBox>
@@ -3109,20 +3754,119 @@ export const documentationPages: IDocumentationPage[] = [
           <TextLink to="/api/builder">Builder</TextLink> via{' '}
           <InlineCode>strings</InlineCode>.
         </p>
-        <CodeBlock code={localizationSnippet} language="ts" label="Localized fields" />
+        <CodeBlock
+          code={localizationSnippet}
+          language="ts"
+          label="Localized fields"
+        />
         <SectionTitle>Built-in UI strings</SectionTitle>
         <p>
-          The exported <InlineCode>strings</InlineCode> object can be used as a
-          base for selective overrides of built-in copy.
+          Locales can be imported from their subpaths and passed to the Builder
+          through the <InlineCode>strings</InlineCode> prop.
         </p>
-        <CodeBlock code={stringsSnippet} language="tsx" label="Custom UI strings" />
+        <CodeBlock
+          code={firstPartyLocaleSnippet}
+          language="tsx"
+          label="Built-in French translations"
+        />
+        <p>Supported locale subpaths:</p>
         <List>
-          <li><InlineCode>group</InlineCode> covers labels such as add, delete, and group mode choices.</li>
-          <li><InlineCode>rule</InlineCode> covers rule-level action labels.</li>
-          <li><InlineCode>textMode</InlineCode> covers text-mode labels and messages such as the mode toggle, syntax error prefix, lock warning, and locked-range hover text.</li>
-          <li><InlineCode>textMode.sql</InlineCode> covers localized SQL parser and syntax-validation messages used by text mode.</li>
-          <li><InlineCode>operators</InlineCode> lets you rename operator captions shown in selectors.</li>
-          <li><InlineCode>validation</InlineCode> customizes built-in validation messages.</li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/en-US
+            </InlineCode>{' '}
+            — English (United States)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/fr-FR
+            </InlineCode>{' '}
+            — French (France)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/it-IT
+            </InlineCode>{' '}
+            — Italian (Italy)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/de-DE
+            </InlineCode>{' '}
+            — German (Germany)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/es-ES
+            </InlineCode>{' '}
+            — Spanish (Spain)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/pt-PT
+            </InlineCode>{' '}
+            — Portuguese (Portugal)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/cs-CZ
+            </InlineCode>{' '}
+            — Czech (Czechia)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/sk-SK
+            </InlineCode>{' '}
+            — Slovak (Slovakia)
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/zh-CN
+            </InlineCode>{' '}
+            — Simplified Chinese
+          </li>
+          <li>
+            <InlineCode>
+              @vojtechportes/react-query-builder/locale/zh-TW
+            </InlineCode>{' '}
+            — Traditional Chinese
+          </li>
+        </List>
+        <p>
+          The package-root <InlineCode>strings</InlineCode> import remains the
+          backward-compatible English (<InlineCode>en-US</InlineCode>) form. Use
+          it as a base when you only need selective overrides.
+        </p>
+        <CodeBlock
+          code={stringsSnippet}
+          language="tsx"
+          label="Custom UI strings"
+        />
+        <List>
+          <li>
+            <InlineCode>group</InlineCode> covers labels such as add, delete,
+            and group mode choices.
+          </li>
+          <li>
+            <InlineCode>rule</InlineCode> covers rule-level action labels.
+          </li>
+          <li>
+            <InlineCode>textMode</InlineCode> covers text-mode labels and
+            messages such as the mode toggle, syntax error prefix, lock warning,
+            and locked-range hover text.
+          </li>
+          <li>
+            <InlineCode>textMode.sql</InlineCode> covers localized SQL parser
+            and syntax-validation messages used by text mode.
+          </li>
+          <li>
+            <InlineCode>operators</InlineCode> lets you rename operator captions
+            shown in selectors.
+          </li>
+          <li>
+            <InlineCode>validation</InlineCode> customizes built-in validation
+            messages.
+          </li>
         </List>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder">Builder</TextLink>.
@@ -3136,26 +3880,33 @@ export const documentationGroups: IDocumentationGroup[] = [
   {
     key: 'getting-started',
     title: 'Getting Started',
-    pages: documentationPages.filter(page => page.sectionKey === 'getting-started'),
+    pages: documentationPages.filter(
+      (page) => page.sectionKey === 'getting-started'
+    ),
   },
   {
     key: 'parsing',
     title: 'Parsing and Formatting',
-    pages: documentationPages.filter(page => page.sectionKey === 'parsing'),
+    pages: documentationPages.filter((page) => page.sectionKey === 'parsing'),
   },
   {
     key: 'customization',
     title: 'Customization',
-    pages: documentationPages.filter(page => page.sectionKey === 'customization'),
+    pages: documentationPages.filter(
+      (page) => page.sectionKey === 'customization'
+    ),
   },
   {
     key: 'single-localization',
     title: 'Localization',
-    pages: documentationPages.filter(page => page.sectionKey === 'single-localization'),
+    pages: documentationPages.filter(
+      (page) => page.sectionKey === 'single-localization'
+    ),
   },
 ];
 
 export const findDocumentationPage = (pathname: string) =>
-  documentationPages.find(page => page.path === pathname) ?? documentationPages[0];
+  documentationPages.find((page) => page.path === pathname) ??
+  documentationPages[0];
 
 export const documentationOverviewPage = documentationPages[0];

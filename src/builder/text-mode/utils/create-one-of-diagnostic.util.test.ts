@@ -1,4 +1,4 @@
-import { strings } from '../../../constants/strings';
+﻿import { strings } from '../../../locales/en-us';
 import { createOneOfDiagnostic } from './create-one-of-diagnostic.util';
 
 describe('createOneOfDiagnostic', () => {

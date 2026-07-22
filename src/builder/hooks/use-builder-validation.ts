@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { IStrings } from '../../constants/strings';
+﻿import { useEffect, useRef, useState } from 'react';
+import type { IStrings } from '../../locales/types/strings';
 import { DenormalizedQuery, NormalizedQuery } from '../../utils/query-tree';
 import { createBuilderValidationResult } from '../../utils/validation/create-builder-validation-result.util';
 import { validateBuilderQuery } from '../../utils/validation/validate-builder-query.util';
@@ -141,4 +141,3 @@ export const useBuilderValidation = ({
 
   return validation;
 };
-

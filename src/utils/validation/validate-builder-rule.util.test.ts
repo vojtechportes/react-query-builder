@@ -1,4 +1,4 @@
-import { strings } from '../../constants/strings';
+﻿import { strings } from '../../locales/en-us';
 import { validateBuilderRule } from './validate-builder-rule.util';
 
 describe('validateBuilderRule field comparisons', () => {
@@ -8,9 +8,19 @@ describe('validateBuilderRule field comparisons', () => {
         field: 'TEXT_A',
         label: 'Text A',
         type: 'TEXT',
-        operators: ['EQUAL', 'BETWEEN', 'CONTAINS', 'STARTS_WITH', 'ENDS_WITH', 'NOT_CONTAINS'],
+        operators: [
+          'EQUAL',
+          'BETWEEN',
+          'CONTAINS',
+          'STARTS_WITH',
+          'ENDS_WITH',
+          'NOT_CONTAINS',
+        ],
         validation: { required: true },
-        fieldComparison: { type: 'string', comparableFields: ['TEXT_B', 'LIST_A'] },
+        fieldComparison: {
+          type: 'string',
+          comparableFields: ['TEXT_B', 'LIST_A'],
+        },
       },
       {
         field: 'TEXT_B',

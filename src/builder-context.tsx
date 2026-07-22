@@ -1,4 +1,4 @@
-import React, { FC, createContext } from 'react';
+﻿import React, { FC, createContext } from 'react';
 import {
   BuilderGroupMode,
   BuilderNewNodePlacement,
@@ -8,11 +8,9 @@ import {
   IBuilderValidationResult,
 } from './builder/types';
 import { defaultComponents } from './builder/constants/default-components';
-import { IStrings, strings as defaultStrings } from './constants/strings';
-import {
-  BuilderHistoryAction,
-  IBuilderHistoryState,
-} from './history/types';
+import type { IStrings } from './locales/types/strings';
+import { strings as defaultStrings } from './locales/en-us';
+import { BuilderHistoryAction, IBuilderHistoryState } from './history/types';
 import { NormalizedQuery } from './utils/query-tree';
 import { IBuilderFieldOptionsStore } from './builder/utils/builder-field-options-store';
 
@@ -187,4 +185,3 @@ export const BuilderContextProvider: FC<IBuilderContextProviderProps> = ({
     </BuilderContext.Provider>
   );
 };
-

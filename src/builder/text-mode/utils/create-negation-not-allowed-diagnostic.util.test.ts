@@ -1,4 +1,4 @@
-import { strings } from '../../../constants/strings';
+﻿import { strings } from '../../../locales/en-us';
 import { createNegationNotAllowedDiagnostic } from './create-negation-not-allowed-diagnostic.util';
 
 describe('createNegationNotAllowedDiagnostic', () => {

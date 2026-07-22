@@ -1,4 +1,4 @@
-import { strings } from '../../../constants/strings';
+﻿import { strings } from '../../../locales/en-us';
 import { createFieldNotFoundDiagnostic } from './create-field-not-found-diagnostic.util';
 
 describe('createFieldNotFoundDiagnostic', () => {

@@ -1,4 +1,4 @@
-import { IStrings } from '../../../constants/strings';
+﻿import type { IStrings } from '../../../locales/types/strings';
 import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
 import { getValidationString } from '../../../utils/validation/get-validation-string.util';
 import { validateFieldComparison } from '../../../utils/validation/validate-field-comparison.util';
@@ -228,7 +228,9 @@ export const validateBuilderSqlTextSemantics = (
           return;
         }
 
-        diagnostics.push(createOneOfDiagnostic(range.start, range.end, strings));
+        diagnostics.push(
+          createOneOfDiagnostic(range.start, range.end, strings)
+        );
       });
 
       return;
@@ -252,4 +254,3 @@ export const validateBuilderSqlTextSemantics = (
 
   return diagnostics;
 };
-

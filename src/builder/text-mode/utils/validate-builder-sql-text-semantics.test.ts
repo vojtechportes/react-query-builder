@@ -1,4 +1,4 @@
-import { strings } from '../../../constants/strings';
+﻿import { strings } from '../../../locales/en-us';
 import { tryParseSql } from '../../../query-formats/sql/try-parse-sql';
 import { IBuilderFieldProps } from '../../types';
 import { validateBuilderSqlTextSemantics } from './validate-builder-sql-text-semantics';
@@ -9,7 +9,10 @@ const fields: IBuilderFieldProps[] = [
     label: 'Mock Field',
     type: 'TEXT',
     operators: ['EQUAL', 'IS_NOT_NULL', 'LIKE', 'NOT_IN'],
-    fieldComparison: { type: 'string', comparableFields: ['OTHER_TEXT_FIELD', 'LIST_FIELD'] },
+    fieldComparison: {
+      type: 'string',
+      comparableFields: ['OTHER_TEXT_FIELD', 'LIST_FIELD'],
+    },
   },
   {
     field: 'OTHER_TEXT_FIELD',
@@ -193,5 +196,3 @@ describe('validateBuilderSqlTextSemantics', () => {
     );
   });
 });
-
-

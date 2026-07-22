@@ -1,11 +1,14 @@
-import React, { FC } from 'react';
+﻿import React, { FC } from 'react';
 import { IButtonProps } from '../../button';
-import { IStrings } from '../../constants/strings';
+import type { IStrings } from '../../locales/types/strings';
 import { IPopoverItemProps } from '../../popover-item';
 import { IPopoverProps } from '../../popover';
 import { BuilderGroupMode, IHistoryControlsProps } from '../types';
 import { RootControls } from './root-controls';
-import { ITextModeToggleContentProps, TextModeToggleContent } from './text-mode-toggle-content';
+import {
+  ITextModeToggleContentProps,
+  TextModeToggleContent,
+} from './text-mode-toggle-content';
 
 export interface IBuilderRootActionsProps {
   readOnly: boolean;
@@ -61,9 +64,9 @@ export const BuilderRootActions: FC<IBuilderRootActionsProps> = ({
   HistoryControlsComponent,
 }) => {
   const shouldRender =
-    ((!readOnly && strings.group && !singleRootGroup) ||
-      showHistoryControls ||
-      isTextModeConfigured);
+    (!readOnly && strings.group && !singleRootGroup) ||
+    showHistoryControls ||
+    isTextModeConfigured;
 
   if (!shouldRender) {
     return null;

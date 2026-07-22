@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+﻿import React, { ReactElement } from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import {
@@ -7,7 +7,7 @@ import {
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
-import { strings } from '../constants/strings';
+import { strings } from '../locales/en-us';
 import { Rule } from './rule';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -123,7 +123,9 @@ const data: any[] = [
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -145,10 +147,15 @@ const renderWithContext = (
 
 describe('#components/Rule', () => {
   it('renders in editable and read-only modes', () => {
-    const editable = renderWithContext(<Rule id="test-2" field="MOCK_FIELD_1" />);
-    const readOnly = renderWithContext(<Rule id="test-2" field="MOCK_FIELD_1" />, {
-      readOnly: true,
-    });
+    const editable = renderWithContext(
+      <Rule id="test-2" field="MOCK_FIELD_1" />
+    );
+    const readOnly = renderWithContext(
+      <Rule id="test-2" field="MOCK_FIELD_1" />,
+      {
+        readOnly: true,
+      }
+    );
 
     expect(editable.container.firstChild).toBeTruthy();
     expect(readOnly.container.firstChild).toBeTruthy();
@@ -180,11 +187,15 @@ describe('#components/Rule', () => {
     );
 
     for (let index = 0; index < 8; index += 1) {
-      expect(container.querySelector(`[data-test="Rule[${index}]"]`)).toBeTruthy();
+      expect(
+        container.querySelector(`[data-test="Rule[${index}]"]`)
+      ).toBeTruthy();
     }
 
     expect(
-      container.querySelector('[data-test="Rule[9]"] [data-test="SelectMultiTrigger"]')
+      container.querySelector(
+        '[data-test="Rule[9]"] [data-test="SelectMultiTrigger"]'
+      )
     ).toBeTruthy();
     expect(
       container.querySelectorAll(
@@ -269,9 +280,10 @@ describe('#components/Rule', () => {
     expect(
       container.querySelector('#query-builder-rule-test-2-operator-trigger')
     ).toHaveAttribute('disabled');
-    expect(
-      container.querySelector('[data-test="Switch"]')
-    ).toHaveAttribute('aria-disabled', 'true');
+    expect(container.querySelector('[data-test="Switch"]')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('renders value-source and value-field selectors for field comparisons', () => {

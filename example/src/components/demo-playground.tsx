@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 import '@radix-ui/themes/styles.css';
 import {
@@ -23,6 +23,8 @@ import {
   initialQueryTree,
 } from '../constants/demo-data';
 import { siteTheme } from '../constants/site-theme';
+import { localeStrings } from '../constants/locale-strings';
+import { localeOptions, type LocaleId } from '../constants/locale-options';
 import { BuilderSurface } from './builder-surface';
 import { MuiBuilderSurface } from './mui-builder-surface';
 import {
@@ -283,6 +285,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
   const [newNodePlacement, setNewNodePlacement] = React.useState<
     'append' | 'prepend'
   >('append');
+  const [locale, setLocale] = React.useState<LocaleId>('en-US');
   const [history, setHistory] = React.useState(false);
   const [textMode, setTextMode] = React.useState(false);
   const [defaultMode, setDefaultMode] = React.useState<'builder' | 'text'>(
@@ -354,6 +357,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     allowGroupNegation,
     allowFieldComparisons,
     newNodePlacement,
+    strings: localeStrings[locale],
     history,
     textMode,
     defaultMode,
@@ -398,6 +402,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         allowGroupNegation,
         allowFieldComparisons,
         newNodePlacement,
+        locale,
         history,
         textMode,
         defaultMode,
@@ -417,6 +422,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       allowGroupNegation,
       allowFieldComparisons,
       newNodePlacement,
+      locale,
       history,
       textMode,
       defaultMode,
@@ -582,6 +588,19 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
             >
               <option value="append">Append to end</option>
               <option value="prepend">Prepend to start</option>
+            </SelectControl>
+          </SelectField>
+          <SelectField>
+            <SelectFieldLabel>Locale</SelectFieldLabel>
+            <SelectControl
+              value={locale}
+              onChange={(event) => setLocale(event.target.value as LocaleId)}
+            >
+              {localeOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
             </SelectControl>
           </SelectField>
         </Panel>

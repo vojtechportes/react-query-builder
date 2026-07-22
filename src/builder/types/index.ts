@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { IAlertProps } from '../../alert';
 import { IButtonProps } from '../../button';
 import { ICloneButtonProps } from '../../clone-button';
@@ -16,7 +16,7 @@ import { IPopoverItemProps } from '../../popover-item';
 import { IPopoverProps } from '../../popover';
 import { IRuleProps as IRuleContainerProps } from '../../rule/rule-container';
 import { Text } from '../../text';
-import { IStrings } from '../../constants/strings';
+import type { IStrings } from '../../locales/types/strings';
 import { BuilderLockState } from '../../utils/lock-state';
 import { BuilderDefaultMode } from './builder-default-mode';
 import type { IBuilderFieldChange } from './field-option';
@@ -82,7 +82,11 @@ export type BuilderFieldValue =
   | Array<{ value: string | number; label: string }>;
 
 export type BuilderFieldUsageLimitScope = 'global' | 'parent';
-export type BuilderFieldComparisonType = 'string' | 'number' | 'date' | 'boolean';
+export type BuilderFieldComparisonType =
+  | 'string'
+  | 'number'
+  | 'date'
+  | 'boolean';
 
 export interface IBuilderFieldUsageLimit {
   key?: string;
@@ -111,7 +115,7 @@ export type BuilderValidationMessage =
 
 export interface IBuilderRangeValidation<
   TValueValidation = unknown,
-  TRangeValue = string | number
+  TRangeValue = string | number,
 > {
   common?: Partial<TValueValidation>;
   start?: Partial<TValueValidation>;
@@ -135,15 +139,17 @@ export interface IBuilderFieldValidationBase<TValue = unknown> {
   customMessage?: BuilderValidationMessage;
 }
 
-export interface ITextValueValidationRule
-  extends IBuilderFieldValidationBase<string | string[]> {
+export interface ITextValueValidationRule extends IBuilderFieldValidationBase<
+  string | string[]
+> {
   minLength?: number;
   maxLength?: number;
   matches?: RegExp;
 }
 
-export interface INumberValueValidationRule
-  extends IBuilderFieldValidationBase<number | number[]> {
+export interface INumberValueValidationRule extends IBuilderFieldValidationBase<
+  number | number[]
+> {
   min?: number;
   max?: number;
   integer?: boolean;
@@ -151,18 +157,21 @@ export interface INumberValueValidationRule
   negative?: boolean;
 }
 
-export interface IDateValueValidationRule
-  extends IBuilderFieldValidationBase<string | string[]> {
+export interface IDateValueValidationRule extends IBuilderFieldValidationBase<
+  string | string[]
+> {
   minDate?: string | Date;
   maxDate?: string | Date;
 }
 
 export type IBooleanValueValidationRule = IBuilderFieldValidationBase<boolean>;
-export type IListValueValidationRule =
-  IBuilderFieldValidationBase<string | number>;
+export type IListValueValidationRule = IBuilderFieldValidationBase<
+  string | number
+>;
 
-export interface IMultiListValueValidationRule
-  extends IBuilderFieldValidationBase<Array<string | number>> {
+export interface IMultiListValueValidationRule extends IBuilderFieldValidationBase<
+  Array<string | number>
+> {
   minItems?: number;
   maxItems?: number;
 }
@@ -231,7 +240,7 @@ export type IStatementFieldValidation =
 interface IBuilderFieldBase<
   TType extends BuilderFieldType,
   TValue extends BuilderFieldValue | undefined,
-  TValidation
+  TValidation,
 > {
   field: string;
   label: string;
@@ -440,5 +449,3 @@ export type {
   BuilderRefListener,
   IBuilderRef,
 } from '../../hooks/use-builder-ref/types';
-
-

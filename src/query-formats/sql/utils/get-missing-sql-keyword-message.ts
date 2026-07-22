@@ -1,4 +1,4 @@
-import { IStrings } from '../../../constants/strings';
+﻿import type { IStrings } from '../../../locales/types/strings';
 import { getSqlParserString } from './get-sql-parser-string';
 
 export const getMissingSqlKeywordMessage = (

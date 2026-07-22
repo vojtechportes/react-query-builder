@@ -60,6 +60,56 @@
       "import": "./dist/formatQuery.mjs",
       "require": "./dist/formatQuery.cjs"
     },
+    "./locale/en-US": {
+      "types": "./dist/locale/en-US/index.d.ts",
+      "import": "./dist/locale/en-US/index.mjs",
+      "require": "./dist/locale/en-US/index.cjs"
+    },
+    "./locale/fr-FR": {
+      "types": "./dist/locale/fr-FR/index.d.ts",
+      "import": "./dist/locale/fr-FR/index.mjs",
+      "require": "./dist/locale/fr-FR/index.cjs"
+    },
+    "./locale/it-IT": {
+      "types": "./dist/locale/it-IT/index.d.ts",
+      "import": "./dist/locale/it-IT/index.mjs",
+      "require": "./dist/locale/it-IT/index.cjs"
+    },
+    "./locale/de-DE": {
+      "types": "./dist/locale/de-DE/index.d.ts",
+      "import": "./dist/locale/de-DE/index.mjs",
+      "require": "./dist/locale/de-DE/index.cjs"
+    },
+    "./locale/es-ES": {
+      "types": "./dist/locale/es-ES/index.d.ts",
+      "import": "./dist/locale/es-ES/index.mjs",
+      "require": "./dist/locale/es-ES/index.cjs"
+    },
+    "./locale/pt-PT": {
+      "types": "./dist/locale/pt-PT/index.d.ts",
+      "import": "./dist/locale/pt-PT/index.mjs",
+      "require": "./dist/locale/pt-PT/index.cjs"
+    },
+    "./locale/cs-CZ": {
+      "types": "./dist/locale/cs-CZ/index.d.ts",
+      "import": "./dist/locale/cs-CZ/index.mjs",
+      "require": "./dist/locale/cs-CZ/index.cjs"
+    },
+    "./locale/sk-SK": {
+      "types": "./dist/locale/sk-SK/index.d.ts",
+      "import": "./dist/locale/sk-SK/index.mjs",
+      "require": "./dist/locale/sk-SK/index.cjs"
+    },
+    "./locale/zh-CN": {
+      "types": "./dist/locale/zh-CN/index.d.ts",
+      "import": "./dist/locale/zh-CN/index.mjs",
+      "require": "./dist/locale/zh-CN/index.cjs"
+    },
+    "./locale/zh-TW": {
+      "types": "./dist/locale/zh-TW/index.d.ts",
+      "import": "./dist/locale/zh-TW/index.mjs",
+      "require": "./dist/locale/zh-TW/index.cjs"
+    },
     "./bootstrap/v5": {
       "types": "./dist/bootstrap/v5/index.d.ts",
       "import": "./dist/bootstrap/v5/index.mjs",
@@ -121,6 +171,16 @@
     "dist/index.d.ts",
     "dist/parseQuery.d.ts",
     "dist/formatQuery.d.ts",
+    "dist/locale/en-US/index.d.ts",
+    "dist/locale/fr-FR/index.d.ts",
+    "dist/locale/it-IT/index.d.ts",
+    "dist/locale/de-DE/index.d.ts",
+    "dist/locale/es-ES/index.d.ts",
+    "dist/locale/pt-PT/index.d.ts",
+    "dist/locale/cs-CZ/index.d.ts",
+    "dist/locale/sk-SK/index.d.ts",
+    "dist/locale/zh-CN/index.d.ts",
+    "dist/locale/zh-TW/index.d.ts",
     "dist/bootstrap/v5/index.d.ts",
     "dist/mui/v7/index.d.ts",
     "dist/mui/v9/index.d.ts",

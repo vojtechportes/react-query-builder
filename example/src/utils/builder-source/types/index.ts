@@ -1,3 +1,4 @@
+﻿import type { LocaleId } from '../../../constants/locale-options';
 import type { IColors } from '../../../../../src/constants/colors';
 
 export type CustomizationMode =
@@ -18,6 +19,7 @@ export interface IBuilderSourceOptions {
   allowGroupNegation: boolean;
   allowFieldComparisons: boolean;
   newNodePlacement: 'append' | 'prepend';
+  locale: LocaleId;
   history: boolean;
   textMode: boolean;
   defaultMode: 'builder' | 'text';
@@ -28,5 +30,3 @@ export interface IBuilderSourceOptions {
   themeColors: IColors;
   defaultThemeColors: IColors;
 }
-
-

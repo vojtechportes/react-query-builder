@@ -1,4 +1,4 @@
-export { Builder, defaultComponents } from './builder';
+﻿export { Builder, defaultComponents } from './builder';
 export { useBuilderRef } from './hooks/use-builder-ref';
 export { useBuilderRuleDependencies } from './hooks/use-builder-rule-dependencies';
 export type {
@@ -83,11 +83,14 @@ export type {
   IBooleanFieldValidationRule,
   IBooleanValueValidationRule,
 } from './builder';
-export { ThemeProvider } from './theme-provider/theme-provider'
-export type { IThemeProviderProps } from './theme-provider/theme-provider'
+export { ThemeProvider } from './theme-provider/theme-provider';
+export type { IThemeProviderProps } from './theme-provider/theme-provider';
 
 export { BuilderContext } from './builder-context';
-export type { IBuilderContextProps, IBuilderContextProviderProps } from './builder-context';
+export type {
+  IBuilderContextProps,
+  IBuilderContextProviderProps,
+} from './builder-context';
 
 export { Input } from './form/input';
 export type { IInputProps } from './form/input';
@@ -138,8 +141,8 @@ export type {
   IColorVariant,
   IGreyColorVariant,
 } from './constants/colors';
-export { strings } from './constants/strings';
-export type { IStrings } from './constants/strings';
+export { strings } from './locales/en-us';
+export type { IStrings } from './locales/types/strings';
 export { queryOperators } from './utils/query-operators';
 export {
   getRuleValueSource,
@@ -176,4 +179,3 @@ export type {
   RuleReadOnly,
   RuleReadOnlyTarget,
 } from './utils/query-tree';
-
