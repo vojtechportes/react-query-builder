@@ -3905,8 +3905,12 @@ export const documentationGroups: IDocumentationGroup[] = [
   },
 ];
 
-export const findDocumentationPage = (pathname: string) =>
-  documentationPages.find((page) => page.path === pathname) ??
-  documentationPages[0];
+export const findDocumentationPage = (pathname: string) => {
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/';
+  return (
+    documentationPages.find((page) => page.path === normalizedPath) ??
+    documentationPages[0]
+  );
+};
 
 export const documentationOverviewPage = documentationPages[0];

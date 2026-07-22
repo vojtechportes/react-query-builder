@@ -1763,8 +1763,10 @@ export const apiGroups: IApiGroup[] = [
   },
 ];
 
-export const findApiPage = (pathname: string) =>
-  apiPages.find(page => page.path === pathname) ?? apiPages[0];
+export const findApiPage = (pathname: string) => {
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/';
+  return apiPages.find((page) => page.path === normalizedPath) ?? apiPages[0];
+};
 
 export const apiOverviewPage = apiPages[0];
 
