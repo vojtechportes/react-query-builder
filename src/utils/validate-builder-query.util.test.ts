@@ -1,8 +1,5 @@
-import {
-  IBuilderFieldProps,
-  IBuilderValidationContext,
-} from '../builder';
-import { strings } from '../constants/strings';
+﻿import { IBuilderFieldProps, IBuilderValidationContext } from '../builder';
+import { strings } from '../locales/en-us';
 import { validateBuilderQuery } from './validation/validate-builder-query.util';
 
 describe('validateBuilderQuery', () => {
@@ -68,7 +65,9 @@ describe('validateBuilderQuery', () => {
           type: 'GROUP',
           value: 'AND',
           isNegated: false,
-          children: [{ id: 'rule-1', field: 'NAME', operator: 'EQUAL', value: '' }],
+          children: [
+            { id: 'rule-1', field: 'NAME', operator: 'EQUAL', value: '' },
+          ],
         },
       ],
       context
@@ -196,7 +195,9 @@ describe('validateBuilderQuery', () => {
           type: 'GROUP',
           value: 'AND',
           isNegated: false,
-          children: [{ id: 'rule-1', field: 'NAME', operator: 'EQUAL', value: '' }],
+          children: [
+            { id: 'rule-1', field: 'NAME', operator: 'EQUAL', value: '' },
+          ],
         },
       ],
       {
@@ -245,7 +246,9 @@ describe('validateBuilderQuery', () => {
     );
 
     expect(result.isValid).toEqual(false);
-    expect(result.issuesByRuleId['rule-2'][0].code).toEqual('usage_limit_exceeded');
+    expect(result.issuesByRuleId['rule-2'][0].code).toEqual(
+      'usage_limit_exceeded'
+    );
   });
 
   it('Limits shared usage keys within the same parent scope only', async () => {
@@ -290,7 +293,12 @@ describe('validateBuilderQuery', () => {
               value: 'AND',
               isNegated: false,
               children: [
-                { id: 'rule-3', field: 'ALIAS', operator: 'EQUAL', value: 'Carol' },
+                {
+                  id: 'rule-3',
+                  field: 'ALIAS',
+                  operator: 'EQUAL',
+                  value: 'Carol',
+                },
               ],
             },
           ],
@@ -303,11 +311,12 @@ describe('validateBuilderQuery', () => {
     );
 
     expect(result.isValid).toEqual(false);
-    expect(result.issuesByRuleId['rule-2'][0].code).toEqual('usage_limit_exceeded');
+    expect(result.issuesByRuleId['rule-2'][0].code).toEqual(
+      'usage_limit_exceeded'
+    );
     expect(result.issuesByRuleId['rule-3']).toBeUndefined();
   });
 });
-
 
 describe('validateBuilderQuery field comparisons', () => {
   const fieldComparisonContext: IBuilderValidationContext = {
@@ -417,14 +426,12 @@ describe('validateBuilderQuery field comparisons', () => {
     );
 
     expect(disabledResult.isValid).toEqual(false);
-    expect(disabledResult.issuesByRuleId['rule-field-disabled'][0].code).toEqual(
-      'field_comparison_disabled'
-    );
+    expect(
+      disabledResult.issuesByRuleId['rule-field-disabled'][0].code
+    ).toEqual('field_comparison_disabled');
     expect(incompatibleResult.isValid).toEqual(false);
     expect(
       incompatibleResult.issuesByRuleId['rule-field-incompatible'][0].code
     ).toEqual('field_comparison_incompatible');
   });
 });
-
-

@@ -1,5 +1,5 @@
-import { BuilderLockState } from './lock-state';
-import { IStrings } from '../constants/strings';
+﻿import { BuilderLockState } from './lock-state';
+import type { IStrings } from '../locales/types/strings';
 
 export const getLockToggleTitle = (
   strings: IStrings | undefined,
@@ -20,7 +20,5 @@ export const getLockToggleTitle = (
     return strings?.group?.lockDescendants || 'Lock group and descendants';
   }
 
-  return (
-    strings?.group?.unlockDescendants || 'Unlock group and descendants'
-  );
+  return strings?.group?.unlockDescendants || 'Unlock group and descendants';
 };

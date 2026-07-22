@@ -1,6 +1,11 @@
-import { IStrings } from '../../constants/strings';
+﻿import type { IStrings } from '../../locales/types/strings';
 import type { QueryGroupValue, QueryOperator } from '../../utils/query-tree';
-import type { IParsedGroup, IToken, ParsedNode, TokenType } from './sql-token.types';
+import type {
+  IParsedGroup,
+  IToken,
+  ParsedNode,
+  TokenType,
+} from './sql-token.types';
 import { tokenizeSql } from './tokenize-sql';
 import { IParsedSqlArrayValue } from './types/parsed-sql-array-value';
 import { IParsedSqlRuleNode } from './types/parsed-sql-rule-node';
@@ -470,12 +475,14 @@ export class SqlParser {
     };
   }
 
-  private normalizeArrayValue(values: Array<string | number>): string[] | number[] {
-    if (values.every(value => typeof value === 'string')) {
+  private normalizeArrayValue(
+    values: Array<string | number>
+  ): string[] | number[] {
+    if (values.every((value) => typeof value === 'string')) {
       return values as string[];
     }
 
-    if (values.every(value => typeof value === 'number')) {
+    if (values.every((value) => typeof value === 'number')) {
       return values as number[];
     }
 

@@ -104,6 +104,36 @@ export const MyBuilder = () => {
 };
 ```
 
+## Localization
+
+The package includes built-in translations for the locales listed below.
+Locales can be imported from their subpaths and passed to the Builder through the
+`strings` prop:
+
+```tsx
+import { Builder } from '@vojtechportes/react-query-builder';
+import { strings } from '@vojtechportes/react-query-builder/locale/fr-FR';
+
+<Builder fields={fields} data={data} strings={strings} onChange={setData} />;
+```
+
+Supported locale subpaths:
+
+- <code>@vojtechportes/react-query-builder/locale/en-US</code>
+- <code>@vojtechportes/react-query-builder/locale/fr-FR</code>
+- <code>@vojtechportes/react-query-builder/locale/it-IT</code>
+- <code>@vojtechportes/react-query-builder/locale/de-DE</code>
+- <code>@vojtechportes/react-query-builder/locale/es-ES</code>
+- <code>@vojtechportes/react-query-builder/locale/pt-PT</code>
+- <code>@vojtechportes/react-query-builder/locale/cs-CZ</code>
+- <code>@vojtechportes/react-query-builder/locale/sk-SK</code>
+- <code>@vojtechportes/react-query-builder/locale/zh-CN</code>
+- <code>@vojtechportes/react-query-builder/locale/zh-TW</code>
+
+The package-root named strings export remains the backward-compatible
+English (en-US) strings. IStrings properties remain optional, so applications
+can continue supplying partial custom overrides.
+
 ## Validation and Usage Limits
 
 Field metadata can define both value validation and structural usage limits.
@@ -377,7 +407,7 @@ editor view.
   textMode
   defaultMode="text"
   onChange={setData}
-/>;
+/>
 ```
 
 For advanced text editing, the package also exposes
@@ -445,4 +475,3 @@ Responsive behavior is documented in more detail on the website:
 
 - <a href="https://www.react-query-builder.com/documentation/components" target="_blank" rel="noopener noreferrer">Documentation: Components</a>
 - <a href="https://www.react-query-builder.com/api/components" target="_blank" rel="noopener noreferrer">API: Components</a>
-

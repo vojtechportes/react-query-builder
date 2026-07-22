@@ -1,4 +1,4 @@
-import { IStrings } from '../../../constants/strings';
+﻿import type { IStrings } from '../../../locales/types/strings';
 import { getSqlParserString } from './get-sql-parser-string';
 
 export const getMissingSqlTokenMessage = (
@@ -19,7 +19,11 @@ export const getMissingSqlTokenMessage = (
         'Missing opening parenthesis.'
       );
     case 'COMMA':
-      return getSqlParserString(textModeStrings, 'missingComma', 'Missing comma.');
+      return getSqlParserString(
+        textModeStrings,
+        'missingComma',
+        'Missing comma.'
+      );
     case 'OPERATOR':
       return getSqlParserString(
         textModeStrings,

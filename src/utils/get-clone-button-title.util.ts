@@ -1,4 +1,4 @@
-import { IStrings } from '../constants/strings';
+﻿import type { IStrings } from '../locales/types/strings';
 
 export const getCloneButtonTitle = (
   strings: IStrings | undefined,

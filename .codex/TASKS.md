@@ -1,4 +1,4 @@
-﻿This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
+This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
 
 ## Status Legend
 
@@ -349,19 +349,19 @@ enabled on the production website.
 
 ### T007 - Add first-party locale string subpath exports
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Goal:** Move localization ownership into `src/locales` and ship complete first-party
-UI string catalogs for ten locales through explicit package subpaths, while preserving
+UI string translations for ten locales through explicit package subpaths, while preserving
 the existing English `strings` export from the package root.
 
 **Architecture and public API decisions:**
 
 - Make `src/locales` the canonical source location for the string contract and all
-  first-party catalogs; remove localization ownership from `src/constants/strings.ts`.
+  first-party translations; remove localization ownership from `src/constants/strings.ts`.
 - Keep internal folders and files kebab-case, for example `src/locales/en-us`, while
   public package paths use the exact canonical locale casing.
-- Give `en-US` sole ownership of the existing English catalog. Re-export that catalog
+- Give `en-US` sole ownership of the existing English translation. Re-export that translation
   as the package-root named `strings` export so this existing import remains backward
   compatible:
   `import { strings } from '@vojtechportes/react-query-builder'`.
@@ -383,32 +383,32 @@ the existing English `strings` export from the package root.
 
 **Implementation phases:**
 
-- [ ] Move the localization model and English catalog:
+- [x] Move the localization model and English translation:
   - Relocate `IStrings` into a focused type file under `src/locales`.
   - Relocate the current English values into the `en-US` locale module.
   - Update all internal imports that currently reference `constants/strings`.
-  - Update `src/index.tsx` to re-export the `en-US` catalog under the existing
+  - Update `src/index.tsx` to re-export the `en-US` translation under the existing
     named `strings` API and continue exporting `IStrings`.
   - Remove the old constants module after all consumers have migrated; do not keep
     two canonical English objects.
-- [ ] Add catalog integrity tests before translating:
+- [x] Add translation integrity tests before translating:
   - Recursively compare every shipped locale's leaf paths with `en-US` and fail on
     missing or extra keys.
-  - Require every catalog leaf to be a non-empty string.
+  - Require every translation leaf to be a non-empty string.
   - Compare the exact placeholder multiset for corresponding messages. Word order may
     differ, but token names and occurrence counts may not.
   - Reject stray placeholder-like tokens and verify root `strings` and
     `locale/en-US` resolve from the same English source.
-- [ ] Add the `en-US` public entry and package plumbing:
+- [x] Add the `en-US` public entry and package plumbing:
   - Add an explicit `tsdown.config.ts` entry that emits locale-only ESM, CommonJS,
     and declaration artifacts.
   - Add explicit `types`, `import`, and `require` conditions to
     `package.json#exports`.
   - Add the public `.d.ts` target to `package.json#files`; the current declaration
     exclusion otherwise removes it from the published package.
-- [ ] Use a two-agent translation workflow for every non-English locale:
+- [x] Use a two-agent translation workflow for every non-English locale:
   - Spawn one dedicated localization sub-agent to translate one locale from the
-    canonical `en-US` catalog and preserve UI intent, terminology, and placeholders.
+    canonical `en-US` translation and preserve UI intent, terminology, and placeholders.
   - After that translation is complete, spawn a separate proofreading sub-agent for
     the same locale to compare it with `en-US` and check linguistic correctness,
     regional usage, consistency, UI brevity, technical terminology, and placeholders.
@@ -416,25 +416,25 @@ the existing English `strings` export from the package root.
     any disputed wording or remaining linguistic risk in the task notes.
   - Keep each sub-agent scoped to its assigned locale so translations and reviews are
     independently attributable and concurrent edits do not overlap.
-  - `en-US` retains the existing English copy and requires compatibility and catalog
+  - `en-US` retains the existing English copy and requires compatibility and translation
     integrity review rather than translation.
-- [ ] Add complete Western European catalogs and explicit build/export/file entries:
+- [x] Add complete Western European translations and explicit build/export/file entries:
       `fr-FR`, `it-IT`, `de-DE`, `es-ES`, and `pt-PT`.
-- [ ] Add complete Central European catalogs and explicit build/export/file entries:
+- [x] Add complete Central European translations and explicit build/export/file entries:
       `cs-CZ` and `sk-SK`.
-- [ ] Add complete Chinese catalogs and explicit build/export/file entries:
+- [x] Add complete Chinese translations and explicit build/export/file entries:
       `zh-CN` in Simplified Chinese and `zh-TW` in Traditional Chinese.
-- [ ] Update README and example-site localization documentation with all ten exact
+- [x] Update README and example-site localization documentation with all ten exact
       import paths, supported locale names, and a complete
       `<Builder strings={strings} />` example. Explain that the package-root import
       remains the backward-compatible English form.
-- [ ] Add locale selection to the Demo website:
+- [x] Add locale selection to the Demo website:
   - Add an accessible `Locale` select directly below `New node placement` in the
     left-hand playground configuration panel.
   - List all ten locale identifiers with clear human-readable names and default to
     `en-US`.
   - Map each option to its locale subpath's named `strings` export and pass the selected
-    catalog to every Builder rendering path, including the default and all adapter
+    translation to every Builder rendering path, including the default and all adapter
     demos.
   - Change the Builder's built-in labels, actions, validation messages, and text-mode
     diagnostics immediately without resetting query data or other playground settings.
@@ -444,15 +444,15 @@ the existing English `strings` export from the package root.
     with the documented backward-compatible import.
   - Add focused tests for option coverage, default selection, control placement,
     locale switching, state preservation, adapter rendering, and generated source.
-- [ ] Validate the built and packed package from consumer-style ESM, CommonJS, and
+- [x] Validate the built and packed package from consumer-style ESM, CommonJS, and
       TypeScript imports, then run the repository-required code review agent and resolve
       its findings.
 
 **Translation requirements:**
 
-- Every non-English catalog covers the complete `en-US` shape, including
+- Every non-English translation covers the complete `en-US` shape, including
   `textMode.sql`, `validation`, deprecated operator aliases, history, locking, and
-  field-comparison messages. First-party catalogs must not depend on English fallback
+  field-comparison messages. First-party translations must not depend on English fallback
   text for missing leaves.
 - Preserve interpolation placeholders exactly, including `{token}`, `{value}`,
   `{keyword}`, `{operator}`, `{field}`, `{valueField}`, `{min}`, and `{max}`.
@@ -471,13 +471,13 @@ the existing English `strings` export from the package root.
 **Acceptance criteria:**
 
 - `src/locales` is the single source of truth for `IStrings` and all first-party
-  catalogs; the old `src/constants/strings.ts` implementation no longer exists.
+  translations; the old `src/constants/strings.ts` implementation no longer exists.
 - The package-root named `strings` export remains source-compatible and behaviorally
-  identical to the current English catalog.
+  identical to the current English translation.
 - All ten public subpaths resolve with exact casing on a case-sensitive filesystem and
   expose named `strings` values assignable to `IStrings`.
 - The root `strings` export and `locale/en-US` are backed by the same canonical English
-  module, with no duplicated catalog to drift.
+  module, with no duplicated translation to drift.
 - Each locale has exactly the English leaf keys, all leaves are non-empty, and every
   message preserves the corresponding placeholder multiset.
 - Each locale has working ESM (`.mjs`), CommonJS (`.cjs`), and TypeScript declaration
@@ -499,9 +499,22 @@ the existing English `strings` export from the package root.
 - Any linguistic nuance that the proofreading sub-agent cannot confidently certify is
   recorded explicitly as a remaining human-review risk.
 
-**Verification:**
+**Task notes:**
 
-- Run focused catalog path, non-empty-value, placeholder, and English re-export tests.
+- Dedicated translation and independent proofreading passes completed for all nine
+  non-English locales. All actionable findings were resolved.
+- Remaining human-review risk is limited to glossary preferences and language features
+  the single-string API cannot express: Czech plural inflection, French collection-
+  operator direction, and preferred terms for builder, modifiers, token, scalar, and
+  array. No known correctness issue remains.
+- Verification passed translation integrity, placeholders, root English identity,
+  exact-case ESM/CommonJS/TypeScript subpaths, packed artifacts, Demo switching,
+  adapters, CJK rendering, responsive layout, full Jest, library and example builds,
+  SEO validation, modified-file lint, and Prettier. Repository-wide lint still reports
+  pre-existing errors in untouched files.
+  **Verification:**
+
+- Run focused translation path, non-empty-value, placeholder, and English re-export tests.
 - Run type-resolution checks importing all ten subpaths and confirm the existing root
   import still type-checks.
 - Run the library build and assert that every locale produces `.mjs`, `.cjs`,

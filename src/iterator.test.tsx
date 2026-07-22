@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+﻿import React, { ReactElement } from 'react';
 import { render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
@@ -6,7 +6,7 @@ import {
   defaultComponents,
 } from './builder';
 import { BuilderContext } from './builder-context';
-import { strings } from './constants/strings';
+import { strings } from './locales/en-us';
 import { Iterator } from './iterator';
 import { NormalizedQuery } from './utils/query-tree';
 
@@ -78,6 +78,8 @@ describe('#components/Iterator', () => {
       <Iterator filteredData={filteredData} originalData={data} />
     );
 
-    expect(container.querySelectorAll('[data-test="IteratorRule"]')).toHaveLength(2);
+    expect(
+      container.querySelectorAll('[data-test="IteratorRule"]')
+    ).toHaveLength(2);
   });
 });

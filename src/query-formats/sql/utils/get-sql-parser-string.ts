@@ -1,4 +1,4 @@
-import { IStrings } from '../../../constants/strings';
+﻿import type { IStrings } from '../../../locales/types/strings';
 
 export interface ISqlParserStringReplacements {
   [key: string]: string | number | undefined;
@@ -12,7 +12,10 @@ export const getSqlParserString = (
 ): string => {
   const template = textModeStrings?.sql?.[key] || fallback;
 
-  return Object.entries(replacements).reduce((result, [replacementKey, value]) => {
-    return result.replaceAll(`{${replacementKey}}`, String(value ?? ''));
-  }, template);
+  return Object.entries(replacements).reduce(
+    (result, [replacementKey, value]) => {
+      return result.replaceAll(`{${replacementKey}}`, String(value ?? ''));
+    },
+    template
+  );
 };

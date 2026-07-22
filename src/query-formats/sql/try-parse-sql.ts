@@ -1,4 +1,4 @@
-import { IStrings } from '../../constants/strings';
+﻿import type { IStrings } from '../../locales/types/strings';
 import type { ISqlParseResult } from './types/sql-parse-result';
 import { inferSqlFields } from './infer-sql-fields';
 import { SqlParser } from './sql-parser';
@@ -29,7 +29,9 @@ export const tryParseSql = (
       error.diagnostic
     ) {
       return {
-        diagnostics: [error.diagnostic as ReturnType<typeof createSqlDiagnostic>],
+        diagnostics: [
+          error.diagnostic as ReturnType<typeof createSqlDiagnostic>,
+        ],
       };
     }
 

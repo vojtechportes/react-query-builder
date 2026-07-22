@@ -1,4 +1,4 @@
-import { IStrings } from '../../../constants/strings';
+﻿import type { IStrings } from '../../../locales/types/strings';
 import { ITextModeDiagnostic } from '../types/text-mode-diagnostic';
 
 export const createNegationNotAllowedDiagnostic = (

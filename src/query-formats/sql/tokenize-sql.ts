@@ -1,11 +1,15 @@
-import { IStrings } from '../../constants/strings';
+﻿import type { IStrings } from '../../locales/types/strings';
 import { extractSqlPredicate } from './extract-sql-predicate';
 import { IToken, SQL_KEYWORDS } from './sql-token.types';
 import { createSqlParseError } from './utils/create-sql-parse-error';
 import { getSqlParserString } from './utils/get-sql-parser-string';
 import { isSuspiciousSqlStringClose } from './utils/is-suspicious-sql-string-close';
 
-const coerceSqlKeyword = (value: string, start: number, end: number): IToken => {
+const coerceSqlKeyword = (
+  value: string,
+  start: number,
+  end: number
+): IToken => {
   const upperValue = value.toUpperCase();
 
   if (SQL_KEYWORDS.has(upperValue)) {
@@ -32,13 +36,23 @@ export const tokenizeSql = (
     }
 
     if (char === '(') {
-      tokens.push({ type: 'LPAREN', value: char, start: index, end: index + 1 });
+      tokens.push({
+        type: 'LPAREN',
+        value: char,
+        start: index,
+        end: index + 1,
+      });
       index += 1;
       continue;
     }
 
     if (char === ')') {
-      tokens.push({ type: 'RPAREN', value: char, start: index, end: index + 1 });
+      tokens.push({
+        type: 'RPAREN',
+        value: char,
+        start: index,
+        end: index + 1,
+      });
       index += 1;
       continue;
     }
@@ -121,7 +135,12 @@ export const tokenizeSql = (
         if (currentChar === '"') {
           index += 1;
           closed = true;
-          tokens.push({ type: 'IDENTIFIER', value, start: tokenStart, end: index });
+          tokens.push({
+            type: 'IDENTIFIER',
+            value,
+            start: tokenStart,
+            end: index,
+          });
           break;
         }
 
@@ -149,12 +168,22 @@ export const tokenizeSql = (
       const pair = `${char}${next || ''}`;
 
       if (pair === '>=' || pair === '<=' || pair === '<>' || pair === '!=') {
-        tokens.push({ type: 'OPERATOR', value: pair, start: index, end: index + 2 });
+        tokens.push({
+          type: 'OPERATOR',
+          value: pair,
+          start: index,
+          end: index + 2,
+        });
         index += 2;
         continue;
       }
 
-      tokens.push({ type: 'OPERATOR', value: char, start: index, end: index + 1 });
+      tokens.push({
+        type: 'OPERATOR',
+        value: char,
+        start: index,
+        end: index + 1,
+      });
       index += 1;
       continue;
     }
@@ -181,7 +210,10 @@ export const tokenizeSql = (
       const start = index;
       index += 1;
 
-      while (index < predicate.length && /[A-Za-z0-9_$.]/.test(predicate[index])) {
+      while (
+        index < predicate.length &&
+        /[A-Za-z0-9_$.]/.test(predicate[index])
+      ) {
         value += predicate[index];
         index += 1;
       }
@@ -203,7 +235,11 @@ export const tokenizeSql = (
     );
   }
 
-  tokens.push({ type: 'EOF', value: '', start: predicate.length, end: predicate.length });
+  tokens.push({
+    type: 'EOF',
+    value: '',
+    start: predicate.length,
+    end: predicate.length,
+  });
   return tokens;
 };
-

@@ -1,4 +1,4 @@
-import { IStrings } from '../../../constants/strings';
+﻿import type { IStrings } from '../../../locales/types/strings';
 import { getValidationString } from '../../../utils/validation/get-validation-string.util';
 import { ITextModeDiagnostic } from '../types/text-mode-diagnostic';
 

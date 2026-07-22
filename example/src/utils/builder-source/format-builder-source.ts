@@ -2,12 +2,7 @@ import { baseBuilderImportItems } from './constants/base-builder-import-items';
 import type { IBuilderSourceOptions } from './types';
 import { createThemeOverrides } from './utils/create-theme-overrides.util';
 import { formatThemeOverrides } from './utils/format-theme-overrides.util';
-
-const indentBlock = (block: string, spaces: number) =>
-  block
-    .split('\n')
-    .map(line => `${' '.repeat(spaces)}${line}`)
-    .join('\n');
+import { indentBlock } from './utils/indent-block.util';
 
 export const formatBuilderSource = ({
   readOnly,
@@ -18,6 +13,7 @@ export const formatBuilderSource = ({
   allowGroupNegation,
   allowFieldComparisons,
   newNodePlacement,
+  locale,
   history,
   textMode,
   defaultMode,
@@ -41,6 +37,10 @@ export const formatBuilderSource = ({
   const usesThemeProvider = Boolean(themeOverrides);
   const builderImportItems = [...baseBuilderImportItems];
 
+  if (locale === 'en-US') {
+    builderImportItems.splice(1, 0, 'strings');
+  }
+
   if (usesThemeProvider) {
     builderImportItems.splice(1, 0, 'colors');
   }
@@ -48,6 +48,9 @@ export const formatBuilderSource = ({
   const imports = [
     `import React, { useState } from 'react';`,
     `import { ${builderImportItems.join(', ')} } from '@vojtechportes/react-query-builder';`,
+    locale === 'en-US'
+      ? null
+      : `import { strings } from '@vojtechportes/react-query-builder/locale/${locale}';`,
     usesThemeProvider
       ? `import { ThemeProvider } from '@vojtechportes/react-query-builder/theme-provider';`
       : null,
@@ -86,18 +89,15 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     'data={data}',
     'fields={demoFields}',
     'onChange={setData}',
+    'strings={strings}',
     readOnly ? 'readOnly' : null,
-    readOnlyProtectsDelete
-      ? null
-      : 'readOnlyProtectsDelete={false}',
+    readOnlyProtectsDelete ? null : 'readOnlyProtectsDelete={false}',
     lockable ? 'lockable' : null,
     cloneable ? 'cloneable' : null,
     draggable ? 'draggable' : null,
     allowGroupNegation ? null : 'allowGroupNegation={false}',
     allowFieldComparisons ? 'allowFieldComparisons' : null,
-    newNodePlacement === 'prepend'
-      ? 'newNodePlacement="prepend"'
-      : null,
+    newNodePlacement === 'prepend' ? 'newNodePlacement="prepend"' : null,
     history ? 'history' : null,
     textMode ? 'textMode' : null,
     textMode && defaultMode === 'text' ? 'defaultMode="text"' : null,
@@ -119,17 +119,17 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
         ? 'createMonacoComponents(antdComponents)'
         : usesMantineAdapter
           ? 'createMonacoComponents(mantineComponents)'
-        : usesFluentUiAdapter
-          ? 'createMonacoComponents(fluentUiComponents)'
-        : usesRadixAdapter
-          ? 'createMonacoComponents(radixComponents)'
-        : usesBootstrapAdapter
-          ? 'createMonacoComponents(bootstrapComponents)'
-        : 'createMonacoComponents({})'
+          : usesFluentUiAdapter
+            ? 'createMonacoComponents(fluentUiComponents)'
+            : usesRadixAdapter
+              ? 'createMonacoComponents(radixComponents)'
+              : usesBootstrapAdapter
+                ? 'createMonacoComponents(bootstrapComponents)'
+                : 'createMonacoComponents({})'
     : null;
 
   if (componentExpression) {
-    const existingComponentPropIndex = builderProps.findIndex(prop =>
+    const existingComponentPropIndex = builderProps.findIndex((prop) =>
       prop.startsWith('components=')
     );
 
@@ -142,7 +142,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
 
   const builderMarkup = [
     '    <Builder',
-    ...builderProps.map(prop => `      ${prop}`),
+    ...builderProps.map((prop) => `      ${prop}`),
     '    />',
   ].join('\n');
 
@@ -152,7 +152,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
         '      colors={',
         formatThemeOverrides(themeOverrides!)
           .split('\n')
-          .map(line => `      ${line}`)
+          .map((line) => `      ${line}`)
           .join('\n'),
         '      }',
         '    >',
@@ -173,7 +173,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
           indentBlock(themedBuilderMarkup, 2),
           '    </Theme>',
         ].join('\n')
-    : themedBuilderMarkup;
+      : themedBuilderMarkup;
 
   return [
     imports,
@@ -187,9 +187,6 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     '  );',
     '};',
   ]
-    .filter(line => line !== null)
+    .filter((line) => line !== null)
     .join('\n');
 };
-
-
-

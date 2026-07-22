@@ -1,4 +1,4 @@
-import { strings } from '../../../constants/strings';
+﻿import { strings } from '../../../locales/en-us';
 import { createOperatorNotAllowedDiagnostic } from './create-operator-not-allowed-diagnostic.util';
 
 describe('createOperatorNotAllowedDiagnostic', () => {

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+﻿import React, { ReactElement } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
@@ -6,7 +6,7 @@ import {
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
-import { strings } from '../constants/strings';
+import { strings } from '../locales/en-us';
 import { Group } from './group';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -48,12 +48,13 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 const queryByDataTest = (
   container: HTMLElement,
   value: string
-): HTMLElement | null =>
-  container.querySelector(`[data-test="${value}"]`);
+): HTMLElement | null => container.querySelector(`[data-test="${value}"]`);
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -77,7 +78,7 @@ const getStyleRules = (): CSSStyleRule[] => {
   const rules: CSSStyleRule[] = [];
 
   const appendRules = (cssRules: CSSRuleList) => {
-    Array.from(cssRules).forEach(rule => {
+    Array.from(cssRules).forEach((rule) => {
       if (rule instanceof CSSStyleRule) {
         rules.push(rule);
         return;
@@ -89,7 +90,7 @@ const getStyleRules = (): CSSStyleRule[] => {
     });
   };
 
-  Array.from(document.styleSheets).forEach(styleSheet => {
+  Array.from(document.styleSheets).forEach((styleSheet) => {
     appendRules(styleSheet.cssRules);
   });
 
@@ -167,7 +168,13 @@ describe('#components/Group', () => {
 
   it('hides group controls when the group is locally read-only', () => {
     const { container } = renderWithContext(
-      <Group id="test-2" isRoot={false} value="AND" isNegated={false} readOnly />
+      <Group
+        id="test-2"
+        isRoot={false}
+        value="AND"
+        isNegated={false}
+        readOnly
+      />
     );
 
     expect(queryByDataTest(container, 'AddRule')).toBeNull();
@@ -254,11 +261,12 @@ describe('#components/Group', () => {
 
     const classNames = Array.from(leftContainer?.classList || []);
     const rules = getStyleRules();
-    const normalizeSelector = (selector: string) => selector.replace(/\s+/g, '');
+    const normalizeSelector = (selector: string) =>
+      selector.replace(/\s+/g, '');
     const hasRule = (suffix: string) =>
-      classNames.some(className =>
+      classNames.some((className) =>
         rules.some(
-          rule =>
+          (rule) =>
             normalizeSelector(rule.selectorText) ===
             normalizeSelector(`.${className}${suffix}`)
         )
@@ -311,6 +319,9 @@ describe('#components/Group', () => {
       }
     );
 
-    expect(getByDataTest(container, 'AddRule')).toHaveProperty('disabled', true);
+    expect(getByDataTest(container, 'AddRule')).toHaveProperty(
+      'disabled',
+      true
+    );
   });
 });
