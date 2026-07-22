@@ -19,12 +19,12 @@ jobs:
 
     steps:
       - name: Checkout default branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.repository.default_branch }}
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -52,8 +52,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json
-          git commit -m "chore: Package updated to version ${VERSION}"
-          git push
+          if git diff --cached --quiet; then
+            echo "Package files are already at version ${VERSION}; skipping commit."
+          else
+            git commit -m "chore: Package updated to version ${VERSION}"
+            git push
+          fi
 
       - name: Publish package
         run: npm publish --access public
