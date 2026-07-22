@@ -23,6 +23,14 @@ try {
   );
 }
 const baseHtml = fs.readFileSync(indexPath, 'utf8');
+if (
+  !baseHtml.includes('id="seo-fallback-styles"') ||
+  !baseHtml.includes('@keyframes seo-fallback-loading')
+) {
+  throw new Error(
+    'Example HTML template is missing SEO fallback loading styles.'
+  );
+}
 
 const escapeHtml = (value) =>
   String(value)
@@ -205,7 +213,7 @@ const createRecipeFallback = (page) => {
         .join('')}`
     : '';
 
-  return `<main data-seo-fallback="recipe"><article>
+  return `<main data-seo-fallback="recipe" aria-busy="true"><article>
     <p>React Query Builder recipes</p>
     <h1>${escapeHtml(page.title)}</h1>
     <p>${escapeHtml(page.summary)}</p>
@@ -221,7 +229,7 @@ const createRecipeFallback = (page) => {
 const createPageFallback = (page) => {
   if (page.section === 'Recipes') return createRecipeFallback(page);
 
-  return `<main data-seo-fallback="${escapeHtml(fallbackKindForPage(page))}"><article>
+  return `<main data-seo-fallback="${escapeHtml(fallbackKindForPage(page))}" aria-busy="true"><article>
     <p>${escapeHtml(
       page.section === 'Home'
         ? seoConfig.siteName

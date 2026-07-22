@@ -378,7 +378,8 @@ if (fs.existsSync(distRoot)) {
     if (
       !html.includes(`<h1>${escapeHtml(page.title)}</h1>`) ||
       !html.includes(`<p>${escapeHtml(page.description)}</p>`) ||
-      !html.includes(`data-seo-fallback="${fallbackKind}"`)
+      !html.includes(`data-seo-fallback="${fallbackKind}"`) ||
+      !html.includes('aria-busy="true"')
     ) {
       warn(
         `${page.path} generated HTML is missing crawlable fallback content.`
