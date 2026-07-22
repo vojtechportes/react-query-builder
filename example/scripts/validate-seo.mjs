@@ -23,6 +23,17 @@ const sitemapSource = fs.readFileSync(
   path.join(exampleRoot, 'public', 'sitemap.xml'),
   'utf8'
 );
+const ftpHtaccessPath = path.join(
+  repoRoot,
+  '.github',
+  'deploy',
+  'ftp',
+  '.htaccess'
+);
+const ftpWorkflowSource = fs.readFileSync(
+  path.join(repoRoot, '.github', 'workflows', 'deploy-example-ftp.yml'),
+  'utf8'
+);
 const recipesDir = path.join(
   exampleRoot,
   'src',
@@ -40,12 +51,49 @@ const recipeSources = fs
 
 const errors = [];
 const warn = (message) => errors.push(message);
+const escapeHtml = (value) =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 const canonicalUrlForPath = (pagePath) => {
   const normalizedPath = pagePath === '/' ? '' : pagePath.replace(/^\//, '');
   return new URL(normalizedPath, seoConfig.siteUrl).toString();
 };
 
 const pages = seoConfig.pages;
+
+if (!fs.existsSync(ftpHtaccessPath)) {
+  warn('FTP deployment .htaccess is missing.');
+} else {
+  const ftpHtaccessSource = fs.readFileSync(ftpHtaccessPath, 'utf8');
+  for (const directive of [
+    'Options -Indexes',
+    'DirectorySlash Off',
+    'RewriteEngine On',
+    'https://www.react-query-builder.com/$1',
+    '$1/index.html',
+  ]) {
+    if (!ftpHtaccessSource.includes(directive)) {
+      warn(`FTP deployment .htaccess is missing: ${directive}`);
+    }
+  }
+}
+
+if (fs.existsSync(path.join(exampleRoot, 'public', '.htaccess'))) {
+  warn('FTP .htaccess must not be present in example/public.');
+}
+
+if (
+  !ftpWorkflowSource.includes(
+    'cp .github/deploy/ftp/.htaccess example/dist/.htaccess'
+  )
+) {
+  warn(
+    'FTP workflow must copy the hosting configuration after the example build.'
+  );
+}
 const pagesByPath = new Map(pages.map((page) => [page.path, page]));
 
 if (pagesByPath.size !== pages.length) {
@@ -312,24 +360,37 @@ if (recipeRoutes.length !== recipeRecords.length) {
     `Expected one direct route per recipe; found ${recipeRoutes.length} routes for ${recipeRecords.length} recipes.`
   );
 }
-const recipesDistRoot = path.join(exampleRoot, 'dist', 'recipes');
-if (fs.existsSync(recipesDistRoot)) {
-  for (const page of pages.filter((item) => item.section === 'Recipes')) {
+const distRoot = path.join(exampleRoot, 'dist');
+if (fs.existsSync(distRoot)) {
+  for (const page of pages) {
     const outputPath =
-      page.path === '/recipes'
-        ? path.join(recipesDistRoot, 'index.html')
-        : path.join(
-            exampleRoot,
-            'dist',
-            page.path.replace(/^\//, ''),
-            'index.html'
-          );
+      page.path === '/'
+        ? path.join(distRoot, 'index.html')
+        : path.join(distRoot, page.path.replace(/^\//, ''), 'index.html');
+    if (!fs.existsSync(outputPath)) {
+      warn(`${page.path} is missing generated route HTML.`);
+      continue;
+    }
+
     const html = fs.readFileSync(outputPath, 'utf8');
+    const fallbackKind =
+      page.section === 'Recipes' ? 'recipe' : page.section.toLowerCase();
     if (
-      !html.includes(`<h1>${page.title}</h1>`) ||
-      !html.includes('data-seo-fallback="recipe"')
+      !html.includes(`<h1>${escapeHtml(page.title)}</h1>`) ||
+      !html.includes(`<p>${escapeHtml(page.description)}</p>`) ||
+      !html.includes(`data-seo-fallback="${fallbackKind}"`)
     ) {
-      warn(`${page.path} generated HTML is missing crawlable recipe content.`);
+      warn(
+        `${page.path} generated HTML is missing crawlable fallback content.`
+      );
+    }
+
+    if (
+      page.section === 'Recipes' &&
+      page.faqs?.length &&
+      !html.includes('<h2>Frequently asked questions</h2>')
+    ) {
+      warn(`${page.path} generated HTML is missing crawlable FAQ content.`);
     }
   }
 }
