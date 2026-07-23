@@ -22,7 +22,7 @@ describe('versioned site import boundaries', () => {
     expect(violations).toEqual([]);
   });
 
-  it('keeps v1 Home and Demo imports out of transitional legacy content', () => {
+  it('keeps v1-owned content out of transitional legacy implementations', () => {
     const v1Root = resolve(sourceRoot, 'v1');
     const forbiddenLegacyRoots = [
       resolve(sourceRoot, 'pages/home-page'),
@@ -37,6 +37,15 @@ describe('versioned site import boundaries', () => {
       resolve(sourceRoot, 'constants/locale-strings'),
       resolve(sourceRoot, 'utils/builder-source'),
       resolve(sourceRoot, 'utils/query-formatters'),
+      resolve(sourceRoot, 'pages/documentation-page'),
+      resolve(sourceRoot, 'components/imperative-field-options-demo'),
+      resolve(sourceRoot, 'components/shared-field-options-demo'),
+      resolve(sourceRoot, 'components/parsing-sandbox'),
+      resolve(sourceRoot, 'components/load-imperative-field-options-demo'),
+      resolve(sourceRoot, 'components/load-shared-field-options-demo'),
+      resolve(sourceRoot, 'components/load-parsing-sandbox'),
+      resolve(sourceRoot, 'components/utils/wait-for-timeout.util'),
+      resolve(sourceRoot, 'constants/related-recipes-by-path'),
     ];
     const violations = collectSourceImports(v1Root).flatMap(
       ({ importer, source }) => {
