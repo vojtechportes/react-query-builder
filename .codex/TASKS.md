@@ -759,7 +759,7 @@ sharing only non-content site infrastructure.
 
 ### T011 - Add isolated v1.33.1 and local-v2 package bindings
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T010
 

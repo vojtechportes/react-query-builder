@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.package-binding-v2.json",
+  "include": ["src/pages/recipes-page/snippets/*.snippet.tsx"]
+}

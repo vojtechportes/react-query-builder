@@ -7,10 +7,16 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: ['coverage/**', 'dist/**', 'example/dist/**', 'node_modules/**'],
+    ignores: [
+      'coverage/**',
+      'dist/**',
+      'example/dist/**',
+      'example/config/package-bindings/.smoke-dist/**',
+      'node_modules/**',
+    ],
   },
   {
-    files: ['**/*.cjs'],
+    files: ['**/*.{cjs,mjs}'],
     languageOptions: {
       globals: {
         ...globals.node,
