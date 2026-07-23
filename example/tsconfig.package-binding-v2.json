@@ -1,0 +1,72 @@
+{
+  "extends": "./tsconfig.package-binding-base.json",
+  "compilerOptions": {
+    "paths": {
+      "react": ["../node_modules/@types/react/index.d.ts"],
+      "react/jsx-runtime": ["../node_modules/@types/react/jsx-runtime.d.ts"],
+      "react/jsx-dev-runtime": [
+        "../node_modules/@types/react/jsx-dev-runtime.d.ts"
+      ],
+      "react-dom": ["../node_modules/@types/react-dom/index.d.ts"],
+      "react-dom/*": ["../node_modules/@types/react-dom/*"],
+      "@vojtechportes/react-query-builder": ["../src/index.tsx"],
+      "@vojtechportes/react-query-builder/parseQuery": [
+        "../src/parseQuery/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/formatQuery": [
+        "../src/formatQuery/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/en-US": [
+        "../src/locales/en-us/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/fr-FR": [
+        "../src/locales/fr-fr/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/it-IT": [
+        "../src/locales/it-it/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/de-DE": [
+        "../src/locales/de-de/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/es-ES": [
+        "../src/locales/es-es/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/pt-PT": [
+        "../src/locales/pt-pt/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/cs-CZ": [
+        "../src/locales/cs-cz/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/sk-SK": [
+        "../src/locales/sk-sk/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/zh-CN": [
+        "../src/locales/zh-cn/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/locale/zh-TW": [
+        "../src/locales/zh-tw/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/bootstrap/v5": [
+        "../src/bootstrap/v5/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/mui/v7": ["../src/mui/v7/index.ts"],
+      "@vojtechportes/react-query-builder/mui/v9": ["../src/mui/v9/index.ts"],
+      "@vojtechportes/react-query-builder/antd/v5": ["../src/antd/v5/index.ts"],
+      "@vojtechportes/react-query-builder/antd/v6": ["../src/antd/v6/index.ts"],
+      "@vojtechportes/react-query-builder/fluentui/v8": [
+        "../src/fluentui/v8/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/mantine/v8": [
+        "../src/mantine/v8/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/mantine/v9": [
+        "../src/mantine/v9/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/radix/v1": [
+        "../src/radix/v1/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/monaco": ["../src/monaco/index.ts"]
+    }
+  },
+  "include": ["config/package-bindings/smoke/package-surface.smoke.ts"]
+}

@@ -7,8 +7,13 @@
     "build": "npm run recipes:validate && vite build && vite build --ssr src/entry-server.tsx --outDir .ssg && node scripts/build-seo.mjs",
     "preview": "vite preview",
     "seo:validate": "node scripts/validate-seo.mjs",
-    "recipes:validate": "node scripts/validate-recipe-code-format.mjs && tsc -p tsconfig.recipe-snippets.json",
-    "recipes:demos:test": "vitest run src/pages/recipes-page"
+    "recipes:validate": "node scripts/validate-recipe-code-format.mjs && npm run package-bindings:snippets",
+    "recipes:demos:test": "vitest run src/pages/recipes-page",
+    "package-bindings:typecheck": "tsc -p tsconfig.package-binding-v1.json && tsc -p tsconfig.package-binding-v2.json",
+    "package-bindings:snippets": "tsc -p tsconfig.recipe-snippets.v1.json && tsc -p tsconfig.recipe-snippets.v2.json",
+    "package-bindings:build": "vite build --config config/package-bindings/vite.package-binding-client.config.mts --mode v1 && vite build --config config/package-bindings/vite.package-binding-client.config.mts --mode v2 && vite build --config config/package-bindings/vite.package-binding-ssr.config.mts --mode v1 && vite build --config config/package-bindings/vite.package-binding-ssr.config.mts --mode v2",
+    "package-bindings:test": "vitest run --config config/package-bindings/vite.package-binding-test.config.mts --mode v1 && vitest run --config config/package-bindings/vite.package-binding-test.config.mts --mode v2",
+    "package-bindings:verify": "npm run package-bindings:typecheck && npm run package-bindings:snippets && npm run package-bindings:build && npm run package-bindings:test && node scripts/verify-package-binding.mjs v1 && node scripts/verify-package-binding.mjs v2"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -33,6 +38,8 @@
     "react-dom": "^19.2.6",
     "react-hook-form": "7.81.0",
     "react-router-dom": "^7.15.1",
+    "rqb-v1": "npm:@vojtechportes/react-query-builder@1.33.1",
+    "rqb-v2": "file:..",
     "styled-components": "^6.4.2"
   },
   "devDependencies": {
