@@ -533,7 +533,7 @@ the existing English `strings` export from the package root.
 
 ### T008 - Normalize FTP URLs and add static SEO fallbacks
 
-**Status:** `[~]` In progress
+**Status:** `[x]` Done
 
 **Goal:** Make every canonical example-site URL resolve consistently on the FTP-hosted
 production domain and ship meaningful crawlable HTML for every canonical route before
@@ -730,7 +730,7 @@ site may keep styled-components for its own shell; the published v2 package may 
 
 ### T010 - Record the v1/v2 architecture decision
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T008 and T009
 
