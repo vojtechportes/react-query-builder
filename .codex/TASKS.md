@@ -855,7 +855,7 @@ sharing only non-content site infrastructure.
 
 ### T015 - Create independent v2 Home and Demo pages
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T014
 
