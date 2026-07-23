@@ -6,14 +6,16 @@ import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@vojtechportes/react-query-builder', async () => {
-  const { colors } = await import('../../../src/constants/colors');
+vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
+  const { colors } =
+    await importOriginal<typeof import('@vojtechportes/react-query-builder')>();
 
   return {
     colors,
     Builder: ({ strings }: { strings?: { group?: { addRule?: string } } }) => (
       <div data-testid="builder">{strings?.group?.addRule}</div>
     ),
+    ThemeProvider: ({ children }: React.PropsWithChildren) => children,
   };
 });
 

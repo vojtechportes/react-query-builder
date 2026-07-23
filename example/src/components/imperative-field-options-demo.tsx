@@ -82,23 +82,24 @@ const initialData: DenormalizedQuery = [
   },
 ];
 
-const cityOptionsByCountry = {
-  CZ: [
-    { value: 'PRG', label: 'Prague' },
-    { value: 'BRN', label: 'Brno' },
-    { value: 'OSR', label: 'Ostrava' },
-  ],
-  SK: [
-    { value: 'BTS', label: 'Bratislava' },
-    { value: 'KSC', label: 'Kosice' },
-    { value: 'ZIL', label: 'Zilina' },
-  ],
-  DE: [
-    { value: 'BER', label: 'Berlin' },
-    { value: 'MUC', label: 'Munich' },
-    { value: 'HAM', label: 'Hamburg' },
-  ],
-} as const;
+const cityOptionsByCountry: Record<string, { value: string; label: string }[]> =
+  {
+    CZ: [
+      { value: 'PRG', label: 'Prague' },
+      { value: 'BRN', label: 'Brno' },
+      { value: 'OSR', label: 'Ostrava' },
+    ],
+    SK: [
+      { value: 'BTS', label: 'Bratislava' },
+      { value: 'KSC', label: 'Kosice' },
+      { value: 'ZIL', label: 'Zilina' },
+    ],
+    DE: [
+      { value: 'BER', label: 'Berlin' },
+      { value: 'MUC', label: 'Munich' },
+      { value: 'HAM', label: 'Hamburg' },
+    ],
+  };
 
 export const ImperativeFieldOptionsDemo: React.FC = () => {
   const [data, setData] = React.useState<DenormalizedQuery>(initialData);
@@ -126,7 +127,12 @@ export const ImperativeFieldOptionsDemo: React.FC = () => {
 
   return (
     <DemoCard>
-      <Builder ref={builderRef} fields={fields} data={data} onChange={setData} />
+      <Builder
+        ref={builderRef}
+        fields={fields}
+        data={data}
+        onChange={setData}
+      />
     </DemoCard>
   );
 };

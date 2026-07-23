@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes, FC } from 'react';
 import styled from 'styled-components';
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 
 const StyledButton = styled.button`
   width: fit-content;
@@ -18,15 +18,11 @@ const StyledButton = styled.button`
   }
 `;
 
-export interface ISmallButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ISmallButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-export const SmallButton: FC<ISmallButtonProps> = ({
-  children,
-  ...props
-}) => {
+export const SmallButton: FC<ISmallButtonProps> = ({ children, ...props }) => {
   return (
     <StyledButton type="button" {...props}>
       {children}

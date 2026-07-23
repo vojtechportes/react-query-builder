@@ -1,8 +1,12 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { IColors, IColorVariant, IGreyColorVariant } from '../../../src/constants/colors';
+import {
+  IColors,
+  IColorVariant,
+  IGreyColorVariant,
+} from '@vojtechportes/react-query-builder';
 import { isColorGroupKey } from './utils/is-color-group-key.util';
 import styled from 'styled-components';
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 
 const StyledRow = styled.label`
   display: grid;
@@ -92,7 +96,8 @@ export const ThemeColorInput: FC<IThemeColorInputProps> = ({
     }
 
     const groupKey = parsedName[0] as keyof IColors;
-    const colorKey = parsedName[1] as keyof IColorVariant & keyof IGreyColorVariant;
+    const colorKey = parsedName[1] as keyof IColorVariant &
+      keyof IGreyColorVariant;
 
     if (parsedName.length === 2 && isColorGroupKey(groupKey)) {
       return themeColors[groupKey][colorKey];

@@ -353,7 +353,15 @@ if (recipeRoutes.length !== recipeRecords.length) {
     `Expected one direct route per recipe; found ${recipeRoutes.length} routes for ${recipeRecords.length} recipes.`
   );
 }
-const distRoot = path.join(exampleRoot, 'dist');
+const target = process.argv[2];
+
+if (target && target !== 'v1' && target !== 'v2') {
+  warn(`Expected a version target of "v1" or "v2", received "${target}".`);
+}
+
+const distRoot = target
+  ? path.join(exampleRoot, '.versioned-dist', target)
+  : path.join(exampleRoot, 'dist');
 if (fs.existsSync(distRoot)) {
   for (const page of pages) {
     const outputPath =

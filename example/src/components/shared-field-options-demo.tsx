@@ -82,15 +82,17 @@ const initialData: DenormalizedQuery = [
 
 export const SharedFieldOptionsDemo: React.FC = () => {
   const [data, setData] = React.useState<DenormalizedQuery>(initialData);
-  const [cityOptionState, setCityOptionState] = React.useState<IBuilderFieldOptionState>({
-    options: fields[0].value ?? [],
-    status: 'idle',
-  });
+  const [cityOptionState, setCityOptionState] =
+    React.useState<IBuilderFieldOptionState>({
+      options: Array.isArray(fields[0].value) ? fields[0].value : [],
+      status: 'idle',
+    });
   const builderRef = useBuilderRef();
 
-  React.useEffect(() => builderRef.subscribeToFieldOptionState('CITY', setCityOptionState), [
-    builderRef,
-  ]);
+  React.useEffect(
+    () => builderRef.subscribeToFieldOptionState('CITY', setCityOptionState),
+    [builderRef]
+  );
 
   const loadSharedOptions = React.useCallback(
     (mode: 'default' | 'czech' | 'slovak' | 'german') => {
@@ -149,7 +151,12 @@ export const SharedFieldOptionsDemo: React.FC = () => {
         <span>Field state: {cityOptionState.status}</span>
         <span>Shared options: {cityOptionState.options.length}</span>
       </StatusRow>
-      <Builder ref={builderRef} fields={fields} data={data} onChange={setData} />
+      <Builder
+        ref={builderRef}
+        fields={fields}
+        data={data}
+        onChange={setData}
+      />
     </DemoCard>
   );
 };

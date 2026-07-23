@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { colors } from '@vojtechportes/react-query-builder';
-import type { IColors } from '../../../src/constants/colors';
+import type { IColors } from '@vojtechportes/react-query-builder';
 
 const Root = styled.section`
   display: grid;
@@ -122,7 +122,12 @@ const getColorValue = (themeColors: IColors, path: ColorPath) => {
 
   const keys = path.split('.');
 
-  if (keys[0] === 'info' || keys[0] === 'success' || keys[0] === 'warning' || keys[0] === 'error') {
+  if (
+    keys[0] === 'info' ||
+    keys[0] === 'success' ||
+    keys[0] === 'warning' ||
+    keys[0] === 'error'
+  ) {
     const [group, key] = keys as [
       keyof Pick<IColors, 'info' | 'success' | 'warning' | 'error'>,
       keyof IColors['info'],
@@ -150,7 +155,12 @@ const setColorValue = (
 
   const keys = path.split('.');
 
-  if (keys[0] === 'info' || keys[0] === 'success' || keys[0] === 'warning' || keys[0] === 'error') {
+  if (
+    keys[0] === 'info' ||
+    keys[0] === 'success' ||
+    keys[0] === 'warning' ||
+    keys[0] === 'error'
+  ) {
     const [group, key] = keys as [
       keyof Pick<IColors, 'info' | 'success' | 'warning' | 'error'>,
       keyof IColors['info'],
@@ -194,9 +204,11 @@ export const ThemeEditor: React.FC<IThemeEditorProps> = ({
 }) => (
   <Root>
     <Title>Theme</Title>
-    {disabled && disabledMessage ? <DisabledNote>{disabledMessage}</DisabledNote> : null}
+    {disabled && disabledMessage ? (
+      <DisabledNote>{disabledMessage}</DisabledNote>
+    ) : null}
     <Grid $disabled={disabled}>
-      {controls.map(control => {
+      {controls.map((control) => {
         const colorValue = getColorValue(value, control.name);
 
         return (
@@ -207,7 +219,7 @@ export const ThemeEditor: React.FC<IThemeEditorProps> = ({
               type="color"
               value={String(colorValue)}
               disabled={disabled}
-              onChange={event =>
+              onChange={(event) =>
                 onChange(setColorValue(value, control.name, event.target.value))
               }
             />

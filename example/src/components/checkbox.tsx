@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 
 const StyledLabel = styled.label`
   display: flex;
@@ -21,11 +21,7 @@ export interface ICheckboxProps {
   onChange: (checked: boolean) => void;
 }
 
-export const Checkbox: FC<ICheckboxProps> = ({
-  checked,
-  label,
-  onChange,
-}) => {
+export const Checkbox: FC<ICheckboxProps> = ({ checked, label, onChange }) => {
   return (
     <StyledLabel>
       <StyledInput

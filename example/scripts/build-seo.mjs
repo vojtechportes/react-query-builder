@@ -6,8 +6,20 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const exampleRoot = path.resolve(__dirname, '..');
-const distRoot = path.join(exampleRoot, 'dist');
-const ssgRoot = path.join(exampleRoot, '.ssg');
+const target = process.argv[2];
+
+if (target && target !== 'v1' && target !== 'v2') {
+  throw new Error(
+    `Expected a version target of "v1" or "v2", received "${target}".`
+  );
+}
+
+const distRoot = target
+  ? path.join(exampleRoot, '.versioned-dist', target)
+  : path.join(exampleRoot, 'dist');
+const ssgRoot = target
+  ? path.join(distRoot, '.ssg')
+  : path.join(exampleRoot, '.ssg');
 const serverEntryUrl = pathToFileURL(
   path.join(ssgRoot, 'entry-server.mjs')
 ).href;
