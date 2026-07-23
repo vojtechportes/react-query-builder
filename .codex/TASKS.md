@@ -831,7 +831,7 @@ sharing only non-content site infrastructure.
 
 ### T014 - Freeze version-owned v1 Home and Demo pages
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T013
 

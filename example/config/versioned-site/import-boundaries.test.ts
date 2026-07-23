@@ -1,4 +1,4 @@
-import { resolve } from 'node:path';
+import { dirname, resolve, sep } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { collectSourceImports } from './utils/collect-source-imports.util';
 import { getImportBoundaryViolation } from './utils/get-import-boundary-violation.util';
@@ -22,6 +22,43 @@ describe('versioned site import boundaries', () => {
     expect(violations).toEqual([]);
   });
 
+  it('keeps v1 Home and Demo imports out of transitional legacy content', () => {
+    const v1Root = resolve(sourceRoot, 'v1');
+    const forbiddenLegacyRoots = [
+      resolve(sourceRoot, 'pages/home-page'),
+      resolve(sourceRoot, 'pages/demo-page'),
+      resolve(sourceRoot, 'components/demo-playground'),
+      resolve(sourceRoot, 'components/builder-surface'),
+      resolve(sourceRoot, 'components/mui-builder-surface'),
+      resolve(sourceRoot, 'components/theme-editor'),
+      resolve(sourceRoot, 'components/bootstrap-demo-scope'),
+      resolve(sourceRoot, 'constants/demo-data'),
+      resolve(sourceRoot, 'constants/locale-options'),
+      resolve(sourceRoot, 'constants/locale-strings'),
+      resolve(sourceRoot, 'utils/builder-source'),
+      resolve(sourceRoot, 'utils/query-formatters'),
+    ];
+    const violations = collectSourceImports(v1Root).flatMap(
+      ({ importer, source }) => {
+        if (!source.startsWith('.')) {
+          return source === 'rqb-v2' || source.startsWith('rqb-v2/')
+            ? [`${importer} -> ${source}`]
+            : [];
+        }
+
+        const importedPath = resolve(dirname(importer), source);
+        const importsLegacyContent = forbiddenLegacyRoots.some(
+          (legacyRoot) =>
+            importedPath === legacyRoot ||
+            importedPath.startsWith(`${legacyRoot}${sep}`)
+        );
+
+        return importsLegacyContent ? [`${importer} -> ${source}`] : [];
+      }
+    );
+
+    expect(violations).toEqual([]);
+  });
   it.each([
     ['src/v1/app.tsx', '../v2/app', 'v1 modules cannot import v2 modules'],
     ['src/v2/app.tsx', '../v1/app', 'v2 modules cannot import v1 modules'],
