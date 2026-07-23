@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { ContentArticle } from '../../components/content-article';
 import { DocumentationSidebar } from '../../components/documentation-sidebar';
-import { ParsingSandbox } from '../../components/parsing-sandbox';
+import { ClientOnly } from '../../components/client-only';
+import { loadParsingSandbox } from '../../components/load-parsing-sandbox';
 import { RelatedRecipes } from '../../components/related-recipes';
 import { relatedRecipesByPath } from '../../constants/related-recipes-by-path';
 import { findSeoPage } from '../../constants/seo-pages';
@@ -62,7 +63,11 @@ export const DocumentationPage: React.FC = () => {
         {page.content}
         <RelatedRecipes links={relatedRecipesByPath[page.path]} />
         {page.path === '/documentation/parsing-and-formatting' ? (
-          <ParsingSandbox />
+          <ClientOnly
+            loader={loadParsingSandbox}
+            label="Loading the interactive parsing sandbox..."
+            minHeight="20rem"
+          />
         ) : null}
       </ContentArticle>
     </Layout>

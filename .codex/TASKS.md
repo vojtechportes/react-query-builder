@@ -585,3 +585,137 @@ the React application loads.
 - After deployment, crawl all sitemap URLs without following redirects and verify they
   return `200`; verify representative trailing-slash variants redirect directly to HTTPS
   canonical URLs.
+
+### T009 - Pre-render static example pages with client-only interactive islands
+
+**Status:** `[x]` Done
+
+**Goal:** Generate complete, route-specific HTML for every canonical example-site page at
+build time while preserving Builder, data-grid, editor, and other browser-only experiences
+as interactive client-side islands.
+
+**Architecture decisions:**
+
+- Treat this as static-site generation rather than request-time SSR. Both FTP and GitHub
+  Pages must continue to receive ordinary static files and require no Node.js server.
+- Keep `example/src/constants/seo-pages.json` as the canonical list of pages to generate.
+  A route cannot become canonical without producing a corresponding HTML document.
+- Extract the route element tree from the current `BrowserRouter` wrapper so the client
+  entry and the build-time renderer use the same routes and page components.
+- Add a build-only server entry that renders one canonical route at a time with a static
+  router and React's server-rendering APIs.
+- Hydrate the generated document with `hydrateRoot`; do not use `createRoot` to discard
+  correctly pre-rendered page content.
+- Introduce a reusable `ClientOnly`/island boundary. The server and the browser's first
+  hydration render must emit the same accessible placeholder. Browser-only modules load
+  only after hydration and then replace that placeholder.
+- Keep Builder, Monaco, data grids, drag-and-drop demos, cookie consent, analytics, and any
+  module that reads browser globals behind client-only boundaries. Do not evaluate those
+  modules in the SSG process.
+- Render all meaningful surrounding content statically: page headings, explanations,
+  navigation, code examples, expected output, safety notes, FAQs, and links.
+- Collect styled-components server styles and inject them into each generated document so
+  the pre-rendered page does not flash unstyled or change structure during hydration.
+- Preserve the current canonical URL, structured-data, sitemap, robots, FTP `.htaccess`,
+  analytics, and deployment-specific base-path behavior. Remove the generic SEO fallback
+  only after full SSG output is verified to provide equal or better crawlable content.
+
+**Implementation phases:**
+
+- [x] Audit server-rendering compatibility:
+  - Identify page modules and shared components that read `window`, `document`, storage,
+    media queries, observers, or layout measurements during module evaluation or render.
+  - Identify browser-only third-party packages that must not enter the server bundle.
+  - Classify each component as fully static, hydration-safe interactive UI, or client-only
+    island, and record intentional placeholders.
+- [x] Share routing between browser and build-time rendering:
+  - Move canonical route declarations into a reusable route component or route-object
+    registry without changing public URLs or redirects.
+  - Keep `BrowserRouter` and deployment basename handling in the client entry.
+  - Use the corresponding static router in the SSG entry and verify nested direct routes.
+- [x] Add client-only island infrastructure:
+  - Render the same stable placeholder on the server and during the first client render.
+  - Activate the real component after an effect confirms that hydration has completed.
+  - Dynamically import heavy browser-only modules so their top-level code is never
+    evaluated by the SSG bundle.
+  - Provide accessible loading labels, fixed or minimum dimensions where practical, and
+    reduced-motion behavior to limit layout shift.
+- [x] Make page content server-renderable:
+  - Pre-render Home, Documentation, API, Demo, and Recipes page structure and prose.
+  - Keep interactive Builder and recipe demos as islands while rendering their titles,
+    instructions, source examples, and expected results statically.
+  - Replace browser-derived initial values with deterministic server/client defaults and
+    apply persisted preferences only after hydration.
+- [x] Add the SSG build pipeline:
+  - Produce a Vite SSR/build-time bundle separate from the browser bundle.
+  - Iterate over every canonical SEO page, render it at its deployment-aware pathname,
+    collect server styles, and write the result to the route's `index.html`.
+  - Inject route-specific metadata and JSON-LD from the existing SEO registry without
+    duplicating metadata ownership.
+  - Ensure temporary server-rendering artifacts are excluded from deployable output.
+- [x] Switch the client entry to hydration:
+  - Hydrate pre-rendered pages with output identical to the server's initial tree.
+  - Preserve client-side navigation after the first direct page load.
+  - Detect and fail tests on hydration mismatch warnings or duplicate React roots.
+- [x] Integrate deployment variants:
+  - Generate correct assets, internal links, canonicals, and router basenames for the FTP
+    custom domain and the GitHub Pages repository base path.
+  - Preserve FTP-only `.htaccess` copying and confirm the SSG step does not add it to the
+    GitHub Pages artifact.
+  - Preserve direct-route, redirect-only, 404, robots, sitemap, analytics, and consent
+    behavior.
+- [x] Remove obsolete fallback generation after parity is proven:
+  - Retain island-level loading placeholders.
+  - Remove generic page-level SEO fallback markup and styles only when every canonical
+    route contains complete SSG HTML and all no-JavaScript checks pass.
+  - Keep validation that prevents empty root documents from returning in future changes.
+
+**Acceptance criteria:**
+
+- Every canonical route produces a standalone HTML file containing its real page-specific
+  H1 and meaningful body content before JavaScript executes.
+- Documentation, API, Home, and Recipes pages remain readable and navigable with JavaScript
+  disabled; interactive areas clearly degrade to useful placeholders and static guidance.
+- Builder, Monaco, data-grid, table, form, and recipe-demo islands activate after hydration
+  and behave the same as in the current client-rendered application.
+- Server output and the initial browser render match without hydration warnings, replaced
+  document trees, duplicated content, or duplicate styled-components rules.
+- Browser-only dependencies are absent from server execution paths and cannot make the SSG
+  build fail because DOM globals are unavailable.
+- Each generated page retains its unique title, description, canonical URL, robots policy,
+  Open Graph/Twitter metadata, structured data, and exactly one primary heading.
+- The sitemap contains every canonical generated route exactly once and excludes redirect-
+  only and fallback routes.
+- FTP and GitHub Pages artifacts use their correct site URL, asset base, internal links,
+  router basename, robots file, and sitemap; only the FTP artifact contains `.htaccess`.
+- Direct navigation, reload, back/forward navigation, and client-side navigation work on
+  representative top-level and deeply nested routes.
+- SSG output is deterministic: two clean builds from the same commit produce equivalent
+  route HTML apart from explicitly allowed hashed asset filenames.
+- The initial page has no raw-content flash; static styles and island dimensions prevent
+  avoidable layout shifts while keeping crawlable content genuinely visible.
+
+**Verification:**
+
+- Add automated coverage comparing the canonical SEO registry with generated route files
+  and fail on missing, extra, empty, or duplicate outputs.
+- Parse every generated HTML file and assert a unique title, description, canonical URL,
+  one H1, structured data, page-specific body text, server styles, and hydration entry.
+- Run the SSG build in a DOM-free Node.js process so accidental browser-global access fails
+  during CI.
+- Serve both production-domain and GitHub Pages builds locally and test representative
+  Home, Documentation, nested Documentation, API, nested API, Demo, Recipes, and recipe
+  detail routes.
+- Repeat the representative route checks with JavaScript disabled and confirm meaningful
+  content and navigation remain available.
+- Capture browser console errors during hydration and fail on mismatch, uncaught exception,
+  missing chunk, or duplicate-root warnings.
+- Exercise each client-only island category after hydration: Builder, Monaco, DataGrid,
+  AG Grid, TanStack Table, React Hook Form, and lightweight recipe demos.
+- Verify direct loads and client navigation under `/` and `/react-query-builder/` base
+  paths, including asset loading and canonical URL generation.
+- Run SEO validation, recipe validation, focused SSG/island tests, the full example build,
+  FTP artifact checks, GitHub Pages artifact checks, formatting, lint, and Lighthouse SEO
+  checks on representative pages.
+- After deployment, crawl all sitemap URLs as raw HTML and use Search Console URL Inspection
+  on representative pages to confirm Google receives the pre-rendered content.

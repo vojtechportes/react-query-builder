@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "npm run recipes:validate && vite build && node scripts/build-seo.mjs",
+    "build": "npm run recipes:validate && vite build && vite build --ssr src/entry-server.tsx --outDir .ssg && node scripts/build-seo.mjs",
     "preview": "vite preview",
     "seo:validate": "node scripts/validate-seo.mjs",
     "recipes:validate": "node scripts/validate-recipe-code-format.mjs && tsc -p tsconfig.recipe-snippets.json",
