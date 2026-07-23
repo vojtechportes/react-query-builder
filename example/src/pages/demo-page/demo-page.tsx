@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { DemoPlayground } from '../../components/demo-playground';
+import { ClientOnly } from '../../components/client-only';
 import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
+import { loadDemoPlayground } from './load-demo-playground';
 
 const Root = styled.section`
   display: grid;
@@ -22,7 +23,15 @@ export const DemoPage: React.FC = () => {
   return (
     <Root>
       <Title>Demo</Title>
-      <DemoPlayground />
+      <p>
+        Configure fields, adapters, validation, text editing, localization, and
+        query output in the interactive playground below.
+      </p>
+      <ClientOnly
+        loader={loadDemoPlayground}
+        label="Loading the interactive query builder playground..."
+        minHeight="32rem"
+      />
     </Root>
   );
 };

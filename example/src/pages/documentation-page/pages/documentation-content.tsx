@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { AlertBox } from '../../../components/alert-box';
 import { CodeBlock } from '../../../components/code-block';
-import { ImperativeFieldOptionsDemo } from '../../../components/imperative-field-options-demo';
-import { SharedFieldOptionsDemo } from '../../../components/shared-field-options-demo';
+import { ClientOnly } from '../../../components/client-only';
+import { loadImperativeFieldOptionsDemo } from '../../../components/load-imperative-field-options-demo';
+import { loadSharedFieldOptionsDemo } from '../../../components/load-shared-field-options-demo';
 import {
   InlineCode,
   ItemTitle,
@@ -2190,7 +2191,11 @@ export const documentationPages: IDocumentationPage[] = [
           </InlineCode>
           .
         </p>
-        <SharedFieldOptionsDemo />
+        <ClientOnly
+          loader={loadSharedFieldOptionsDemo}
+          label="Loading the shared field-options demo..."
+          minHeight="18rem"
+        />
         <SectionTitle>Rule-Level API</SectionTitle>
         <p>
           Use the rule-level imperative API when options depend on other rules
@@ -2215,7 +2220,11 @@ export const documentationPages: IDocumentationPage[] = [
           call is optional and useful when you want strict select semantics,
           such as clearing a now-invalid city after the nearest country changes.
         </p>
-        <ImperativeFieldOptionsDemo />
+        <ClientOnly
+          loader={loadImperativeFieldOptionsDemo}
+          label="Loading the imperative field-options demo..."
+          minHeight="18rem"
+        />
         <SectionTitle>TanStack React Query Example</SectionTitle>
         <p>
           If your app already uses TanStack React Query, keep caching there and

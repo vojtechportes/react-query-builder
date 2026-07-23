@@ -26,8 +26,27 @@ export default defineConfig({
       'react-dom': testReactDomRoot,
     },
   },
+  ssr: {
+    noExternal: [
+      'prism-react-renderer',
+      'styled-components',
+      /^react$/,
+      /^react\//,
+      /^react-dom(?:\/.*)?$/,
+      /^react-router(?:-dom)?$/,
+    ],
+  },
   resolve: {
+    dedupe: ['react', 'react-dom'],
     alias: [
+      {
+        find: 'react',
+        replacement: testReactRoot,
+      },
+      {
+        find: 'react-dom',
+        replacement: testReactDomRoot,
+      },
       {
         find: '@vojtechportes/react-query-builder/locale/en-US',
         replacement: srcRoot + '/locales/en-us',

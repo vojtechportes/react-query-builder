@@ -1,3 +1,5 @@
+/* global console, process, URL */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +14,7 @@ const seoConfig = JSON.parse(
   )
 );
 const appSource = fs.readFileSync(
-  path.join(exampleRoot, 'src', 'app', 'app.tsx'),
+  path.join(exampleRoot, 'src', 'app', 'app-routes.tsx'),
   'utf8'
 );
 const searchSource = fs.readFileSync(
@@ -51,12 +53,6 @@ const recipeSources = fs
 
 const errors = [];
 const warn = (message) => errors.push(message);
-const escapeHtml = (value) =>
-  String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
 const canonicalUrlForPath = (pagePath) => {
   const normalizedPath = pagePath === '/' ? '' : pagePath.replace(/^\//, '');
   return new URL(normalizedPath, seoConfig.siteUrl).toString();
@@ -143,13 +139,10 @@ for (const [name, values] of [
   }
 }
 
-const routeRegex =
-  /<Route\s+path="([^"]+)"\s+element=\{\s*<([A-Za-z]+Page)\s*\/>\s*\}/g;
-const appRoutes = new Set();
-let routeMatch;
-while ((routeMatch = routeRegex.exec(appSource))) {
-  appRoutes.add(routeMatch[1]);
+if (!appSource.includes('canonicalSeoPages.map')) {
+  warn('Shared routes must be generated from the canonical SEO page registry.');
 }
+const appRoutes = new Set(pages.map((page) => page.path));
 
 for (const route of appRoutes) {
   if (!pagesByPath.has(route)) {
@@ -373,23 +366,24 @@ if (fs.existsSync(distRoot)) {
     }
 
     const html = fs.readFileSync(outputPath, 'utf8');
-    const fallbackKind =
-      page.section === 'Recipes' ? 'recipe' : page.section.toLowerCase();
+    const h1Matches = html.match(/<h1(?:\s[^>]*)?>[\s\S]*?<\/h1>/gi) ?? [];
     if (
-      !html.includes(`<h1>${escapeHtml(page.title)}</h1>`) ||
-      !html.includes(`<p>${escapeHtml(page.description)}</p>`) ||
-      !html.includes(`data-seo-fallback="${fallbackKind}"`) ||
-      !html.includes('aria-busy="true"')
+      h1Matches.length !== 1 ||
+      !html.includes('data-styled="true"') ||
+      !html.includes('<script id="structured-data-page"') ||
+      !html.includes('<script type="module"') ||
+      !html.includes('data-client-only-placeholder="true"') ||
+      html.includes('data-seo-fallback')
     ) {
       warn(
-        `${page.path} generated HTML is missing crawlable fallback content.`
+        `${page.path} generated HTML is missing complete pre-rendered content.`
       );
     }
 
     if (
       page.section === 'Recipes' &&
       page.faqs?.length &&
-      !html.includes('<h2>Frequently asked questions</h2>')
+      !html.includes('Frequently asked questions</h2>')
     ) {
       warn(`${page.path} generated HTML is missing crawlable FAQ content.`);
     }

@@ -1,10 +1,17 @@
+/* global process, URL */
+
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const exampleRoot = path.resolve(__dirname, '..');
 const distRoot = path.join(exampleRoot, 'dist');
+const ssgRoot = path.join(exampleRoot, '.ssg');
+const serverEntryUrl = pathToFileURL(
+  path.join(ssgRoot, 'entry-server.mjs')
+).href;
+const { renderPage } = await import(serverEntryUrl);
 const seoConfigPath = path.join(
   exampleRoot,
   'src',
@@ -23,14 +30,6 @@ try {
   );
 }
 const baseHtml = fs.readFileSync(indexPath, 'utf8');
-if (
-  !baseHtml.includes('id="seo-fallback-styles"') ||
-  !baseHtml.includes('@keyframes seo-fallback-loading')
-) {
-  throw new Error(
-    'Example HTML template is missing SEO fallback loading styles.'
-  );
-}
 
 const escapeHtml = (value) =>
   String(value)
@@ -179,69 +178,8 @@ const setStructuredData = (html, page, canonicalUrl) => {
   );
 };
 
-const fallbackNavigation = [
-  { label: 'Home', path: '/' },
-  { label: 'Documentation', path: '/documentation' },
-  { label: 'API', path: '/api' },
-  { label: 'Demo', path: '/demo' },
-  { label: 'Recipes', path: '/recipes' },
-];
-
-const createFallbackNavigation = () =>
-  `<nav aria-label="Explore React Query Builder">
-    <h2>Explore React Query Builder</h2>
-    <ul>${fallbackNavigation
-      .map(
-        (item) =>
-          `<li><a href="${escapeHtml(canonicalUrlForPath(item.path))}">${escapeHtml(item.label)}</a></li>`
-      )
-      .join('')}</ul>
-  </nav>`;
-
-const fallbackKindForPage = (page) =>
-  page.section === 'Recipes' ? 'recipe' : page.section.toLowerCase();
-
-const createRecipeFallback = (page) => {
-  const list = (items) =>
-    `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
-  const faq = page.faqs?.length
-    ? `<h2>Frequently asked questions</h2>${page.faqs
-        .map(
-          (item) =>
-            `<section><h3>${escapeHtml(item.question)}</h3><p>${escapeHtml(item.answer)}</p></section>`
-        )
-        .join('')}`
-    : '';
-
-  return `<main data-seo-fallback="recipe" aria-busy="true"><article>
-    <p>React Query Builder recipes</p>
-    <h1>${escapeHtml(page.title)}</h1>
-    <p>${escapeHtml(page.summary)}</p>
-    <p>${escapeHtml(page.description)}</p>
-    <h2>What this recipe builds</h2>${list(page.capabilities)}
-    <h2>Validation and safety</h2>${list(page.safetyNotes)}
-    <h2>Production notes</h2>${list(page.productionNotes)}
-    ${faq}
-    ${createFallbackNavigation()}
-  </article></main>`;
-};
-
-const createPageFallback = (page) => {
-  if (page.section === 'Recipes') return createRecipeFallback(page);
-
-  return `<main data-seo-fallback="${escapeHtml(fallbackKindForPage(page))}" aria-busy="true"><article>
-    <p>${escapeHtml(
-      page.section === 'Home'
-        ? seoConfig.siteName
-        : `${page.section} · ${seoConfig.siteName}`
-    )}</p>
-    <h1>${escapeHtml(page.title)}</h1>
-    <p>${escapeHtml(page.description)}</p>
-    ${createFallbackNavigation()}
-  </article></main>`;
-};
-
 const createPageHtml = (page) => {
+  const renderedPage = renderPage(page.path);
   const canonicalUrl = canonicalUrlForPath(page.path);
   const imageUrl = canonicalUrlForPath('/favicon.png');
   const title = `${page.title} | ${seoConfig.siteName}`;
@@ -282,10 +220,8 @@ const createPageHtml = (page) => {
     throw new Error('Example HTML template is missing the empty root element.');
   }
 
-  html = html.replace(
-    emptyRoot,
-    `<div id="root">${createPageFallback(page)}</div>`
-  );
+  html = html.replace('</head>', `${renderedPage.styles}\n  </head>`);
+  html = html.replace(emptyRoot, `<div id="root">${renderedPage.html}</div>`);
 
   return html;
 };
@@ -324,21 +260,24 @@ for (const page of seoConfig.pages) {
       ? indexPath
       : path.join(distRoot, page.path.replace(/^\//, ''), 'index.html');
   const html = fs.readFileSync(outputPath, 'utf8');
-  const fallbackMarker = `data-seo-fallback="${fallbackKindForPage(page)}"`;
+  const h1Matches = html.match(/<h1(?:\s[^>]*)?>[\s\S]*?<\/h1>/gi) ?? [];
   if (
-    !html.includes(`<h1>${escapeHtml(page.title)}</h1>`) ||
-    !html.includes(`<p>${escapeHtml(page.description)}</p>`) ||
-    !html.includes(fallbackMarker)
+    h1Matches.length !== 1 ||
+    !html.includes('data-styled="true"') ||
+    !html.includes('<script id="structured-data-page"') ||
+    !html.includes('<div id="root">') ||
+    !html.includes('<script type="module"') ||
+    html.includes('data-seo-fallback')
   ) {
     throw new Error(
-      `Generated HTML is missing crawlable fallback content for ${page.path}.`
+      `Generated HTML is missing complete SSG content for ${page.path}.`
     );
   }
 
   if (
     page.section === 'Recipes' &&
     page.faqs?.length &&
-    !html.includes('<h2>Frequently asked questions</h2>')
+    !html.includes('Frequently asked questions</h2>')
   ) {
     throw new Error(
       `Generated recipe HTML is missing FAQ content for ${page.path}.`
@@ -351,3 +290,5 @@ fs.writeFileSync(
   path.join(distRoot, 'robots.txt'),
   `User-agent: *\nAllow: /\n\nSitemap: ${canonicalUrlForPath('/sitemap.xml')}\n`
 );
+
+fs.rmSync(ssgRoot, { recursive: true, force: true });

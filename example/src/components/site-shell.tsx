@@ -11,7 +11,8 @@ import {
 import { siteTheme } from '../constants/site-theme';
 import { CloseIcon, GithubIcon, MenuIcon, NpmIcon } from './icons';
 import { HeaderSearch } from './header-search';
-import { CookieConsentBanner } from './cookie-consent-banner';
+import { ClientOnly } from './client-only';
+import { loadCookieConsentBanner } from './load-cookie-consent-banner';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -471,7 +472,11 @@ export const SiteShell: React.FC = () => {
         &copy; Vojtěch Václav Porteš {year} - All library contents are available
         under the MIT license.
       </Footer>
-      <CookieConsentBanner />
+      <ClientOnly
+        loader={loadCookieConsentBanner}
+        label="Loading privacy preferences..."
+        minHeight="0"
+      />
     </Page>
   );
 };
