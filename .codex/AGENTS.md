@@ -89,6 +89,14 @@ Use `kebab-case` for:
 - Keep tasks small and committable
 - Each code addition or refactor should be tested
 
+## Copy
+
+- Do not use m-dashes "—", use standard n-dash instead "-"
+- Always make sure text is readable and understandable, doesn't contain unecessary text or information that are irelevant. That especially apply to the library website.
+- Text should be easy to understand even for junior/medior developer, without over-explanation
+- As an inspiration how good copy should look like, look at for example https://docs.nestjs.com/recipes/crud-generator or https://mui.com/material-ui/api/slider
+- Make sure you are using concise communication style and don't use multiple styles of writing
+
 ## Sub-agents
 
 Define and use these two sub-agents from now on.

@@ -902,7 +902,7 @@ sharing only non-content site infrastructure.
 
 ### T017 - Create the independent v2 Documentation tree
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T016
 
