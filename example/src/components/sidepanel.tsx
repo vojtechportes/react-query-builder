@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 
 const StyledSidepanel = styled.aside`
   display: flex;

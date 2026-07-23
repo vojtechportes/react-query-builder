@@ -19,6 +19,7 @@
     "config/package-bindings/v2-package-binding.ts",
     "config/package-bindings/constants",
     "config/package-bindings/types",
-    "config/package-bindings/utils"
+    "config/package-bindings/utils",
+    "config/versioned-site"
   ]
 }

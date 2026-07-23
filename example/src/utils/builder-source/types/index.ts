@@ -1,5 +1,5 @@
-﻿import type { LocaleId } from '../../../constants/locale-options';
-import type { IColors } from '../../../../../src/constants/colors';
+import type { LocaleId } from '../../../constants/locale-options';
+import type { IColors } from '@vojtechportes/react-query-builder';
 
 export type CustomizationMode =
   | 'default'

@@ -15,8 +15,8 @@ import { createMonacoComponents } from '@vojtechportes/react-query-builder/monac
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import { Theme as RadixTheme } from '@radix-ui/themes';
 import { components as radixComponents } from '@vojtechportes/react-query-builder/radix/v1';
-import type { IColors } from '../../../src/constants/colors';
-import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
+import type { IColors } from '@vojtechportes/react-query-builder';
+import { ThemeProvider } from '@vojtechportes/react-query-builder';
 import {
   demoFields,
   defaultTheme,

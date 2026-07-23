@@ -1,4 +1,4 @@
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 
 export const siteTheme = {
   primary: colors.primary.default,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 import {
   GITHUB_URL,
   NPM_URL,
