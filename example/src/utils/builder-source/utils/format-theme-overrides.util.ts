@@ -1,10 +1,13 @@
-import type { IColors } from '../../../../../src/constants/colors';
+import type { IColors } from '@vojtechportes/react-query-builder';
 
-export const formatThemeOverrides = (themeOverrides: Partial<IColors>): string => {
+export const formatThemeOverrides = (
+  themeOverrides: Partial<IColors>
+): string => {
   const lines = Object.entries(themeOverrides).flatMap(([key, value]) => {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       const nestedLines = Object.entries(value).map(
-        ([nestedKey, nestedValue]) => `      ${nestedKey}: ${JSON.stringify(nestedValue)},`
+        ([nestedKey, nestedValue]) =>
+          `      ${nestedKey}: ${JSON.stringify(nestedValue)},`
       );
 
       return [
@@ -20,4 +23,3 @@ export const formatThemeOverrides = (themeOverrides: Partial<IColors>): string =
 
   return ['{', '    ...colors,', ...lines, '  }'].join('\n');
 };
-

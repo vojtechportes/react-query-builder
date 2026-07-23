@@ -2,7 +2,7 @@ import type {
   DenormalizedQuery,
   IBuilderFieldProps,
 } from '@vojtechportes/react-query-builder';
-import { formatQuery } from '../../../src/formatQuery';
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
 
 export type SupportedQueryFormat =
   | 'SQL'

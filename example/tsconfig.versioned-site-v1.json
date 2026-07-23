@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.package-binding-v1.json",
+  "compilerOptions": {
+    "types": ["vite/client"]
+  },
+  "include": ["src/v1", "src/shared"]
+}

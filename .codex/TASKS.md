@@ -783,7 +783,7 @@ sharing only non-content site infrastructure.
 
 ### T012 - Add independent Vite build targets and shared artifact staging
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T011
 
