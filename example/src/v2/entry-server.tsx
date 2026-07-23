@@ -3,7 +3,7 @@ import { AppRoutes } from '../app/app-routes';
 import { routerBasename } from '../app/router-basename';
 import { DemoPage } from './pages/demo-page/demo-page';
 import { HomePage } from './pages/home-page/home-page';
-import { DocumentationPage } from '../pages/documentation-page/documentation-page';
+import { DocumentationPage } from './pages/documentation-page/documentation-page';
 import { renderApp } from '../shared/ssr/render-app.util';
 
 export const renderPage = (pathname: string) =>
