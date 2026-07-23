@@ -4,8 +4,16 @@ import type { IAppContentPages } from './types/app-content-pages';
 import { AppRoutes } from './app-routes';
 import { routerBasename } from './router-basename';
 
-export const App: React.FC<IAppContentPages> = ({ demoPage, homePage }) => (
+export const App: React.FC<IAppContentPages> = ({
+  demoPage,
+  documentationPage,
+  homePage,
+}) => (
   <BrowserRouter basename={routerBasename}>
-    <AppRoutes demoPage={demoPage} homePage={homePage} />
+    <AppRoutes
+      demoPage={demoPage}
+      documentationPage={documentationPage}
+      homePage={homePage}
+    />
   </BrowserRouter>
 );

@@ -878,7 +878,7 @@ sharing only non-content site infrastructure.
 
 ### T016 - Freeze the version-owned v1 Documentation tree
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T013
 
