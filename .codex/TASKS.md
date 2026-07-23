@@ -719,3 +719,1280 @@ as interactive client-side islands.
   checks on representative pages.
 - After deployment, crawl all sitemap URLs as raw HTML and use Search Console URL Inspection
   on representative pages to confirm Google receives the pre-rendered content.
+
+## React Query Builder 2.0 versioned-site and styling migration
+
+Execution order is dependency-driven. T010-T031 must be complete before any styling task
+starts. T033 is the first styling review gate; no later styling migration starts before
+its maintainer approval. v1 and v2 own separate pages, copy, navigation, search, routes,
+and all SEO/SSG code and data. Only non-content infrastructure may be shared. The example
+site may keep styled-components for its own shell; the published v2 package may not.
+
+### T010 - Record the v1/v2 architecture decision
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T008 and T009
+
+**Goal:** Select the smallest architecture that isolates both library versions while
+sharing only non-content site infrastructure.
+
+**Scope:**
+
+- Compare two isolated Vite builds with a single runtime app using two npm aliases.
+- Prefer isolated builds unless the single-app spike proves package, type, React, CSS, SSR,
+  and bundle isolation.
+- Define folders, build commands, package resolution, local development, and artifact
+  layout.
+- Share only shell chrome, low-level UI, analytics plumbing, URL/version utilities,
+  artifact assembly, fixtures, and test infrastructure.
+
+**Acceptance criteria:**
+
+- v1 is pinned to 1.33.1 and v2 resolves to the local future-2.0 package.
+- Pages, copy, navigation, search, routes, and SEO/SSG ownership are never shared.
+- The decision and rejected alternative are recorded before implementation.
+
+**Verification:**
+
+- Build minimal root/subpath client and SSR imports for both candidates.
+
+### T011 - Add isolated v1.33.1 and local-v2 package bindings
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T010
+
+**Goal:** Give each build an unambiguous package implementation.
+
+**Scope:**
+
+- Bind v1 exactly to `@vojtechportes/react-query-builder@1.33.1` or an exact npm alias.
+- Bind v2 to the local package build/source during development and 2.0.0 after release.
+- Cover root, locale, parser/formatter, adapter, and Monaco subpaths.
+- Ensure one React/React DOM runtime per build.
+
+**Acceptance criteria:**
+
+- Client, SSR, tests, and snippet type-checking resolve the intended version only.
+- v1 cannot load v2 CSS; v2 cannot import the v1 runtime.
+
+**Verification:**
+
+- Inspect both dependency graphs and run representative subpath imports.
+
+### T012 - Add independent Vite build targets and shared artifact staging
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T011
+
+**Goal:** Build v1 and v2 independently without duplicating application infrastructure.
+
+**Scope:**
+
+- Add version-target-aware Vite, TypeScript, test, client, and SSR entry configuration.
+- Extract only approved non-content shell/infrastructure into the shared layer.
+- Build to isolated staging directories so clean builds cannot overwrite one another.
+- Add import-boundary checks between v1-owned and v2-owned trees.
+
+**Acceptance criteria:**
+
+- Either target builds alone and contains no package or content imports from the other.
+- Shared modules contain no page, route registry, search, canonical, or SEO/SSG content.
+
+**Verification:**
+
+- Build each target separately and fail a deliberate boundary violation.
+
+### T013 - Add version-prefix, basename, and URL helpers
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T012
+
+**Goal:** Centralize mechanical version URL handling without sharing route ownership.
+
+**Scope:**
+
+- Parse, add, remove, and switch `/v1` and `/v2` prefixes.
+- Support production root and GitHub Pages repository basenames.
+- Preserve query strings and hashes during redirects/switches.
+- Keep route availability supplied by each version's own manifest.
+
+**Acceptance criteria:**
+
+- Helpers handle root, deep, unknown, query, hash, and alternate-base URLs.
+- No helper imports either version's page or SEO tree.
+
+**Verification:**
+
+- Add a table-driven URL/basename test matrix.
+
+### T014 - Freeze version-owned v1 Home and Demo pages
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T013
+
+**Goal:** Preserve current Home and Demo page implementations/copy for v1.
+
+**Scope:**
+
+- Copy Home, Demo, playground configuration, generated source, and demo fixtures into the
+  v1-owned tree.
+- Keep current styled-components and 1.33.1 behavior.
+- Remove cross-version page/content imports.
+
+**Acceptance criteria:**
+
+- v1 Home/Demo output and interactions match the current site.
+- Future v2 edits cannot change v1 files or output.
+
+**Verification:**
+
+- Run v1 page/playground tests and compare representative HTML/screens.
+
+### T015 - Create independent v2 Home and Demo pages
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T014
+
+**Goal:** Establish independently evolving v2 Home and Demo implementations.
+
+**Scope:**
+
+- Create v2-owned copies of Home, Demo, playground, generated source, and fixtures.
+- Bind all demos to the local v2 package target.
+- Keep page copy/components independent from v1 even when initially identical.
+
+**Acceptance criteria:**
+
+- v2 Home/Demo import no v1 page/content modules.
+- A v2-only edit leaves v1 output unchanged.
+
+**Verification:**
+
+- Run v2 page/playground tests and an ownership-isolation check.
+
+### T016 - Freeze the version-owned v1 Documentation tree
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T013
+
+**Goal:** Preserve the complete current Documentation application for v1.
+
+**Scope:**
+
+- Copy all Documentation pages, navigation data, prose, code samples, and local helpers
+  into v1 ownership.
+- Keep v1 imports/snippets aligned with 1.33.1.
+- Do not share page implementations or copy with v2.
+
+**Acceptance criteria:**
+
+- Every current documentation route has a v1-owned implementation.
+- v1 documentation tests and raw SSG content remain equivalent to the baseline.
+
+**Verification:**
+
+- Run all v1 Documentation tests and route/content comparisons.
+
+### T017 - Create the independent v2 Documentation tree
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T016
+
+**Goal:** Give v2 Documentation fully independent page and copy ownership.
+
+**Scope:**
+
+- Create v2-owned Documentation pages, navigation data, prose, code samples, and helpers.
+- Bind examples to the v2 package target.
+- Prevent imports from the v1 Documentation tree.
+
+**Acceptance criteria:**
+
+- v2 documentation can diverge without changing v1 output.
+- Every v2 documentation route has local copy and tests.
+
+**Verification:**
+
+- Run v2 Documentation tests and cross-version import checks.
+
+### T018 - Freeze the version-owned v1 API tree
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T013
+
+**Goal:** Preserve the full 1.33.1 API reference independently.
+
+**Scope:**
+
+- Copy all API pages, signatures, adapter references, navigation, and code examples into
+  v1 ownership.
+- Keep public signatures/examples accurate for 1.33.1.
+- Do not share API page implementations or copy with v2.
+
+**Acceptance criteria:**
+
+- Every current API route renders from v1-owned files.
+- v1 signatures and examples remain stable after v2 API edits.
+
+**Verification:**
+
+- Run v1 API tests and compare representative signatures/routes.
+
+### T019 - Create the independent v2 API tree
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T018
+
+**Goal:** Establish a separately evolving v2 API reference.
+
+**Scope:**
+
+- Create v2-owned API pages, signatures, adapter references, navigation, and examples.
+- Bind types/signatures to the local v2 package target.
+- Prevent imports from the v1 API tree.
+
+**Acceptance criteria:**
+
+- v2 API changes cannot affect v1 pages or search/SEO inputs.
+- Every v2 API route is independently tested.
+
+**Verification:**
+
+- Run v2 API tests, type checks, and ownership checks.
+
+### T020 - Freeze the version-owned v1 Recipes tree
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T013
+
+**Goal:** Preserve every current recipe page, snippet, demo, and recipe registry entry for
+v1.
+
+**Scope:**
+
+- Copy recipe overview/detail pages, code snippets, demos, FAQ copy, related links, and
+  recipe data into v1 ownership.
+- Keep snippet imports and runtime demos pinned to 1.33.1.
+- Do not share recipe implementations or copy with v2.
+
+**Acceptance criteria:**
+
+- Every current recipe route builds, type-checks, and runs from v1-owned files.
+- v1 recipe output remains stable after v2 changes.
+
+**Verification:**
+
+- Run v1 recipe validation, snippet type checks, demos, and route tests.
+
+### T021 - Create the independent v2 Recipes tree
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T020
+
+**Goal:** Establish independently evolving v2 recipes, snippets, and demos.
+
+**Scope:**
+
+- Create v2-owned recipe pages, snippets, demos, FAQs, related links, and registry data.
+- Bind snippets/demos to the local v2 package target.
+- Prevent imports from the v1 Recipes tree.
+
+**Acceptance criteria:**
+
+- v2 recipes can adopt the stylesheet/API without changing v1 copy or demos.
+- All v2 snippets type-check and all demos use the v2 package.
+
+**Verification:**
+
+- Run v2 recipe validation, snippet type checks, demos, and ownership checks.
+
+### T022 - Create independent v1 navigation and route manifests
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T014, T016, T018, and T020
+
+**Goal:** Make v1 route availability/navigation a version-owned source of truth.
+
+**Scope:**
+
+- Define v1 Home, Documentation, API, Demo, Recipes, nested, and legacy route records.
+- Create v1 top navigation, sidebars, breadcrumbs, related links, and source-link data.
+- Prefix public output under `/v1` using T013 helpers.
+
+**Acceptance criteria:**
+
+- v1 navigation references only v1-owned routes/content.
+- Missing/legacy routes have explicit v1 behavior.
+
+**Verification:**
+
+- Compare v1 manifest, rendered links, and route coverage.
+
+### T023 - Create independent v2 navigation and route manifests
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T015, T017, T019, and T021
+
+**Goal:** Make v2 route availability/navigation independently editable.
+
+**Scope:**
+
+- Define v2 Home, Documentation, API, Demo, Recipes, nested, and legacy route records.
+- Create v2 top navigation, sidebars, breadcrumbs, related links, and source-link data.
+- Prefix public output under `/v2` using T013 helpers.
+
+**Acceptance criteria:**
+
+- v2 navigation imports no v1 manifest/content.
+- v2-only pages do not require corresponding v1 records.
+
+**Verification:**
+
+- Test v2 manifest, rendered links, and route coverage.
+
+### T024 - Add the accessible version switcher and fallback behavior
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T022 and T023
+
+**Goal:** Turn the static header pill into a usable v1/v2 switcher.
+
+**Scope:**
+
+- Move it outside the Brand link to avoid nested interactive elements.
+- Preserve the logical path/query/hash when the target owns an equivalent route.
+- Fall back to the nearest target-version section landing page otherwise.
+- Support desktop/mobile, keyboard navigation, focus, dismissal, and accessible labels.
+
+**Acceptance criteria:**
+
+- The active version and both choices are clear and operable with pointer/keyboard.
+- Same-page and fallback results use the target's independent route manifest.
+
+**Verification:**
+
+- Add interaction/accessibility tests for both versions and fallback cases.
+
+### T025 - Add unversioned-to-v2 and version-local legacy redirects
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T022 and T023
+
+**Goal:** Make v2 the latest default without crossing legacy v1 traffic into v2
+unexpectedly.
+
+**Scope:**
+
+- Redirect `/` to `/v2` and every known unversioned route to the same logical v2 path.
+- Preserve query strings/hashes.
+- Apply existing legacy redirects separately within `/v1/*` and `/v2/*`.
+- Define unknown-route behavior for client routing and generated static documents.
+
+**Acceptance criteria:**
+
+- `/documentation` becomes `/v2/documentation`, with equivalent behavior for deep paths.
+- Redirects are single-hop and do not change versions for already versioned URLs.
+
+**Verification:**
+
+- Add a full redirect/status/location matrix for both deployment basenames.
+
+### T026 - Create the independent v1 search index and tests
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T022
+
+**Goal:** Keep v1 search derived only from v1 pages/copy/routes.
+
+**Scope:**
+
+- Create v1-owned searchable records and indexing logic/configuration.
+- Make result URLs use `/v1/*` and v1 route availability.
+- Keep search UI primitive sharing separate from search data ownership.
+
+**Acceptance criteria:**
+
+- v2 content cannot appear in v1 search.
+- Every indexable v1 page has a valid v1 result path.
+
+**Verification:**
+
+- Run v1 indexing, result relevance, navigation, and missing-route tests.
+
+### T027 - Create the independent v2 search index and tests
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T023
+
+**Goal:** Keep v2 search independently derived from v2 pages/copy/routes.
+
+**Scope:**
+
+- Create v2-owned searchable records and indexing logic/configuration.
+- Make result URLs use `/v2/*` and v2 route availability.
+- Prevent imports from v1 search/page data.
+
+**Acceptance criteria:**
+
+- v1-only copy cannot appear in v2 results.
+- v2-only pages can be indexed without a v1 equivalent.
+
+**Verification:**
+
+- Run v2 indexing, result relevance, navigation, and ownership tests.
+
+### T028 - Create the independent v1 SEO/SSG pipeline
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T022 and T026
+
+**Goal:** Give v1 full ownership of SEO data, static generation, and validation.
+
+**Scope:**
+
+- Create v1 metadata/SEO registry, canonicals, structured data, sitemap/robots config,
+  server entry, SSG build, and validation scripts.
+- Decide/document v1 indexing policy without claiming v2 content.
+- Preserve v1 styled-components SSR collection and hydration output.
+
+**Acceptance criteria:**
+
+- v1 SEO/SSG imports no v2 SEO, routes, pages, or search records.
+- Every v1 canonical route emits complete static HTML and validates independently.
+
+**Verification:**
+
+- Run v1 SEO validation, DOM-free SSG, raw HTML, structured-data, and hydration checks.
+
+### T029 - Create the independent v2 SEO/SSG pipeline
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T023 and T027
+
+**Goal:** Give v2 separately evolving SEO data, static generation, and validation.
+
+**Scope:**
+
+- Create v2 metadata/SEO registry, canonicals, structured data, sitemap/robots config,
+  server entry, SSG build, and validation scripts.
+- Keep all v2 SEO/SSG code/data local to v2.
+- Generate complete static HTML for every v2 canonical route.
+
+**Acceptance criteria:**
+
+- v2 SEO edits cannot change v1 metadata, sitemap, robots, search, or HTML.
+- v2 SEO/SSG validation runs without importing v1-owned modules.
+
+**Verification:**
+
+- Run v2 SEO validation, DOM-free SSG, raw HTML, structured-data, and hydration checks.
+
+### T030 - Assemble versioned artifacts and update deployment redirects
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T024, T025, T028, and T029
+
+**Goal:** Publish one static artifact containing isolated v1/v2 apps and correct redirects.
+
+**Scope:**
+
+- Assemble staging output into `example/dist/v1` and `example/dist/v2` without collisions.
+- Keep version-owned CSS/JS/SSG assets isolated and hash-safe.
+- Update root redirect documents, FTP `.htaccess`, GitHub Pages behavior, and both
+  deployment workflows.
+- Keep only non-SEO assembly shared; version SEO artifacts remain owned/generated locally.
+
+**Acceptance criteria:**
+
+- FTP and GitHub Pages artifacts serve deep v1/v2 routes and unversioned redirects.
+- v1 styles/runtime never load in v2 and vice versa.
+
+**Verification:**
+
+- Build, serve, crawl, and inspect both deployment variants with/without JavaScript.
+
+### T031 - Verify and approve the complete versioned-site prerequisite
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T024 through T030
+
+**Goal:** Close the site-versioning prerequisite before any styling migration.
+
+**Scope:**
+
+- Run package isolation, page, navigation, search, route, switcher, SEO/SSG, hydration,
+  accessibility, and deployment matrices for both versions.
+- Confirm v1 is exact 1.33.1 and v2 uses the local package.
+- Review shared boundaries and independent page/SEO ownership.
+
+**Acceptance criteria:**
+
+- T032+ cannot begin until this task is marked done.
+- `/v1/*`, `/v2/*`, and same-path unversioned-to-v2 behavior are maintainer-approved.
+- No cross-version package, page, search, route, SEO, or CSS imports remain.
+
+**Verification:**
+
+- Archive the passing dual-target build, route, dependency, and asset reports.
+
+### T032 - Capture the package baseline and add CSS build/test infrastructure
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T031
+
+**Goal:** Prepare deterministic CSS Modules tooling without broadly restyling components.
+
+**Scope:**
+
+- Record package/consumer min+gzip, installed dependencies, tarball size, and ESM/CJS
+  baselines.
+- Add pinned `@tsdown/css`, `clsx`, CSS Module TypeScript declarations, and Jest handling.
+- Emit exactly one stable `dist/styles.css` with no JS injection while preserving shared JS
+  chunks; validate the experimental tsdown CSS options.
+- Lock placement: `{module}/{module}.tsx` beside `{module}/{module}.module.css`; move any
+  styled file lacking its own folder first.
+- Lock class rules: `clsx`, incoming className preservation, private hashes, low
+  specificity, no leaked transient props.
+
+**Acceptance criteria:**
+
+- Client, SSR, ESM, CJS, TS, and Jest handle CSS Modules.
+- Non-UI exports remain CSS/clsx-free.
+- No component except drop-zone is migrated yet.
+
+**Verification:**
+
+- Run smoke builds/tests and save baseline/output inspection reports.
+
+### T033 - Migrate drop-zone as the first CSS Modules review gate
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T032
+
+**Goal:** Deliver one complete component migration for immediate maintainer review.
+
+**Scope:**
+
+- Move `src/drop-zone.tsx` to `src/drop-zone/drop-zone.tsx`.
+- Add adjacent `drop-zone.module.css`; update imports, exports, and tests.
+- Replace styled wrappers/interpolations with `clsx` module/state classes.
+- Preserve active, dragging, empty, transition-disabled, responsive, DOM/ref, data/ARIA,
+  and incoming class behavior.
+- Stop before T034+ until approved.
+
+**Acceptance criteria:**
+
+- No styled-components/transient props remain in drop-zone.
+- Emitted selectors match JS mappings and visuals/behavior match the baseline.
+- Folder, naming, state modeling, and composition receive explicit maintainer approval.
+
+**Verification:**
+
+- Run focused DnD tests, ESM/CJS/SSR builds, and all-state visual checks.
+
+### T034 - Prove adapter multi-entry CSS output with one minimal module
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T033 approval
+
+**Goal:** Validate root/adapter CSS output before larger migrations.
+
+**Scope:**
+
+- Migrate one small ANTD or MUI text-mode toggle wrapper into its adjacent module folder.
+- Verify class mappings and stylesheet inclusion across ESM/CJS root/adapter entries.
+- Confirm no split/hashed CSS asset proliferation or JS style injection.
+
+**Acceptance criteria:**
+
+- One stylesheet contains root and selected adapter rules exactly once.
+- SSR and unrelated entries remain safe.
+
+**Verification:**
+
+- Build all entries and inspect assets/imports plus the focused adapter test.
+
+### T035 - Add the public stylesheet export and CSS-variable token contract
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T034
+
+**Goal:** Establish v2's stable styling API before more component migrations.
+
+**Scope:**
+
+- Export `./styles.css`, publish it, add a conventional style field if useful, and mark CSS
+  side effects narrowly.
+- Define inherited `--query-builder-*` colors, paddings/gaps, radii, shadows, sizing,
+  typography, and existing control width/min-width.
+- Audit z-index/motion/editor/drop-zone values; expose only credible public needs.
+- Add typed CSS-variable `style`, `className`, and stable root data hook to Builder.
+- Keep the 900px breakpoint compiled unless container queries replace it.
+
+**Acceptance criteria:**
+
+- Global/wrapper/Builder overrides work for colors, padding, radii, and shadows.
+- Packed consumers resolve one explicit stylesheet; unstyled consumers get no injection.
+
+**Verification:**
+
+- Run token precedence, packed export, client, SSR, and no-CSS consumer checks.
+
+### T036 - Add the ThemeProvider-to-CSS-variable compatibility bridge
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035
+
+**Goal:** Keep legacy color theming compatible for one deprecation cycle.
+
+**Scope:**
+
+- Map `IColors` once and serialize only provided overrides.
+- Keep the provider DOMless; support Builder and standalone public controls.
+- Preserve current nested-provider replacement semantics unless explicitly documented.
+- Document precedence: defaults, inherited CSS, Builder style, explicit provider values.
+- Retain `colors`/types and mark ThemeProvider theming legacy.
+
+**Acceptance criteria:**
+
+- No/partial/nested providers, direct CSS, Builder style, and standalone controls behave as
+  documented.
+- Unused provider defaults never suppress inherited CSS.
+
+**Verification:**
+
+- Run focused theme, API, declaration, and precedence tests.
+
+### T037 - Migrate Button, SecondaryButton, and OutlinedButton modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T036
+
+**Goal:** Migrate the base button composition in one focused change.
+
+**Scope:**
+
+- Move each styled component into its own adjacent module folder.
+- Replace styled inheritance with explicit shared classes/React composition.
+- Preserve public props, className, DOM, hover, focus-visible, and disabled states.
+
+**Acceptance criteria:**
+
+- These three buttons contain no styled-components usage or leaked props.
+- Visual and behavioral contracts match v1.
+
+**Verification:**
+
+- Run focused button tests and interaction/state visual checks.
+
+### T038 - Migrate CloneButton and LockToggle modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T037
+
+**Goal:** Migrate icon/state button variants separately from the base family.
+
+**Scope:**
+
+- Move CloneButton and LockToggle into adjacent module folders.
+- Preserve clone/lock titles, icons, disabled/focus states, lock-state variants, className,
+  and ARIA behavior.
+
+**Acceptance criteria:**
+
+- Both controls are styled-components-free and use the accepted button/token foundation.
+- All lock states and disabled behavior remain compatible.
+
+**Verification:**
+
+- Run clone/lock tests plus keyboard and state visuals.
+
+### T039 - Migrate Alert and Text modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T036
+
+**Goal:** Migrate small semantic display primitives independently.
+
+**Scope:**
+
+- Move Alert and Text into adjacent module folders.
+- Preserve alert severity/variant color combinations, icon/content layout, text sizing,
+  className, and accessibility.
+
+**Acceptance criteria:**
+
+- Both primitives have no styled interpolation and use public color/spacing/radius tokens.
+- All severity/variant combinations match the baseline.
+
+**Verification:**
+
+- Add/run focused alert/text tests, SSR, and visual checks.
+
+### T040 - Migrate Popover and PopoverItem modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T037
+
+**Goal:** Migrate default popover positioning and item states.
+
+**Scope:**
+
+- Move Popover and PopoverItem into adjacent folders/modules.
+- Preserve positioning, layering, outside-click behavior, focus, item hover/disabled states,
+  className, refs, and accessibility.
+
+**Acceptance criteria:**
+
+- Popover primitives are styled-components-free and token-driven.
+- Interaction, DOM, and public props remain compatible.
+
+**Verification:**
+
+- Run popover tests, SSR, keyboard, and layering visual checks.
+
+### T041 - Migrate remaining drag-and-drop presentation modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T033 and T035
+
+**Goal:** Complete DnD presentation using the approved drop-zone pattern.
+
+**Scope:**
+
+- Migrate drag-handle, drag-preview, and empty-group-drop-zone into adjacent modules.
+- Preserve active/dragging/empty/settling/transition states, overlay sizing, hit areas,
+  refs, and DnD attributes.
+
+**Acceptance criteria:**
+
+- Default DnD presentation has no styled-components usage.
+- Nested/empty targets and previews match baseline behavior/visuals.
+
+**Verification:**
+
+- Run DnD/iterator tests and all-state/nesting visual checks.
+
+### T042 - Migrate shared input styles, Input, and Switch modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035
+
+**Goal:** Replace the shared runtime input fragment and foundational form controls.
+
+**Scope:**
+
+- Convert `src/styles/input.styles.ts` to explicit reusable CSS module classes.
+- Move Input and Switch into adjacent module folders.
+- Preserve native attributes, refs, width/min-width, switched/disabled/focus states, knob
+  motion, and responsive sizing.
+
+**Acceptance criteria:**
+
+- Input/Switch have no styled-components usage and retain public behavior.
+- Shared classes are local/explicit rather than a new catch-all API.
+
+**Verification:**
+
+- Run form tests, sizing/token overrides, keyboard, and visual checks.
+
+### T043 - Migrate Option and public OptionContainer modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035
+
+**Goal:** Remove styled types from option primitives and settle public polymorphism.
+
+**Scope:**
+
+- Move Option and OptionContainer into adjacent folders/modules.
+- Replace OptionContainer with a typed/ref-forwarding React component.
+- Decide/document whether its currently available `as` prop is preserved.
+- Preserve attributes, className, selected state, and layout.
+
+**Acceptance criteria:**
+
+- Public declarations no longer import styled-components types.
+- Chosen OptionContainer runtime/type behavior is explicit and tested.
+
+**Verification:**
+
+- Run focused tests and packed TypeScript consumer assertions.
+
+### T044 - Migrate SelectMulti internals and form popover modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T042 and T043
+
+**Goal:** Migrate multi-select finite states and internal presentation.
+
+**Scope:**
+
+- Migrate select-multi trigger, tag, option, label, indicator, remove, summary, chevron,
+  and form popover modules into adjacent folders.
+- Preserve selection/disabled states, truncation, tag removal, keyboard behavior, and host
+  class composition.
+
+**Acceptance criteria:**
+
+- Internal multi-select presentation has no styled interpolation.
+- All state combinations and token overrides match baseline behavior.
+
+**Verification:**
+
+- Run focused SelectMulti unit/interaction/visual tests.
+
+### T045 - Migrate Select and SelectMulti wrapper modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T044
+
+**Goal:** Finish default select roots, hidden inputs, and container layout.
+
+**Scope:**
+
+- Move Select and SelectMulti wrappers into adjacent folders/modules.
+- Preserve refs, hidden inputs, control sizing variables, open/close behavior, loading,
+  className, and form integration.
+
+**Acceptance criteria:**
+
+- Both wrappers are styled-components-free and keep public props/DOM behavior.
+- Control width/min-width and responsive layout remain compatible.
+
+**Verification:**
+
+- Run form select tests, keyboard interactions, and responsive visuals.
+
+### T046 - Migrate Group option and container modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T038 and T043
+
+**Goal:** Migrate group header/options/container layout in isolation.
+
+**Scope:**
+
+- Move group option/container/header/sides into adjacent folders/modules.
+- Preserve nested groups, modifiers, selected modes, controls, padding/radius/shadow, and
+  responsive behavior.
+- Replace group CSSOM inspection with semantic state plus real-CSS integration tests.
+
+**Acceptance criteria:**
+
+- Group components contain no styled-components usage.
+- Nested/responsive visuals and public/custom-component behavior match baseline.
+
+**Verification:**
+
+- Run group/iterator tests and nested/responsive visual checks.
+
+### T047 - Migrate Rule container, layout, and range-input modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T042, T045, and T046
+
+**Goal:** Migrate rule content/control/value/validation presentation.
+
+**Scope:**
+
+- Move rule/rule-container and widget range-input layout into adjacent modules.
+- Preserve controls-present, comparison/range/multi-value, validation, read-only, and
+  responsive control states.
+- Preserve composition between layout/value content and custom components.
+
+**Acceptance criteria:**
+
+- Rule presentation is styled-components-free and functionally compatible.
+- Validation and responsive layouts match the baseline.
+
+**Verification:**
+
+- Run rule/widget/validation/read-only tests and visuals.
+
+### T048 - Migrate Builder root, root controls, and history modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T037, T039, T040, and T047
+
+**Goal:** Replace Builder shell styling without changing Builder behavior.
+
+**Scope:**
+
+- Migrate styled-builder, root controls, history controls, blocked-alert container, and
+  root action layout into adjacent modules.
+- Preserve root class/style/data hook, history, add actions, modes, single/multiple roots,
+  and adapter custom components.
+
+**Acceptance criteria:**
+
+- Builder shell has no styled-components dependency.
+- All root configurations and responsive layouts match baseline behavior.
+
+**Verification:**
+
+- Run Builder/history/root action tests and responsive visual checks.
+
+### T049 - Migrate default text-mode toggle, input, and editor modules
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T039, T042, and T048
+
+**Goal:** Migrate lightweight text mode, synchronized layers, and diagnostics.
+
+**Scope:**
+
+- Migrate toggle content, input/editor roots, frame/layers/overlays, diagnostics, missing
+  markers, and errors into adjacent modules.
+- Preserve typography/scroll sync, protected ranges, caret, syntax highlighting,
+  read-only, sizing, and custom input composition.
+- Use deliberate global Prism `.token.*` selectors and preserve SQL grammar registration.
+
+**Acceptance criteria:**
+
+- Built-in text mode is styled-components-free with aligned layers/diagnostics.
+- Editing, protection, errors, highlighting, and SSR remain compatible.
+
+**Verification:**
+
+- Run text-mode tests, keyboard/scroll/SSR checks, and diagnostic visuals.
+
+### T050 - Retire styled input and responsive helper files
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T042, T047, and T049
+
+**Goal:** Remove obsolete styled helper fragments after all consumers migrate.
+
+**Scope:**
+
+- Delete `src/styles/input.styles.ts` and `src/styles/responsive.styles.ts` only after all
+  usage is replaced by adjacent modules.
+- Keep shared CSS explicit and narrowly owned; avoid catch-all replacements.
+- Verify responsive behavior remains in the appropriate owning modules.
+
+**Acceptance criteria:**
+
+- No imports/references to the old helpers remain.
+- Input/rule/group/text-mode responsive behavior is unchanged.
+
+**Verification:**
+
+- Run source grep, TypeScript, affected tests, and responsive visuals.
+
+### T051 - Complete ANTD, MUI, and Mantine wrapper migrations
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T034 and T049
+
+**Goal:** Remove the remaining styled wrappers from the smaller adapter surfaces.
+
+**Scope:**
+
+- Finish ANTD and MUI toggle wrappers not handled in T034.
+- Migrate Mantine shared styled wrappers into adjacent modules.
+- Preserve host classes/props, incoming className, density, layout, and all supported
+  adapter versions.
+- Use global `.anticon`/`.MuiSvgIcon-root` selectors only where necessary.
+
+**Acceptance criteria:**
+
+- ANTD v5/v6, MUI v7/v9, and Mantine v8/v9 wrapper paths have no styled imports.
+- Host-library styles remain authoritative and compatible.
+
+**Verification:**
+
+- Run all listed adapter tests and representative visuals.
+
+### T052 - Migrate Fluent UI structural wrappers
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035 and T049
+
+**Goal:** Remove styled-components from Fluent UI structural/text/history/connected
+wrappers without unrelated adapter refactoring.
+
+**Scope:**
+
+- Split/move styled wrappers from `src/fluentui/shared/components.tsx` into adjacent module
+  folders as required.
+- Preserve host props/classes, rule/group layout, responsive behavior, history, connected
+  selection, and Fluent UI v8 behavior.
+
+**Acceptance criteria:**
+
+- Fluent UI entry has no styled-components usage and retains its public mapping/API.
+- Responsive and selected/disabled states match baseline.
+
+**Verification:**
+
+- Run Fluent UI tests and desktop/responsive visuals.
+
+### T053 - Migrate Radix structural wrappers
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035 and T049
+
+**Goal:** Remove styled-components from Radix structural/alert/group/rule/history/control
+wrappers.
+
+**Scope:**
+
+- Split/move styled wrappers from `src/radix/shared/components.tsx` into adjacent modules.
+- Preserve Radix host classes/tokens, incoming classes, connected selection, shadows, and
+  responsive behavior.
+- Keep Radix Themes/icons owned by host packages.
+
+**Acceptance criteria:**
+
+- Radix v1 entry has no styled-components usage and retains public mappings.
+- Host/query-builder variables coexist without specificity leakage.
+
+**Verification:**
+
+- Run Radix tests and representative theme/responsive visuals.
+
+### T054 - Migrate Monaco editor styling and global selectors
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035 and T049
+
+**Goal:** Migrate Monaco framing/diagnostic styles while preserving editor integration.
+
+**Scope:**
+
+- Move Monaco editor components into adjacent module folders as required.
+- Migrate root/frame/surface/error styles; target generated Monaco classes deliberately.
+- Preserve dimensions, read-only/protected ranges, diagnostics, hover text, and custom
+  component composition.
+
+**Acceptance criteria:**
+
+- Monaco entry has no styled-components dependency and emits CSS once.
+- Decorations/protected ranges match baseline behavior and visuals.
+
+**Verification:**
+
+- Run Monaco component/utility tests, SSR imports, and decoration visuals.
+
+### T055 - Verify Bootstrap, every adapter entry, and CSS-free non-UI entries
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T051, T052, T053, and T054
+
+**Goal:** Prove all public entries work with the final styling architecture.
+
+**Scope:**
+
+- Verify Bootstrap v5 without unnecessary rewrites.
+- Test root, ANTD v5/v6, Bootstrap v5, Fluent v8, Mantine v8/v9, MUI v7/v9, Radix v1,
+  Monaco, locales, `parseQuery`, and `formatQuery` independently.
+- Preserve incoming host classes and avoid pulling optional peers into other entries.
+- Ensure locale/parser/formatter consumers remain CSS/clsx-free and SSR-safe.
+
+**Acceptance criteria:**
+
+- Every export resolves in ESM/CJS/TypeScript and applicable client/SSR usage.
+- Adapter CSS occurs once and non-UI entries emit none.
+
+**Verification:**
+
+- Run the complete adapter and packed per-entry consumer matrix.
+
+### T056 - Integrate v2 stylesheet resolution without changing site styling
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T035 and T055
+
+**Goal:** Load the library stylesheet only in v2 demos while retaining styled-components
+for the example site and v1 library demos.
+
+**Scope:**
+
+- Resolve/import `@vojtechportes/react-query-builder/styles.css` from v2 client/SSR paths.
+- Keep it absent from v1 and keep the site's own styled-components/ServerStyleSheet.
+- Verify CSS extraction and hydration alongside site SSR styles.
+
+**Acceptance criteria:**
+
+- v2 demos are styled exactly once; v1/site styling is unchanged.
+- No cross-version stylesheet/runtime request occurs.
+
+**Verification:**
+
+- Build/inspect both targets and run SSR/hydration/asset checks.
+
+### T057 - Update v2 consumer, adapter, Monaco, and theming documentation
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T056
+
+**Goal:** Document v2's explicit stylesheet/token API without editing frozen v1 copy.
+
+**Scope:**
+
+- Add stylesheet imports to v2 quick starts, adapter/Monaco examples, and generated source.
+- Document global/wrapper/Builder overrides, token precedence, adapter stylesheet order,
+  stable hooks, private module hashes, and legacy ThemeProvider migration.
+- Keep v1 pages and all v1 SEO/search data untouched.
+
+**Acceptance criteria:**
+
+- Every v2 copy-ready Builder example imports styles exactly once.
+- v1 content remains unchanged except shared version-switcher chrome.
+
+**Verification:**
+
+- Run v2 docs/API/source-generation tests and compare v1 snapshots.
+
+### T058 - Update the v2 theme editor and recipe snippets
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T057
+
+**Goal:** Demonstrate CSS-variable customization in live v2 demos and copy-paste recipes.
+
+**Scope:**
+
+- Add v2 controls/examples for color, padding, radius, and shadow variables.
+- Update v2 recipe snippets, paired demos/page code, snippet TS config, and formatter
+  validation for the explicit stylesheet.
+- Keep v1 theme UI, snippets, demos, and copy unchanged.
+
+**Acceptance criteria:**
+
+- Live v2 overrides work per Builder and generated code is valid/copy-ready.
+- v1 output remains isolated.
+
+**Verification:**
+
+- Run v2 theme/playground/recipe/snippet tests and v1 snapshot checks.
+
+### T059 - Add packed-consumer, SSR, hydration, and visual-parity verification
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T055 and T058
+
+**Goal:** Complete the cross-cutting release verification gate.
+
+**Scope:**
+
+- Test packed consumers with/without styles, variable precedence, all exports, SSR, and
+  hydration.
+- Cover desktop/responsive layouts, root/group/rule/control states, DnD, validation,
+  clone/lock, built-in text mode, Monaco, and adapters.
+- Verify keyboard focus, contrast, hit targets, and reduced motion.
+- Add/run all-example Vitest scripts for v1 and v2.
+
+**Acceptance criteria:**
+
+- With-CSS emits one asset; no-CSS stays functional with no injection.
+- No hydration/class/runtime-style warnings occur.
+- Maintainer accepts visual/accessibility parity.
+
+**Verification:**
+
+- Run packed, unit, adapter, dual-example, SSR/hydration, responsive, and manual review
+  matrices.
+
+### T060 - Remove published styled-components dependencies and audit declarations
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T059
+
+**Goal:** Remove styled-components from the v2 published package while retaining example
+site/v1 usage.
+
+**Scope:**
+
+- Remove root package styled-components/runtime types and regenerate the lockfile.
+- Keep styled-components only where required by example shell and v1 demos.
+- Grep library source plus all `.mjs`, `.cjs`, `.d.mts`, `.d.cts`, and `.d.ts` outputs.
+- Verify OptionContainer/public declarations and Prism side-effect preservation.
+
+**Acceptance criteria:**
+
+- Packed v2 package has no styled-components dependency/type leak.
+- Example/v1 styled-components remain isolated and functional.
+
+**Verification:**
+
+- Run source/dist greps, declaration consumers, dependency graph, and tarball checks.
+
+### T061 - Add release CI, size report, and 2.0.0 migration notes
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T060
+
+**Goal:** Make the major release reproducible and protected from styling regressions.
+
+**Scope:**
+
+- Add packed export/CSS/declaration/dependency checks to required pre-publish CI.
+- Compare JS/CSS min+gzip, install dependency, and tarball sizes with T032 baseline.
+- Add a regression budget/report and prevent styled-components from returning unnoticed.
+- Write 2.0.0 migration notes covering stylesheet import, tokens, ThemeProvider legacy,
+  OptionContainer decisions, and versioned docs URLs.
+- Run the repository-required code-review agent and resolve findings.
+
+**Acceptance criteria:**
+
+- Release target is 2.0.0 from 1.33.1 and every required matrix passes before publish.
+- Size/dependency improvement is measured, not assumed.
+- CI fails missing styles, export/declaration leaks, or forbidden dependency regressions.
+
+**Verification:**
+
+- Run the full publish-artifact workflow locally/CI and record final size/review reports.
