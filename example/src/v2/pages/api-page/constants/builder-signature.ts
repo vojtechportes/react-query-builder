@@ -1,0 +1,26 @@
+export const builderSignature = `export interface IBuilderProps {
+  fields: IBuilderFieldProps[];
+  data: DenormalizedQuery;
+  components?: IBuilderComponentsProps;
+  strings?: IStrings;
+  textMode?: boolean | IBuilderTextModeConfig;
+  defaultMode?: BuilderDefaultMode;
+  readOnly?: boolean;
+  readOnlyProtectsDelete?: boolean;
+  lockable?: boolean;
+  cloneable?: boolean;
+  draggable?: boolean;
+  allowGroupNegation?: boolean;
+  allowFieldComparisons?: boolean;
+  singleRootGroup?: boolean;
+  groupTypes?: 'with-modifiers' | 'without-modifiers' | 'both';
+  newNodePlacement?: 'append' | 'prepend';
+  validator?: IBuilderValidator;
+  onStateChange?: (state: IBuilderStateChange) => void;
+  onFieldOptionsReload?: (field: string) => void;
+  onRuleOptionsReload?: (ruleId: string) => void;
+  onFieldChange?: (change: IBuilderFieldChange) => void;
+  showValidation?: boolean;
+  history?: boolean | IBuilderHistoryConfig;
+  onChange?: (data: DenormalizedQuery) => any;
+}`;
