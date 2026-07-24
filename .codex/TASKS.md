@@ -1259,7 +1259,7 @@ unexpectedly.
 
 ### T032 - Capture the package baseline and add CSS build/test infrastructure
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T031
 

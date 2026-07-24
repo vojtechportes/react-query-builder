@@ -1,7 +1,17 @@
-﻿import { defineConfig } from 'tsdown';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   clean: true,
+  css: {
+    fileName: 'styles.css',
+    inject: false,
+    modules: {
+      generateScopedName: 'rqb_[hash]',
+      localsConvention: 'camelCaseOnly',
+      scopeBehaviour: 'local',
+    },
+    splitting: false,
+  },
   dts: {
     cjsReexport: true,
   },
