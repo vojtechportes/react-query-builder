@@ -1,14 +1,14 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 import { ContentArticle } from '../../../components/content-article';
 import { DocumentationSidebar } from '../../../components/documentation-sidebar';
 import { RelatedRecipes } from '../../../components/related-recipes';
-import { relatedRecipesByPath } from './constants/related-recipes-by-path';
 import { findSeoPage } from '../../../constants/seo-pages';
 import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { apiGroups } from './constants/api-groups';
-import { apiPages } from './constants/api-pages';
+import { createV2PageMetadataOptions } from '../../app/utils/create-v2-page-metadata-options.util';
+import { findV2RouteRecord } from '../../app/utils/find-v2-route-record.util';
+import { v2ApiSidebar } from '../../navigation/constants/v2-api-sidebar';
 import { findApiPage } from './utils/find-api-page.util';
 
 const Layout = styled.div`
@@ -42,22 +42,24 @@ const Summary = styled.p`
 export const ApiPage: React.FC = () => {
   const location = useLocation();
   const page = findApiPage(location.pathname);
+  const route = findV2RouteRecord(page.path);
   const seoPage = findSeoPage(page.path);
-  usePageMetadata(seoPage.title, seoPage.description, seoPage);
+
+  usePageMetadata(
+    seoPage.title,
+    seoPage.description,
+    createV2PageMetadataOptions(seoPage, route)
+  );
 
   return (
     <Layout>
-      <DocumentationSidebar
-        title="API"
-        overviewPage={apiPages[0]}
-        groups={apiGroups}
-      />
+      <DocumentationSidebar {...v2ApiSidebar} />
       <ContentArticle>
         <SectionLabel>{page.sectionTitle}</SectionLabel>
         <Title>{page.title}</Title>
         {page.summary ? <Summary>{page.summary}</Summary> : null}
         {page.content}
-        <RelatedRecipes links={relatedRecipesByPath[page.path]} />
+        <RelatedRecipes links={route.relatedLinks} />
       </ContentArticle>
     </Layout>
   );

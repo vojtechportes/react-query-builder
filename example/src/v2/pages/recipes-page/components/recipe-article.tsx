@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AlertBox } from '../../../../components/alert-box';
 import { CodeBlock } from '../../../../components/code-block';
 import { List, SectionTitle } from '../../../../components/docs-primitives';
+import type { IV2RelatedLink } from '../../../app/types/v2-related-link';
 import type { IRecipePage } from '../types/recipe-page';
 import { RecipeFaq } from './recipe-faq';
 import { RecipeLiveDemo } from './recipe-live-demo';
@@ -9,12 +10,12 @@ import { RecipeRelatedLinks } from './recipe-related-links';
 
 export interface IRecipeArticleProps {
   page: IRecipePage;
-  pagesByPath: Map<string, IRecipePage>;
+  relatedLinks: IV2RelatedLink[];
 }
 
 export const RecipeArticle: React.FC<IRecipeArticleProps> = ({
   page,
-  pagesByPath,
+  relatedLinks,
 }) => (
   <>
     {page.illustrative ? (
@@ -64,7 +65,7 @@ export const RecipeArticle: React.FC<IRecipeArticleProps> = ({
         <li key={item}>{item}</li>
       ))}
     </List>
-    <RecipeRelatedLinks page={page} pagesByPath={pagesByPath} />
+    <RecipeRelatedLinks links={relatedLinks} />
     <RecipeFaq faqs={page.faqs} />
   </>
 );
