@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderApp } from '../../shared/ssr/render-app.util';
 import { V2AppRoutes } from './v2-app-routes';
@@ -16,12 +16,16 @@ afterEach(() => {
   cleanup();
 });
 
-const renderClientRoute = (path: string) =>
-  render(
-    <MemoryRouter basename="/v2" initialEntries={[`/v2${path}`]}>
-      <V2AppRoutes />
-    </MemoryRouter>
-  );
+const renderClientRoute = (path: string) => {
+  const router = createMemoryRouter([{ path: '*', element: <V2AppRoutes /> }], {
+    basename: '/v2',
+    initialEntries: [`/v2${path}`],
+  });
+
+  render(<RouterProvider router={router} />);
+
+  return router;
+};
 
 describe('v2 app routes', () => {
   it('renders the version switcher outside the Brand link on all layouts', () => {
@@ -107,15 +111,21 @@ describe('v2 app routes', () => {
   });
 
   it('redirects a legacy v2 route to its owned canonical destination', async () => {
-    renderClientRoute('/api/builder-props');
+    const router = renderClientRoute(
+      '/api/builder-props?q=a%2Fb&q=c&empty=#ref%201'
+    );
 
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Builder' })
     ).toBeDefined();
+    expect(router.state.location).toMatchObject({
+      pathname: '/v2/api/builder',
+      search: '?q=a%2Fb&q=c&empty=',
+      hash: '#ref%201',
+    });
   });
-
   it('handles an unknown v2 route by returning to the v2 Home page', async () => {
-    renderClientRoute('/route-not-owned-by-v2');
+    const router = renderClientRoute('/route-not-owned-by-v2?draft=#fallback');
 
     expect(
       await screen.findByRole('heading', {
@@ -123,5 +133,10 @@ describe('v2 app routes', () => {
         name: 'React Query Builder',
       })
     ).toBeDefined();
+    expect(router.state.location).toMatchObject({
+      pathname: '/v2',
+      search: '?draft=',
+      hash: '#fallback',
+    });
   });
 });

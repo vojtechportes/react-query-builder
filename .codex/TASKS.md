@@ -1090,7 +1090,7 @@ v1.
 
 ### T025 - Add unversioned-to-v2 and version-local legacy redirects
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T022 and T023
 
