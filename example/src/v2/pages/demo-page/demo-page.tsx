@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { ClientOnly } from '../../../components/client-only';
-import { findSeoPage } from '../../../constants/seo-pages';
-import { usePageMetadata } from '../../../hooks/use-page-metadata';
+import { useV2PageMetadata } from '../../seo/hooks/use-v2-page-metadata';
+import { createV2PageMetadataOptions } from '../../seo/utils/create-v2-page-metadata-options.util';
+import { findV2SeoPage } from '../../seo/utils/find-v2-seo-page.util';
 import { findV2RouteRecord } from '../../app/utils/find-v2-route-record.util';
-import { createV2PageMetadataOptions } from '../../app/utils/create-v2-page-metadata-options.util';
 import { loadDemoPlayground } from './load-demo-playground';
 
 const Root = styled.section`
@@ -17,11 +17,11 @@ const Title = styled.h1`
   font-size: clamp(2rem, 4vw, 3rem);
 `;
 
-const seoPage = findSeoPage('/demo');
+const seoPage = findV2SeoPage('/demo');
 const route = findV2RouteRecord('/demo');
 
 export const DemoPage: React.FC = () => {
-  usePageMetadata(
+  useV2PageMetadata(
     seoPage.title,
     seoPage.description,
     createV2PageMetadataOptions(seoPage, route)
