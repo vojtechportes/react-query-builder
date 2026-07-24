@@ -9,6 +9,7 @@ import { recipes } from '../pages/recipes-page/pages/recipes-content';
 import { v2FallbackRoute } from './constants/v2-fallback-route';
 import { v2LegacyRouteRedirects } from './constants/v2-legacy-route-redirects';
 import { v2RouteManifest } from './constants/v2-route-manifest';
+import { v2VersionSwitchRoutes } from './constants/v2-version-switch-routes';
 import { createV2PublicPath } from './utils/create-v2-public-path.util';
 import { findV2RouteRecord } from './utils/find-v2-route-record.util';
 import { getV2RouterBasename } from './utils/get-v2-router-basename.util';
@@ -49,6 +50,7 @@ describe('v2 route manifest', () => {
     expect(manifestPaths).toHaveLength(55);
     expect(new Set(manifestPaths).size).toBe(manifestPaths.length);
     expect(new Set(manifestPaths)).toEqual(new Set(expectedCanonicalPaths));
+    expect(v2VersionSwitchRoutes).toEqual(manifestPaths);
   });
 
   it('provides v2 public paths, breadcrumbs, related links, and source links', () => {

@@ -9,6 +9,7 @@ import { recipes } from '../pages/recipes-page/pages/recipes-content';
 import { v1FallbackRoute } from './constants/v1-fallback-route';
 import { v1LegacyRouteRedirects } from './constants/v1-legacy-route-redirects';
 import { v1RouteManifest } from './constants/v1-route-manifest';
+import { v1VersionSwitchRoutes } from './constants/v1-version-switch-routes';
 import { createV1PublicPath } from './utils/create-v1-public-path.util';
 import { findV1RouteRecord } from './utils/find-v1-route-record.util';
 import { getV1RouterBasename } from './utils/get-v1-router-basename.util';
@@ -49,6 +50,7 @@ describe('v1 route manifest', () => {
     expect(manifestPaths).toHaveLength(55);
     expect(new Set(manifestPaths).size).toBe(manifestPaths.length);
     expect(new Set(manifestPaths)).toEqual(new Set(expectedCanonicalPaths));
+    expect(v1VersionSwitchRoutes).toEqual(manifestPaths);
   });
 
   it('provides v1 public paths, breadcrumbs, related links, and source links', () => {
