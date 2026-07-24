@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { apiBaseline } from './pages/api-page/constants/api-baseline';
 import { documentationBaseline } from './pages/documentation-page/constants/documentation-baseline';
+import { recipes } from './pages/recipes-page/pages/recipes-content';
 import { renderPage } from './entry-server';
 
 describe('v1 version-owned SSR', () => {
@@ -50,6 +51,24 @@ describe('v1 version-owned SSR', () => {
     }
   );
 
+  it('renders the frozen Recipes overview', () => {
+    const page = renderPage('/recipes');
+
+    expect(page.html).toContain('>React Query Builder Recipes</h1>');
+    expect(page.styles).toContain('data-styled="true"');
+  });
+
+  it.each(recipes)(
+    'renders the frozen recipe content for $path',
+    ({ path, title }) => {
+      const page = renderPage(path);
+
+      expect(page.html).toContain(`>${title}</h1>`);
+      expect(page.html).toContain('data-client-only-placeholder="true"');
+      expect(page.html).toContain('Loading the interactive recipe demo...');
+      expect(page.styles).toContain('data-styled="true"');
+    }
+  );
   it('preserves the parsing sandbox client-only boundary', () => {
     const page = renderPage('/documentation/parsing-and-formatting');
 

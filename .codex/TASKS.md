@@ -972,7 +972,7 @@ sharing only non-content site infrastructure.
 
 ### T020 - Freeze the version-owned v1 Recipes tree
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T013
 

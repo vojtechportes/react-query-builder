@@ -1,4 +1,4 @@
-﻿import fs from 'node:fs';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import prettier from 'prettier';
@@ -8,20 +8,16 @@ const exampleRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..'
 );
-const snippetsDirectory = path.join(
+const target = process.argv[2];
+const recipeRoot = path.join(
   exampleRoot,
   'src',
-  'pages',
-  'recipes-page',
-  'snippets'
+  ...(target === 'v1'
+    ? ['v1', 'pages', 'recipes-page']
+    : ['pages', 'recipes-page'])
 );
-const pagesDirectory = path.join(
-  exampleRoot,
-  'src',
-  'pages',
-  'recipes-page',
-  'pages'
-);
+const snippetsDirectory = path.join(recipeRoot, 'snippets');
+const pagesDirectory = path.join(recipeRoot, 'pages');
 const requiredRenderedCodeProperties = new Set([
   'fieldsCode',
   'builderCode',
