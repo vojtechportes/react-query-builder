@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { createVersionAssetBase } from './utils/create-version-asset-base.util';
 import { createVersionedSiteViteConfig } from './utils/create-versioned-site-vite-config.util';
 import { resolveVersionTarget } from './utils/resolve-version-target.util';
 
@@ -19,7 +20,9 @@ describe('versioned site configuration', () => {
         ])
       );
       expect(clientConfig.build?.outDir).toBe(stageRoot);
-      expect(clientConfig.base).toBe(`/${target}/`);
+      expect(clientConfig.base).toBe(
+        createVersionAssetBase(process.env.VITE_BASE_PATH, target)
+      );
       expect(clientConfig.build?.emptyOutDir).toBe(true);
       expect(ssrConfig.build?.outDir).toBe(resolve(stageRoot, '.ssg'));
       expect(ssrConfig.build?.emptyOutDir).toBe(true);
@@ -35,6 +38,8 @@ describe('versioned site configuration', () => {
   });
 
   it('keeps repository deployment assets inside each version', () => {
+    const originalDeploymentBase = process.env.VITE_BASE_PATH;
+
     process.env.VITE_BASE_PATH = '/react-query-builder/';
 
     try {
@@ -45,9 +50,14 @@ describe('versioned site configuration', () => {
         '/react-query-builder/v2/'
       );
     } finally {
-      delete process.env.VITE_BASE_PATH;
+      if (originalDeploymentBase === undefined) {
+        delete process.env.VITE_BASE_PATH;
+      } else {
+        process.env.VITE_BASE_PATH = originalDeploymentBase;
+      }
     }
   });
+
   it('rejects a non-version Vite mode', () => {
     expect(() => resolveVersionTarget('production')).toThrow(
       'Expected a version target mode of "v1" or "v2"'
