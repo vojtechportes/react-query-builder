@@ -51,6 +51,57 @@ const verifyCssBuild = async () => {
   const javascriptFiles = distributionFiles.filter((fileName) =>
     /\.(?:cjs|mjs)$/.test(fileName)
   );
+  const dropZoneClassKeys = [
+    'anchor',
+    'active',
+    'dragging',
+    'empty',
+    'dropZone',
+    'inner',
+    'transitionDisabled',
+  ];
+  let dropZoneClassMappings;
+
+  for (const fileName of javascriptFiles) {
+    const source = await readFile(fileName, 'utf8');
+    const moduleMatch = source.match(
+      /#region src\/drop-zone\/drop-zone\.module\.css[\s\S]*?\{([\s\S]*?)\};/
+    );
+
+    if (!moduleMatch) {
+      continue;
+    }
+
+    dropZoneClassMappings = Object.fromEntries(
+      Array.from(
+        moduleMatch[1].matchAll(/["']([^"']+)["']:\s*["']([^"']+)["']/g),
+        (match) => [match[1], match[2]]
+      )
+    );
+    break;
+  }
+
+  if (!dropZoneClassMappings) {
+    throw new Error('DropZone CSS Module mappings are missing from the build');
+  }
+
+  const dropZoneClassNames = dropZoneClassKeys.map((key) => {
+    const className = dropZoneClassMappings[key];
+
+    if (!className || !stylesheet.includes(`.${className}`)) {
+      throw new Error(`DropZone CSS class ${key} is missing from dist output`);
+    }
+
+    return className;
+  });
+
+  if (new Set(dropZoneClassNames).size !== dropZoneClassNames.length) {
+    throw new Error('DropZone CSS Module class mappings are not unique');
+  }
+
+  if (!stylesheet.includes('var(--query-builder-color-grey-300, #e0e0e0)')) {
+    throw new Error('DropZone theme token or default fallback is missing');
+  }
 
   for (const fileName of javascriptFiles) {
     const source = await readFile(fileName, 'utf8');
@@ -156,6 +207,8 @@ const verifyCssBuild = async () => {
         cssFiles: ['dist/styles.css'],
         cssInjection: false,
         cjsSsrLoad: 'passed',
+        dropZoneCssModuleClassesUnique: true,
+        dropZoneThemeToken: '--query-builder-color-grey-300',
         esmNonUiLoad: 'passed',
         nonUiEntriesCssAndClsxFree: true,
         sharedJavaScriptChunks: sharedJavaScriptChunks.length,

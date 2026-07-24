@@ -1289,7 +1289,7 @@ unexpectedly.
 
 ### T033 - Migrate drop-zone as the first CSS Modules review gate
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T032
 
