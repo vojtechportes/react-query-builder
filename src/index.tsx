@@ -1,4 +1,6 @@
-﻿export { Builder, defaultComponents } from './builder';
+import './styles/css-module-contract';
+
+export { Builder, defaultComponents } from './builder';
 export { useBuilderRef } from './hooks/use-builder-ref';
 export { useBuilderRuleDependencies } from './hooks/use-builder-rule-dependencies';
 export type {
