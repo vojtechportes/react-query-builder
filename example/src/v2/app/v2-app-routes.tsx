@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { SiteShell } from '../../components/site-shell';
+import { RouteRedirect } from '../../shared/route-redirect';
 import { v2TopNavigation } from '../navigation/constants/v2-top-navigation';
 import { ApiPage } from '../pages/api-page/api-page';
 import { DemoPage } from '../pages/demo-page/demo-page';
@@ -36,12 +37,12 @@ export const V2AppRoutes: React.FC = () => {
           <Route
             key={redirect.from}
             path={redirect.from}
-            element={<Navigate to={redirect.to} replace />}
+            element={<RouteRedirect to={redirect.to} />}
           />
         ))}
         <Route
           path={v2FallbackRoute.path}
-          element={<Navigate to={v2FallbackRoute.to} replace />}
+          element={<RouteRedirect to={v2FallbackRoute.to} />}
         />
       </Route>
     </Routes>
