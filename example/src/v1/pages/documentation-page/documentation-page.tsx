@@ -7,9 +7,9 @@ import { DocumentationSidebar } from '../../../components/documentation-sidebar'
 import { RelatedRecipes } from '../../../components/related-recipes';
 import { findSeoPage } from '../../../constants/seo-pages';
 import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { documentationGroups } from './constants/documentation-groups';
-import { documentationPages } from './constants/documentation-pages';
-import { relatedRecipesByPath } from './constants/related-recipes-by-path';
+import { createV1PageMetadataOptions } from '../../app/utils/create-v1-page-metadata-options.util';
+import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
+import { v1DocumentationSidebar } from '../../navigation/constants/v1-documentation-sidebar';
 import { findDocumentationPage } from './utils/find-documentation-page.util';
 import { loadParsingSandbox } from './utils/load-parsing-sandbox.util';
 
@@ -44,23 +44,24 @@ const Summary = styled.p`
 export const DocumentationPage: React.FC = () => {
   const location = useLocation();
   const page = findDocumentationPage(location.pathname);
+  const route = findV1RouteRecord(page.path);
   const seoPage = findSeoPage(page.path);
 
-  usePageMetadata(seoPage.title, seoPage.description, seoPage);
+  usePageMetadata(
+    seoPage.title,
+    seoPage.description,
+    createV1PageMetadataOptions(seoPage, route)
+  );
 
   return (
     <Layout>
-      <DocumentationSidebar
-        title="Documentation"
-        overviewPage={documentationPages[0]}
-        groups={documentationGroups}
-      />
+      <DocumentationSidebar {...v1DocumentationSidebar} />
       <ContentArticle>
         <SectionLabel>{page.sectionTitle}</SectionLabel>
         <Title>{page.title}</Title>
         {page.summary ? <Summary>{page.summary}</Summary> : null}
         {page.content}
-        <RelatedRecipes links={relatedRecipesByPath[page.path]} />
+        <RelatedRecipes links={route.relatedLinks} />
         {page.path === '/documentation/parsing-and-formatting' ? (
           <ClientOnly
             loader={loadParsingSandbox}

@@ -1020,7 +1020,7 @@ v1.
 
 ### T022 - Create independent v1 navigation and route manifests
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T014, T016, T018, and T020
 

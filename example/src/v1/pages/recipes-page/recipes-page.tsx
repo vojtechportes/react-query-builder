@@ -5,11 +5,11 @@ import { ContentArticle } from '../../../components/content-article';
 import { DocumentationSidebar } from '../../../components/documentation-sidebar';
 import { findSeoPage } from '../../../constants/seo-pages';
 import { usePageMetadata } from '../../../hooks/use-page-metadata';
+import { createV1PageMetadataOptions } from '../../app/utils/create-v1-page-metadata-options.util';
+import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
+import { v1RecipesSidebar } from '../../navigation/constants/v1-recipes-sidebar';
 import { RecipeArticle } from './components/recipe-article';
 import { RecipesOverview } from './components/recipes-overview';
-import { recipeGroups } from './constants/recipe-groups';
-import { recipesOverviewPage } from './constants/recipes-overview-page';
-import { recipes } from './pages/recipes-content';
 import { findRecipePage } from './utils/find-recipe-page.util';
 
 const Layout = styled.div`
@@ -39,34 +39,20 @@ const Summary = styled.p`
   margin-top: 0.55rem;
 `;
 
-const pagesByPath = new Map(recipes.map((page) => [page.path, page]));
-
 export const RecipesPage: React.FC = () => {
   const { pathname } = useLocation();
   const page = findRecipePage(pathname);
-  const seoPage = findSeoPage(page?.path ?? '/recipes');
+  const route = findV1RouteRecord(page?.path ?? '/recipes');
+  const seoPage = findSeoPage(route.path);
+
   usePageMetadata(seoPage.title, seoPage.description, {
-    ...seoPage,
-    breadcrumbs: page
-      ? [
-          { name: 'Home', path: '/' },
-          { name: 'Recipes', path: '/recipes' },
-          { name: page.title, path: page.path },
-        ]
-      : [
-          { name: 'Home', path: '/' },
-          { name: 'Recipes', path: '/recipes' },
-        ],
+    ...createV1PageMetadataOptions(seoPage, route),
     faqs: page?.faqs,
   });
 
   return (
     <Layout>
-      <DocumentationSidebar
-        title="Recipes"
-        overviewPage={recipesOverviewPage}
-        groups={recipeGroups}
-      />
+      <DocumentationSidebar {...v1RecipesSidebar} />
       <ContentArticle>
         <SectionLabel>Recipes</SectionLabel>
         <Title>{page?.title ?? 'React Query Builder Recipes'}</Title>
@@ -78,10 +64,10 @@ export const RecipesPage: React.FC = () => {
           <RecipeArticle
             key={page.path}
             page={page}
-            pagesByPath={pagesByPath}
+            relatedLinks={route.relatedLinks}
           />
         ) : (
-          <RecipesOverview groups={recipeGroups} />
+          <RecipesOverview groups={v1RecipesSidebar.groups} />
         )}
       </ContentArticle>
     </Layout>

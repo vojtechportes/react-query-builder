@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SiteShell } from '../components/site-shell';
 import { canonicalSeoPages } from '../constants/seo-pages';
+import { TOP_LEVEL_NAV } from '../constants/site-constants';
 import type { IAppContentPages } from './types/app-content-pages';
 
 const redirects = [
@@ -47,7 +48,17 @@ export const AppRoutes: React.FC<IAppContentPages> = ({
 
   return (
     <Routes>
-      <Route element={<SiteShell />}>
+      <Route
+        element={
+          <SiteShell
+            versionLabel="Docs v1"
+            topNavigation={TOP_LEVEL_NAV.map((item) => ({
+              label: item.label,
+              path: item.to,
+            }))}
+          />
+        }
+      >
         {canonicalSeoPages.map((page) => (
           <Route
             key={page.path}
