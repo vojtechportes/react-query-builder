@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { siteTheme } from '../../../constants/site-theme';
 import { findSeoPage } from '../../../constants/seo-pages';
 import { usePageMetadata } from '../../../hooks/use-page-metadata';
+import { createV2PageMetadataOptions } from '../../app/utils/create-v2-page-metadata-options.util';
+import { findV2RouteRecord } from '../../app/utils/find-v2-route-record.util';
 
 const Hero = styled.section`
   display: grid;
@@ -127,9 +129,14 @@ const Code = styled.code`
 `;
 
 const seoPage = findSeoPage('/');
+const route = findV2RouteRecord('/');
 
 export const HomePage: React.FC = () => {
-  usePageMetadata(seoPage.title, seoPage.description, seoPage);
+  usePageMetadata(
+    seoPage.title,
+    seoPage.description,
+    createV2PageMetadataOptions(seoPage, route)
+  );
 
   return (
     <Hero>

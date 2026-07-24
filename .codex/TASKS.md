@@ -1043,7 +1043,7 @@ v1.
 
 ### T023 - Create independent v2 navigation and route manifests
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T015, T017, T019, and T021
 
