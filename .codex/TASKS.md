@@ -1115,7 +1115,7 @@ unexpectedly.
 
 ### T026 - Create the independent v1 search index and tests
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T022
 
