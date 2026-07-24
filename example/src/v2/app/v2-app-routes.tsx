@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { SiteShell } from '../../components/site-shell';
+import { useSiteSearch } from '../../hooks/use-site-search';
 import { RouteRedirect } from '../../shared/route-redirect';
 import { v2TopNavigation } from '../navigation/constants/v2-top-navigation';
 import { ApiPage } from '../pages/api-page/api-page';
@@ -24,7 +25,13 @@ export const V2AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route
-        element={<SiteShell version="v2" topNavigation={v2TopNavigation} />}
+        element={
+          <SiteShell
+            version="v2"
+            topNavigation={v2TopNavigation}
+            useSearch={useSiteSearch}
+          />
+        }
       >
         {v2RouteManifest.map((route) => (
           <Route
