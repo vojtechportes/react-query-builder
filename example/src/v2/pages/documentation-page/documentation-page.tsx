@@ -10,26 +10,27 @@ import { DocumentationSidebar } from '../../../components/documentation-sidebar'
 import { RelatedRecipes } from '../../../components/related-recipes';
 import { findSeoPage } from '../../../constants/seo-pages';
 import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { documentationGroups } from './constants/documentation-groups';
-import { documentationPages } from './constants/documentation-pages';
-import { relatedRecipesByPath } from './constants/related-recipes-by-path';
+import { createV2PageMetadataOptions } from '../../app/utils/create-v2-page-metadata-options.util';
+import { findV2RouteRecord } from '../../app/utils/find-v2-route-record.util';
+import { v2DocumentationSidebar } from '../../navigation/constants/v2-documentation-sidebar';
 import { findDocumentationPage } from './utils/find-documentation-page.util';
 import { loadParsingSandbox } from './utils/load-parsing-sandbox.util';
 
 export const DocumentationPage: React.FC = () => {
   const location = useLocation();
   const page = findDocumentationPage(location.pathname);
+  const route = findV2RouteRecord(page.path);
   const seoPage = findSeoPage(page.path);
 
-  usePageMetadata(seoPage.title, seoPage.description, seoPage);
+  usePageMetadata(
+    seoPage.title,
+    seoPage.description,
+    createV2PageMetadataOptions(seoPage, route)
+  );
 
   return (
     <DocumentationLayout>
-      <DocumentationSidebar
-        title="Documentation"
-        overviewPage={documentationPages[0]}
-        groups={documentationGroups}
-      />
+      <DocumentationSidebar {...v2DocumentationSidebar} />
       <ContentArticle>
         <DocumentationSectionLabel>
           {page.sectionTitle}
@@ -39,7 +40,7 @@ export const DocumentationPage: React.FC = () => {
           <DocumentationSummary>{page.summary}</DocumentationSummary>
         ) : null}
         {page.content}
-        <RelatedRecipes links={relatedRecipesByPath[page.path]} />
+        <RelatedRecipes links={route.relatedLinks} />
         {page.path === '/documentation/parsing-and-formatting' ? (
           <ClientOnly
             loader={loadParsingSandbox}
