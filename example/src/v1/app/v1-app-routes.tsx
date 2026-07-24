@@ -23,9 +23,7 @@ export const V1AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route
-        element={
-          <SiteShell versionLabel="Docs v1" topNavigation={v1TopNavigation} />
-        }
+        element={<SiteShell version="v1" topNavigation={v1TopNavigation} />}
       >
         {v1RouteManifest.map((route) => (
           <Route

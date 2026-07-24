@@ -1066,7 +1066,7 @@ v1.
 
 ### T024 - Add the accessible version switcher and fallback behavior
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T022 and T023
 

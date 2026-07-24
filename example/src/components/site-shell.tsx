@@ -8,6 +8,9 @@ import { CloseIcon, GithubIcon, MenuIcon, NpmIcon } from './icons';
 import { HeaderSearch } from './header-search';
 import { ClientOnly } from './client-only';
 import { loadCookieConsentBanner } from './load-cookie-consent-banner';
+import type { SiteVersion } from '../shared/versioned-url';
+import { routerBasename } from '../app/router-basename';
+import { VersionSwitcher } from './version-switcher/version-switcher';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -76,7 +79,19 @@ const HeaderInner = styled.div`
   padding: 1rem 1.5rem;
 
   @media (max-width: 540px) {
+    gap: 0.5rem;
     padding: 1rem 0.5rem;
+  }
+`;
+
+const BrandArea = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+
+  @media (max-width: 540px) {
+    gap: 0.45rem;
   }
 `;
 
@@ -107,6 +122,11 @@ const Logo = styled.span`
   letter-spacing: -0.04em;
   flex-shrink: 0;
   padding-bottom: 0.08em;
+
+  @media (max-width: 540px) {
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 const BrandText = styled.div`
@@ -132,24 +152,6 @@ const QueryBuilderText = styled.span`
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.04em;
-`;
-
-const VersionBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1.9rem;
-  margin-bottom: -2px;
-  padding: 0.35rem 0.75rem;
-  border: 1px solid ${siteTheme.primaryBorder};
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.8);
-  color: ${siteTheme.primaryDark};
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
 `;
 
 const Right = styled.div`
@@ -187,6 +189,10 @@ const MobileActions = styled.div`
   @media (max-width: 1079px) {
     display: flex;
   }
+
+  @media (max-width: 540px) {
+    gap: 0.35rem;
+  }
 `;
 
 const NavItem = styled(NavLink)`
@@ -220,6 +226,11 @@ const IconLink = styled.a`
     width: 20px;
     height: 20px;
   }
+
+  @media (max-width: 540px) {
+    width: 36px;
+    height: 36px;
+  }
 `;
 
 const MenuButton = styled.button`
@@ -237,6 +248,11 @@ const MenuButton = styled.button`
   svg {
     width: 20px;
     height: 20px;
+  }
+
+  @media (max-width: 540px) {
+    width: 36px;
+    height: 36px;
   }
 `;
 
@@ -332,12 +348,12 @@ const Footer = styled.footer`
 `;
 
 export interface ISiteShellProps {
-  versionLabel: string;
+  version: SiteVersion;
   topNavigation: readonly { label: string; path: string }[];
 }
 
 export const SiteShell: React.FC<ISiteShellProps> = ({
-  versionLabel,
+  version,
   topNavigation,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -357,17 +373,19 @@ export const SiteShell: React.FC<ISiteShellProps> = ({
       <GlobalStyle />
       <Header>
         <HeaderInner>
-          <Brand to="/">
-            <Logo aria-hidden="true">QB</Logo>
-            <BrandText>
-              <ReactText>React</ReactText>
-              <QueryBuilderText>Query Builder</QueryBuilderText>
-            </BrandText>
-            <VersionBadge aria-label="Documentation version">
-              {versionLabel}
-            </VersionBadge>
-          </Brand>
-
+          <BrandArea>
+            <Brand to="/">
+              <Logo aria-hidden="true">QB</Logo>
+              <BrandText>
+                <ReactText>React</ReactText>
+                <QueryBuilderText>Query Builder</QueryBuilderText>
+              </BrandText>
+            </Brand>
+            <VersionSwitcher
+              basename={routerBasename}
+              currentVersion={version}
+            />
+          </BrandArea>
           <Right>
             <DesktopOnly>
               <Nav>

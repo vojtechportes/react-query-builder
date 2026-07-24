@@ -24,6 +24,17 @@ const renderClientRoute = (path: string) =>
   );
 
 describe('v2 app routes', () => {
+  it('renders the version switcher outside the Brand link on all layouts', () => {
+    renderClientRoute('/');
+
+    const brand = screen.getByRole('link', { name: /React Query Builder/i });
+    const trigger = screen.getByRole('button', {
+      name: 'Documentation version. Current version: v2',
+    });
+
+    expect(brand.contains(trigger)).toBe(false);
+    expect(trigger.closest('#mobile-site-panel')).toBeNull();
+  });
   it('renders v2-prefixed top navigation and nested sidebar links', () => {
     const page = renderApp(
       '/documentation/adapters/mui',
