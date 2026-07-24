@@ -1,4 +1,4 @@
-﻿import React, {
+import React, {
   forwardRef,
   useCallback,
   useEffect,
@@ -25,6 +25,7 @@ import { Iterator } from '../iterator';
 import { Popover } from '../popover';
 import { PopoverItem } from '../popover-item';
 import { useTheme } from '../theme-provider/hooks/use-theme';
+import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import { createGroupNode } from '../utils/create-group-node.util';
 import { createId } from '../utils/create-id.util';
 import { emitQuery } from '../utils/emit-query.util';
@@ -153,6 +154,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
     const resolvedDefaultMode =
       defaultMode ?? textModeConfig?.defaultMode ?? 'builder';
     const theme = useTheme();
+    const themeCssVariables = useThemeCssVariables();
     const compatibleOriginalData = useMemo(
       () => sanitizeDenormalizedQuery(originalData),
       [originalData, sanitizeDenormalizedQuery]
@@ -962,7 +964,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           redo,
         }}
       >
-        <StyledBuilder $theme={theme}>
+        <StyledBuilder $theme={theme} style={themeCssVariables}>
           {textModeBlockedByLocks && strings.textMode?.locksUnsupported ? (
             <TextModeBlockedAlertContainer>
               <AlertComponent

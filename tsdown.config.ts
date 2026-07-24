@@ -6,7 +6,7 @@ export default defineConfig({
     fileName: 'styles.css',
     inject: false,
     modules: {
-      generateScopedName: 'rqb_[hash]',
+      generateScopedName: 'rqb_[local]_[hash]',
       localsConvention: 'camelCaseOnly',
       scopeBehaviour: 'local',
     },
