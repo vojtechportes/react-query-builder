@@ -1,34 +1,21 @@
 import * as React from 'react';
 import { Link, SectionTitle } from '../../../../components/docs-primitives';
-import type { IRecipePage } from '../types/recipe-page';
-import { formatPathLabel } from '../utils/format-path-label.util';
+import type { IV1RelatedLink } from '../../../app/types/v1-related-link';
 
 export interface IRecipeRelatedLinksProps {
-  page: IRecipePage;
-  pagesByPath: Map<string, IRecipePage>;
+  links: IV1RelatedLink[];
 }
 
 export const RecipeRelatedLinks: React.FC<IRecipeRelatedLinksProps> = ({
-  page,
-  pagesByPath,
+  links,
 }) => (
   <section>
     <SectionTitle>Related guides</SectionTitle>
     <ul>
-      {page.relatedDocPaths.map((path) => (
-        <li key={path}>
-          <Link to={path}>{formatPathLabel(path)}</Link>
-        </li>
-      ))}
-      {page.relatedRecipePaths.map((path) => (
-        <li key={path}>
-          <Link to={path}>{pagesByPath.get(path)?.title ?? path}</Link>
-        </li>
-      ))}
-      {page.externalReferences?.map((reference) => (
-        <li key={reference.href}>
-          <Link to={reference.href} external>
-            {reference.label}
+      {links.map((link) => (
+        <li key={link.path}>
+          <Link to={link.path} external={link.external}>
+            {link.label}
           </Link>
         </li>
       ))}
