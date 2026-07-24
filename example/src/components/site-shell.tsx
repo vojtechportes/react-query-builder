@@ -2,12 +2,7 @@ import * as React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { colors } from '@vojtechportes/react-query-builder';
-import {
-  GITHUB_URL,
-  NPM_URL,
-  SITE_NAME,
-  TOP_LEVEL_NAV,
-} from '../constants/site-constants';
+import { GITHUB_URL, NPM_URL } from '../constants/site-constants';
 import { siteTheme } from '../constants/site-theme';
 import { CloseIcon, GithubIcon, MenuIcon, NpmIcon } from './icons';
 import { HeaderSearch } from './header-search';
@@ -336,7 +331,15 @@ const Footer = styled.footer`
   }
 `;
 
-export const SiteShell: React.FC = () => {
+export interface ISiteShellProps {
+  versionLabel: string;
+  topNavigation: readonly { label: string; path: string }[];
+}
+
+export const SiteShell: React.FC<ISiteShellProps> = ({
+  versionLabel,
+  topNavigation,
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const location = useLocation();
   const year = new Date().getFullYear();
@@ -361,15 +364,19 @@ export const SiteShell: React.FC = () => {
               <QueryBuilderText>Query Builder</QueryBuilderText>
             </BrandText>
             <VersionBadge aria-label="Documentation version">
-              Docs v1
+              {versionLabel}
             </VersionBadge>
           </Brand>
 
           <Right>
             <DesktopOnly>
               <Nav>
-                {TOP_LEVEL_NAV.map((item) => (
-                  <NavItem key={item.to} to={item.to} end={item.to === '/'}>
+                {topNavigation.map((item) => (
+                  <NavItem
+                    key={item.path}
+                    to={item.path}
+                    end={item.path === '/'}
+                  >
                     {item.label}
                   </NavItem>
                 ))}
@@ -456,8 +463,12 @@ export const SiteShell: React.FC = () => {
             <HeaderSearch />
           </MobileSearchWrap>
           <MobileNav>
-            {TOP_LEVEL_NAV.map((item) => (
-              <MobileNavItem key={item.to} to={item.to} end={item.to === '/'}>
+            {topNavigation.map((item) => (
+              <MobileNavItem
+                key={item.path}
+                to={item.path}
+                end={item.path === '/'}
+              >
                 {item.label}
               </MobileNavItem>
             ))}
