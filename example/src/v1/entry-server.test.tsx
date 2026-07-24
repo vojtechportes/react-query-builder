@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { apiBaseline } from './pages/api-page/constants/api-baseline';
 import { documentationBaseline } from './pages/documentation-page/constants/documentation-baseline';
 import { renderPage } from './entry-server';
 
@@ -31,6 +32,16 @@ describe('v1 version-owned SSR', () => {
 
   it.each(documentationBaseline)(
     'renders the frozen Documentation content for $path',
+    ({ path, title }) => {
+      const page = renderPage(path);
+
+      expect(page.html).toContain(`>${title}</h1>`);
+      expect(page.styles).toContain('data-styled="true"');
+    }
+  );
+
+  it.each(apiBaseline)(
+    'renders the frozen API content for $path',
     ({ path, title }) => {
       const page = renderPage(path);
 

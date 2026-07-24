@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SiteShell } from '../components/site-shell';
 import { canonicalSeoPages } from '../constants/seo-pages';
-import { ApiPage } from '../pages/api-page/api-page';
 import { RecipesPage } from '../pages/recipes-page/recipes-page';
 import type { IAppContentPages } from './types/app-content-pages';
 
@@ -33,12 +32,13 @@ const redirects = [
 ] as const;
 
 export const AppRoutes: React.FC<IAppContentPages> = ({
+  apiPage,
   demoPage,
   documentationPage,
   homePage,
 }) => {
   const pageElements = {
-    API: <ApiPage />,
+    API: apiPage,
     Demo: demoPage,
     Documentation: documentationPage,
     Home: homePage,
