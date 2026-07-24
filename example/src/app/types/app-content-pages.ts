@@ -5,4 +5,5 @@ export interface IAppContentPages {
   demoPage: React.ReactElement;
   documentationPage: React.ReactElement;
   homePage: React.ReactElement;
+  recipesPage: React.ReactElement;
 }

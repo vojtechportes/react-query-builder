@@ -39,6 +39,7 @@ describe('versioned site import boundaries', () => {
       resolve(sourceRoot, 'utils/query-formatters'),
       resolve(sourceRoot, 'pages/documentation-page'),
       resolve(sourceRoot, 'pages/api-page'),
+      resolve(sourceRoot, 'pages/recipes-page'),
       resolve(sourceRoot, 'components/imperative-field-options-demo'),
       resolve(sourceRoot, 'components/shared-field-options-demo'),
       resolve(sourceRoot, 'components/parsing-sandbox'),

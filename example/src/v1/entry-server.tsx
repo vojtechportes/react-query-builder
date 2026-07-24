@@ -5,6 +5,7 @@ import { renderApp } from '../shared/ssr/render-app.util';
 import { ApiPage } from './pages/api-page/api-page';
 import { DemoPage } from './pages/demo-page/demo-page';
 import { HomePage } from './pages/home-page/home-page';
+import { RecipesPage } from './pages/recipes-page/recipes-page';
 import { DocumentationPage } from './pages/documentation-page/documentation-page';
 
 export const renderPage = (pathname: string) =>
@@ -16,5 +17,6 @@ export const renderPage = (pathname: string) =>
       demoPage={<DemoPage />}
       documentationPage={<DocumentationPage />}
       homePage={<HomePage />}
+      recipesPage={<RecipesPage />}
     />
   );

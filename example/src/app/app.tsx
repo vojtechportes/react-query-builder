@@ -9,6 +9,7 @@ export const App: React.FC<IAppContentPages> = ({
   demoPage,
   documentationPage,
   homePage,
+  recipesPage,
 }) => (
   <BrowserRouter basename={routerBasename}>
     <AppRoutes
@@ -16,6 +17,7 @@ export const App: React.FC<IAppContentPages> = ({
       demoPage={demoPage}
       documentationPage={documentationPage}
       homePage={homePage}
+      recipesPage={recipesPage}
     />
   </BrowserRouter>
 );
