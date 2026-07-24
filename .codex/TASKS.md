@@ -1234,7 +1234,7 @@ unexpectedly.
 
 ### T031 - Verify and approve the complete versioned-site prerequisite
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T024 through T030
 

@@ -8,14 +8,16 @@ import { findV2SeoPage } from './utils/find-v2-seo-page.util';
 
 describe('v2 structured data', () => {
   it('creates stable version-prefixed canonicals without double-prefixing', () => {
-    expect(createV2CanonicalUrl('/')).toBe(
-      'https://vojtechportes.github.io/react-query-builder/v2'
+    const siteUrl = 'https://example.com/docs/';
+
+    expect(createV2CanonicalUrl('/', siteUrl)).toBe(
+      'https://example.com/docs/v2'
     );
-    expect(createV2CanonicalUrl('/api/builder')).toBe(
-      'https://vojtechportes.github.io/react-query-builder/v2/api/builder'
+    expect(createV2CanonicalUrl('/api/builder', siteUrl)).toBe(
+      'https://example.com/docs/v2/api/builder'
     );
-    expect(createV2CanonicalUrl('/v2/api/builder')).toBe(
-      'https://vojtechportes.github.io/react-query-builder/v2/api/builder'
+    expect(createV2CanonicalUrl('/v2/api/builder', siteUrl)).toBe(
+      'https://example.com/docs/v2/api/builder'
     );
   });
 

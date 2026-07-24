@@ -1,11 +1,10 @@
-/* global process */
-
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createDeploymentUrl } from './utils/create-deployment-url.util.mjs';
 import { getRedirectOutputPath } from './utils/get-redirect-output-path.util.mjs';
 import { normalizeDeploymentBase } from './utils/normalize-deployment-base.util.mjs';
+import { normalizeLineEndings } from './utils/normalize-line-endings.util.mjs';
 
 const scriptRoot = path.dirname(fileURLToPath(import.meta.url));
 const exampleRoot = path.resolve(scriptRoot, '../..');
@@ -152,7 +151,7 @@ const trackedHtaccess = fs.readFileSync(
   'utf8'
 );
 
-if (htaccess !== trackedHtaccess) {
+if (normalizeLineEndings(htaccess) !== normalizeLineEndings(trackedHtaccess)) {
   errors.push(
     'Generated FTP configuration differs from the tracked deployment file.'
   );

@@ -6,6 +6,7 @@ import { createRedirectDocument } from './utils/create-redirect-document.util.mj
 import { createRootRobots } from './utils/create-root-robots.util.mjs';
 import { getRedirectOutputPath } from './utils/get-redirect-output-path.util.mjs';
 import { normalizeDeploymentBase } from './utils/normalize-deployment-base.util.mjs';
+import { normalizeLineEndings } from './utils/normalize-line-endings.util.mjs';
 
 const manifests = {
   v1: {
@@ -18,6 +19,8 @@ const manifests = {
   },
 };
 
+assert.equal(normalizeLineEndings('first\r\nsecond\r\n'), 'first\nsecond\n');
+assert.equal(normalizeLineEndings('first\nsecond\n'), 'first\nsecond\n');
 assert.equal(normalizeDeploymentBase(), '');
 assert.equal(normalizeDeploymentBase('/'), '');
 assert.equal(
