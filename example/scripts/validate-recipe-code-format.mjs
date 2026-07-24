@@ -12,8 +12,8 @@ const target = process.argv[2];
 const recipeRoot = path.join(
   exampleRoot,
   'src',
-  ...(target === 'v1'
-    ? ['v1', 'pages', 'recipes-page']
+  ...(['v1', 'v2'].includes(target)
+    ? [target, 'pages', 'recipes-page']
     : ['pages', 'recipes-page'])
 );
 const snippetsDirectory = path.join(recipeRoot, 'snippets');
