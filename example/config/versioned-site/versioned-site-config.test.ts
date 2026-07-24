@@ -19,6 +19,7 @@ describe('versioned site configuration', () => {
         ])
       );
       expect(clientConfig.build?.outDir).toBe(stageRoot);
+      expect(clientConfig.base).toBe(`/${target}/`);
       expect(clientConfig.build?.emptyOutDir).toBe(true);
       expect(ssrConfig.build?.outDir).toBe(resolve(stageRoot, '.ssg'));
       expect(ssrConfig.build?.emptyOutDir).toBe(true);
@@ -33,6 +34,20 @@ describe('versioned site configuration', () => {
     expect(v1Config.build?.outDir).not.toBe(v2Config.build?.outDir);
   });
 
+  it('keeps repository deployment assets inside each version', () => {
+    process.env.VITE_BASE_PATH = '/react-query-builder/';
+
+    try {
+      expect(createVersionedSiteViteConfig('v1', 'client').base).toBe(
+        '/react-query-builder/v1/'
+      );
+      expect(createVersionedSiteViteConfig('v2', 'client').base).toBe(
+        '/react-query-builder/v2/'
+      );
+    } finally {
+      delete process.env.VITE_BASE_PATH;
+    }
+  });
   it('rejects a non-version Vite mode', () => {
     expect(() => resolveVersionTarget('production')).toThrow(
       'Expected a version target mode of "v1" or "v2"'

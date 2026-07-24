@@ -16,7 +16,9 @@ const ssgRoot = path.join(distRoot, '.ssg');
 const serverEntryUrl = pathToFileURL(
   path.join(ssgRoot, 'entry-server.mjs')
 ).href;
-const { renderPage, v1RouteManifest } = await import(serverEntryUrl);
+const { renderPage, v1RouteManifest, v1RouteRedirectManifest } = await import(
+  serverEntryUrl
+);
 const seoConfig = JSON.parse(
   fs.readFileSync(
     path.join(
@@ -96,6 +98,10 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(distRoot, 'robots.txt'),
   createV1Robots(seoConfig, siteUrl)
+);
+fs.writeFileSync(
+  path.join(distRoot, 'route-redirect-manifest.json'),
+  `${JSON.stringify(v1RouteRedirectManifest, null, 2)}\n`
 );
 
 const errors = validateV1SeoOutput({

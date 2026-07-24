@@ -8,6 +8,7 @@ import { createGoogleTagManagerPlugin } from '../../../vite-plugins/create-googl
 import type { VersionBuildKind } from '../types/version-build-kind';
 import type { VersionTarget } from '../types/version-target';
 import { createImportBoundaryPlugin } from './create-import-boundary-plugin.util';
+import { createVersionAssetBase } from './create-version-asset-base.util';
 import { createVersionEntryPlugin } from './create-version-entry-plugin.util';
 
 export const createVersionedSiteViteConfig = (
@@ -21,7 +22,7 @@ export const createVersionedSiteViteConfig = (
   const isSsr = buildKind === 'ssr';
 
   return {
-    base: process.env.VITE_BASE_PATH || '/',
+    base: createVersionAssetBase(process.env.VITE_BASE_PATH, target),
     plugins: [
       react(),
       createGoogleTagManagerPlugin(process.env.VITE_SITE_URL),

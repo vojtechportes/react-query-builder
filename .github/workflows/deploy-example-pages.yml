@@ -37,7 +37,7 @@ jobs:
         run: npm run build
 
       - name: Build example
-        run: npm run build --workspace example
+        run: npm run build:deploy --workspace example
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
           VITE_SITE_URL: https://vojtechportes.github.io/${{ github.event.repository.name }}/

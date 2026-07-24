@@ -3,15 +3,42 @@ DirectorySlash Off
 
 RewriteEngine On
 
-# Keep the root URL intact, but normalize directory route variants to the
-# non-trailing-slash canonical URLs emitted by the SEO build.
+RewriteRule ^$ /v2 [R=308,L,NE]
+
+RewriteRule ^api/builder-props/?$ /v2/api/builder [R=308,L,NE]
+RewriteRule ^documentation/parsing-and-formatting/sql/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^documentation/parsing-and-formatting/mongo/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^documentation/parsing-and-formatting/other-formats/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^documentation/configuration/fields/?$ /v2/api/fields [R=308,L,NE]
+RewriteRule ^documentation/configuration/data/?$ /v2/api/data [R=308,L,NE]
+RewriteRule ^documentation/configuration/builder-props/?$ /v2/api/builder [R=308,L,NE]
+RewriteRule ^documentation/configuration/components/?$ /v2/documentation/components [R=308,L,NE]
+
+RewriteRule ^v1/api/builder-props/?$ /v1/api/builder [R=308,L,NE]
+RewriteRule ^v1/documentation/parsing-and-formatting/sql/?$ /v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v1/documentation/parsing-and-formatting/mongo/?$ /v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v1/documentation/parsing-and-formatting/other-formats/?$ /v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/fields/?$ /v1/api/fields [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/data/?$ /v1/api/data [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/builder-props/?$ /v1/api/builder [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/components/?$ /v1/documentation/components [R=308,L,NE]
+RewriteRule ^v2/api/builder-props/?$ /v2/api/builder [R=308,L,NE]
+RewriteRule ^v2/documentation/parsing-and-formatting/sql/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v2/documentation/parsing-and-formatting/mongo/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v2/documentation/parsing-and-formatting/other-formats/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/fields/?$ /v2/api/fields [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/data/?$ /v2/api/data [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/builder-props/?$ /v2/api/builder [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/components/?$ /v2/documentation/components [R=308,L,NE]
+
+RewriteCond %{REQUEST_URI} !^/(v1|v2)(/|$)
+RewriteCond %{DOCUMENT_ROOT}/v2/$1/index.html -f
+RewriteRule ^(.+?)/?$ /v2/$1 [R=308,L,NE]
+
 RewriteCond %{REQUEST_URI} !^/$
 RewriteCond %{REQUEST_URI} /$
-RewriteRule ^(.+)/$ https://www.react-query-builder.com/$1 [R=301,L,NE]
+RewriteRule ^(.+)/$ /$1 [R=308,L,NE]
 
-# Serve generated route directories at their canonical URL without allowing
-# mod_dir to redirect through the proxy's internal HTTP scheme.
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteCond %{REQUEST_FILENAME}/index.html -f
 RewriteRule ^(.+)$ $1/index.html [L]
-

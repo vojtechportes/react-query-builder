@@ -17,6 +17,7 @@ const stageRoot = path.resolve(scriptsRoot, '..', '.versioned-dist', target);
 const requiredPaths = [
   'index.html',
   'package-module-graph.json',
+  'route-redirect-manifest.json',
   'robots.txt',
   'sitemap.xml',
 ];
