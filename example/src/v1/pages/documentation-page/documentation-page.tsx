@@ -5,9 +5,9 @@ import { ClientOnly } from '../../../components/client-only';
 import { ContentArticle } from '../../../components/content-article';
 import { DocumentationSidebar } from '../../../components/documentation-sidebar';
 import { RelatedRecipes } from '../../../components/related-recipes';
-import { findSeoPage } from '../../../constants/seo-pages';
-import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { createV1PageMetadataOptions } from '../../app/utils/create-v1-page-metadata-options.util';
+import { useV1PageMetadata } from '../../seo/hooks/use-v1-page-metadata';
+import { createV1PageMetadataOptions } from '../../seo/utils/create-v1-page-metadata-options.util';
+import { findV1SeoPage } from '../../seo/utils/find-v1-seo-page.util';
 import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
 import { v1DocumentationSidebar } from '../../navigation/constants/v1-documentation-sidebar';
 import { findDocumentationPage } from './utils/find-documentation-page.util';
@@ -45,9 +45,9 @@ export const DocumentationPage: React.FC = () => {
   const location = useLocation();
   const page = findDocumentationPage(location.pathname);
   const route = findV1RouteRecord(page.path);
-  const seoPage = findSeoPage(page.path);
+  const seoPage = findV1SeoPage(page.path);
 
-  usePageMetadata(
+  useV1PageMetadata(
     seoPage.title,
     seoPage.description,
     createV1PageMetadataOptions(seoPage, route)
