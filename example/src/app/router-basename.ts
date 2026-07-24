@@ -1,4 +1,4 @@
 import { normalizeBasename } from '../shared/versioned-url';
 
 export const routerBasename =
-  normalizeBasename(import.meta.env.BASE_URL) || undefined;
+  normalizeBasename(import.meta.env.VITE_BASE_PATH) || undefined;

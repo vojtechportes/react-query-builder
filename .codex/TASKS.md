@@ -1209,7 +1209,7 @@ unexpectedly.
 
 ### T030 - Assemble versioned artifacts and update deployment redirects
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T024, T025, T028, and T029
 
