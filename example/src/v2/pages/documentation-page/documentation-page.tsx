@@ -8,9 +8,9 @@ import { DocumentationTitle } from './components/documentation-title';
 import { ContentArticle } from '../../../components/content-article';
 import { DocumentationSidebar } from '../../../components/documentation-sidebar';
 import { RelatedRecipes } from '../../../components/related-recipes';
-import { findSeoPage } from '../../../constants/seo-pages';
-import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { createV2PageMetadataOptions } from '../../app/utils/create-v2-page-metadata-options.util';
+import { useV2PageMetadata } from '../../seo/hooks/use-v2-page-metadata';
+import { createV2PageMetadataOptions } from '../../seo/utils/create-v2-page-metadata-options.util';
+import { findV2SeoPage } from '../../seo/utils/find-v2-seo-page.util';
 import { findV2RouteRecord } from '../../app/utils/find-v2-route-record.util';
 import { v2DocumentationSidebar } from '../../navigation/constants/v2-documentation-sidebar';
 import { findDocumentationPage } from './utils/find-documentation-page.util';
@@ -20,9 +20,9 @@ export const DocumentationPage: React.FC = () => {
   const location = useLocation();
   const page = findDocumentationPage(location.pathname);
   const route = findV2RouteRecord(page.path);
-  const seoPage = findSeoPage(page.path);
+  const seoPage = findV2SeoPage(page.path);
 
-  usePageMetadata(
+  useV2PageMetadata(
     seoPage.title,
     seoPage.description,
     createV2PageMetadataOptions(seoPage, route)
