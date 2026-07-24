@@ -2,9 +2,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { siteTheme } from '../../../constants/site-theme';
-import { findSeoPage } from '../../../constants/seo-pages';
-import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { createV1PageMetadataOptions } from '../../app/utils/create-v1-page-metadata-options.util';
+import { useV1PageMetadata } from '../../seo/hooks/use-v1-page-metadata';
+import { createV1PageMetadataOptions } from '../../seo/utils/create-v1-page-metadata-options.util';
+import { findV1SeoPage } from '../../seo/utils/find-v1-seo-page.util';
 import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
 
 const Hero = styled.section`
@@ -128,11 +128,11 @@ const Code = styled.code`
     Menlo, monospace;
 `;
 
-const seoPage = findSeoPage('/');
+const seoPage = findV1SeoPage('/');
 const route = findV1RouteRecord('/');
 
 export const HomePage: React.FC = () => {
-  usePageMetadata(
+  useV1PageMetadata(
     seoPage.title,
     seoPage.description,
     createV1PageMetadataOptions(seoPage, route)

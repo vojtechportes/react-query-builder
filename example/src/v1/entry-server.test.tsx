@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { v1RouteManifest } from './app/constants/v1-route-manifest';
 import { apiBaseline } from './pages/api-page/constants/api-baseline';
 import { documentationBaseline } from './pages/documentation-page/constants/documentation-baseline';
 import { recipes } from './pages/recipes-page/pages/recipes-content';
@@ -74,5 +75,31 @@ describe('v1 version-owned SSR', () => {
 
     expect(page.html).toContain('data-client-only-placeholder="true"');
     expect(page.html).toContain('Loading the interactive parsing sandbox...');
+  });
+});
+
+describe('v1 SSR isolation', () => {
+  it('renders every canonical route without DOM globals', () => {
+    expect(globalThis.document).toBeUndefined();
+    expect(globalThis.window).toBeUndefined();
+
+    for (const route of v1RouteManifest) {
+      const page = renderPage(route.path);
+
+      expect(page.html.match(/<h1(?:\s[^>]*)?>/g)).toHaveLength(1);
+      expect(page.html).not.toContain('data-seo-fallback');
+      expect(page.styles).toContain('data-styled="true"');
+    }
+  });
+
+  it('does not leak styled-components collection between renders', () => {
+    const firstHomeRender = renderPage('/');
+
+    renderPage('/demo');
+
+    const secondHomeRender = renderPage('/');
+
+    expect(secondHomeRender.html).toBe(firstHomeRender.html);
+    expect(secondHomeRender.styles).toBe(firstHomeRender.styles);
   });
 });
