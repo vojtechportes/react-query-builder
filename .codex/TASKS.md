@@ -925,7 +925,7 @@ sharing only non-content site infrastructure.
 
 ### T018 - Freeze the version-owned v1 API tree
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T013
 
