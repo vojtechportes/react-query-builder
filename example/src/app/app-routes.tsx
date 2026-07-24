@@ -4,6 +4,7 @@ import { SiteShell } from '../components/site-shell';
 import { canonicalSeoPages } from '../constants/seo-pages';
 import { TOP_LEVEL_NAV } from '../constants/site-constants';
 import type { IAppContentPages } from './types/app-content-pages';
+import { useSiteSearch } from '../hooks/use-site-search';
 
 const redirects = [
   { from: '/api/builder-props', to: '/api/builder' },
@@ -56,6 +57,7 @@ export const AppRoutes: React.FC<IAppContentPages> = ({
               label: item.label,
               path: item.to,
             }))}
+            useSearch={useSiteSearch}
           />
         }
       >

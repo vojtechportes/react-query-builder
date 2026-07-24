@@ -11,6 +11,7 @@ import { loadCookieConsentBanner } from './load-cookie-consent-banner';
 import type { SiteVersion } from '../shared/versioned-url';
 import { routerBasename } from '../app/router-basename';
 import { VersionSwitcher } from './version-switcher/version-switcher';
+import type { SiteSearchHook } from './search/types/site-search-hook';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -350,11 +351,13 @@ const Footer = styled.footer`
 export interface ISiteShellProps {
   version: SiteVersion;
   topNavigation: readonly { label: string; path: string }[];
+  useSearch: SiteSearchHook;
 }
 
 export const SiteShell: React.FC<ISiteShellProps> = ({
   version,
   topNavigation,
+  useSearch,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const location = useLocation();
@@ -401,7 +404,7 @@ export const SiteShell: React.FC<ISiteShellProps> = ({
               </Nav>
 
               <UtilityRow>
-                <HeaderSearch />
+                <HeaderSearch useSearch={useSearch} />
               </UtilityRow>
             </DesktopOnly>
 
@@ -478,7 +481,7 @@ export const SiteShell: React.FC<ISiteShellProps> = ({
             </MenuButton>
           </MobilePanelHeader>
           <MobileSearchWrap>
-            <HeaderSearch />
+            <HeaderSearch useSearch={useSearch} />
           </MobileSearchWrap>
           <MobileNav>
             {topNavigation.map((item) => (
