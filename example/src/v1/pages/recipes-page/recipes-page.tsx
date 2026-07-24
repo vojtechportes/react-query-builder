@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { ContentArticle } from '../../../components/content-article';
 import { DocumentationSidebar } from '../../../components/documentation-sidebar';
-import { findSeoPage } from '../../../constants/seo-pages';
-import { usePageMetadata } from '../../../hooks/use-page-metadata';
-import { createV1PageMetadataOptions } from '../../app/utils/create-v1-page-metadata-options.util';
+import { useV1PageMetadata } from '../../seo/hooks/use-v1-page-metadata';
+import { createV1PageMetadataOptions } from '../../seo/utils/create-v1-page-metadata-options.util';
+import { findV1SeoPage } from '../../seo/utils/find-v1-seo-page.util';
 import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
 import { v1RecipesSidebar } from '../../navigation/constants/v1-recipes-sidebar';
 import { RecipeArticle } from './components/recipe-article';
@@ -43,9 +43,9 @@ export const RecipesPage: React.FC = () => {
   const { pathname } = useLocation();
   const page = findRecipePage(pathname);
   const route = findV1RouteRecord(page?.path ?? '/recipes');
-  const seoPage = findSeoPage(route.path);
+  const seoPage = findV1SeoPage(route.path);
 
-  usePageMetadata(seoPage.title, seoPage.description, {
+  useV1PageMetadata(seoPage.title, seoPage.description, {
     ...createV1PageMetadataOptions(seoPage, route),
     faqs: page?.faqs,
   });

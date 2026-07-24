@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { ClientOnly } from '../../../components/client-only';
-import { findSeoPage } from '../../../constants/seo-pages';
-import { usePageMetadata } from '../../../hooks/use-page-metadata';
+import { useV1PageMetadata } from '../../seo/hooks/use-v1-page-metadata';
+import { createV1PageMetadataOptions } from '../../seo/utils/create-v1-page-metadata-options.util';
+import { findV1SeoPage } from '../../seo/utils/find-v1-seo-page.util';
 import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
-import { createV1PageMetadataOptions } from '../../app/utils/create-v1-page-metadata-options.util';
 import { loadDemoPlayground } from './load-demo-playground';
 
 const Root = styled.section`
@@ -17,11 +17,11 @@ const Title = styled.h1`
   font-size: clamp(2rem, 4vw, 3rem);
 `;
 
-const seoPage = findSeoPage('/demo');
+const seoPage = findV1SeoPage('/demo');
 const route = findV1RouteRecord('/demo');
 
 export const DemoPage: React.FC = () => {
-  usePageMetadata(
+  useV1PageMetadata(
     seoPage.title,
     seoPage.description,
     createV1PageMetadataOptions(seoPage, route)

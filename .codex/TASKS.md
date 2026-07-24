@@ -1161,7 +1161,7 @@ unexpectedly.
 
 ### T028 - Create the independent v1 SEO/SSG pipeline
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T022 and T026
 
