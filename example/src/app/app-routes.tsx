@@ -2,19 +2,9 @@ import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SiteShell } from '../components/site-shell';
 import { canonicalSeoPages } from '../constants/seo-pages';
-import { ApiPage } from '../pages/api-page/api-page';
-import { DemoPage } from '../pages/demo-page/demo-page';
-import { DocumentationPage } from '../pages/documentation-page/documentation-page';
-import { HomePage } from '../pages/home-page/home-page';
-import { RecipesPage } from '../pages/recipes-page/recipes-page';
-
-const pageElements = {
-  API: <ApiPage />,
-  Demo: <DemoPage />,
-  Documentation: <DocumentationPage />,
-  Home: <HomePage />,
-  Recipes: <RecipesPage />,
-};
+import { TOP_LEVEL_NAV } from '../constants/site-constants';
+import type { IAppContentPages } from './types/app-content-pages';
+import { useSiteSearch } from '../hooks/use-site-search';
 
 const redirects = [
   { from: '/api/builder-props', to: '/api/builder' },
@@ -42,24 +32,51 @@ const redirects = [
   },
 ] as const;
 
-export const AppRoutes: React.FC = () => (
-  <Routes>
-    <Route element={<SiteShell />}>
-      {canonicalSeoPages.map((page) => (
-        <Route
-          key={page.path}
-          path={page.path}
-          element={pageElements[page.section as keyof typeof pageElements]}
-        />
-      ))}
-      {redirects.map((redirect) => (
-        <Route
-          key={redirect.from}
-          path={redirect.from}
-          element={<Navigate to={redirect.to} replace />}
-        />
-      ))}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Route>
-  </Routes>
-);
+export const AppRoutes: React.FC<IAppContentPages> = ({
+  apiPage,
+  demoPage,
+  documentationPage,
+  homePage,
+  recipesPage,
+}) => {
+  const pageElements = {
+    API: apiPage,
+    Demo: demoPage,
+    Documentation: documentationPage,
+    Home: homePage,
+    Recipes: recipesPage,
+  };
+
+  return (
+    <Routes>
+      <Route
+        element={
+          <SiteShell
+            version="v1"
+            topNavigation={TOP_LEVEL_NAV.map((item) => ({
+              label: item.label,
+              path: item.to,
+            }))}
+            useSearch={useSiteSearch}
+          />
+        }
+      >
+        {canonicalSeoPages.map((page) => (
+          <Route
+            key={page.path}
+            path={page.path}
+            element={pageElements[page.section as keyof typeof pageElements]}
+          />
+        ))}
+        {redirects.map((redirect) => (
+          <Route
+            key={redirect.from}
+            path={redirect.from}
+            element={<Navigate to={redirect.to} replace />}
+          />
+        ))}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  );
+};

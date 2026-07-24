@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ThemeProvider } from '../../../../../src/theme-provider/theme-provider';
+import { ThemeProvider } from '@vojtechportes/react-query-builder';
 import { BuilderSurface } from '../../../components/builder-surface';
 import { MuiBuilderSurface } from '../../../components/mui-builder-surface';
 import { defaultTheme } from '../../../constants/demo-data';

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useSiteSearch } from '../hooks/use-site-search';
 import { CloseIcon, SearchIcon } from './icons';
+import type { SiteSearchHook } from './search/types/site-search-hook';
 
 const Root = styled.div`
   position: relative;
@@ -110,11 +110,15 @@ const ResultSummary = styled.div`
   line-height: 1.5;
 `;
 
-export const HeaderSearch: React.FC = () => {
+export interface IHeaderSearchProps {
+  useSearch: SiteSearchHook;
+}
+
+export const HeaderSearch: React.FC<IHeaderSearchProps> = ({ useSearch }) => {
   const [query, setQuery] = React.useState('');
   const [isOpen, setIsOpen] = React.useState(false);
   const navigate = useNavigate();
-  const results = useSiteSearch(query);
+  const results = useSearch(query);
   const rootRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -152,7 +156,7 @@ export const HeaderSearch: React.FC = () => {
             setIsOpen(true);
           }
         }}
-        onChange={event => {
+        onChange={(event) => {
           const nextValue = event.target.value;
           setQuery(nextValue);
           setIsOpen(Boolean(nextValue.trim()));
@@ -173,7 +177,7 @@ export const HeaderSearch: React.FC = () => {
 
       {shouldShowResults ? (
         <Results>
-          {results.slice(0, 6).map(result => (
+          {results.slice(0, 6).map((result) => (
             <ResultButton
               key={result.id}
               onClick={() => {

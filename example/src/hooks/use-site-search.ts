@@ -3,11 +3,13 @@ import MiniSearch from 'minisearch';
 import { apiPages } from '../pages/api-page/pages/api-content';
 import { documentationPages } from '../pages/documentation-page/pages/documentation-content';
 import { recipes } from '../pages/recipes-page/pages/recipes-content';
+import type { ISiteSearchResult } from '../components/search/types/site-search-result';
 
 interface ISearchDocument {
   id: string;
   title: string;
   path: string;
+  publicPath: string;
   summary: string;
   content: string;
 }
@@ -17,6 +19,7 @@ const searchDocuments: ISearchDocument[] = [
     id: 'home',
     title: 'Home',
     path: '/',
+    publicPath: '/',
     summary:
       'Highly configurable TypeScript library for nested filter editors, query formatting, and query parsing.',
     content:
@@ -26,6 +29,7 @@ const searchDocuments: ISearchDocument[] = [
     id: 'demo',
     title: 'Demo',
     path: '/demo',
+    publicPath: '/demo',
     summary:
       'Interactive builder demo with control toggles, theme editing, and output previews.',
     content:
@@ -35,6 +39,7 @@ const searchDocuments: ISearchDocument[] = [
     id: page.path,
     title: page.title,
     path: page.path,
+    publicPath: page.path,
     summary: page.description,
     content: `${page.title} ${page.description} ${page.searchText}`,
   })),
@@ -42,6 +47,7 @@ const searchDocuments: ISearchDocument[] = [
     id: page.path,
     title: page.title,
     path: page.path,
+    publicPath: page.path,
     summary: page.description,
     content: `${page.title} ${page.description} ${page.searchText}`,
   })),
@@ -49,16 +55,17 @@ const searchDocuments: ISearchDocument[] = [
     id: page.path,
     title: page.title,
     path: page.path,
+    publicPath: page.path,
     summary: page.description,
     content: `${page.title} ${page.description} ${page.primaryKeyword} ${page.secondaryKeywords.join(' ')} ${page.searchText}`,
   })),
 ];
 
-export const useSiteSearch = (query: string) => {
+export const useSiteSearch = (query: string): ISiteSearchResult[] => {
   const miniSearch = React.useMemo(() => {
     const search = new MiniSearch<ISearchDocument>({
       fields: ['title', 'content'],
-      storeFields: ['title', 'path', 'summary'],
+      storeFields: ['title', 'path', 'publicPath', 'summary'],
       searchOptions: {
         boost: { title: 3 },
         fuzzy: 0.15,
@@ -80,6 +87,6 @@ export const useSiteSearch = (query: string) => {
 
     return miniSearch.search(trimmed, {
       combineWith: 'AND',
-    });
+    }) as unknown as ISiteSearchResult[];
   }, [miniSearch, query]);
 };

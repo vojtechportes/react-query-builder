@@ -4,6 +4,11 @@ import { StaticRouter } from 'react-router-dom';
 import { ServerStyleSheet } from 'styled-components';
 import { AppRoutes } from './app/app-routes';
 import { routerBasename } from './app/router-basename';
+import { ApiPage } from './pages/api-page/api-page';
+import { DemoPage } from './pages/demo-page/demo-page';
+import { HomePage } from './pages/home-page/home-page';
+import { RecipesPage } from './pages/recipes-page/recipes-page';
+import { DocumentationPage } from './pages/documentation-page/documentation-page';
 
 export interface IRenderedPage {
   html: string;
@@ -18,7 +23,13 @@ export const renderPage = (pathname: string): IRenderedPage => {
     const html = renderToString(
       sheet.collectStyles(
         <StaticRouter basename={routerBasename} location={location}>
-          <AppRoutes />
+          <AppRoutes
+            apiPage={<ApiPage />}
+            demoPage={<DemoPage />}
+            documentationPage={<DocumentationPage />}
+            homePage={<HomePage />}
+            recipesPage={<RecipesPage />}
+          />
         </StaticRouter>
       )
     );

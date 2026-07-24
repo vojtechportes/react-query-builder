@@ -1,0 +1,57 @@
+import * as React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { SiteShell } from '../../components/site-shell';
+import { RouteRedirect } from '../../shared/route-redirect';
+import { v2TopNavigation } from '../navigation/constants/v2-top-navigation';
+import { ApiPage } from '../pages/api-page/api-page';
+import { DemoPage } from '../pages/demo-page/demo-page';
+import { DocumentationPage } from '../pages/documentation-page/documentation-page';
+import { HomePage } from '../pages/home-page/home-page';
+import { RecipesPage } from '../pages/recipes-page/recipes-page';
+import { useV2SiteSearch } from '../search/hooks/use-v2-site-search';
+import { v2FallbackRoute } from './constants/v2-fallback-route';
+import { v2LegacyRouteRedirects } from './constants/v2-legacy-route-redirects';
+import { v2RouteManifest } from './constants/v2-route-manifest';
+
+export const V2AppRoutes: React.FC = () => {
+  const pageElements = {
+    API: <ApiPage />,
+    Demo: <DemoPage />,
+    Documentation: <DocumentationPage />,
+    Home: <HomePage />,
+    Recipes: <RecipesPage />,
+  };
+
+  return (
+    <Routes>
+      <Route
+        element={
+          <SiteShell
+            version="v2"
+            topNavigation={v2TopNavigation}
+            useSearch={useV2SiteSearch}
+          />
+        }
+      >
+        {v2RouteManifest.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={pageElements[route.section]}
+          />
+        ))}
+        {v2LegacyRouteRedirects.map((redirect) => (
+          <Route
+            key={redirect.from}
+            path={redirect.from}
+            element={<RouteRedirect to={redirect.to} />}
+          />
+        ))}
+        <Route
+          path={v2FallbackRoute.path}
+          element={<RouteRedirect to={v2FallbackRoute.to} />}
+        />
+      </Route>
+    </Routes>
+  );
+};

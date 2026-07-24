@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { colors } from '../../../src';
+import { colors } from '@vojtechportes/react-query-builder';
 import { ThemeColorInput } from './theme-color-input';
 import styled from 'styled-components';
-import { IColors } from '../../../src/constants/colors';
+import { IColors } from '@vojtechportes/react-query-builder';
 
 const StyledTheme = styled.div`
   display: flex;

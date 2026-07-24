@@ -1,13 +1,25 @@
 {
   "compilerOptions": {
     "composite": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "target": "ES2022",
     "types": ["node"]
   },
-  "include": ["vite.config.mts"]
+  "include": [
+    "vite.config.mts",
+    "vite-plugins",
+    "config/package-bindings/*.mts",
+    "config/package-bindings/v1-package-binding.ts",
+    "config/package-bindings/v2-package-binding.ts",
+    "config/package-bindings/constants",
+    "config/package-bindings/types",
+    "config/package-bindings/utils",
+    "config/versioned-site"
+  ]
 }

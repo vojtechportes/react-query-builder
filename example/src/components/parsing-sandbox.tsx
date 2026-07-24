@@ -5,8 +5,8 @@ import {
   type DenormalizedQuery,
   type IBuilderFieldProps,
 } from '@vojtechportes/react-query-builder';
-import { ThemeProvider } from '../../../src/theme-provider/theme-provider';
-import { parseQuery } from '../../../src/parseQuery';
+import { ThemeProvider } from '@vojtechportes/react-query-builder';
+import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
 import { AlertBox } from './alert-box';
 import { CodeBlock } from './code-block';
 import {
@@ -111,16 +111,19 @@ const BuilderViewport = styled.div`
   line-height: normal;
 `;
 
-const formatExample = (query: DenormalizedQuery, format: SupportedQueryFormat) =>
-  formatQueryText(query, format, demoFields);
+const formatExample = (
+  query: DenormalizedQuery,
+  format: SupportedQueryFormat
+) => formatQueryText(query, format, demoFields);
 
 export const ParsingSandbox: React.FC = () => {
   const [inputFormat, setInputFormat] =
     React.useState<SupportedQueryFormat>('SQL');
   const [outputFormat, setOutputFormat] =
     React.useState<SupportedQueryFormat>('Mongo');
-  const [builderData, setBuilderData] =
-    React.useState<DenormalizedQuery>(parsingSandboxInitialQueryTree);
+  const [builderData, setBuilderData] = React.useState<DenormalizedQuery>(
+    parsingSandboxInitialQueryTree
+  );
   const [builderFields, setBuilderFields] =
     React.useState<IBuilderFieldProps[]>(demoFields);
   const [inputText, setInputText] = React.useState(() =>
@@ -180,7 +183,7 @@ export const ParsingSandbox: React.FC = () => {
         <SelectRow>
           <Select
             value={inputFormat}
-            onChange={event => {
+            onChange={(event) => {
               const nextFormat = event.target.value as SupportedQueryFormat;
               setInputFormat(nextFormat);
               const nextText = formatExample(builderData, nextFormat);
@@ -188,7 +191,7 @@ export const ParsingSandbox: React.FC = () => {
               setInputError(null);
             }}
           >
-            {supportedFormats.map(format => (
+            {supportedFormats.map((format) => (
               <option key={format} value={format}>
                 Input: {format}
               </option>
@@ -197,11 +200,11 @@ export const ParsingSandbox: React.FC = () => {
 
           <Select
             value={outputFormat}
-            onChange={event =>
+            onChange={(event) =>
               setOutputFormat(event.target.value as SupportedQueryFormat)
             }
           >
-            {supportedFormats.map(format => (
+            {supportedFormats.map((format) => (
               <option key={format} value={format}>
                 Output: {format}
               </option>
@@ -212,7 +215,7 @@ export const ParsingSandbox: React.FC = () => {
 
       <Textarea
         value={inputText}
-        onChange={event => applyParse(event.target.value, inputFormat)}
+        onChange={(event) => applyParse(event.target.value, inputFormat)}
       />
 
       {inputError ? (
@@ -252,4 +255,3 @@ export const ParsingSandbox: React.FC = () => {
     </Root>
   );
 };
-

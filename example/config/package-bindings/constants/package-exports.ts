@@ -1,0 +1,142 @@
+import type { IPackageExport } from '../types/package-export';
+
+export const packageExports: readonly IPackageExport[] = [
+  {
+    subpath: '/parseQuery',
+    localSourcePath: 'parseQuery/index.ts',
+    publishedImportPath: 'dist/parseQuery.mjs',
+    publishedTypePath: 'dist/parseQuery.d.ts',
+  },
+  {
+    subpath: '/formatQuery',
+    localSourcePath: 'formatQuery/index.ts',
+    publishedImportPath: 'dist/formatQuery.mjs',
+    publishedTypePath: 'dist/formatQuery.d.ts',
+  },
+  {
+    subpath: '/locale/en-US',
+    localSourcePath: 'locales/en-us/index.ts',
+    publishedImportPath: 'dist/locale/en-US/index.mjs',
+    publishedTypePath: 'dist/locale/en-US/index.d.ts',
+  },
+  {
+    subpath: '/locale/fr-FR',
+    localSourcePath: 'locales/fr-fr/index.ts',
+    publishedImportPath: 'dist/locale/fr-FR/index.mjs',
+    publishedTypePath: 'dist/locale/fr-FR/index.d.ts',
+  },
+  {
+    subpath: '/locale/it-IT',
+    localSourcePath: 'locales/it-it/index.ts',
+    publishedImportPath: 'dist/locale/it-IT/index.mjs',
+    publishedTypePath: 'dist/locale/it-IT/index.d.ts',
+  },
+  {
+    subpath: '/locale/de-DE',
+    localSourcePath: 'locales/de-de/index.ts',
+    publishedImportPath: 'dist/locale/de-DE/index.mjs',
+    publishedTypePath: 'dist/locale/de-DE/index.d.ts',
+  },
+  {
+    subpath: '/locale/es-ES',
+    localSourcePath: 'locales/es-es/index.ts',
+    publishedImportPath: 'dist/locale/es-ES/index.mjs',
+    publishedTypePath: 'dist/locale/es-ES/index.d.ts',
+  },
+  {
+    subpath: '/locale/pt-PT',
+    localSourcePath: 'locales/pt-pt/index.ts',
+    publishedImportPath: 'dist/locale/pt-PT/index.mjs',
+    publishedTypePath: 'dist/locale/pt-PT/index.d.ts',
+  },
+  {
+    subpath: '/locale/cs-CZ',
+    localSourcePath: 'locales/cs-cz/index.ts',
+    publishedImportPath: 'dist/locale/cs-CZ/index.mjs',
+    publishedTypePath: 'dist/locale/cs-CZ/index.d.ts',
+  },
+  {
+    subpath: '/locale/sk-SK',
+    localSourcePath: 'locales/sk-sk/index.ts',
+    publishedImportPath: 'dist/locale/sk-SK/index.mjs',
+    publishedTypePath: 'dist/locale/sk-SK/index.d.ts',
+  },
+  {
+    subpath: '/locale/zh-CN',
+    localSourcePath: 'locales/zh-cn/index.ts',
+    publishedImportPath: 'dist/locale/zh-CN/index.mjs',
+    publishedTypePath: 'dist/locale/zh-CN/index.d.ts',
+  },
+  {
+    subpath: '/locale/zh-TW',
+    localSourcePath: 'locales/zh-tw/index.ts',
+    publishedImportPath: 'dist/locale/zh-TW/index.mjs',
+    publishedTypePath: 'dist/locale/zh-TW/index.d.ts',
+  },
+  {
+    subpath: '/bootstrap/v5',
+    localSourcePath: 'bootstrap/v5/index.ts',
+    publishedImportPath: 'dist/bootstrap/v5/index.mjs',
+    publishedTypePath: 'dist/bootstrap/v5/index.d.ts',
+  },
+  {
+    subpath: '/mui/v7',
+    localSourcePath: 'mui/v7/index.ts',
+    publishedImportPath: 'dist/mui/v7/index.mjs',
+    publishedTypePath: 'dist/mui/v7/index.d.ts',
+  },
+  {
+    subpath: '/mui/v9',
+    localSourcePath: 'mui/v9/index.ts',
+    publishedImportPath: 'dist/mui/v9/index.mjs',
+    publishedTypePath: 'dist/mui/v9/index.d.ts',
+  },
+  {
+    subpath: '/antd/v5',
+    localSourcePath: 'antd/v5/index.ts',
+    publishedImportPath: 'dist/antd/v5/index.mjs',
+    publishedTypePath: 'dist/antd/v5/index.d.ts',
+  },
+  {
+    subpath: '/antd/v6',
+    localSourcePath: 'antd/v6/index.ts',
+    publishedImportPath: 'dist/antd/v6/index.mjs',
+    publishedTypePath: 'dist/antd/v6/index.d.ts',
+  },
+  {
+    subpath: '/fluentui/v8',
+    localSourcePath: 'fluentui/v8/index.ts',
+    publishedImportPath: 'dist/fluentui/v8/index.mjs',
+    publishedTypePath: 'dist/fluentui/v8/index.d.ts',
+  },
+  {
+    subpath: '/mantine/v8',
+    localSourcePath: 'mantine/v8/index.ts',
+    publishedImportPath: 'dist/mantine/v8/index.mjs',
+    publishedTypePath: 'dist/mantine/v8/index.d.ts',
+  },
+  {
+    subpath: '/mantine/v9',
+    localSourcePath: 'mantine/v9/index.ts',
+    publishedImportPath: 'dist/mantine/v9/index.mjs',
+    publishedTypePath: 'dist/mantine/v9/index.d.ts',
+  },
+  {
+    subpath: '/radix/v1',
+    localSourcePath: 'radix/v1/index.ts',
+    publishedImportPath: 'dist/radix/v1/index.mjs',
+    publishedTypePath: 'dist/radix/v1/index.d.ts',
+  },
+  {
+    subpath: '/monaco',
+    localSourcePath: 'monaco/index.ts',
+    publishedImportPath: 'dist/monaco/index.mjs',
+    publishedTypePath: 'dist/monaco/index.d.ts',
+  },
+  {
+    subpath: '',
+    localSourcePath: 'index.tsx',
+    publishedImportPath: 'dist/index.mjs',
+    publishedTypePath: 'dist/index.d.ts',
+  },
+];

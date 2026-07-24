@@ -1,18 +1,17 @@
 import * as React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { colors } from '../../../src';
-import {
-  GITHUB_URL,
-  NPM_URL,
-  SITE_NAME,
-  TOP_LEVEL_NAV,
-} from '../constants/site-constants';
+import { colors } from '@vojtechportes/react-query-builder';
+import { GITHUB_URL, NPM_URL } from '../constants/site-constants';
 import { siteTheme } from '../constants/site-theme';
 import { CloseIcon, GithubIcon, MenuIcon, NpmIcon } from './icons';
 import { HeaderSearch } from './header-search';
 import { ClientOnly } from './client-only';
 import { loadCookieConsentBanner } from './load-cookie-consent-banner';
+import type { SiteVersion } from '../shared/versioned-url';
+import { routerBasename } from '../app/router-basename';
+import { VersionSwitcher } from './version-switcher/version-switcher';
+import type { SiteSearchHook } from './search/types/site-search-hook';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -81,7 +80,19 @@ const HeaderInner = styled.div`
   padding: 1rem 1.5rem;
 
   @media (max-width: 540px) {
+    gap: 0.5rem;
     padding: 1rem 0.5rem;
+  }
+`;
+
+const BrandArea = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+
+  @media (max-width: 540px) {
+    gap: 0.45rem;
   }
 `;
 
@@ -112,6 +123,11 @@ const Logo = styled.span`
   letter-spacing: -0.04em;
   flex-shrink: 0;
   padding-bottom: 0.08em;
+
+  @media (max-width: 540px) {
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 const BrandText = styled.div`
@@ -137,24 +153,6 @@ const QueryBuilderText = styled.span`
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.04em;
-`;
-
-const VersionBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1.9rem;
-  margin-bottom: -2px;
-  padding: 0.35rem 0.75rem;
-  border: 1px solid ${siteTheme.primaryBorder};
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.8);
-  color: ${siteTheme.primaryDark};
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
 `;
 
 const Right = styled.div`
@@ -192,6 +190,10 @@ const MobileActions = styled.div`
   @media (max-width: 1079px) {
     display: flex;
   }
+
+  @media (max-width: 540px) {
+    gap: 0.35rem;
+  }
 `;
 
 const NavItem = styled(NavLink)`
@@ -225,6 +227,11 @@ const IconLink = styled.a`
     width: 20px;
     height: 20px;
   }
+
+  @media (max-width: 540px) {
+    width: 36px;
+    height: 36px;
+  }
 `;
 
 const MenuButton = styled.button`
@@ -242,6 +249,11 @@ const MenuButton = styled.button`
   svg {
     width: 20px;
     height: 20px;
+  }
+
+  @media (max-width: 540px) {
+    width: 36px;
+    height: 36px;
   }
 `;
 
@@ -336,7 +348,17 @@ const Footer = styled.footer`
   }
 `;
 
-export const SiteShell: React.FC = () => {
+export interface ISiteShellProps {
+  version: SiteVersion;
+  topNavigation: readonly { label: string; path: string }[];
+  useSearch: SiteSearchHook;
+}
+
+export const SiteShell: React.FC<ISiteShellProps> = ({
+  version,
+  topNavigation,
+  useSearch,
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const location = useLocation();
   const year = new Date().getFullYear();
@@ -354,29 +376,35 @@ export const SiteShell: React.FC = () => {
       <GlobalStyle />
       <Header>
         <HeaderInner>
-          <Brand to="/">
-            <Logo aria-hidden="true">QB</Logo>
-            <BrandText>
-              <ReactText>React</ReactText>
-              <QueryBuilderText>Query Builder</QueryBuilderText>
-            </BrandText>
-            <VersionBadge aria-label="Documentation version">
-              Docs v1
-            </VersionBadge>
-          </Brand>
-
+          <BrandArea>
+            <Brand to="/">
+              <Logo aria-hidden="true">QB</Logo>
+              <BrandText>
+                <ReactText>React</ReactText>
+                <QueryBuilderText>Query Builder</QueryBuilderText>
+              </BrandText>
+            </Brand>
+            <VersionSwitcher
+              basename={routerBasename}
+              currentVersion={version}
+            />
+          </BrandArea>
           <Right>
             <DesktopOnly>
               <Nav>
-                {TOP_LEVEL_NAV.map((item) => (
-                  <NavItem key={item.to} to={item.to} end={item.to === '/'}>
+                {topNavigation.map((item) => (
+                  <NavItem
+                    key={item.path}
+                    to={item.path}
+                    end={item.path === '/'}
+                  >
                     {item.label}
                   </NavItem>
                 ))}
               </Nav>
 
               <UtilityRow>
-                <HeaderSearch />
+                <HeaderSearch useSearch={useSearch} />
               </UtilityRow>
             </DesktopOnly>
 
@@ -453,11 +481,15 @@ export const SiteShell: React.FC = () => {
             </MenuButton>
           </MobilePanelHeader>
           <MobileSearchWrap>
-            <HeaderSearch />
+            <HeaderSearch useSearch={useSearch} />
           </MobileSearchWrap>
           <MobileNav>
-            {TOP_LEVEL_NAV.map((item) => (
-              <MobileNavItem key={item.to} to={item.to} end={item.to === '/'}>
+            {topNavigation.map((item) => (
+              <MobileNavItem
+                key={item.path}
+                to={item.path}
+                end={item.path === '/'}
+              >
                 {item.label}
               </MobileNavItem>
             ))}

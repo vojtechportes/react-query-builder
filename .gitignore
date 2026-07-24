@@ -13,3 +13,5 @@ dist
 
 /coverage
 example/dist
+example/config/package-bindings/.smoke-dist
+example/.versioned-dist

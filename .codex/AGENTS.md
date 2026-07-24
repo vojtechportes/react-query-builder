@@ -53,9 +53,9 @@ src/
 
 # File names and placement
 
-
 - Utility files should be always suffixed with `*.util.(ts|tsx)`
 - Interfaces should be prefixed with `I` in the interface name
+- Interface file names must never be prefixed with `i-`; name files after the domain concept, for example `package-binding.ts`
 - Enums should be suffixed with `*-enum.ts`
 - Types should have no suffix
 - Types, interfaces, enums, utility functions, components and so on should not be mixed together in one folder as a flat structure
@@ -84,8 +84,18 @@ Use `kebab-case` for:
   Two or more interfaces / enums / types / constants should never be placed together in one file
 
 - Prefer arrow functions over function statements where `this` context is not needed
+- Use blank lines to separate variable declarations from following control-flow blocks, function declarations, and other distinct statement blocks
+- Adjacent single-line variable declarations may stay together; when either adjacent declaration spans multiple lines, place a blank line between them
 - Keep tasks small and committable
 - Each code addition or refactor should be tested
+
+## Copy
+
+- Do not use m-dashes "—", use standard n-dash instead "-"
+- Always make sure text is readable and understandable, doesn't contain unecessary text or information that are irelevant. That especially apply to the library website.
+- Text should be easy to understand even for junior/medior developer, without over-explanation
+- As an inspiration how good copy should look like, look at for example https://docs.nestjs.com/recipes/crud-generator or https://mui.com/material-ui/api/slider
+- Make sure you are using concise communication style and don't use multiple styles of writing
 
 ## Sub-agents
 
@@ -135,7 +145,3 @@ Operating rule:
 
 - Do not skip the planning agent for non-trivial work (trivial task could be fixing typo, small styles fix / addition, unused file / folder deletion, minor or patch dependency update that does not bring any breaking changes)
 - Do not skip the code review agent after implementation
-
-
-
-

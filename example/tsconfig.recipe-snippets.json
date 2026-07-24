@@ -1,26 +1,3 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "jsx": "react",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext",
-    "baseUrl": ".",
-    "paths": {
-      "@vojtechportes/react-query-builder": ["../src/index.tsx"],
-      "@vojtechportes/react-query-builder/formatQuery": [
-        "../src/formatQuery/index.ts"
-      ],
-      "@vojtechportes/react-query-builder/parseQuery": [
-        "../src/parseQuery/index.ts"
-      ],
-      "@vojtechportes/react-query-builder/mui/v9": ["../dist/mui/v9/index.d.ts"]
-    }
-  },
-  "include": ["src/pages/recipes-page/snippets/*.snippet.tsx"]
+  "extends": "./tsconfig.recipe-snippets.v2.json"
 }
