@@ -51,7 +51,7 @@ export const AppRoutes: React.FC<IAppContentPages> = ({
       <Route
         element={
           <SiteShell
-            versionLabel="Docs v1"
+            version="v1"
             topNavigation={TOP_LEVEL_NAV.map((item) => ({
               label: item.label,
               path: item.to,
