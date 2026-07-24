@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { apiBaseline } from './pages/api-page/constants/api-baseline';
 import { documentationBaseline } from './pages/documentation-page/constants/documentation-baseline';
 import { renderPage } from './entry-server';
 
@@ -39,6 +40,15 @@ describe('v2 version-owned SSR', () => {
     }
   );
 
+  it.each(apiBaseline)(
+    'renders the v2-owned API content for $path',
+    ({ path, title }) => {
+      const page = renderPage(path);
+
+      expect(page.html).toContain(`>${title}</h1>`);
+      expect(page.styles).toContain('data-styled="true"');
+    }
+  );
   it('renders the parsing sandbox client-only boundary', () => {
     const page = renderPage('/documentation/parsing-and-formatting');
 
