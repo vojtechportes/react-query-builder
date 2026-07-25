@@ -1,0 +1,63 @@
+@layer react-query-builder {
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--query-builder-spacing-md, 0.75rem);
+    padding: var(--query-builder-spacing-md, 0.75rem)
+      var(--query-builder-spacing-lg, 1rem);
+    border: 1px solid;
+    border-radius: var(--query-builder-radius-md, 6px);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .info {
+    --alert-primary: var(--query-builder-color-info-primary, #2563eb);
+    --alert-light: var(--query-builder-color-info-light, #8fb2ff);
+  }
+
+  .success {
+    --alert-primary: var(--query-builder-color-success-primary, #2f8f4e);
+    --alert-light: var(--query-builder-color-success-light, #8fd3a3);
+  }
+
+  .warning {
+    --alert-primary: var(--query-builder-color-warning-primary, #dc7a1e);
+    --alert-light: var(--query-builder-color-warning-light, #f7b578);
+  }
+
+  .error {
+    --alert-primary: var(--query-builder-color-error-primary, #d14343);
+    --alert-light: var(--query-builder-color-error-light, #f2a0a0);
+  }
+
+  .outlined {
+    color: var(--alert-primary);
+    background: color-mix(
+      in srgb,
+      var(--alert-primary) 5%,
+      var(--query-builder-color-white, #ffffff) 95%
+    );
+    border-color: var(--alert-light);
+  }
+
+  .filled {
+    color: var(--query-builder-color-white, #ffffff);
+    background: var(--alert-primary);
+    border-color: var(--alert-primary);
+  }
+
+  .icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    line-height: 1;
+  }
+
+  .content {
+    min-width: 0;
+  }
+}

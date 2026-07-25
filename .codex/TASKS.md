@@ -1438,7 +1438,7 @@ unexpectedly.
 
 ### T039 - Migrate Alert and Text modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T036
 
