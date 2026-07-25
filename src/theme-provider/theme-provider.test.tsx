@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Button } from '../button';
+import { OutlinedButton } from '../outlined-button';
+import { SecondaryButton } from '../secondary-button';
 import { colors } from '../constants/colors';
 import { useTheme } from './hooks/use-theme';
 import { ThemeProvider } from './theme-provider';
@@ -63,17 +65,36 @@ describe('#components/ThemeProvider', () => {
     );
   });
 
-  it('supports a standalone exported control with partial colors', () => {
+  it('supports standalone exported controls with partial colors', () => {
     render(
-      <ThemeProvider colors={{ primary: { default: 'rgb(1, 2, 3)' } }}>
-        <Button label="Standalone" onClick={jest.fn()} />
+      <ThemeProvider
+        colors={{
+          primary: { default: 'rgb(1, 2, 3)' },
+          secondary: { light: 'rgb(4, 5, 6)' },
+          grey: { 300: 'rgb(7, 8, 9)' },
+        }}
+      >
+        <Button label="Primary" onClick={jest.fn()} />
+        <SecondaryButton label="Secondary" onClick={jest.fn()} />
+        <OutlinedButton label="Outlined" onClick={jest.fn()} />
       </ThemeProvider>
     );
-    const buttonStyle = getComputedStyle(
-      screen.getByRole('button', { name: 'Standalone' })
-    );
 
-    expect(buttonStyle.backgroundColor).toBe('rgb(1, 2, 3)');
-    expect(buttonStyle.color).toBe('rgb(255, 255, 255)');
+    for (const name of ['Primary', 'Secondary', 'Outlined']) {
+      const buttonStyle = screen.getByRole('button', { name }).style;
+
+      expect(
+        buttonStyle.getPropertyValue('--query-builder-color-primary-default')
+      ).toBe('rgb(1, 2, 3)');
+      expect(
+        buttonStyle.getPropertyValue('--query-builder-color-secondary-light')
+      ).toBe('rgb(4, 5, 6)');
+      expect(
+        buttonStyle.getPropertyValue('--query-builder-color-grey-300')
+      ).toBe('rgb(7, 8, 9)');
+      expect(
+        buttonStyle.getPropertyValue('--query-builder-color-grey-400')
+      ).toBe('');
+    }
   });
 });
