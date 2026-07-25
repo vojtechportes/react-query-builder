@@ -1,5 +1,6 @@
 import { colors } from '../../constants/colors';
 import { IThemeProps } from '../theme-provider';
+import type { ThemeColorOverrides } from '../types/theme-color-overrides';
 import { createThemeCssVariables } from './create-theme-css-variables.util';
 
 describe('#utils/createThemeCssVariables', () => {
@@ -39,7 +40,7 @@ describe('#utils/createThemeCssVariables', () => {
   });
 
   it('serializes only provided runtime overrides', () => {
-    const partialTheme = {
+    const partialTheme: IThemeProps<ThemeColorOverrides> = {
       colors: {
         primary: {
           default: '#123456',
@@ -48,7 +49,7 @@ describe('#utils/createThemeCssVariables', () => {
           300: '#abcdef',
         },
       },
-    } as IThemeProps;
+    };
 
     expect(createThemeCssVariables(partialTheme)).toEqual({
       '--query-builder-color-primary-default': '#123456',

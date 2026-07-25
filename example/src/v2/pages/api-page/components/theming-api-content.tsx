@@ -25,33 +25,24 @@ export const ThemingApiContent: React.FC = () => (
         <ItemTitle>
           <InlineCode>colors</InlineCode>:
         </ItemTitle>{' '}
-        Optional partial replacement source for theme color values provided
-        through context.
+        Optional deep partial color overrides. Only provided leaves become CSS
+        variables; omitted leaves continue to inherit from consumer CSS.
       </li>
       <li>
         <ItemTitle>
           <InlineCode>children</InlineCode>:
         </ItemTitle>{' '}
-        Optional React subtree that receives the theme context.
+        Optional React subtree that receives context without an added DOM node.
       </li>
       <li>
-        <ItemTitle>
-          <InlineCode>colors.primary</InlineCode> and{' '}
-          <InlineCode>colors.secondary</InlineCode>:
-        </ItemTitle>{' '}
-        Color variants used by primary and secondary action surfaces.
+        <ItemTitle>Nested providers:</ItemTitle> The nearest provider replaces
+        the outer context value. Missing legacy values resolve from the exported{' '}
+        <InlineCode>colors</InlineCode> defaults instead of the outer provider.
       </li>
       <li>
-        <ItemTitle>
-          <InlineCode>colors.grey</InlineCode>:
-        </ItemTitle>{' '}
-        Neutral palette used for borders, text, backgrounds, and control states.
-      </li>
-      <li>
-        <ItemTitle>
-          <InlineCode>colors.white</InlineCode>:
-        </ItemTitle>{' '}
-        Surface color used by builder containers and controls.
+        <ItemTitle>Precedence:</ItemTitle> Stylesheet defaults, inherited CSS,
+        explicit provider colors, then explicit{' '}
+        <InlineCode>Builder.style</InlineCode> values.
       </li>
       <li>
         <ItemTitle>Adapter note:</ItemTitle>{' '}
@@ -60,6 +51,12 @@ export const ThemingApiContent: React.FC = () => (
         theme the adapter UI.
       </li>
     </List>
+    <AlertBox title="Legacy theming" variant="warning">
+      <InlineCode>ThemeProvider</InlineCode> is deprecated for new integrations.
+      Use public <InlineCode>--query-builder-*</InlineCode> variables instead.
+      The provider, exported <InlineCode>colors</InlineCode>, and color types
+      stay available for the compatibility cycle.
+    </AlertBox>
     <AlertBox title="Documentation" variant="info">
       <TextLink to="/documentation/theming">Theming</TextLink> and{' '}
       <TextLink to="/documentation/adapters">Adapters</TextLink>.

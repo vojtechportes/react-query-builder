@@ -54,6 +54,61 @@ describe('#components/Builder theme CSS variables', () => {
     ).toBe('2rem');
   });
 
+  it('serializes only partial provider values and preserves inherited CSS', () => {
+    const { container } = render(
+      <div
+        style={
+          {
+            '--query-builder-color-primary-default': '#fedcba',
+          } as React.CSSProperties
+        }
+      >
+        <ThemeProvider colors={{ grey: { 300: '#abcdef' } }}>
+          <Builder {...requiredProps} />
+        </ThemeProvider>
+      </div>
+    );
+    const builderRoot = container.querySelector(
+      '[data-query-builder="root"]'
+    ) as HTMLElement;
+
+    expect(
+      builderRoot.style.getPropertyValue('--query-builder-color-grey-300')
+    ).toBe('#abcdef');
+    expect(
+      builderRoot.style.getPropertyValue(
+        '--query-builder-color-primary-default'
+      )
+    ).toBe('');
+    expect(
+      builderRoot.parentElement?.style.getPropertyValue(
+        '--query-builder-color-primary-default'
+      )
+    ).toBe('#fedcba');
+  });
+
+  it('uses only the nearest provider compatibility variables', () => {
+    const { container } = render(
+      <ThemeProvider colors={{ primary: { default: '#123456' } }}>
+        <ThemeProvider colors={{ grey: { 300: '#abcdef' } }}>
+          <Builder {...requiredProps} />
+        </ThemeProvider>
+      </ThemeProvider>
+    );
+    const builderRoot = container.querySelector(
+      '[data-query-builder="root"]'
+    ) as HTMLElement;
+
+    expect(
+      builderRoot.style.getPropertyValue('--query-builder-color-grey-300')
+    ).toBe('#abcdef');
+    expect(
+      builderRoot.style.getPropertyValue(
+        '--query-builder-color-primary-default'
+      )
+    ).toBe('');
+  });
+
   it('preserves root class and style props with explicit styles taking precedence', () => {
     const themeColors = {
       ...colors,

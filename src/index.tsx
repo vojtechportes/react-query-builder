@@ -88,7 +88,11 @@ export type {
   IBooleanValueValidationRule,
 } from './builder';
 export { ThemeProvider } from './theme-provider/theme-provider';
-export type { IThemeProviderProps } from './theme-provider/theme-provider';
+export type {
+  IThemeProps,
+  IThemeProviderProps,
+} from './theme-provider/theme-provider';
+export type { ThemeColorOverrides } from './theme-provider/types/theme-color-overrides';
 
 export { BuilderContext } from './builder-context';
 export type {

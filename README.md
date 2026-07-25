@@ -222,6 +222,30 @@ and React Query integration example:
 
 - <a href="https://www.react-query-builder.com/documentation/dynamic-field-options" target="_blank" rel="noopener noreferrer">Dynamic Field Options Documentation</a>
 
+## Styling and legacy color theming
+
+Import `@vojtechportes/react-query-builder/styles.css` once and customize the
+inherited `--query-builder-*` CSS variables for new integrations.
+
+`ThemeProvider` remains available as a deprecated compatibility API for the
+built-in components. Its `colors` prop accepts deep partial color overrides and
+does not add a DOM wrapper. Only supplied color values become inline CSS
+variables, so omitted values do not suppress CSS inherited from your app.
+
+Nested providers keep replacement semantics: the nearest provider replaces the
+outer provider value, and omitted legacy colors resolve to the exported
+`colors` defaults. On a Builder, precedence runs from stylesheet defaults, to
+inherited CSS, to explicit ThemeProvider colors, and finally to variables in the
+Builder `style` prop.
+
+```tsx
+import { Builder, ThemeProvider } from '@vojtechportes/react-query-builder';
+
+<ThemeProvider colors={{ primary: { default: '#3f51b5' } }}>
+  <Builder data={data} fields={fields} onChange={setData} />
+</ThemeProvider>;
+```
+
 ## UI Adapters
 
 The package also exposes ready-made component mappings through versioned

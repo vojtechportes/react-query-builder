@@ -129,7 +129,7 @@ export const documentationBaseline = [
     path: '/documentation/theming',
     title: 'Theming',
     contentHash:
-      '9e2fa30cbec8402749d1989bfb149ac3f51e81c92fc3df1d9ca3341ec373d277',
+      '0af5b3b47ec8d9727aacf26812a5b7cf272971f7ed8b8818e2ed849f54b5aee9',
   },
   {
     path: '/documentation/localization',
