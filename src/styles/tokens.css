@@ -1,0 +1,62 @@
+@layer react-query-builder {
+  :where(:root) {
+    --query-builder-color-primary-default: #3f51b5;
+    --query-builder-color-primary-light: #757de8;
+    --query-builder-color-primary-dark: #002984;
+    --query-builder-color-primary-contrast-text: #ffffff;
+    --query-builder-color-secondary-default: #f44336;
+    --query-builder-color-secondary-light: #ff7961;
+    --query-builder-color-secondary-dark: #ba000d;
+    --query-builder-color-secondary-contrast-text: #ffffff;
+    --query-builder-color-grey-100: #f5f5f5;
+    --query-builder-color-grey-200: #eeeeee;
+    --query-builder-color-grey-300: #e0e0e0;
+    --query-builder-color-grey-400: #bdbdbd;
+    --query-builder-color-grey-500: #9e9e9e;
+    --query-builder-color-grey-600: #757575;
+    --query-builder-color-grey-700: #616161;
+    --query-builder-color-grey-800: #424242;
+    --query-builder-color-grey-900: #212121;
+    --query-builder-color-info-primary: #2563eb;
+    --query-builder-color-info-light: #8fb2ff;
+    --query-builder-color-success-primary: #2f8f4e;
+    --query-builder-color-success-light: #8fd3a3;
+    --query-builder-color-warning-primary: #dc7a1e;
+    --query-builder-color-warning-light: #f7b578;
+    --query-builder-color-error-primary: #d14343;
+    --query-builder-color-error-light: #f2a0a0;
+    --query-builder-color-white: #ffffff;
+    --query-builder-spacing-xs: 0.25rem;
+    --query-builder-spacing-sm: 0.5rem;
+    --query-builder-spacing-md: 0.75rem;
+    --query-builder-spacing-lg: 1rem;
+    --query-builder-root-padding: 1rem;
+    --query-builder-group-padding: 0.7rem;
+    --query-builder-rule-padding: 0.7rem;
+    --query-builder-control-gap: 0.5rem;
+    --query-builder-group-gap: 1rem;
+    --query-builder-radius-sm: 4px;
+    --query-builder-radius-md: 6px;
+    --query-builder-radius-pill: 999px;
+    --query-builder-root-radius: 0;
+    --query-builder-shadow-group: 0 0 5px -1px rgba(0, 0, 0, 0.15);
+    --query-builder-shadow-popover: 0 10px 25px rgba(0, 0, 0, 0.12);
+    --query-builder-shadow-focus: 0 0 0 3px
+      var(--query-builder-color-primary-light);
+    --query-builder-shadow-root: none;
+    --query-builder-control-width: 160px;
+    --query-builder-control-min-width: 160px;
+    --query-builder-control-height: 2rem;
+    --query-builder-font-family: Arial, sans-serif;
+    --query-builder-font-size: 16px;
+    --query-builder-line-height: normal;
+    --query-builder-editor-font-family: 'Courier New', monospace;
+    --query-builder-editor-font-size: 0.85rem;
+    --query-builder-editor-line-height: 1.5;
+    --query-builder-editor-min-height: 10rem;
+    --query-builder-drop-zone-height: 50px;
+    --query-builder-motion-duration: 180ms;
+    --query-builder-motion-easing: ease;
+    --query-builder-popover-z-index: 10;
+  }
+}

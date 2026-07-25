@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import React from 'react';
+import type { IBuilderStyle } from './builder-style';
 import { IAlertProps } from '../../alert';
 import { IButtonProps } from '../../button';
 import { ICloneButtonProps } from '../../clone-button';
@@ -413,6 +414,8 @@ export interface IResolvedBuilderComponentsProps {
 export interface IBuilderProps {
   fields: IBuilderFieldProps[];
   data: DenormalizedQuery;
+  className?: string;
+  style?: IBuilderStyle;
   components?: IBuilderComponentsProps;
   strings?: IStrings;
   textMode?: boolean | IBuilderTextModeConfig;
@@ -436,6 +439,8 @@ export interface IBuilderProps {
   history?: boolean | IBuilderHistoryConfig;
   onChange?: (data: DenormalizedQuery) => any;
 }
+
+export type { IBuilderStyle } from './builder-style';
 
 export type {
   BuilderFieldOptionStateListener,
