@@ -1,0 +1,26 @@
+@layer react-query-builder {
+  .input {
+    -moz-appearance: textfield;
+    padding: 0 0.6rem;
+  }
+
+  .input::-webkit-date-and-time-value,
+  .input::-webkit-datetime-edit,
+  .input::-webkit-datetime-edit-fields-wrapper,
+  .input::-webkit-datetime-edit-text,
+  .input::-webkit-datetime-edit-month-field,
+  .input::-webkit-datetime-edit-day-field,
+  .input::-webkit-datetime-edit-year-field {
+    color: var(--query-builder-color-grey-800, #424242);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: inherit;
+    line-height: calc(2rem - 2px);
+  }
+
+  .input::-webkit-outer-spin-button,
+  .input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+}
