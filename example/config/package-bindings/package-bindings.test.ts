@@ -37,9 +37,12 @@ describe('versioned package bindings', () => {
         readFileSync(resolve(binding.packageRoot, 'package.json'), 'utf8')
       ) as { exports: Record<string, unknown> };
 
-      const expectedExports = packageExports.map(({ subpath }) =>
-        subpath === '' ? '.' : `.${subpath}`
-      );
+      const expectedExports = [
+        ...packageExports.map(({ subpath }) =>
+          subpath === '' ? '.' : `.${subpath}`
+        ),
+        ...(binding.target === 'v2' ? ['./styles.css'] : []),
+      ];
 
       expect(Object.keys(manifest.exports).sort()).toEqual(
         expectedExports.sort()

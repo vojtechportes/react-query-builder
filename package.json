@@ -44,12 +44,17 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "style": "./dist/styles.css",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./styles.css": "./dist/styles.css",
     "./parseQuery": {
       "types": "./dist/parseQuery.d.ts",
       "import": "./dist/parseQuery.mjs",
@@ -166,6 +171,7 @@
   },
   "files": [
     "dist",
+    "dist/styles.css",
     "!dist/**/*.map",
     "!dist/**/*.d.ts",
     "dist/index.d.ts",
@@ -198,7 +204,7 @@
     "test": "jest --runInBand",
     "test:update": "jest --updateSnapshot --runInBand",
     "test:watch": "jest --watch",
-    "test:css-infrastructure": "jest --runInBand --collectCoverage=false src/styles/css-module-contract.test.ts && npm run build && node scripts/css-build/verify-css-build.util.mjs",
+    "test:css-infrastructure": "jest --runInBand --collectCoverage=false src/styles/css-module-contract.test.ts && npm run build && node scripts/css-build/verify-css-build.util.mjs && node scripts/css-build/verify-public-stylesheet.util.mjs && node scripts/css-build/verify-stylesheet-consumers.util.mjs",
     "lint": "eslint .",
     "prettier:check": "prettier --check .",
     "example:dev": "npm run dev --workspace example",
