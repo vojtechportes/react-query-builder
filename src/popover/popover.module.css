@@ -1,0 +1,20 @@
+@layer react-query-builder {
+  .container {
+    position: relative;
+    display: flex;
+  }
+
+  .content {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    z-index: var(--query-builder-popover-z-index, 5);
+    min-width: 180px;
+    background: var(--query-builder-color-white, #ffffff);
+    border: 1px solid var(--query-builder-color-grey-500, #9e9e9e);
+    box-shadow: var(
+      --query-builder-shadow-popover,
+      0 4px 12px rgba(0, 0, 0, 0.15)
+    );
+  }
+}
