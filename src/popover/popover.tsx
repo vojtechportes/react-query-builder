@@ -1,24 +1,8 @@
+import clsx from 'clsx';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { Button } from './button';
-import { useTheme } from './theme-provider/hooks/use-theme';
-import { IThemeProps } from './theme-provider/theme-provider';
-
-const Container = styled.div`
-  position: relative;
-  display: flex;
-`;
-
-const Content = styled.div<{ $theme: IThemeProps }>`
-  position: absolute;
-  top: calc(100% + 0.35rem);
-  left: 0;
-  z-index: 5;
-  min-width: 180px;
-  background: ${({ $theme }) => $theme?.colors?.white};
-  border: 1px solid ${({ $theme }) => $theme?.colors?.grey['500']};
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-`;
+import { Button } from '../button';
+import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
+import styles from './popover.module.css';
 
 export interface IPopoverProps {
   label: string;
@@ -35,7 +19,7 @@ export const Popover: FC<IPopoverProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const theme = useTheme();
+  const themeCssVariables = useThemeCssVariables();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,7 +39,7 @@ export const Popover: FC<IPopoverProps> = ({
     };
   }, []);
 
-  const wrappedChildren = React.Children.map(children, child => {
+  const wrappedChildren = React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) {
       return child;
     }
@@ -74,11 +58,15 @@ export const Popover: FC<IPopoverProps> = ({
   });
 
   return (
-    <Container className={className} ref={containerRef}>
-      <Button onClick={() => setIsOpen(open => !open)} data-test={dataTest}>
+    <div
+      className={clsx(styles.container, className)}
+      ref={containerRef}
+      style={themeCssVariables}
+    >
+      <Button onClick={() => setIsOpen((open) => !open)} data-test={dataTest}>
         {label}
       </Button>
-      {isOpen && <Content $theme={theme}>{wrappedChildren}</Content>}
-    </Container>
+      {isOpen && <div className={styles.content}>{wrappedChildren}</div>}
+    </div>
   );
 };

@@ -1461,7 +1461,7 @@ unexpectedly.
 
 ### T040 - Migrate Popover and PopoverItem modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T037
 
