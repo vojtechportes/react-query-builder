@@ -93,6 +93,34 @@ const verifyCssBuild = async () => {
       uniqueRuleKeys: ['outlinedButton'],
     },
     {
+      name: 'CloneButton',
+      modulePattern:
+        /#region src\/clone-button\/clone-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['cloneButton', 'disabled'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['cloneButton'],
+      requiredSelectors: [
+        { key: 'cloneButton', suffix: ':hover' },
+        { key: 'cloneButton', suffix: ':focus-visible' },
+        { key: 'disabled', suffix: ':hover' },
+      ],
+    },
+    {
+      name: 'LockToggle',
+      modulePattern:
+        /#region src\/lock-toggle\/lock-toggle\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['all', 'disabled', 'lockToggle', 'self', 'unlocked'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['all', 'lockToggle', 'self', 'unlocked'],
+      requiredSelectors: [
+        { key: 'unlocked', suffix: ':hover' },
+        { key: 'self', suffix: ':hover' },
+        { key: 'all', suffix: ':hover' },
+        { key: 'lockToggle', suffix: ':focus-visible' },
+        { key: 'disabled', suffix: ':hover' },
+      ],
+    },
+    {
       name: 'ANTD text-mode toggle',
       modulePattern:
         /#region src\/antd\/shared\/components\/antd-text-mode-toggle-content\/antd-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
@@ -197,6 +225,16 @@ const verifyCssBuild = async () => {
       }
     }
 
+    for (const { key, suffix } of contract.requiredSelectors || []) {
+      const selector = `.${referenceMappings[key]}${suffix}`;
+
+      if (!stylesheet.includes(selector)) {
+        throw new Error(
+          `${contract.name} required selector ${selector} is missing`
+        );
+      }
+    }
+
     cssModuleMappings.set(contract.name, referenceMappings);
   }
 
@@ -213,6 +251,7 @@ const verifyCssBuild = async () => {
   const expectedTokenFallbacks = [
     'var(--query-builder-color-primary-default, #3f51b5)',
     'var(--query-builder-color-primary-dark, #002984)',
+    'var(--query-builder-color-primary-light, #757de8)',
     'var(--query-builder-color-secondary-light, #ff7961)',
     'var(--query-builder-color-secondary-default, #f44336)',
     'var(--query-builder-color-white, #fff)',
@@ -220,6 +259,7 @@ const verifyCssBuild = async () => {
     'var(--query-builder-color-grey-200, #eee)',
     'var(--query-builder-color-grey-300, #e0e0e0)',
     'var(--query-builder-color-grey-400, #bdbdbd)',
+    'var(--query-builder-color-grey-600, #757575)',
     'var(--query-builder-color-grey-700, #616161)',
     'var(--query-builder-color-grey-800, #424242)',
   ];
@@ -350,6 +390,10 @@ const verifyCssBuild = async () => {
         cjsRootAndAntdNodeLoads: 'passed',
         buttonCssModuleClassesUnique: true,
         buttonRulesExactlyOnce: true,
+        cloneButtonCssModuleClassesUnique: true,
+        cloneButtonRulesExactlyOnce: true,
+        lockToggleCssModuleClassesUnique: true,
+        lockToggleRulesExactlyOnce: true,
         dropZoneCssModuleClassesUnique: true,
         dropZoneRulesExactlyOnce: true,
         dropZoneThemeToken: '--query-builder-color-grey-300',
