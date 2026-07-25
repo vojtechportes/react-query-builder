@@ -1,5 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { ThemeProvider } from '../theme-provider/theme-provider';
+import inputStyles from '../styles/input.module.css';
 import { SelectMulti } from './select-multi';
 
 const mockValues = [
@@ -32,6 +34,51 @@ describe('#components/SelectMulti', () => {
     expect(getByDataTest(container, 'SelectMultiTrigger')).toBeTruthy();
   });
 
+  it('applies the shared input classes to the trigger', () => {
+    const { container } = render(
+      <SelectMulti
+        disabled={false}
+        onChange={jest.fn()}
+        onDelete={jest.fn()}
+        selectedValue={['test']}
+        values={mockValues}
+      />
+    );
+    const trigger = getByDataTest(container, 'SelectMultiTrigger');
+
+    expect(trigger.classList.contains(inputStyles.control)).toBe(true);
+    expect(trigger.classList.contains(inputStyles.typography)).toBe(true);
+  });
+
+  it('serializes legacy theme variables on the shared trigger surface', () => {
+    const { container } = render(
+      <ThemeProvider
+        colors={{
+          grey: { 500: '#555555', 800: '#222222' },
+          white: '#fafafa',
+        }}
+      >
+        <SelectMulti
+          disabled={false}
+          onChange={jest.fn()}
+          onDelete={jest.fn()}
+          selectedValue={['test']}
+          values={mockValues}
+        />
+      </ThemeProvider>
+    );
+    const trigger = getByDataTest(container, 'SelectMultiTrigger');
+
+    expect(
+      trigger.style.getPropertyValue('--query-builder-color-grey-500')
+    ).toBe('#555555');
+    expect(
+      trigger.style.getPropertyValue('--query-builder-color-grey-800')
+    ).toBe('#222222');
+    expect(trigger.style.getPropertyValue('--query-builder-color-white')).toBe(
+      '#fafafa'
+    );
+  });
   it('emits add and delete actions from the options list', () => {
     const onChange = jest.fn();
     const onDelete = jest.fn();
@@ -69,8 +116,8 @@ describe('#components/SelectMulti', () => {
       />
     );
 
-    expect(getByDataTest(container, 'SelectMultiSummaryBadge').textContent).toEqual(
-      '+1'
-    );
+    expect(
+      getByDataTest(container, 'SelectMultiSummaryBadge').textContent
+    ).toEqual('+1');
   });
 });

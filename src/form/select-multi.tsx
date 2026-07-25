@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../theme-provider/hooks/use-theme';
+import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import { Trigger } from '../widgets/select-multi/components/trigger';
 import { Option } from '../widgets/select-multi/components/option';
 import { useSelectMulti } from '../widgets/select-multi/hooks/use-select-multi';
@@ -21,8 +22,10 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-export interface ISelectMultiProps
-  extends Pick<ISelectProps, 'onChange' | 'values' | 'id' | 'name'> {
+export interface ISelectMultiProps extends Pick<
+  ISelectProps,
+  'onChange' | 'values' | 'id' | 'name'
+> {
   onDelete: (value: string) => void;
   selectedValue: string[];
   emptyValue?: string;
@@ -42,13 +45,16 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
   name,
 }) => {
   const theme = useTheme();
+  const themeCssVariables = useThemeCssVariables();
   const { isOpen, rootRef, toggle, triggerRef } = useSelectMulti({
     disabled,
   });
   const selectedOptions = getSelectedOptions(values, selectedValue);
   const selectedLabels = selectedOptions.map(({ label }) => label);
   const summary = createSummary(selectedLabels);
-  const title = summary.text ? selectedLabels.join(', ') : emptyValue || 'Select value';
+  const title = summary.text
+    ? selectedLabels.join(', ')
+    : emptyValue || 'Select value';
 
   const handleToggleValue = (value: string) => {
     if (selectedValue.includes(value)) {
@@ -73,11 +79,14 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         expanded={isOpen}
         id={id ? `${id}-trigger` : undefined}
         label={summary.text || emptyValue || 'Select value'}
-        badgeContent={summary.hiddenCount > 0 ? `+${summary.hiddenCount}` : undefined}
+        badgeContent={
+          summary.hiddenCount > 0 ? `+${summary.hiddenCount}` : undefined
+        }
         onClick={toggle}
         title={title}
         triggerRef={triggerRef}
         theme={theme}
+        themeCssVariables={themeCssVariables}
       />
       {isOpen ? (
         <Popover theme={theme}>
