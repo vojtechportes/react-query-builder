@@ -1,0 +1,8 @@
+@layer react-query-builder {
+  .previewContainer {
+    pointer-events: none;
+    min-width: 320px;
+    max-width: min(960px, calc(100vw - 3rem));
+    opacity: 0.95;
+  }
+}

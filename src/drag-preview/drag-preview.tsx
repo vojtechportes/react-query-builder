@@ -1,17 +1,10 @@
 import React, { FC } from 'react';
-import styled from 'styled-components';
-import { Rule, IRuleProps } from './rule/rule';
-import { Group } from './group/group';
-import { Iterator } from './iterator';
-import { isNormalizedGroupNode } from './utils/is-normalized-group-node.util';
-import { NormalizedQuery } from './utils/query-tree';
-
-const PreviewContainer = styled.div`
-  pointer-events: none;
-  min-width: 320px;
-  max-width: min(960px, calc(100vw - 3rem));
-  opacity: 0.95;
-`;
+import { Rule, IRuleProps } from '../rule/rule';
+import { Group } from '../group/group';
+import { Iterator } from '../iterator';
+import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
+import { NormalizedQuery } from '../utils/query-tree';
+import styles from './drag-preview.module.css';
 
 export interface IDragPreviewProps {
   activeId: string;
@@ -19,7 +12,7 @@ export interface IDragPreviewProps {
 }
 
 export const DragPreview: FC<IDragPreviewProps> = ({ activeId, data }) => {
-  const activeItem = data.find(item => item.id === activeId);
+  const activeItem = data.find((item) => item.id === activeId);
 
   if (!activeItem) {
     return null;
@@ -27,11 +20,11 @@ export const DragPreview: FC<IDragPreviewProps> = ({ activeId, data }) => {
 
   if (isNormalizedGroupNode(activeItem)) {
     const children = activeItem.children
-      .map(childId => data.find(item => item.id === childId))
+      .map((childId) => data.find((item) => item.id === childId))
       .filter(Boolean) as NormalizedQuery;
 
     return (
-      <PreviewContainer>
+      <div className={styles.previewContainer}>
         <Group
           id={activeItem.id}
           value={activeItem.value}
@@ -48,15 +41,15 @@ export const DragPreview: FC<IDragPreviewProps> = ({ activeId, data }) => {
             isOverlay
           />
         </Group>
-      </PreviewContainer>
+      </div>
     );
   }
 
   const { field, value, operator, id } = activeItem as IRuleProps;
 
   return (
-    <PreviewContainer>
+    <div className={styles.previewContainer}>
       <Rule field={field} value={value} operator={operator} id={id} />
-    </PreviewContainer>
+    </div>
   );
 };

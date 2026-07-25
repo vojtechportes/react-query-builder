@@ -1,0 +1,11 @@
+@layer react-query-builder {
+  .dragHandle {
+    width: 14px;
+    min-width: 14px;
+    height: 100%;
+    background: var(--query-builder-color-grey-300, #e0e0e0);
+    border-right: var(--query-builder-color-grey-400, #bdbdbd);
+    cursor: grab;
+    touch-action: none;
+  }
+}
