@@ -1415,7 +1415,7 @@ unexpectedly.
 
 ### T038 - Migrate CloneButton and LockToggle modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T037
 
