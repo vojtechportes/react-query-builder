@@ -40,7 +40,7 @@
     --query-builder-radius-pill: 999px;
     --query-builder-root-radius: 0;
     --query-builder-shadow-group: 0 0 5px -1px rgba(0, 0, 0, 0.15);
-    --query-builder-shadow-popover: 0 10px 25px rgba(0, 0, 0, 0.12);
+    --query-builder-shadow-popover: 0 4px 12px rgba(0, 0, 0, 0.15);
     --query-builder-shadow-focus: 0 0 0 3px
       var(--query-builder-color-primary-light);
     --query-builder-shadow-root: none;
@@ -57,6 +57,6 @@
     --query-builder-drop-zone-height: 50px;
     --query-builder-motion-duration: 180ms;
     --query-builder-motion-easing: ease;
-    --query-builder-popover-z-index: 10;
+    --query-builder-popover-z-index: 5;
   }
 }
