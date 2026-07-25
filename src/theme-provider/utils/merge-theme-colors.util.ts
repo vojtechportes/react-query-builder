@@ -1,6 +1,9 @@
 import { colors, IColors } from '../../constants/colors';
+import type { ThemeColorOverrides } from '../types/theme-color-overrides';
 
-export const mergeThemeColors = (nextColors?: IColors): IColors => ({
+export const mergeThemeColors = (
+  nextColors?: ThemeColorOverrides
+): IColors => ({
   ...colors,
   ...nextColors,
   primary: {
