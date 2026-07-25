@@ -65,6 +65,7 @@ import { resolveBuilderFieldOptionState } from './utils/resolve-builder-field-op
 import { resolveReconciledBuilderRuleValue } from './utils/resolve-reconciled-builder-rule-value.util';
 import { removeQueryNegation } from '../utils/remove-query-negation.util';
 import { removeNormalizedQueryNegation } from '../utils/remove-normalized-query-negation.util';
+import { createBuilderRootStyle } from './utils/create-builder-root-style.util';
 
 const tryFormatBuilderTextState = (
   data: DenormalizedQuery,
@@ -98,6 +99,8 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
     {
       data: originalData = [],
       fields,
+      className,
+      style,
       components = defaultComponents,
       strings = defaultStrings,
       readOnly = false,
@@ -155,6 +158,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
       defaultMode ?? textModeConfig?.defaultMode ?? 'builder';
     const theme = useTheme();
     const themeCssVariables = useThemeCssVariables();
+    const rootStyle = createBuilderRootStyle(themeCssVariables, style);
     const compatibleOriginalData = useMemo(
       () => sanitizeDenormalizedQuery(originalData),
       [originalData, sanitizeDenormalizedQuery]
@@ -964,7 +968,12 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           redo,
         }}
       >
-        <StyledBuilder $theme={theme} style={themeCssVariables}>
+        <StyledBuilder
+          $theme={theme}
+          className={className}
+          data-query-builder="root"
+          style={rootStyle}
+        >
           {textModeBlockedByLocks && strings.textMode?.locksUnsupported ? (
             <TextModeBlockedAlertContainer>
               <AlertComponent

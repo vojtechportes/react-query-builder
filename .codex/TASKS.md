@@ -1339,7 +1339,7 @@ unexpectedly.
 
 ### T035 - Add the public stylesheet export and CSS-variable token contract
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T034
 

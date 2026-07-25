@@ -5,11 +5,16 @@
     box-sizing: border-box;
     overflow: visible;
     transition:
-      height 180ms ease,
-      margin 180ms ease,
-      border-color 180ms ease,
-      background-color 180ms ease,
-      opacity 180ms ease;
+      height var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      margin var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      border-color var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      background-color var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      opacity var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease);
   }
 
   .anchor:not(.dragging) {
@@ -29,14 +34,14 @@
   }
 
   .anchor.dragging.active:not(.empty) {
-    height: 50px;
-    margin: 0.5rem 0 0;
+    height: var(--query-builder-drop-zone-height, 50px);
+    margin: var(--query-builder-spacing-sm, 0.5rem) 0 0;
     opacity: 1;
   }
 
   .anchor.empty {
-    height: 50px;
-    margin: 0.5rem 0 0;
+    height: var(--query-builder-drop-zone-height, 50px);
+    margin: var(--query-builder-spacing-sm, 0.5rem) 0 0;
     opacity: 0;
   }
 
@@ -56,8 +61,10 @@
     pointer-events: none;
     opacity: 0;
     transition:
-      opacity 180ms ease,
-      transform 180ms ease;
+      opacity var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      transform var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease);
   }
 
   .dropZone.dragging {
@@ -75,10 +82,14 @@
     transform-origin: center;
     opacity: 0.35;
     transition:
-      border-color 180ms ease,
-      background-color 180ms ease,
-      transform 180ms ease,
-      opacity 180ms ease;
+      border-color var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      background-color var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      transform var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      opacity var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease);
   }
 
   .inner.active {

@@ -60,6 +60,7 @@ export type {
   IBuilderValidationResult,
   IBuilderValidator,
   IBuilderProps,
+  IBuilderStyle,
   IBuilderRangeValidation,
   IResolvedBuilderComponentsProps,
   IDateFieldProps,
@@ -97,4 +98,3 @@ export type {
   IBooleanValueValidationRule,
   IBuilderHistoryState,
 } from './types';
-

@@ -1,4 +1,5 @@
 import './styles/css-module-contract';
+import './styles/tokens.css';
 
 export { Builder, defaultComponents } from './builder';
 export { useBuilderRef } from './hooks/use-builder-ref';
@@ -50,6 +51,7 @@ export type {
   IBuilderValidationResult,
   IBuilderValidator,
   IBuilderProps,
+  IBuilderStyle,
   IBuilderRangeValidation,
   IResolvedBuilderComponentsProps,
   ITextModeEditorProps,
