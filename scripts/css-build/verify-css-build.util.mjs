@@ -69,6 +69,30 @@ const verifyCssBuild = async () => {
       uniqueRuleKeys: ['anchor'],
     },
     {
+      name: 'Button',
+      modulePattern:
+        /#region src\/button\/button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['button'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['button'],
+    },
+    {
+      name: 'SecondaryButton',
+      modulePattern:
+        /#region src\/secondary-button\/secondary-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['secondaryButton'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['secondaryButton'],
+    },
+    {
+      name: 'OutlinedButton',
+      modulePattern:
+        /#region src\/outlined-button\/outlined-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['outlinedButton'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['outlinedButton'],
+    },
+    {
       name: 'ANTD text-mode toggle',
       modulePattern:
         /#region src\/antd\/shared\/components\/antd-text-mode-toggle-content\/antd-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
@@ -186,8 +210,24 @@ const verifyCssBuild = async () => {
     );
   }
 
-  if (!stylesheet.includes('var(--query-builder-color-grey-300, #e0e0e0)')) {
-    throw new Error('DropZone theme token or default fallback is missing');
+  const expectedTokenFallbacks = [
+    'var(--query-builder-color-primary-default, #3f51b5)',
+    'var(--query-builder-color-primary-dark, #002984)',
+    'var(--query-builder-color-secondary-light, #ff7961)',
+    'var(--query-builder-color-secondary-default, #f44336)',
+    'var(--query-builder-color-white, #fff)',
+    'var(--query-builder-color-grey-100, #f5f5f5)',
+    'var(--query-builder-color-grey-200, #eee)',
+    'var(--query-builder-color-grey-300, #e0e0e0)',
+    'var(--query-builder-color-grey-400, #bdbdbd)',
+    'var(--query-builder-color-grey-700, #616161)',
+    'var(--query-builder-color-grey-800, #424242)',
+  ];
+
+  for (const tokenFallback of expectedTokenFallbacks) {
+    if (!stylesheet.includes(tokenFallback)) {
+      throw new Error(`Theme token fallback is missing: ${tokenFallback}`);
+    }
   }
 
   for (const fileName of javascriptFiles) {
@@ -308,6 +348,8 @@ const verifyCssBuild = async () => {
         antdAdapterRulesExactlyOnce: true,
         cssInjection: false,
         cjsRootAndAntdNodeLoads: 'passed',
+        buttonCssModuleClassesUnique: true,
+        buttonRulesExactlyOnce: true,
         dropZoneCssModuleClassesUnique: true,
         dropZoneRulesExactlyOnce: true,
         dropZoneThemeToken: '--query-builder-color-grey-300',
