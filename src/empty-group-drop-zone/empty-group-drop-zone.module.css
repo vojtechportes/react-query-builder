@@ -1,0 +1,58 @@
+@layer react-query-builder {
+  .hitArea {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hitArea.dragging {
+    pointer-events: auto;
+  }
+
+  .placeholder {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    box-sizing: border-box;
+    height: 0;
+    margin: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      height var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      margin var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      opacity var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease);
+  }
+
+  .placeholder.active.dragging {
+    height: var(--query-builder-drop-zone-height, 50px);
+    margin: var(--query-builder-spacing-sm, 0.5rem) 0 0;
+    opacity: 1;
+  }
+
+  .placeholderInner {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 2px dashed transparent;
+    background: transparent;
+    transition:
+      border-color var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease),
+      background-color var(--query-builder-motion-duration, 180ms)
+        var(--query-builder-motion-easing, ease);
+  }
+
+  .placeholderInner.active {
+    border-color: var(--query-builder-color-grey-500, #9e9e9e);
+    background: rgba(204, 204, 204, 0.08);
+  }
+
+  .transitionDisabled {
+    transition: none;
+  }
+}
