@@ -121,6 +121,88 @@ const verifyCssBuild = async () => {
       ],
     },
     {
+      name: 'Alert',
+      modulePattern:
+        /#region src\/alert\/alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: [
+        'alert',
+        'content',
+        'error',
+        'filled',
+        'icon',
+        'info',
+        'outlined',
+        'success',
+        'warning',
+      ],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: [
+        'alert',
+        'content',
+        'error',
+        'filled',
+        'icon',
+        'info',
+        'outlined',
+        'success',
+        'warning',
+      ],
+      requiredRuleFragments: [
+        {
+          key: 'info',
+          fragments: [
+            '--alert-primary: var(--query-builder-color-info-primary, #2563eb);',
+            '--alert-light: var(--query-builder-color-info-light, #8fb2ff);',
+          ],
+        },
+        {
+          key: 'success',
+          fragments: [
+            '--alert-primary: var(--query-builder-color-success-primary, #2f8f4e);',
+            '--alert-light: var(--query-builder-color-success-light, #8fd3a3);',
+          ],
+        },
+        {
+          key: 'warning',
+          fragments: [
+            '--alert-primary: var(--query-builder-color-warning-primary, #dc7a1e);',
+            '--alert-light: var(--query-builder-color-warning-light, #f7b578);',
+          ],
+        },
+        {
+          key: 'error',
+          fragments: [
+            '--alert-primary: var(--query-builder-color-error-primary, #d14343);',
+            '--alert-light: var(--query-builder-color-error-light, #f2a0a0);',
+          ],
+        },
+        {
+          key: 'outlined',
+          fragments: [
+            'color: var(--alert-primary);',
+            'background: color-mix(in srgb, var(--alert-primary) 5%, var(--query-builder-color-white, #fff) 95%);',
+            'border-color: var(--alert-light);',
+          ],
+        },
+        {
+          key: 'filled',
+          fragments: [
+            'color: var(--query-builder-color-white, #fff);',
+            'background: var(--alert-primary);',
+            'border-color: var(--alert-primary);',
+          ],
+        },
+      ],
+    },
+    {
+      name: 'Text',
+      modulePattern:
+        /#region src\/text\/text\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['text'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['text'],
+    },
+    {
       name: 'ANTD text-mode toggle',
       modulePattern:
         /#region src\/antd\/shared\/components\/antd-text-mode-toggle-content\/antd-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
@@ -232,6 +314,22 @@ const verifyCssBuild = async () => {
         throw new Error(
           `${contract.name} required selector ${selector} is missing`
         );
+      }
+    }
+
+    for (const { key, fragments } of contract.requiredRuleFragments || []) {
+      const selector = `.${referenceMappings[key]}`;
+      const ruleMatch = stylesheet.match(
+        new RegExp(`${selector}\\s*\\{([^}]*)\\}`)
+      );
+      const normalizedRule = ruleMatch?.[1].replace(/\s+/g, ' ').trim();
+
+      for (const fragment of fragments) {
+        if (!normalizedRule?.includes(fragment)) {
+          throw new Error(
+            `${contract.name} rule ${selector} is missing declaration: ${fragment}`
+          );
+        }
       }
     }
 
@@ -384,6 +482,9 @@ const verifyCssBuild = async () => {
     JSON.stringify(
       {
         cssFiles: ['dist/styles.css'],
+        alertColorMatrixContract: true,
+        alertCssModuleClassesUnique: true,
+        alertRulesExactlyOnce: true,
         antdAdapterEntriesWithCssMappings: 4,
         antdAdapterRulesExactlyOnce: true,
         cssInjection: false,
@@ -400,6 +501,8 @@ const verifyCssBuild = async () => {
         esmNonUiLoad: 'passed',
         nonUiEntriesCssAndClsxFree: true,
         sharedJavaScriptChunks: sharedJavaScriptChunks.length,
+        textCssModuleClassesUnique: true,
+        textRulesExactlyOnce: true,
       },
       null,
       2
