@@ -1366,7 +1366,7 @@ unexpectedly.
 
 ### T036 - Add the ThemeProvider-to-CSS-variable compatibility bridge
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035
 

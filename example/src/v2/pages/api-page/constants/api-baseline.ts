@@ -81,7 +81,7 @@ export const apiBaseline = [
     path: '/api/theming',
     title: 'Theming',
     contentHash:
-      '9d5cb90f8da7ffdab0a8e80ec778e198a85bbe62a2c14ccbd912b189f1a48dbf',
+      'cdabece33531446920dfa658e19d7b84c6eafbe49459773d09a5a69ecb163e95',
   },
   {
     path: '/api/format-query',

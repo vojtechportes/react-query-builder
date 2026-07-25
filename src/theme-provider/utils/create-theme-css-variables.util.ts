@@ -1,9 +1,10 @@
 import { CSSProperties } from 'react';
 import { IThemeProps } from '../theme-provider';
+import type { ThemeColorOverrides } from '../types/theme-color-overrides';
 
 export const createThemeCssVariables = ({
   colors,
-}: IThemeProps): CSSProperties => {
+}: IThemeProps<ThemeColorOverrides>): CSSProperties => {
   const variables = {
     '--query-builder-color-primary-default': colors?.primary?.default,
     '--query-builder-color-primary-light': colors?.primary?.light,
