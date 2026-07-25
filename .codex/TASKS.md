@@ -1392,7 +1392,7 @@ unexpectedly.
 
 ### T037 - Migrate Button, SecondaryButton, and OutlinedButton modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T036
 

@@ -1,0 +1,11 @@
+@layer react-query-builder {
+  .secondaryButton {
+    color: var(--query-builder-color-secondary-contrast-text, #ffffff);
+    background-color: var(--query-builder-color-secondary-light, #ff7961);
+    border: 1px solid var(--query-builder-color-secondary-dark, #ba000d);
+  }
+
+  .secondaryButton:hover {
+    background-color: var(--query-builder-color-secondary-default, #f44336);
+  }
+}
