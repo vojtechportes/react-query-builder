@@ -1,0 +1,20 @@
+@layer react-query-builder {
+  .content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    line-height: 1;
+  }
+
+  .content :global(.anticon) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .label {
+    display: block;
+    line-height: 1;
+  }
+}

@@ -51,52 +51,139 @@ const verifyCssBuild = async () => {
   const javascriptFiles = distributionFiles.filter((fileName) =>
     /\.(?:cjs|mjs)$/.test(fileName)
   );
-  const dropZoneClassKeys = [
-    'anchor',
-    'active',
-    'dragging',
-    'empty',
-    'dropZone',
-    'inner',
-    'transitionDisabled',
+  const cssModuleContracts = [
+    {
+      name: 'DropZone',
+      modulePattern:
+        /#region src\/drop-zone\/drop-zone\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: [
+        'anchor',
+        'active',
+        'dragging',
+        'empty',
+        'dropZone',
+        'inner',
+        'transitionDisabled',
+      ],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['anchor'],
+    },
+    {
+      name: 'ANTD text-mode toggle',
+      modulePattern:
+        /#region src\/antd\/shared\/components\/antd-text-mode-toggle-content\/antd-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['content', 'label'],
+      entryFiles: [
+        'antd/v5/index.mjs',
+        'antd/v5/index.cjs',
+        'antd/v6/index.mjs',
+        'antd/v6/index.cjs',
+      ],
+      uniqueRuleKeys: ['content', 'label'],
+    },
   ];
-  let dropZoneClassMappings;
+  const cssModuleMappings = new Map();
 
-  for (const fileName of javascriptFiles) {
-    const source = await readFile(fileName, 'utf8');
-    const moduleMatch = source.match(
-      /#region src\/drop-zone\/drop-zone\.module\.css[\s\S]*?\{([\s\S]*?)\};/
-    );
+  for (const contract of cssModuleContracts) {
+    const entryMappings = [];
 
-    if (!moduleMatch) {
-      continue;
+    for (const relativeEntry of contract.entryFiles) {
+      const queue = [path.join(distributionDirectory, relativeEntry)];
+      const visited = new Set();
+      let mappings;
+
+      while (queue.length > 0) {
+        const fileName = queue.pop();
+
+        if (!fileName || visited.has(fileName)) {
+          continue;
+        }
+
+        visited.add(fileName);
+
+        const source = await readFile(fileName, 'utf8');
+        const moduleMatch = source.match(contract.modulePattern);
+
+        if (moduleMatch) {
+          mappings = Object.fromEntries(
+            Array.from(
+              moduleMatch[1].matchAll(/["']([^"']+)["']:\s*["']([^"']+)["']/g),
+              (match) => [match[1], match[2]]
+            )
+          );
+        }
+
+        for (const match of source.matchAll(
+          /(?:from\s+|import\s*\(|require\s*\()\s*["'](\.[^"']+)["']/g
+        )) {
+          const dependencyPath = path.resolve(path.dirname(fileName), match[1]);
+
+          if (dependencyPath.startsWith(distributionDirectory)) {
+            queue.push(dependencyPath);
+          }
+        }
+      }
+
+      if (!mappings) {
+        throw new Error(
+          `${contract.name} CSS Module mappings are unreachable from ${relativeEntry}`
+        );
+      }
+
+      entryMappings.push({ relativeEntry, mappings });
     }
 
-    dropZoneClassMappings = Object.fromEntries(
-      Array.from(
-        moduleMatch[1].matchAll(/["']([^"']+)["']:\s*["']([^"']+)["']/g),
-        (match) => [match[1], match[2]]
-      )
-    );
-    break;
-  }
+    const referenceMappings = entryMappings[0].mappings;
+    const referenceSignature = JSON.stringify(referenceMappings);
 
-  if (!dropZoneClassMappings) {
-    throw new Error('DropZone CSS Module mappings are missing from the build');
-  }
-
-  const dropZoneClassNames = dropZoneClassKeys.map((key) => {
-    const className = dropZoneClassMappings[key];
-
-    if (!className || !stylesheet.includes(`.${className}`)) {
-      throw new Error(`DropZone CSS class ${key} is missing from dist output`);
+    for (const { relativeEntry, mappings } of entryMappings.slice(1)) {
+      if (JSON.stringify(mappings) !== referenceSignature) {
+        throw new Error(
+          `${contract.name} CSS Module mappings differ in ${relativeEntry}`
+        );
+      }
     }
 
-    return className;
-  });
+    const classNames = contract.classKeys.map((key) => {
+      const className = referenceMappings[key];
 
-  if (new Set(dropZoneClassNames).size !== dropZoneClassNames.length) {
-    throw new Error('DropZone CSS Module class mappings are not unique');
+      if (!className || !stylesheet.includes(`.${className}`)) {
+        throw new Error(
+          `${contract.name} CSS class ${key} is missing from dist output`
+        );
+      }
+
+      return className;
+    });
+
+    if (new Set(classNames).size !== classNames.length) {
+      throw new Error(
+        `${contract.name} CSS Module class mappings are not unique`
+      );
+    }
+
+    for (const key of contract.uniqueRuleKeys) {
+      const selector = `.${referenceMappings[key]} {`;
+      const occurrences = stylesheet.split(selector).length - 1;
+
+      if (occurrences !== 1) {
+        throw new Error(
+          `Expected ${contract.name} selector ${selector} exactly once, received ${occurrences}`
+        );
+      }
+    }
+
+    cssModuleMappings.set(contract.name, referenceMappings);
+  }
+
+  const antdToggleMappings = cssModuleMappings.get('ANTD text-mode toggle');
+  const antdIconSelector = `.${antdToggleMappings.content} .anticon {`;
+  const antdIconRuleOccurrences = stylesheet.split(antdIconSelector).length - 1;
+
+  if (antdIconRuleOccurrences !== 1) {
+    throw new Error(
+      `Expected scoped ANTD icon selector exactly once, received ${antdIconRuleOccurrences}`
+    );
   }
 
   if (!stylesheet.includes('var(--query-builder-color-grey-300, #e0e0e0)')) {
@@ -196,18 +283,33 @@ const verifyCssBuild = async () => {
   );
   const require = createRequire(import.meta.url);
   const cjsModule = require(path.join(distributionDirectory, 'index.cjs'));
+  const cjsAntdModules = ['v5', 'v6'].map((version) =>
+    require(path.join(distributionDirectory, 'antd', version, 'index.cjs'))
+  );
 
-  if (typeof esmModule.parseQuery !== 'function' || !cjsModule.Builder) {
-    throw new Error('ESM non-UI or CJS root entry did not load in Node');
+  if (
+    typeof esmModule.parseQuery !== 'function' ||
+    !cjsModule.Builder ||
+    cjsAntdModules.some(
+      (antdModule) =>
+        typeof antdModule.components?.TextModeToggleContent !== 'function'
+    )
+  ) {
+    throw new Error(
+      'ESM non-UI, CJS root, or CJS ANTD entry did not load in Node'
+    );
   }
 
   console.log(
     JSON.stringify(
       {
         cssFiles: ['dist/styles.css'],
+        antdAdapterEntriesWithCssMappings: 4,
+        antdAdapterRulesExactlyOnce: true,
         cssInjection: false,
-        cjsSsrLoad: 'passed',
+        cjsRootAndAntdNodeLoads: 'passed',
         dropZoneCssModuleClassesUnique: true,
+        dropZoneRulesExactlyOnce: true,
         dropZoneThemeToken: '--query-builder-color-grey-300',
         esmNonUiLoad: 'passed',
         nonUiEntriesCssAndClsxFree: true,

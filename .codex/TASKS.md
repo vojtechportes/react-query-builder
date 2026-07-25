@@ -1316,7 +1316,7 @@ unexpectedly.
 
 ### T034 - Prove adapter multi-entry CSS output with one minimal module
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T033 approval
 
