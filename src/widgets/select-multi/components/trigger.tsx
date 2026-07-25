@@ -1,13 +1,13 @@
-import React, { FC } from 'react';
+import clsx from 'clsx';
+import React, { CSSProperties, FC } from 'react';
 import styled from 'styled-components';
+import inputStyles from '../../../styles/input.module.css';
 import { IThemeProps } from '../../../theme-provider/theme-provider';
-import { inputControlStyles } from '../../../styles/input.styles';
 
-const StyledTrigger = styled.button<{ $theme: Required<IThemeProps> }>`
+const StyledTrigger = styled.button`
   position: relative;
   display: inline-flex;
   align-items: center;
-  ${inputControlStyles}
   padding: 0 2.2rem 0 0.6rem;
   text-align: left;
   cursor: pointer;
@@ -81,6 +81,7 @@ export interface ITriggerProps {
   title?: string;
   triggerRef: React.RefObject<HTMLButtonElement>;
   theme: Required<IThemeProps>;
+  themeCssVariables?: CSSProperties;
 }
 
 export const Trigger: FC<ITriggerProps> = ({
@@ -93,6 +94,7 @@ export const Trigger: FC<ITriggerProps> = ({
   title,
   triggerRef,
   theme,
+  themeCssVariables,
 }) => {
   return (
     <StyledTrigger
@@ -105,7 +107,8 @@ export const Trigger: FC<ITriggerProps> = ({
       disabled={disabled}
       onClick={onClick}
       title={title}
-      $theme={theme}
+      className={clsx(inputStyles.control, inputStyles.typography)}
+      style={themeCssVariables}
     >
       <StyledLabel>{label}</StyledLabel>
       {badgeContent ? (

@@ -58,7 +58,10 @@ describe('#components/Select', () => {
 
     fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
 
-    expect(getByDataTest(container, 'SelectMultiOption[test]')).toBeDisabled();
+    expect(
+      (getByDataTest(container, 'SelectMultiOption[test]') as HTMLButtonElement)
+        .disabled
+    ).toBe(true);
     fireEvent.click(getByDataTest(container, 'SelectMultiOption[test]'));
 
     expect(onChange).not.toHaveBeenCalled();

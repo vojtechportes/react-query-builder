@@ -1507,7 +1507,7 @@ unexpectedly.
 
 ### T042 - Migrate shared input styles, Input, and Switch modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035
 
