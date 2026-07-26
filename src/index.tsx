@@ -127,7 +127,7 @@ export { SecondaryButton } from './secondary-button';
 export { OutlinedButton } from './outlined-button';
 export { TextModeEditor } from './builder/text-mode/components/text-mode-editor';
 export { TextModeInput } from './builder/text-mode/components/text-mode-input';
-export { TextModeToggleContent } from './builder/components/text-mode-toggle-content';
+export { TextModeToggleContent } from './builder/text-mode/components/text-mode-toggle-content';
 export { Popover } from './popover';
 export type { IPopoverProps } from './popover';
 export { PopoverItem } from './popover-item';

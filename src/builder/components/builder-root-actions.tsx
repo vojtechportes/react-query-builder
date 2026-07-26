@@ -8,7 +8,7 @@ import { RootControls } from './root-controls';
 import {
   ITextModeToggleContentProps,
   TextModeToggleContent,
-} from './text-mode-toggle-content';
+} from '../text-mode/components/text-mode-toggle-content';
 
 export interface IBuilderRootActionsProps {
   readOnly: boolean;

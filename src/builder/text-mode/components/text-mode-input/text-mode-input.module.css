@@ -1,0 +1,19 @@
+@layer react-query-builder {
+  .root {
+    min-height: var(--query-builder-editor-min-height, 10rem);
+    overflow: hidden;
+    background: var(--query-builder-color-white);
+    border: 1px solid var(--query-builder-color-grey-300);
+    border-radius: var(--query-builder-radius-sm, 4px);
+  }
+
+  .field {
+    width: 100%;
+    min-height: var(--query-builder-editor-min-height, 10rem);
+    margin: 0;
+    background: transparent;
+    border: 0;
+    outline: none;
+    resize: vertical;
+  }
+}
