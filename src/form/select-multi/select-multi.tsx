@@ -1,26 +1,13 @@
+import clsx from 'clsx';
 import React, { FC } from 'react';
-import styled from 'styled-components';
-import { useTheme } from '../theme-provider/hooks/use-theme';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
-import { Trigger } from '../widgets/select-multi/components/trigger';
-import { Option } from '../widgets/select-multi/components/option';
-import { useSelectMulti } from '../widgets/select-multi/hooks/use-select-multi';
-import { getSelectedOptions } from '../widgets/select-multi/utils/get-selected-options.util';
-import { createSummary } from '../widgets/select-multi/utils/create-summary.util';
-import { Popover } from './popover';
-import { ISelectProps } from './select';
-
-const Container = styled.div`
-  position: relative;
-  display: inline-block;
-  width: var(--query-builder-control-width, 160px);
-  min-width: var(--query-builder-control-min-width, 160px);
-  max-width: 100%;
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
+import { Option } from '../../widgets/select-multi/components/option';
+import { Trigger } from '../../widgets/select-multi/components/trigger';
+import { useSelectMulti } from '../../widgets/select-multi/hooks/use-select-multi';
+import { createSummary } from '../../widgets/select-multi/utils/create-summary.util';
+import { getSelectedOptions } from '../../widgets/select-multi/utils/get-selected-options.util';
+import { Popover } from '../popover';
+import { ISelectProps } from '../select';
+import styles from './select-multi.module.css';
 
 export interface ISelectMultiProps extends Pick<
   ISelectProps,
@@ -44,8 +31,6 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
   id,
   name,
 }) => {
-  const theme = useTheme();
-  const themeCssVariables = useThemeCssVariables();
   const { isOpen, rootRef, toggle, triggerRef } = useSelectMulti({
     disabled,
   });
@@ -66,13 +51,14 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
   };
 
   return (
-    <Container ref={rootRef} className={className}>
-      <HiddenInput
+    <div ref={rootRef} className={clsx(styles.container, className)}>
+      <input
         type="hidden"
         id={id}
         name={name}
         value={selectedValue.join(',')}
         readOnly
+        className={styles.hiddenInput}
       />
       <Trigger
         disabled={disabled}
@@ -85,11 +71,9 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         onClick={toggle}
         title={title}
         triggerRef={triggerRef}
-        theme={theme}
-        themeCssVariables={themeCssVariables}
       />
       {isOpen ? (
-        <Popover theme={theme}>
+        <Popover>
           {values.map(({ value, label }) => (
             <Option
               key={value}
@@ -97,11 +81,10 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
               label={label}
               selected={selectedValue.includes(value)}
               onClick={handleToggleValue}
-              theme={theme}
             />
           ))}
         </Popover>
       ) : null}
-    </Container>
+    </div>
   );
 };

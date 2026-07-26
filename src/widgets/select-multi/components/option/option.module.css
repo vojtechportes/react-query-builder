@@ -1,0 +1,64 @@
+@layer react-query-builder {
+  .option {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 0;
+    background: var(--query-builder-color-white);
+    color: var(--query-builder-color-grey-900);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 0.16s ease,
+      color 0.16s ease,
+      box-shadow 0.16s ease;
+  }
+
+  .option:hover,
+  .option:focus-visible {
+    background: var(--query-builder-color-grey-100);
+  }
+
+  .option:focus-visible {
+    outline: none;
+  }
+
+  .disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .disabled:hover,
+  .disabled:focus-visible {
+    background: var(--query-builder-color-white);
+  }
+
+  .selected {
+    background: var(--query-builder-color-grey-100);
+    box-shadow: inset 3px 0 0 var(--query-builder-color-primary-default);
+    color: var(--query-builder-color-primary-dark);
+  }
+
+  .selected:hover,
+  .selected:focus-visible {
+    background: var(--query-builder-color-grey-200);
+  }
+
+  .label {
+    white-space: nowrap;
+  }
+
+  .indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--query-builder-color-grey-500);
+  }
+
+  .selectedIndicator {
+    color: var(--query-builder-color-primary-default);
+  }
+}
