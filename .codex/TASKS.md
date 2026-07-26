@@ -1679,7 +1679,7 @@ unexpectedly.
 
 ### T049 - Migrate default text-mode toggle, input, and editor modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T039, T042, and T048
 

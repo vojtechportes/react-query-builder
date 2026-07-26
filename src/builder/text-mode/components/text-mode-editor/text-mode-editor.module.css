@@ -1,0 +1,143 @@
+@layer react-query-builder {
+  .root {
+    display: grid;
+    gap: var(--query-builder-spacing-sm, 0.5rem);
+  }
+
+  .frame {
+    position: relative;
+    min-height: var(--query-builder-editor-min-height, 10rem);
+  }
+
+  .frame :global(.builder-text-mode-input) {
+    position: relative;
+    min-height: var(--query-builder-editor-min-height, 10rem);
+  }
+
+  .frame :global(.builder-text-mode-input-field) {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: var(--query-builder-editor-min-height, 10rem);
+    margin: 0;
+    padding: var(--query-builder-spacing-md, 0.75rem);
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+    caret-color: var(--query-builder-color-grey-800);
+    font-family: var(
+      --query-builder-editor-font-family,
+      'Courier New',
+      monospace
+    );
+    font-size: var(--query-builder-editor-font-size, 0.85rem);
+    line-height: var(--query-builder-editor-line-height, 1.5);
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: transparent !important;
+    resize: vertical;
+  }
+
+  .frame :global(.builder-text-mode-input-field)::selection {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: rgba(37, 99, 235, 0.22);
+  }
+
+  .frame :global(.builder-text-mode-input-field)::-moz-selection {
+    color: transparent;
+    background: rgba(37, 99, 235, 0.22);
+  }
+
+  .editorLayer,
+  .diagnosticOverlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: var(--query-builder-spacing-md, 0.75rem);
+    overflow: hidden;
+    font-family: var(
+      --query-builder-editor-font-family,
+      'Courier New',
+      monospace
+    );
+    font-size: var(--query-builder-editor-font-size, 0.85rem);
+    line-height: var(--query-builder-editor-line-height, 1.5);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .editorLayer {
+    z-index: 1;
+    color: var(--query-builder-color-grey-800);
+  }
+
+  .editorLayer :global(.token.keyword),
+  .editorLayer :global(.token.boolean) {
+    color: #1d4ed8;
+    font-weight: 700;
+  }
+
+  .editorLayer :global(.token.operator),
+  .editorLayer :global(.token.punctuation) {
+    color: #374151;
+  }
+
+  .editorLayer :global(.token.operator) {
+    font-weight: 600;
+  }
+
+  .editorLayer :global(.token.string) {
+    color: #047857;
+  }
+
+  .editorLayer :global(.token.number) {
+    color: #c2410c;
+  }
+
+  .editorLayer :global(.token.function) {
+    color: #7c3aed;
+    font-weight: 600;
+  }
+
+  .editorLayer :global(.token.selector),
+  .editorLayer :global(.token.property),
+  .editorLayer :global(.token.column-name) {
+    color: var(--query-builder-color-grey-900);
+    font-weight: 600;
+  }
+
+  .diagnosticOverlay {
+    z-index: 2;
+    color: transparent;
+  }
+
+  .diagnosticText {
+    background: rgba(244, 67, 54, 0.12);
+    border-radius: 2px;
+    box-shadow: inset 0 -2px 0 var(--query-builder-color-secondary-dark);
+  }
+
+  .missingTokenMarker {
+    position: relative;
+    display: inline-block;
+    width: 0;
+    height: 1em;
+    vertical-align: text-bottom;
+  }
+
+  .missingTokenMarker::after {
+    content: '';
+    position: absolute;
+    bottom: 0.15em;
+    left: 0;
+    width: 0.55rem;
+    border-bottom: 2px solid var(--query-builder-color-secondary-dark);
+    border-radius: var(--query-builder-radius-pill, 999px);
+  }
+
+  .errorMessage {
+    color: var(--query-builder-color-secondary-dark);
+    font-size: 0.8rem;
+  }
+}
