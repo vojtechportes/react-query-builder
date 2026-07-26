@@ -1584,7 +1584,7 @@ unexpectedly.
 
 ### T045 - Migrate Select and SelectMulti wrapper modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T044
 
