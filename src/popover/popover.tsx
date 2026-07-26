@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Button } from '../button';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import styles from './popover.module.css';
 
 export interface IPopoverProps {
@@ -19,7 +18,6 @@ export const Popover: FC<IPopoverProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const themeCssVariables = useThemeCssVariables();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -58,11 +56,7 @@ export const Popover: FC<IPopoverProps> = ({
   });
 
   return (
-    <div
-      className={clsx(styles.container, className)}
-      ref={containerRef}
-      style={themeCssVariables}
-    >
+    <div className={clsx(styles.container, className)} ref={containerRef}>
       <Button onClick={() => setIsOpen((open) => !open)} data-test={dataTest}>
         {label}
       </Button>

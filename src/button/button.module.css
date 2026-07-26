@@ -4,13 +4,13 @@
     align-items: center;
     justify-content: center;
     padding: 0.5rem 1.2rem;
-    color: var(--query-builder-color-primary-contrast-text, #ffffff);
+    color: var(--query-builder-color-primary-contrast-text);
     font-size: 0.7rem;
     min-height: 2rem;
     line-height: 1;
     white-space: nowrap;
     text-transform: uppercase;
-    background-color: var(--query-builder-color-primary-default, #3f51b5);
+    background-color: var(--query-builder-color-primary-default);
     border: 0;
     border-radius: var(--query-builder-radius-sm, 4px);
     outline: none;
@@ -18,6 +18,6 @@
   }
 
   .button:hover {
-    background-color: var(--query-builder-color-primary-dark, #002984);
+    background-color: var(--query-builder-color-primary-dark);
   }
 }

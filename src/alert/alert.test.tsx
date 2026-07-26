@@ -2,7 +2,6 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
-import { ThemeProvider } from '../theme-provider/theme-provider';
 import { Alert } from './alert';
 import styles from './alert.module.css';
 import { AlertSeverity } from './types/alert-severity';
@@ -32,6 +31,7 @@ describe('#components/Alert', () => {
     expect(alert.children[0]).toHaveAttribute('aria-hidden', 'true');
     expect(alert.children[1]).toHaveClass(styles.content);
     expect(alert.children[1]).toHaveTextContent('Alert content');
+    expect(alert.getAttribute('style')).toBeNull();
   });
 
   it.each(
@@ -90,33 +90,6 @@ describe('#components/Alert', () => {
     expect(svg).toHaveAttribute('fill', 'currentColor');
   });
 
-  it('serializes ThemeProvider colors for standalone usage', () => {
-    const { container } = render(
-      <ThemeProvider
-        colors={{
-          info: { primary: 'rgb(1, 2, 3)', light: 'rgb(4, 5, 6)' },
-          white: 'rgb(7, 8, 9)',
-        }}
-      >
-        <Alert severity="info">Information</Alert>
-      </ThemeProvider>
-    );
-    const style = (container.firstElementChild as HTMLElement).style;
-
-    expect(style.getPropertyValue('--query-builder-color-info-primary')).toBe(
-      'rgb(1, 2, 3)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-info-light')).toBe(
-      'rgb(4, 5, 6)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-white')).toBe(
-      'rgb(7, 8, 9)'
-    );
-    expect(
-      style.getPropertyValue('--query-builder-color-warning-primary')
-    ).toBe('');
-  });
-
   it('renders on the server without styled-components runtime output', () => {
     const markup = renderToString(
       <Alert severity="error" variant="filled" className="server-alert">
@@ -129,6 +102,7 @@ describe('#components/Alert', () => {
     expect(markup).toContain(`class="${styles.icon}"`);
     expect(markup).toContain('aria-hidden="true"');
     expect(markup).not.toContain('$severity');
+    expect(markup).not.toContain('--query-builder-color-error-primary');
   });
 
   it('exposes the CSS Module class contract', () => {

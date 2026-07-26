@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React, { FC, useCallback } from 'react';
-import { useThemeCssVariables } from '../../theme-provider/hooks/use-theme-css-variables';
 import inputStyles from '../../styles/input.module.css';
 import styles from './input.module.css';
 
@@ -23,8 +22,6 @@ export const Input: FC<IInputProps> = ({
   id,
   name,
 }) => {
-  const themeCssVariables = useThemeCssVariables();
-
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.value);
@@ -46,7 +43,6 @@ export const Input: FC<IInputProps> = ({
         className
       )}
       disabled={disabled}
-      style={themeCssVariables}
     />
   );
 };

@@ -2,7 +2,6 @@ import { useDroppable } from '@dnd-kit/core';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { DropZone, IDropZoneProps } from './drop-zone';
-import { ThemeProvider } from '../theme-provider/theme-provider';
 import styles from './drop-zone.module.css';
 
 jest.mock('@dnd-kit/core', () => ({
@@ -121,44 +120,12 @@ describe('#components/DropZone', () => {
   it('does not emit component-local theme variables', () => {
     const { container } = renderDropZone({ isActive: true });
     const anchor = container.firstElementChild as HTMLElement;
-    const inner = anchor.querySelector(`.${styles.inner}`) as HTMLElement;
+    const dropZone = anchor.firstElementChild as HTMLElement;
+    const inner = dropZone.firstElementChild as HTMLElement;
 
-    expect(anchor.style.length).toBe(0);
-    expect(inner.style.length).toBe(0);
-  });
-
-  it('serializes only explicit provider colors on a standalone root', () => {
-    const { container } = render(
-      <ThemeProvider colors={{ grey: { 300: '#abcdef' } }}>
-        <DropZone {...defaultProps} isActive />
-      </ThemeProvider>
-    );
-    const anchor = container.firstElementChild as HTMLElement;
-
-    expect(
-      anchor.style.getPropertyValue('--query-builder-color-grey-300')
-    ).toBe('#abcdef');
-    expect(
-      anchor.style.getPropertyValue('--query-builder-color-primary-default')
-    ).toBe('');
-  });
-
-  it('uses only the nearest provider variables on a standalone root', () => {
-    const { container } = render(
-      <ThemeProvider colors={{ primary: { default: '#123456' } }}>
-        <ThemeProvider colors={{ grey: { 300: '#abcdef' } }}>
-          <DropZone {...defaultProps} isActive />
-        </ThemeProvider>
-      </ThemeProvider>
-    );
-    const anchor = container.firstElementChild as HTMLElement;
-
-    expect(
-      anchor.style.getPropertyValue('--query-builder-color-grey-300')
-    ).toBe('#abcdef');
-    expect(
-      anchor.style.getPropertyValue('--query-builder-color-primary-default')
-    ).toBe('');
+    expect(anchor).not.toHaveAttribute('style');
+    expect(dropZone).not.toHaveAttribute('style');
+    expect(inner).not.toHaveAttribute('style');
   });
 
   it('exposes every CSS Module class used by the component', () => {

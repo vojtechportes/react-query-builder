@@ -12,23 +12,23 @@
   }
 
   .info {
-    --alert-primary: var(--query-builder-color-info-primary, #2563eb);
-    --alert-light: var(--query-builder-color-info-light, #8fb2ff);
+    --alert-primary: var(--query-builder-color-info-primary);
+    --alert-light: var(--query-builder-color-info-light);
   }
 
   .success {
-    --alert-primary: var(--query-builder-color-success-primary, #2f8f4e);
-    --alert-light: var(--query-builder-color-success-light, #8fd3a3);
+    --alert-primary: var(--query-builder-color-success-primary);
+    --alert-light: var(--query-builder-color-success-light);
   }
 
   .warning {
-    --alert-primary: var(--query-builder-color-warning-primary, #dc7a1e);
-    --alert-light: var(--query-builder-color-warning-light, #f7b578);
+    --alert-primary: var(--query-builder-color-warning-primary);
+    --alert-light: var(--query-builder-color-warning-light);
   }
 
   .error {
-    --alert-primary: var(--query-builder-color-error-primary, #d14343);
-    --alert-light: var(--query-builder-color-error-light, #f2a0a0);
+    --alert-primary: var(--query-builder-color-error-primary);
+    --alert-light: var(--query-builder-color-error-light);
   }
 
   .outlined {
@@ -36,13 +36,13 @@
     background: color-mix(
       in srgb,
       var(--alert-primary) 5%,
-      var(--query-builder-color-white, #ffffff) 95%
+      var(--query-builder-color-white) 95%
     );
     border-color: var(--alert-light);
   }
 
   .filled {
-    color: var(--query-builder-color-white, #ffffff);
+    color: var(--query-builder-color-white);
     background: var(--alert-primary);
     border-color: var(--alert-primary);
   }

@@ -2,9 +2,8 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from '../theme-provider/theme-provider';
-import styles from './clone-button.module.css';
 import { CloneButton } from './clone-button';
+import styles from './clone-button.module.css';
 
 const clonePath =
   'M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z';
@@ -21,6 +20,8 @@ describe('#components/CloneButton', () => {
     expect(container.firstElementChild).toBe(button);
     expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveAttribute('title', title);
+    expect(button).toHaveClass(styles.cloneButton);
+    expect(button).not.toHaveAttribute('style');
   });
 
   it('preserves its public attributes, incoming class, and icon', () => {
@@ -76,31 +77,10 @@ describe('#components/CloneButton', () => {
     expect(button).toHaveFocus();
     expect(button).toHaveClass(styles.cloneButton, styles.disabled);
     expect(onClick).not.toHaveBeenCalled();
+    expect(button).not.toHaveAttribute('style');
     expect(button.getAttributeNames()).not.toEqual(
       expect.arrayContaining(['$theme', '$disabled'])
     );
-  });
-
-  it('serializes ThemeProvider overrides for standalone usage', () => {
-    render(
-      <ThemeProvider
-        colors={{
-          primary: { light: 'rgb(1, 2, 3)' },
-          grey: { 300: 'rgb(4, 5, 6)' },
-        }}
-      >
-        <CloneButton nodeType="rule" />
-      </ThemeProvider>
-    );
-    const style = screen.getByRole('button', { name: 'Clone rule' }).style;
-
-    expect(style.getPropertyValue('--query-builder-color-primary-light')).toBe(
-      'rgb(1, 2, 3)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-grey-300')).toBe(
-      'rgb(4, 5, 6)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-grey-400')).toBe('');
   });
 
   it('exposes the CSS Module class contract', () => {

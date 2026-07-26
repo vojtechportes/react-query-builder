@@ -6,9 +6,9 @@
     min-width: 2.5rem;
     min-height: 2rem;
     padding: 0 0.625rem;
-    color: var(--query-builder-color-grey-600, #757575);
-    background-color: var(--query-builder-color-white, #ffffff);
-    border: 1px solid var(--query-builder-color-grey-300, #e0e0e0);
+    color: var(--query-builder-color-grey-600);
+    background-color: var(--query-builder-color-white);
+    border: 1px solid var(--query-builder-color-grey-300);
     border-radius: var(--query-builder-radius-sm, 4px);
     outline: none;
     cursor: pointer;
@@ -20,19 +20,19 @@
   }
 
   .cloneButton:hover {
-    background-color: var(--query-builder-color-grey-100, #f5f5f5);
-    border-color: var(--query-builder-color-grey-400, #bdbdbd);
+    background-color: var(--query-builder-color-grey-100);
+    border-color: var(--query-builder-color-grey-400);
   }
 
   .cloneButton:focus-visible {
-    box-shadow: 0 0 0 3px var(--query-builder-color-primary-light, #757de8);
+    box-shadow: 0 0 0 3px var(--query-builder-color-primary-light);
   }
 
   .disabled,
   .disabled:hover {
-    color: var(--query-builder-color-grey-400, #bdbdbd);
-    background-color: var(--query-builder-color-white, #ffffff);
-    border-color: var(--query-builder-color-grey-200, #eeeeee);
+    color: var(--query-builder-color-grey-400);
+    background-color: var(--query-builder-color-white);
+    border-color: var(--query-builder-color-grey-200);
     cursor: not-allowed;
     opacity: 1;
   }

@@ -72,14 +72,19 @@ unless a move would otherwise break an existing path.
   T042 explicitly owns conversion of the shared input fragment.
 - Use `clsx` and explicit state classes or semantic `data-*` attributes for finite
   visual states. Do not reproduce transient styled props as leaked DOM attributes.
-- Use the public `--query-builder-*` variables established by T035, with the accepted
-  v1 defaults as CSS fallbacks. Do not create a second token vocabulary.
-- Preserve T036 precedence: explicit descendant CSS variables win, Builder `style`
-  variables apply at the root, ThemeProvider values are a legacy fallback, and unused
-  provider defaults must not suppress inherited CSS.
-- Apply the existing ThemeProvider-to-CSS-variable bridge only at task-owned
-  standalone roots that need legacy theming. Nested presentation should inherit
-  variables instead of re-emitting default values.
+- Use the public `--query-builder-*` variables established by T035. Default color
+  variables are generated from `src/constants/colors.ts` into
+  `src/styles/tokens.css`; component CSS should consume variables directly rather
+  than duplicate color fallbacks.
+- Preserve the agreed precedence: generated stylesheet defaults, inherited CSS
+  variables, then explicit root `style` overrides. Inline CSS variable serialization
+  belongs only at explicit override boundaries such as the Builder root or a future
+  provider/root wrapper, and should include only provided overrides.
+- Do not add per-component ThemeProvider bridge behavior while migrating leaves.
+  Migrated nested presentation should inherit variables instead of re-emitting
+  default or provider-derived color values. ThemeProvider compatibility is not a
+  migration requirement, though the public API remains until an explicit removal
+  task changes it.
 - Preserve the compiled 900px responsive behavior until T050 retires the styled
   responsive helper. A task may replace only the helper usage it owns with the
   equivalent CSS media query.
@@ -433,9 +438,10 @@ Every task must complete the following in addition to its focused checklist:
 - Keep the internal `StyledBuilder` name if that minimizes churn, but it must become a
   typed React wrapper rather than a styled component. Preserve its ref/DOM behavior
   as used by Builder.
-- Preserve Builder root `className`, typed `style`, stable root data hook, legacy
-  ThemeProvider bridge, explicit variable precedence, typography, padding,
-  background, border, radius, and shadow.
+- Preserve Builder root `className`, typed `style`, stable root data hook, explicit
+  root variable precedence, typography, padding, background, border, radius, and
+  shadow. Keep any remaining ThemeProvider compatibility scoped to the root override
+  boundary until a removal task explicitly changes that public API.
 - Preserve root action ordering, text-mode toggle, add group/rule actions,
   single/multiple roots, history availability, undo/redo buttons, blocked alert
   spacing, modes, custom component sets, and responsive layout.

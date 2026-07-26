@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import { AlertIcon } from './components/alert-icon';
 import styles from './alert.module.css';
 import { AlertSeverity } from './types/alert-severity';
@@ -20,22 +19,12 @@ export const Alert: FC<IAlertProps> = ({
   severity = 'warning',
   variant = 'outlined',
   'data-test': dataTest,
-}) => {
-  const themeCssVariables = useThemeCssVariables();
-
-  return (
-    <div
-      className={clsx(
-        styles.alert,
-        styles[severity],
-        styles[variant],
-        className
-      )}
-      data-test={dataTest}
-      style={themeCssVariables}
-    >
-      <AlertIcon severity={severity} />
-      <div className={styles.content}>{children}</div>
-    </div>
-  );
-};
+}) => (
+  <div
+    className={clsx(styles.alert, styles[severity], styles[variant], className)}
+    data-test={dataTest}
+  >
+    <AlertIcon severity={severity} />
+    <div className={styles.content}>{children}</div>
+  </div>
+);
