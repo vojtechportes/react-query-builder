@@ -1631,7 +1631,7 @@ unexpectedly.
 
 ### T047 - Migrate Rule container, layout, and range-input modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T042, T045, and T046
 
