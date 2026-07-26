@@ -1,0 +1,13 @@
+@layer react-query-builder {
+  .builder {
+    padding: var(--query-builder-root-padding, 1rem);
+    color: var(--query-builder-color-grey-800);
+    font-family: var(--query-builder-font-family, Arial, sans-serif);
+    font-size: var(--query-builder-font-size, 16px);
+    line-height: var(--query-builder-line-height, normal);
+    background: var(--query-builder-color-white);
+    border: 1px solid var(--query-builder-color-grey-100);
+    border-radius: var(--query-builder-root-radius, 0);
+    box-shadow: var(--query-builder-shadow-root, none);
+  }
+}
