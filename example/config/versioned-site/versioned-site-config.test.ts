@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createVersionAssetBase } from './utils/create-version-asset-base.util';
@@ -5,8 +6,19 @@ import { createVersionedSiteViteConfig } from './utils/create-versioned-site-vit
 import { resolveVersionTarget } from './utils/resolve-version-target.util';
 
 const exampleRoot = resolve(import.meta.dirname, '../..');
+const examplePackage = JSON.parse(
+  readFileSync(resolve(exampleRoot, 'package.json'), 'utf8')
+) as {
+  scripts: Record<string, string>;
+};
 
 describe('versioned site configuration', () => {
+  it('starts the v2 site from the default development command', () => {
+    expect(examplePackage.scripts.dev).toBe(examplePackage.scripts['dev:v2']);
+    expect(examplePackage.scripts.dev).toContain(
+      'vite.versioned-site-client.config.mts --mode v2'
+    );
+  });
   it.each(['v1', 'v2'] as const)(
     'uses isolated client and SSR staging for %s',
     (target) => {
