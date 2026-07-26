@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config config/versioned-site/vite.versioned-site-client.config.mts --mode v2",
     "dev:v1": "vite --config config/versioned-site/vite.versioned-site-client.config.mts --mode v1",
     "dev:v2": "vite --config config/versioned-site/vite.versioned-site-client.config.mts --mode v2",
     "build": "npm run recipes:validate && vite build && vite build --ssr src/entry-server.tsx --outDir .ssg && node scripts/build-seo.mjs",
