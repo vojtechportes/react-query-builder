@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ThemeProvider } from '../../theme-provider/theme-provider';
 import sharedInputStyles from '../../styles/input.module.css';
 import { Input } from './input';
 import inputStyles from './input.module.css';
@@ -42,6 +41,7 @@ describe('#components/Input', () => {
     );
     expect(textInput.classList.contains(inputStyles.input)).toBe(true);
     expect(textInput.classList.contains('incoming-class')).toBe(true);
+    expect(textInput.getAttribute('style')).toBeNull();
 
     rerender(
       <Input disabled={false} type="number" onChange={jest.fn()} value={12} />
@@ -76,35 +76,23 @@ describe('#components/Input', () => {
     expect(onChange).toHaveBeenCalledWith('13');
   });
 
-  it('preserves disabled state and serializes explicit theme variables', () => {
+  it('preserves disabled state without emitting inline theme variables', () => {
     render(
-      <ThemeProvider colors={{ grey: { 100: '#f1f1f1', 800: '#111111' } }}>
-        <Input disabled type="text" onChange={jest.fn()} value="Disabled" />
-      </ThemeProvider>
+      <Input disabled type="text" onChange={jest.fn()} value="Disabled" />
     );
     const input = screen.getByDisplayValue('Disabled') as HTMLInputElement;
 
     expect(input.disabled).toBe(true);
-    expect(input.style.getPropertyValue('--query-builder-color-grey-100')).toBe(
-      '#f1f1f1'
-    );
-    expect(input.style.getPropertyValue('--query-builder-color-grey-800')).toBe(
-      '#111111'
-    );
-    expect(input.style.getPropertyValue('--query-builder-color-white')).toBe(
-      ''
-    );
+    expect(input.getAttribute('style')).toBeNull();
   });
 
   it('renders on the server without styled-components runtime output', () => {
     const markup = renderToString(
-      <ThemeProvider colors={{ grey: { 500: '#aaaaaa' } }}>
-        <Input disabled={false} type="text" onChange={jest.fn()} value="SSR" />
-      </ThemeProvider>
+      <Input disabled={false} type="text" onChange={jest.fn()} value="SSR" />
     );
 
     expect(markup).toContain('value="SSR"');
-    expect(markup).toContain('--query-builder-color-grey-500:#aaaaaa');
+    expect(markup).not.toContain('--query-builder-color-grey-500');
     expect(markup).not.toContain('data-styled');
   });
 

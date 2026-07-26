@@ -48,7 +48,7 @@
   }
 
   .placeholderInner.active {
-    border-color: var(--query-builder-color-grey-500, #9e9e9e);
+    border-color: var(--query-builder-color-grey-500);
     background: rgba(204, 204, 204, 0.08);
   }
 

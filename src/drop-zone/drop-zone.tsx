@@ -1,7 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import styles from './drop-zone.module.css';
 
 export interface IDropZoneProps {
@@ -25,7 +24,6 @@ export const DropZone: FC<IDropZoneProps> = ({
   disableTransition = false,
   className,
 }) => {
-  const themeCssVariables = useThemeCssVariables();
   const { setNodeRef } = useDroppable({
     id,
     data: {
@@ -39,7 +37,6 @@ export const DropZone: FC<IDropZoneProps> = ({
   return (
     <div
       ref={setNodeRef}
-      style={themeCssVariables}
       className={clsx(styles.anchor, className, {
         [styles.active]: isActive,
         [styles.dragging]: isDragging,

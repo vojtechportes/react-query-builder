@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ThemeProvider } from '../../theme-provider/theme-provider';
 import { Switch } from './switch';
 import styles from './switch.module.css';
 
@@ -35,41 +34,25 @@ describe('#components/Switch', () => {
       expect(switchButton.classList.contains(styles.switch)).toBe(true);
       expect(switchButton.classList.contains(styles.switched)).toBe(switched);
       expect(switchButton.classList.contains(styles.disabled)).toBe(disabled);
+      expect(switchButton.getAttribute('style')).toBeNull();
       expect(knob.classList.contains(styles.knob)).toBe(true);
       expect(knob.classList.contains(styles.knobSwitched)).toBe(switched);
     }
   );
 
-  it('composes incoming className and serializes explicit theme variables', () => {
+  it('composes incoming className without emitting inline theme variables', () => {
     render(
-      <ThemeProvider
-        colors={{
-          primary: { default: '#0055aa', light: '#99ccff' },
-          grey: { 300: '#dddddd' },
-        }}
-      >
-        <Switch
-          disabled={false}
-          onChange={jest.fn()}
-          switched
-          className="incoming-class"
-        />
-      </ThemeProvider>
+      <Switch
+        disabled={false}
+        onChange={jest.fn()}
+        switched
+        className="incoming-class"
+      />
     );
     const switchButton = getSwitch();
 
     expect(switchButton.classList.contains('incoming-class')).toBe(true);
-    expect(
-      switchButton.style.getPropertyValue(
-        '--query-builder-color-primary-default'
-      )
-    ).toBe('#0055aa');
-    expect(
-      switchButton.style.getPropertyValue('--query-builder-color-primary-light')
-    ).toBe('#99ccff');
-    expect(
-      switchButton.style.getPropertyValue('--query-builder-color-white')
-    ).toBe('');
+    expect(switchButton.getAttribute('style')).toBeNull();
   });
 
   it('emits the next value when clicked and guards disabled clicks', () => {
@@ -101,15 +84,11 @@ describe('#components/Switch', () => {
   });
 
   it('renders on the server without styled-components runtime output', () => {
-    const markup = renderToString(
-      <ThemeProvider colors={{ primary: { default: '#0055aa' } }}>
-        <Switch disabled={false} switched />
-      </ThemeProvider>
-    );
+    const markup = renderToString(<Switch disabled={false} switched />);
 
     expect(markup).toContain('role="switch"');
     expect(markup).toContain('aria-checked="true"');
-    expect(markup).toContain('--query-builder-color-primary-default:#0055aa');
+    expect(markup).not.toContain('--query-builder-color-primary-default');
     expect(markup).not.toContain('data-styled');
   });
 

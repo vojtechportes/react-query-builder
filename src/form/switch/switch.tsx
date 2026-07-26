@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React, { FC, useCallback } from 'react';
-import { useThemeCssVariables } from '../../theme-provider/hooks/use-theme-css-variables';
 import styles from './switch.module.css';
 
 export interface ISwitchProps {
@@ -16,8 +15,6 @@ export const Switch: FC<ISwitchProps> = ({
   disabled = false,
   className,
 }) => {
-  const themeCssVariables = useThemeCssVariables();
-
   const handleClick = useCallback(() => {
     if (onChange && !disabled) {
       onChange(!switched);
@@ -38,7 +35,6 @@ export const Switch: FC<ISwitchProps> = ({
         disabled && styles.disabled,
         className
       )}
-      style={themeCssVariables}
     >
       <span className={clsx(styles.knob, switched && styles.knobSwitched)} />
     </button>

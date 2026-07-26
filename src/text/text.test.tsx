@@ -2,7 +2,6 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
-import { ThemeProvider } from '../theme-provider/theme-provider';
 import { Text } from './text';
 import styles from './text.module.css';
 
@@ -17,30 +16,7 @@ describe('#components/Text', () => {
     expect(text.tagName).toBe('SPAN');
     expect(text).toHaveClass(styles.text, 'incoming-class');
     expect(text).toHaveTextContent('Readable value');
-  });
-
-  it('serializes ThemeProvider colors for standalone usage', () => {
-    const { container } = render(
-      <ThemeProvider
-        colors={{
-          grey: {
-            500: 'rgb(1, 2, 3)',
-            800: 'rgb(4, 5, 6)',
-          },
-        }}
-      >
-        <Text>Value</Text>
-      </ThemeProvider>
-    );
-    const style = (container.firstElementChild as HTMLElement).style;
-
-    expect(style.getPropertyValue('--query-builder-color-grey-500')).toBe(
-      'rgb(1, 2, 3)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-grey-800')).toBe(
-      'rgb(4, 5, 6)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-grey-700')).toBe('');
+    expect(text.getAttribute('style')).toBeNull();
   });
 
   it('renders on the server without styled-components runtime output', () => {
@@ -52,6 +28,7 @@ describe('#components/Text', () => {
     expect(markup).toContain('server-text');
     expect(markup).toContain(styles.text);
     expect(markup).not.toContain('$theme');
+    expect(markup).not.toContain('--query-builder-color-grey-800');
   });
 
   it('exposes the CSS Module class contract', () => {

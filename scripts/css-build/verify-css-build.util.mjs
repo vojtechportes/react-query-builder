@@ -151,43 +151,43 @@ const verifyCssBuild = async () => {
         {
           key: 'info',
           fragments: [
-            '--alert-primary: var(--query-builder-color-info-primary, #2563eb);',
-            '--alert-light: var(--query-builder-color-info-light, #8fb2ff);',
+            '--alert-primary: var(--query-builder-color-info-primary);',
+            '--alert-light: var(--query-builder-color-info-light);',
           ],
         },
         {
           key: 'success',
           fragments: [
-            '--alert-primary: var(--query-builder-color-success-primary, #2f8f4e);',
-            '--alert-light: var(--query-builder-color-success-light, #8fd3a3);',
+            '--alert-primary: var(--query-builder-color-success-primary);',
+            '--alert-light: var(--query-builder-color-success-light);',
           ],
         },
         {
           key: 'warning',
           fragments: [
-            '--alert-primary: var(--query-builder-color-warning-primary, #dc7a1e);',
-            '--alert-light: var(--query-builder-color-warning-light, #f7b578);',
+            '--alert-primary: var(--query-builder-color-warning-primary);',
+            '--alert-light: var(--query-builder-color-warning-light);',
           ],
         },
         {
           key: 'error',
           fragments: [
-            '--alert-primary: var(--query-builder-color-error-primary, #d14343);',
-            '--alert-light: var(--query-builder-color-error-light, #f2a0a0);',
+            '--alert-primary: var(--query-builder-color-error-primary);',
+            '--alert-light: var(--query-builder-color-error-light);',
           ],
         },
         {
           key: 'outlined',
           fragments: [
             'color: var(--alert-primary);',
-            'background: color-mix(in srgb, var(--alert-primary) 5%, var(--query-builder-color-white, #fff) 95%);',
+            'background: color-mix(in srgb, var(--alert-primary) 5%, var(--query-builder-color-white) 95%);',
             'border-color: var(--alert-light);',
           ],
         },
         {
           key: 'filled',
           fragments: [
-            'color: var(--query-builder-color-white, #fff);',
+            'color: var(--query-builder-color-white);',
             'background: var(--alert-primary);',
             'border-color: var(--alert-primary);',
           ],
@@ -346,25 +346,25 @@ const verifyCssBuild = async () => {
     );
   }
 
-  const expectedTokenFallbacks = [
-    'var(--query-builder-color-primary-default, #3f51b5)',
-    'var(--query-builder-color-primary-dark, #002984)',
-    'var(--query-builder-color-primary-light, #757de8)',
-    'var(--query-builder-color-secondary-light, #ff7961)',
-    'var(--query-builder-color-secondary-default, #f44336)',
-    'var(--query-builder-color-white, #fff)',
-    'var(--query-builder-color-grey-100, #f5f5f5)',
-    'var(--query-builder-color-grey-200, #eee)',
-    'var(--query-builder-color-grey-300, #e0e0e0)',
-    'var(--query-builder-color-grey-400, #bdbdbd)',
-    'var(--query-builder-color-grey-600, #757575)',
-    'var(--query-builder-color-grey-700, #616161)',
-    'var(--query-builder-color-grey-800, #424242)',
+  const expectedTokenDefaults = [
+    '--query-builder-color-primary-default: #3f51b5;',
+    '--query-builder-color-primary-dark: #002984;',
+    '--query-builder-color-primary-light: #757de8;',
+    '--query-builder-color-secondary-light: #ff7961;',
+    '--query-builder-color-secondary-default: #f44336;',
+    '--query-builder-color-white: #fff;',
+    '--query-builder-color-grey-100: #f5f5f5;',
+    '--query-builder-color-grey-200: #eee;',
+    '--query-builder-color-grey-300: #e0e0e0;',
+    '--query-builder-color-grey-400: #bdbdbd;',
+    '--query-builder-color-grey-600: #757575;',
+    '--query-builder-color-grey-700: #616161;',
+    '--query-builder-color-grey-800: #424242;',
   ];
 
-  for (const tokenFallback of expectedTokenFallbacks) {
-    if (!stylesheet.includes(tokenFallback)) {
-      throw new Error(`Theme token fallback is missing: ${tokenFallback}`);
+  for (const tokenDefault of expectedTokenDefaults) {
+    if (!stylesheet.includes(tokenDefault)) {
+      throw new Error(`Theme token default is missing: ${tokenDefault}`);
     }
   }
 

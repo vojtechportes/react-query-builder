@@ -2,10 +2,9 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from '../theme-provider/theme-provider';
 import { BuilderLockState } from '../utils/lock-state';
-import styles from './lock-toggle.module.css';
 import { LockToggle } from './lock-toggle';
+import styles from './lock-toggle.module.css';
 
 const iconPaths: Record<BuilderLockState, string> = {
   unlocked:
@@ -33,6 +32,8 @@ describe('#components/LockToggle', () => {
       expect(container.firstElementChild).toBe(button);
       expect(button).toHaveAttribute('type', 'button');
       expect(button).toHaveAttribute('title', title);
+      expect(button).toHaveClass(styles.lockToggle, styles[state]);
+      expect(button).not.toHaveAttribute('style');
     }
   );
 
@@ -126,34 +127,12 @@ describe('#components/LockToggle', () => {
     expect(button).toHaveFocus();
     expect(button).toHaveClass(styles.lockToggle, styles.all, styles.disabled);
     expect(onChange).not.toHaveBeenCalled();
+    expect(button).not.toHaveAttribute('style');
     expect(button.getAttributeNames()).not.toEqual(
       expect.arrayContaining(['$theme', '$state', '$disabled'])
     );
   });
 
-  it('serializes ThemeProvider overrides for standalone usage', () => {
-    render(
-      <ThemeProvider
-        colors={{
-          primary: { default: 'rgb(1, 2, 3)' },
-          grey: { 600: 'rgb(4, 5, 6)' },
-        }}
-      >
-        <LockToggle nodeType="group" state="self" />
-      </ThemeProvider>
-    );
-    const style = screen.getByRole('button', {
-      name: 'Lock group and descendants',
-    }).style;
-
-    expect(
-      style.getPropertyValue('--query-builder-color-primary-default')
-    ).toBe('rgb(1, 2, 3)');
-    expect(style.getPropertyValue('--query-builder-color-grey-600')).toBe(
-      'rgb(4, 5, 6)'
-    );
-    expect(style.getPropertyValue('--query-builder-color-grey-400')).toBe('');
-  });
   it('does nothing when no change handler is provided', () => {
     render(<LockToggle nodeType="rule" state="unlocked" />);
 

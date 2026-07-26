@@ -93,7 +93,7 @@
   }
 
   .inner.active {
-    border-color: var(--query-builder-color-grey-300, #e0e0e0);
+    border-color: var(--query-builder-color-grey-300);
     background: rgba(204, 204, 204, 0.08);
   }
 
