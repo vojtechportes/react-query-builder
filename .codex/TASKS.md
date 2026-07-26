@@ -1704,7 +1704,7 @@ unexpectedly.
 
 ### T050 - Retire styled input and responsive helper files
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T042, T047, and T049
 
