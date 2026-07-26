@@ -1,8 +1,10 @@
 import { render } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import React from 'react';
 import { colors } from '../constants/colors';
 import { ThemeProvider } from '../theme-provider/theme-provider';
 import { Builder } from './builder';
+import builderStyles from './components/styled-builder/styled-builder.module.css';
 
 const requiredProps = {
   fields: [],
@@ -136,7 +138,7 @@ describe('#components/Builder theme CSS variables', () => {
       '[data-query-builder="root"]'
     ) as HTMLElement;
 
-    expect(builderRoot.classList.contains('consumer-builder')).toBe(true);
+    expect(builderRoot).toHaveClass(builderStyles.builder, 'consumer-builder');
     expect(builderRoot.style.color).toBe('rgb(1, 2, 3)');
     expect(
       builderRoot.style.getPropertyValue('--query-builder-color-grey-300')
@@ -150,5 +152,14 @@ describe('#components/Builder theme CSS variables', () => {
     expect(
       builderRoot.style.getPropertyValue('--query-builder-shadow-root')
     ).toBe('0 1px 2px #000000');
+  });
+
+  it('renders the Builder root on the server without styled-components attributes', () => {
+    const markup = renderToString(<Builder {...requiredProps} />);
+
+    expect(markup).toContain('data-query-builder="root"');
+    expect(markup).toContain(builderStyles.builder);
+    expect(markup).not.toContain('data-styled');
+    expect(markup).not.toContain('$theme');
   });
 });
