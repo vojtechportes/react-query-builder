@@ -1,0 +1,5 @@
+@layer react-query-builder {
+  .container {
+    margin-bottom: var(--query-builder-spacing-lg, 1rem);
+  }
+}

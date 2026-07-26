@@ -24,7 +24,6 @@ import { getNodePosition } from '../history/get-node-position';
 import { Iterator } from '../iterator';
 import { Popover } from '../popover';
 import { PopoverItem } from '../popover-item';
-import { useTheme } from '../theme-provider/hooks/use-theme';
 import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import { createGroupNode } from '../utils/create-group-node.util';
 import { createId } from '../utils/create-id.util';
@@ -156,7 +155,6 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
         : 'with-modifiers';
     const resolvedDefaultMode =
       defaultMode ?? textModeConfig?.defaultMode ?? 'builder';
-    const theme = useTheme();
     const themeCssVariables = useThemeCssVariables();
     const rootStyle = createBuilderRootStyle(themeCssVariables, style);
     const compatibleOriginalData = useMemo(
@@ -969,7 +967,6 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
         }}
       >
         <StyledBuilder
-          $theme={theme}
           className={className}
           data-query-builder="root"
           style={rootStyle}
