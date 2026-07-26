@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useContext } from 'react';
-import styled from 'styled-components';
+import clsx from 'clsx';
 import { BuilderFieldOperator, BuilderLockState } from '../builder';
 import { BuilderContext } from '../builder-context';
 import { CloneButton as DefaultCloneButton } from '../clone-button';
@@ -9,9 +9,8 @@ import { createRemoveSubtreeAction } from '../history/create-remove-subtree-acti
 import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { getNodePosition } from '../history/get-node-position';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
-import { Rule as DefaultRuleContainer } from './rule-container';
+import { Rule as DefaultRuleContainer } from './components/rule-container';
 import { SecondaryButton } from '../secondary-button';
-import { compactBuilderMedia } from '../styles/responsive.styles';
 import { Boolean } from '../widgets/boolean';
 import { FieldSelect } from '../widgets/field-select';
 import { Input } from '../widgets/input';
@@ -21,7 +20,10 @@ import { SelectMulti } from '../widgets/select-multi/select-multi';
 import { ValueFieldSelect } from '../widgets/value-field-select';
 import { ValueSourceSelect } from '../widgets/value-source-select';
 import { isBoolean } from '../utils/is-boolean.util';
-import { getCompatibleValueFields, supportsFieldComparisonForOperator } from '../utils/field-comparison-support';
+import {
+  getCompatibleValueFields,
+  supportsFieldComparisonForOperator,
+} from '../utils/field-comparison-support';
 import { isNumber } from '../utils/is-number.util';
 import { isNumberArray } from '../utils/is-number-array.util';
 import { isOptionList } from '../utils/is-option-list.util';
@@ -30,62 +32,18 @@ import { isStringArray } from '../utils/is-string-array.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
 import { operatorRequiresValue } from '../utils/operator-requires-value.util';
 import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { QueryRuleValue, QueryRuleValueSource, RuleReadOnlyTarget } from '../utils/query-tree';
+import {
+  QueryRuleValue,
+  QueryRuleValueSource,
+  RuleReadOnlyTarget,
+} from '../utils/query-tree';
 import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 import { updateRuleLockState } from '../utils/read-only/update-rule-lock-state.util';
 import { getRuleValueSource } from '../utils/rule-value-source';
 import { useBuilderFieldOptionState } from '../builder/hooks/use-builder-field-option-state';
-
-const BooleanContainer = styled.div`
-  display: flex;
-  align-items: center;
-  min-height: 2rem;
-`;
-
-const FieldsContent = styled.div`
-  display: grid;
-  grid-gap: 0.5rem;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.4fr);
-  align-items: start;
-  width: 100%;
-  --query-builder-control-width: 100%;
-  --query-builder-control-min-width: 0px;
-
-  ${compactBuilderMedia`
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  `}
-`;
-
-const LayoutItem = styled.div`
-  min-width: 0;
-`;
-
-const ValueContent = styled(LayoutItem)`
-  min-width: 0;
-
-  ${compactBuilderMedia`
-    grid-column: 1 / -1;
-  `}
-`;
-
-const ValueEditorGrid = styled.div`
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
-
-  ${compactBuilderMedia`
-    grid-template-columns: 1fr;
-  `}
-`;
-
-const ValidationIssues = styled.ul`
-  margin: 0.4rem 0 0;
-  padding-left: 1rem;
-  color: #b42318;
-  font-size: 0.75rem;
-`;
+import styles from './rule.module.css';
 
 export interface IRuleProps {
   field: string;
@@ -132,8 +90,7 @@ export const Rule: FC<IRuleProps> = ({
   } = useContext(BuilderContext);
   const isReadOnly = readOnly || localReadOnly;
   const isFieldReadOnly = isReadOnly || readOnlyTargets.includes('field');
-  const isOperatorReadOnly =
-    isReadOnly || readOnlyTargets.includes('operator');
+  const isOperatorReadOnly = isReadOnly || readOnlyTargets.includes('operator');
   const isValueReadOnly = isReadOnly || readOnlyTargets.includes('value');
   const RuleContainer = components.Rule || DefaultRuleContainer;
   const CloneButton = components.CloneButton || DefaultCloneButton;
@@ -161,7 +118,11 @@ export const Rule: FC<IRuleProps> = ({
     (nextState: BuilderLockState) => {
       const currentRule = data.find((item) => item.id === id);
 
-      if (!dispatchAction || !currentRule || isNormalizedGroupNode(currentRule)) {
+      if (
+        !dispatchAction ||
+        !currentRule ||
+        isNormalizedGroupNode(currentRule)
+      ) {
         return;
       }
 
@@ -227,7 +188,9 @@ export const Rule: FC<IRuleProps> = ({
   const controls =
     !isReadOnly || lockControl ? (
       <>
-        {canDeleteRule ? <Remove onClick={handleDelete}>{strings.rule.delete}</Remove> : null}
+        {canDeleteRule ? (
+          <Remove onClick={handleDelete}>{strings.rule.delete}</Remove>
+        ) : null}
         {cloneControl}
         {lockControl}
       </>
@@ -235,7 +198,7 @@ export const Rule: FC<IRuleProps> = ({
 
   const fieldConfig =
     typeof fieldRef === 'string' && fieldRef.trim() !== ''
-      ? fields.find(item => item.field === fieldRef)
+      ? fields.find((item) => item.field === fieldRef)
       : undefined;
   const fieldOptionState = useBuilderFieldOptionState(fieldConfig, id);
 
@@ -244,26 +207,27 @@ export const Rule: FC<IRuleProps> = ({
       <RuleContainer
         dragHandle={dragHandle}
         controls={controls}
+        className={clsx(isReadOnly && styles.readOnly)}
         data-test={dataTest}
       >
         <div>
-          <FieldsContent>
-            <LayoutItem>
+          <div className={styles.fieldsContent}>
+            <div className={styles.layoutItem}>
               <FieldSelect
                 selectedValue=""
                 id={id}
                 disabled={isFieldReadOnly}
               />
-            </LayoutItem>
-          </FieldsContent>
+            </div>
+          </div>
           {validationIssues.length > 0 && (
-            <ValidationIssues>
+            <ul className={styles.validationIssues}>
               {validationIssues.map((issue) => (
                 <li key={`${issue.code || issue.message}-${issue.message}`}>
                   {issue.message}
                 </li>
               ))}
-            </ValidationIssues>
+            </ul>
           )}
         </div>
       </RuleContainer>
@@ -278,15 +242,20 @@ export const Rule: FC<IRuleProps> = ({
   const fieldValue = fieldOptionState.options;
   const operatorsOptionList =
     operators &&
-    operators.map(item => ({
+    operators.map((item) => ({
       value: item,
       label: (strings.operators && strings.operators[item]) || item,
     }));
   const shouldRenderValueInput = operatorRequiresValue(operator);
   const resolvedValueSource = getRuleValueSource({ valueSource });
-  const compatibleValueFields = getCompatibleValueFields(fields, fieldConfig, operator);
+  const compatibleValueFields = getCompatibleValueFields(
+    fields,
+    fieldConfig,
+    operator
+  );
   const supportsFieldComparison =
-    (allowFieldComparisons && supportsFieldComparisonForOperator(fieldConfig, operator)) ||
+    (allowFieldComparisons &&
+      supportsFieldComparisonForOperator(fieldConfig, operator)) ||
     resolvedValueSource === 'field';
   const usesFieldComparison = resolvedValueSource === 'field';
 
@@ -308,13 +277,13 @@ export const Rule: FC<IRuleProps> = ({
       }
 
       return isBoolean(selectedValue) ? (
-        <BooleanContainer>
+        <div className={styles.booleanContainer}>
           <Boolean
             id={id}
             selectedValue={selectedValue}
             disabled={isValueReadOnly}
           />
-        </BooleanContainer>
+        </div>
       ) : null;
     }
 
@@ -424,34 +393,35 @@ export const Rule: FC<IRuleProps> = ({
     <RuleContainer
       dragHandle={dragHandle}
       controls={controls}
+      className={clsx(isReadOnly && styles.readOnly)}
       data-test={dataTest}
     >
       <div>
-        <FieldsContent>
-          <LayoutItem>
+        <div className={styles.fieldsContent}>
+          <div className={styles.layoutItem}>
             <FieldSelect
               selectedValue={field}
               id={id}
               disabled={isFieldReadOnly}
             />
-          </LayoutItem>
+          </div>
 
           {type === 'BOOLEAN' && (
             <>
               {isOptionList(operatorsOptionList) && (
-                <LayoutItem>
+                <div className={styles.layoutItem}>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                     disabled={isOperatorReadOnly}
                   />
-                </LayoutItem>
+                </div>
               )}
               {shouldRenderValueInput && (
-                <ValueContent>
+                <div className={styles.valueContent}>
                   {supportsFieldComparison ? (
-                    <ValueEditorGrid>
+                    <div className={styles.valueEditorGrid}>
                       <ValueSourceSelect
                         id={id}
                         field={fieldConfig}
@@ -461,11 +431,11 @@ export const Rule: FC<IRuleProps> = ({
                         disabled={isValueReadOnly}
                       />
                       {renderValueEditor()}
-                    </ValueEditorGrid>
+                    </div>
                   ) : (
                     renderValueEditor()
                   )}
-                </ValueContent>
+                </div>
               )}
             </>
           )}
@@ -475,18 +445,18 @@ export const Rule: FC<IRuleProps> = ({
             isOptionList(operatorsOptionList) &&
             operator && (
               <>
-                <LayoutItem>
+                <div className={styles.layoutItem}>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                     disabled={isOperatorReadOnly}
                   />
-                </LayoutItem>
+                </div>
                 {shouldRenderValueInput && (
-                  <ValueContent>
+                  <div className={styles.valueContent}>
                     {supportsFieldComparison ? (
-                      <ValueEditorGrid>
+                      <div className={styles.valueEditorGrid}>
                         <ValueSourceSelect
                           id={id}
                           field={fieldConfig}
@@ -496,11 +466,11 @@ export const Rule: FC<IRuleProps> = ({
                           disabled={isValueReadOnly}
                         />
                         {renderValueEditor()}
-                      </ValueEditorGrid>
+                      </div>
                     ) : (
                       renderValueEditor()
                     )}
-                  </ValueContent>
+                  </div>
                 )}
               </>
             )}
@@ -509,106 +479,102 @@ export const Rule: FC<IRuleProps> = ({
             isOptionList(fieldValue) &&
             isOptionList(operatorsOptionList) && (
               <>
-                <LayoutItem>
+                <div className={styles.layoutItem}>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                     disabled={isOperatorReadOnly}
                   />
-                </LayoutItem>
+                </div>
                 {operator && shouldRenderValueInput && (
-                  <ValueContent>
+                  <div className={styles.valueContent}>
                     {renderValueEditor()}
-                  </ValueContent>
+                  </div>
                 )}
               </>
             )}
 
-          {type === 'TEXT' &&
-            isOptionList(operatorsOptionList) &&
-            operator && (
-              <>
-                <LayoutItem>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isOperatorReadOnly}
-                  />
-                </LayoutItem>
-                {shouldRenderValueInput && (
-                  <ValueContent>
-                    {supportsFieldComparison ? (
-                      <ValueEditorGrid>
-                        <ValueSourceSelect
-                          id={id}
-                          field={fieldConfig}
-                          selectedValueSource={resolvedValueSource}
-                          compatibleFields={compatibleValueFields}
-                          fieldComparisonEnabled={allowFieldComparisons}
-                          disabled={isValueReadOnly}
-                        />
-                        {renderValueEditor()}
-                      </ValueEditorGrid>
-                    ) : (
-                      renderValueEditor()
-                    )}
-                  </ValueContent>
-                )}
-              </>
-            )}
+          {type === 'TEXT' && isOptionList(operatorsOptionList) && operator && (
+            <>
+              <div className={styles.layoutItem}>
+                <OperatorSelect
+                  id={id}
+                  values={operatorsOptionList}
+                  selectedValue={operator}
+                  disabled={isOperatorReadOnly}
+                />
+              </div>
+              {shouldRenderValueInput && (
+                <div className={styles.valueContent}>
+                  {supportsFieldComparison ? (
+                    <div className={styles.valueEditorGrid}>
+                      <ValueSourceSelect
+                        id={id}
+                        field={fieldConfig}
+                        selectedValueSource={resolvedValueSource}
+                        compatibleFields={compatibleValueFields}
+                        fieldComparisonEnabled={allowFieldComparisons}
+                        disabled={isValueReadOnly}
+                      />
+                      {renderValueEditor()}
+                    </div>
+                  ) : (
+                    renderValueEditor()
+                  )}
+                </div>
+              )}
+            </>
+          )}
 
-          {type === 'DATE' &&
-            isOptionList(operatorsOptionList) &&
-            operator && (
-              <>
-                <LayoutItem>
-                  <OperatorSelect
-                    id={id}
-                    values={operatorsOptionList}
-                    selectedValue={operator}
-                    disabled={isOperatorReadOnly}
-                  />
-                </LayoutItem>
-                {shouldRenderValueInput && (
-                  <ValueContent>
-                    {supportsFieldComparison ? (
-                      <ValueEditorGrid>
-                        <ValueSourceSelect
-                          id={id}
-                          field={fieldConfig}
-                          selectedValueSource={resolvedValueSource}
-                          compatibleFields={compatibleValueFields}
-                          fieldComparisonEnabled={allowFieldComparisons}
-                          disabled={isValueReadOnly}
-                        />
-                        {renderValueEditor()}
-                      </ValueEditorGrid>
-                    ) : (
-                      renderValueEditor()
-                    )}
-                  </ValueContent>
-                )}
-              </>
-            )}
+          {type === 'DATE' && isOptionList(operatorsOptionList) && operator && (
+            <>
+              <div className={styles.layoutItem}>
+                <OperatorSelect
+                  id={id}
+                  values={operatorsOptionList}
+                  selectedValue={operator}
+                  disabled={isOperatorReadOnly}
+                />
+              </div>
+              {shouldRenderValueInput && (
+                <div className={styles.valueContent}>
+                  {supportsFieldComparison ? (
+                    <div className={styles.valueEditorGrid}>
+                      <ValueSourceSelect
+                        id={id}
+                        field={fieldConfig}
+                        selectedValueSource={resolvedValueSource}
+                        compatibleFields={compatibleValueFields}
+                        fieldComparisonEnabled={allowFieldComparisons}
+                        disabled={isValueReadOnly}
+                      />
+                      {renderValueEditor()}
+                    </div>
+                  ) : (
+                    renderValueEditor()
+                  )}
+                </div>
+              )}
+            </>
+          )}
 
           {type === 'NUMBER' &&
             isOptionList(operatorsOptionList) &&
             operator && (
               <>
-                <LayoutItem>
+                <div className={styles.layoutItem}>
                   <OperatorSelect
                     id={id}
                     values={operatorsOptionList}
                     selectedValue={operator}
                     disabled={isOperatorReadOnly}
                   />
-                </LayoutItem>
+                </div>
                 {shouldRenderValueInput && (
-                  <ValueContent>
+                  <div className={styles.valueContent}>
                     {supportsFieldComparison ? (
-                      <ValueEditorGrid>
+                      <div className={styles.valueEditorGrid}>
                         <ValueSourceSelect
                           id={id}
                           field={fieldConfig}
@@ -618,26 +584,25 @@ export const Rule: FC<IRuleProps> = ({
                           disabled={isValueReadOnly}
                         />
                         {renderValueEditor()}
-                      </ValueEditorGrid>
+                      </div>
                     ) : (
                       renderValueEditor()
                     )}
-                  </ValueContent>
+                  </div>
                 )}
               </>
             )}
-        </FieldsContent>
+        </div>
         {validationIssues.length > 0 && (
-          <ValidationIssues>
+          <ul className={styles.validationIssues}>
             {validationIssues.map((issue) => (
               <li key={`${issue.code || issue.message}-${issue.message}`}>
                 {issue.message}
               </li>
             ))}
-          </ValidationIssues>
+          </ul>
         )}
       </div>
     </RuleContainer>
   );
 };
-
