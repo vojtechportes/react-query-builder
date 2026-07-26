@@ -17,7 +17,7 @@ import { Rule } from '../../rule/rule-container';
 import { SecondaryButton } from '../../secondary-button';
 import { Text } from '../../text';
 import { HistoryControls } from '../components/history-controls';
-import { TextModeToggleContent } from '../components/text-mode-toggle-content';
+import { TextModeToggleContent } from '../text-mode/components/text-mode-toggle-content';
 import { TextModeEditor } from '../text-mode/components/text-mode-editor';
 import { TextModeInput } from '../text-mode/components/text-mode-input';
 import { IResolvedBuilderComponentsProps } from '../types';

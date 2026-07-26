@@ -4,7 +4,7 @@ export { HistoryButton } from './components/history-button';
 export { HistoryControls } from './components/history-controls';
 export { Alert } from '../alert';
 export { OutlinedButton } from '../outlined-button';
-export { TextModeToggleContent } from './components/text-mode-toggle-content';
+export { TextModeToggleContent } from './text-mode/components/text-mode-toggle-content';
 export { TextModeEditor } from './text-mode/components/text-mode-editor';
 export { TextModeInput } from './text-mode/components/text-mode-input';
 export { useBuilderRef } from '../hooks/use-builder-ref';

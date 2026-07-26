@@ -24,7 +24,7 @@ import type { IBuilderFieldChange } from './field-option';
 import { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
 import { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
 import { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';
-import { ITextModeToggleContentProps } from '../components/text-mode-toggle-content';
+import { ITextModeToggleContentProps } from '../text-mode/components/text-mode-toggle-content';
 import {
   DenormalizedQuery,
   GroupReadOnlyTarget,
@@ -67,7 +67,7 @@ export type { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mod
 export type { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
 export type { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';
 export type { ITextModeProtectedRange } from '../text-mode/types/text-mode-protected-range';
-export type { ITextModeToggleContentProps } from '../components/text-mode-toggle-content';
+export type { ITextModeToggleContentProps } from '../text-mode/components/text-mode-toggle-content';
 export type {
   BuilderHistoryAction as IBuilderHistoryAction,
   IBuilderHistoryConfig,
