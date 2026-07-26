@@ -136,11 +136,11 @@ export type { IPopoverItemProps } from './popover-item';
 export { Rule } from './rule/rule-container';
 export type { IRuleProps } from './rule/rule-container';
 
-export { Group } from './group/group-container';
-export type { IGroupProps } from './group/group-container';
+export { Group } from './group/components/group-container';
+export type { IGroupProps } from './group/components/group-container';
 
-export { Option as GroupHeaderOption } from './group/option';
-export type { IOptionProps as IGroupHeaderOptionProps } from './group/option';
+export { Option as GroupHeaderOption } from './group/components/option';
+export type { IOptionProps as IGroupHeaderOptionProps } from './group/components/option';
 
 export { colors } from './constants/colors';
 export type {

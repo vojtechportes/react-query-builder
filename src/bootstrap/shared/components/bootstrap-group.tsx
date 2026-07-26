@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IGroupProps } from '../../../group/group-container';
+import { IGroupProps } from '../../../group/components/group-container';
 import { bootstrapCardStyles, joinClassNames } from './styles';
 
 export const BootstrapGroup: FC<IGroupProps> = ({
