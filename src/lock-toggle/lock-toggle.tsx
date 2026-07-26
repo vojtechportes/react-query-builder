@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React, { FC, useCallback } from 'react';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import {
   BuilderLockState,
@@ -29,8 +28,6 @@ export const LockToggle: FC<ILockToggleProps> = ({
   title,
   'data-test': dataTest,
 }) => {
-  const themeCssVariables = useThemeCssVariables();
-
   const handleClick = useCallback(() => {
     if (disabled || !onChange) {
       return;
@@ -58,7 +55,6 @@ export const LockToggle: FC<ILockToggleProps> = ({
       title={resolvedTitle}
       aria-label={resolvedTitle}
       data-test={dataTest}
-      style={themeCssVariables}
     >
       <LockIcon state={state} />
     </button>

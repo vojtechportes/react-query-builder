@@ -2,7 +2,6 @@ import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { ThemeProvider } from '../theme-provider/theme-provider';
 import { DragHandle } from './drag-handle';
 import styles from './drag-handle.module.css';
 
@@ -42,29 +41,18 @@ describe('#components/DragHandle', () => {
     expect(onPointerDown).toHaveBeenCalledTimes(1);
   });
 
-  it('serializes only explicit provider color variables', () => {
-    const { container } = render(
-      <ThemeProvider colors={{ grey: { 300: '#abcdef', 400: '#123456' } }}>
-        <DragHandle />
-      </ThemeProvider>
-    );
+  it('does not emit component-local theme variables', () => {
+    const { container } = render(<DragHandle />);
     const handle = container.firstElementChild as HTMLElement;
 
-    expect(
-      handle.style.getPropertyValue('--query-builder-color-grey-300')
-    ).toBe('#abcdef');
-    expect(
-      handle.style.getPropertyValue('--query-builder-color-grey-400')
-    ).toBe('#123456');
-    expect(
-      handle.style.getPropertyValue('--query-builder-color-primary-default')
-    ).toBe('');
+    expect(handle).not.toHaveAttribute('style');
   });
 
   it('renders on the server without styled-components runtime output', () => {
     const markup = renderToString(<DragHandle />);
 
     expect(markup).toContain('class="dragHandle"');
+    expect(markup).not.toContain('--query-builder-color-grey-300');
     expect(markup).not.toContain('data-styled');
   });
 

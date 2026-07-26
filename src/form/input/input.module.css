@@ -11,7 +11,7 @@
   .input::-webkit-datetime-edit-month-field,
   .input::-webkit-datetime-edit-day-field,
   .input::-webkit-datetime-edit-year-field {
-    color: var(--query-builder-color-grey-800, #424242);
+    color: var(--query-builder-color-grey-800);
     font-family: inherit;
     font-size: 0.8rem;
     font-weight: inherit;

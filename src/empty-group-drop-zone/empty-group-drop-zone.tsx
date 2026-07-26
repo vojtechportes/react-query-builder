@@ -1,7 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import styles from './empty-group-drop-zone.module.css';
 
 export interface IEmptyGroupDropZoneProps {
@@ -21,7 +20,6 @@ export const EmptyGroupDropZone: FC<IEmptyGroupDropZoneProps> = ({
   isDragging,
   disableTransition = false,
 }) => {
-  const themeCssVariables = useThemeCssVariables();
   const { setNodeRef } = useDroppable({
     id,
     data: {
@@ -49,7 +47,6 @@ export const EmptyGroupDropZone: FC<IEmptyGroupDropZoneProps> = ({
         data-testid={isActive ? 'ActiveDropZone' : undefined}
       >
         <div
-          style={themeCssVariables}
           className={clsx(styles.placeholderInner, {
             [styles.active]: isActive,
             [styles.transitionDisabled]: disableTransition,

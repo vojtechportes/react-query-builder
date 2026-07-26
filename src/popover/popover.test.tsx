@@ -1,13 +1,12 @@
 import { fireEvent, render } from '@testing-library/react';
-import React from 'react';
-import { renderToString } from 'react-dom/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Popover } from './popover';
-import popoverStyles from './popover.module.css';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
 import { PopoverItem, IPopoverItemProps } from '../popover-item';
 import popoverItemStyles from '../popover-item/popover-item.module.css';
-import { ThemeProvider } from '../theme-provider/theme-provider';
+import { Popover } from './popover';
+import popoverStyles from './popover.module.css';
 
 const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
   const element = container.querySelector(`[data-test="${value}"]`);
@@ -159,20 +158,19 @@ describe('#components/Popover', () => {
 
     expect(root.classList.contains(popoverStyles.container)).toBe(true);
     expect(root.classList.contains('incoming-class')).toBe(true);
+    expect(root).not.toHaveAttribute('style');
     expect(getByDataTest(container, 'PopoverTrigger').tagName).toBe('BUTTON');
   });
 
-  it('serializes theme variables and renders on the server', () => {
+  it('renders on the server without component-local theme variables', () => {
     const markup = renderToString(
-      <ThemeProvider colors={{ white: '#fefefe', grey: { 500: '#aaaaaa' } }}>
-        <Popover label="Add Group" data-test="PopoverTrigger">
-          <PopoverItem label="With Modifiers" onClick={jest.fn()} />
-        </Popover>
-      </ThemeProvider>
+      <Popover label="Add Group" data-test="PopoverTrigger">
+        <PopoverItem label="With Modifiers" onClick={jest.fn()} />
+      </Popover>
     );
 
     expect(markup).toContain('data-test="PopoverTrigger"');
-    expect(markup).toContain('--query-builder-color-white:#fefefe');
+    expect(markup).not.toContain('--query-builder-color-white');
     expect(markup).not.toContain('With Modifiers');
   });
 
@@ -211,6 +209,7 @@ describe('#components/PopoverItem', () => {
     expect(item.type).toBe('button');
     expect(item.classList.contains(popoverItemStyles.item)).toBe(true);
     expect(item.classList.contains('incoming-class')).toBe(true);
+    expect(item).not.toHaveAttribute('style');
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
@@ -230,20 +229,6 @@ describe('#components/PopoverItem', () => {
 
     expect(item.disabled).toBe(true);
     expect(onClick).not.toHaveBeenCalled();
-  });
-
-  it('serializes only explicit provider colors on a standalone item', () => {
-    const { container } = render(
-      <ThemeProvider colors={{ grey: { 700: '#123456' } }}>
-        <PopoverItem label="With Modifiers" onClick={jest.fn()} />
-      </ThemeProvider>
-    );
-    const item = container.firstElementChild as HTMLElement;
-
-    expect(item.style.getPropertyValue('--query-builder-color-grey-700')).toBe(
-      '#123456'
-    );
-    expect(item.style.getPropertyValue('--query-builder-color-white')).toBe('');
   });
 
   it('exposes every CSS Module class used by the component', () => {

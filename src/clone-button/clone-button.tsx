@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React, { FC, useCallback } from 'react';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
 import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import styles from './clone-button.module.css';
 import { CloneIcon } from './clone-icon';
@@ -22,8 +21,6 @@ export const CloneButton: FC<ICloneButtonProps> = ({
   title,
   'data-test': dataTest,
 }) => {
-  const themeCssVariables = useThemeCssVariables();
-
   const handleClick = useCallback(() => {
     if (disabled) {
       return;
@@ -46,7 +43,6 @@ export const CloneButton: FC<ICloneButtonProps> = ({
       title={resolvedTitle}
       aria-label={resolvedTitle}
       data-test={dataTest}
-      style={themeCssVariables}
     >
       <CloneIcon />
     </button>

@@ -1,0 +1,9 @@
+@layer react-query-builder {
+  .optionContainer {
+    display: grid;
+    grid-auto-columns: min-content;
+    grid-auto-flow: column;
+    gap: 0.5rem;
+    align-self: center;
+  }
+}

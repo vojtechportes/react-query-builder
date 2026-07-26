@@ -9,6 +9,11 @@ This backlog is derived from `AGENTS.md`. Keep tasks incremental and update stat
 
 **Task naming convention:** `T{NNN}` for task, `B{NNN}` for a bug fix
 
+## Styling architecture decision
+
+For the v2 CSS Modules migration, default color variables must be generated from `src/constants/colors.ts` into the package stylesheet instead of being duplicated as CSS fallbacks across component modules. Components should consume `--query-builder-*` variables from CSS and inherit them from the nearest root. Inline CSS variables are allowed only at explicit override boundaries, such as the Builder root or a future provider/root wrapper, and should include only provided overrides. Migrated leaf primitives must not call ThemeProvider hooks only to attach color variables to their own `style` prop.
+
+ThemeProvider compatibility is no longer a migration requirement. Keep the public API until a removal task explicitly changes it, but do not add new per-component ThemeProvider bridge behavior while migrating T040-T049.
 ## Backlog
 
 ### T001 - Audit and improve example website SEO
@@ -1374,17 +1379,17 @@ unexpectedly.
 
 **Scope:**
 
-- Map `IColors` once and serialize only provided overrides.
-- Keep the provider DOMless; support Builder and standalone public controls.
-- Preserve current nested-provider replacement semantics unless explicitly documented.
-- Document precedence: defaults, inherited CSS, Builder style, explicit provider values.
-- Retain `colors`/types and mark ThemeProvider theming legacy.
+- Generate default color variables from `src/constants/colors.ts` into the package stylesheet.
+- Keep inline variable serialization limited to explicit root/override boundaries.
+- Do not add new per-primitive ThemeProvider bridge behavior.
+- Document precedence: generated stylesheet defaults, inherited CSS, and explicit root `style` overrides.
+- Retain `colors`/types while treating ThemeProvider compatibility as non-required legacy API until a removal task handles it explicitly.
 
 **Acceptance criteria:**
 
 - No/partial/nested providers, direct CSS, Builder style, and standalone controls behave as
   documented.
-- Unused provider defaults never suppress inherited CSS.
+- Migrated leaf primitives do not emit inline CSS variables for default colors.
 
 **Verification:**
 
@@ -1531,7 +1536,7 @@ unexpectedly.
 
 ### T043 - Migrate Option and public OptionContainer modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035
 
@@ -1996,4 +2001,3 @@ site/v1 usage.
 **Verification:**
 
 - Run the full publish-artifact workflow locally/CI and record final size/review reports.
-

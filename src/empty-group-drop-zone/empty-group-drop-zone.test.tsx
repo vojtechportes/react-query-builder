@@ -3,7 +3,6 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { ThemeProvider } from '../theme-provider/theme-provider';
 import {
   EmptyGroupDropZone,
   IEmptyGroupDropZoneProps,
@@ -103,21 +102,15 @@ describe('#components/EmptyGroupDropZone', () => {
     expect(inner).toHaveClass(styles.transitionDisabled);
   });
 
-  it('serializes only explicit provider colors on the placeholder inner element', () => {
-    const { container } = render(
-      <ThemeProvider colors={{ grey: { 500: '#654321' } }}>
-        <EmptyGroupDropZone {...defaultProps} isActive />
-      </ThemeProvider>
-    );
+  it('does not emit component-local theme variables', () => {
+    const { container } = renderEmptyGroupDropZone({ isActive: true });
+    const hitArea = container.children[0] as HTMLElement;
     const placeholder = container.children[1] as HTMLElement;
     const inner = placeholder.firstElementChild as HTMLElement;
 
-    expect(inner.style.getPropertyValue('--query-builder-color-grey-500')).toBe(
-      '#654321'
-    );
-    expect(
-      inner.style.getPropertyValue('--query-builder-color-primary-default')
-    ).toBe('');
+    expect(hitArea).not.toHaveAttribute('style');
+    expect(placeholder).not.toHaveAttribute('style');
+    expect(inner).not.toHaveAttribute('style');
   });
 
   it('renders on the server without styled-components runtime output', () => {
@@ -125,6 +118,7 @@ describe('#components/EmptyGroupDropZone', () => {
 
     expect(markup).toContain('class="hitArea"');
     expect(markup).toContain('class="placeholder"');
+    expect(markup).not.toContain('--query-builder-color-grey-500');
     expect(markup).not.toContain('data-styled');
   });
 
