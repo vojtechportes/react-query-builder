@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { theme } from 'antd';
-import { IGroupProps } from '../../../group/group-container';
+import { IGroupProps } from '../../../group/components/group-container';
 
 export const AntdGroup: FC<IGroupProps> = ({
   controlsLeft,

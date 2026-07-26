@@ -121,6 +121,61 @@ const verifyCssBuild = async () => {
       ],
     },
     {
+      name: 'GroupOption',
+      modulePattern:
+        /#region src\/group\/components\/option\/option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['disabled', 'option', 'selected'],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['disabled', 'option'],
+      requiredRuleFragments: [
+        {
+          key: 'option',
+          fragments: [
+            'color: var(--query-builder-color-primary-contrast-text);',
+            'background: var(--query-builder-color-grey-500);',
+            'border: 1px solid var(--query-builder-color-grey-800);',
+          ],
+        },
+        {
+          key: 'selected',
+          fragments: [
+            'background: var(--query-builder-color-primary-default);',
+          ],
+        },
+      ],
+    },
+    {
+      name: 'GroupContainer',
+      modulePattern:
+        /#region src\/group\/components\/group-container\/group-container\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: [
+        'body',
+        'group',
+        'header',
+        'left',
+        'right',
+        'withDragHandle',
+        'withLeftControls',
+        'withRightControls',
+      ],
+      entryFiles: ['index.mjs', 'index.cjs'],
+      uniqueRuleKeys: ['body', 'group', 'withDragHandle'],
+      requiredRuleFragments: [
+        {
+          key: 'group',
+          fragments: [
+            'background: #f4f4f4;',
+            'border: 1px solid var(--query-builder-color-grey-200);',
+            'border-radius: var(--query-builder-radius-sm, 4px);',
+          ],
+        },
+        {
+          key: 'body',
+          fragments: ['padding: var(--query-builder-group-padding, .7rem);'],
+        },
+      ],
+    },
+    {
       name: 'Alert',
       modulePattern:
         /#region src\/alert\/alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
@@ -336,6 +391,36 @@ const verifyCssBuild = async () => {
     cssModuleMappings.set(contract.name, referenceMappings);
   }
 
+  const groupOptionMappings = cssModuleMappings.get('GroupOption');
+  const groupContainerMappings = cssModuleMappings.get('GroupContainer');
+  const requiredGroupSelectors = [
+    `.${groupOptionMappings.disabled}.${groupOptionMappings.selected}`,
+    `.${groupContainerMappings.left} > div:first-child`,
+    `.${groupContainerMappings.left} > div + div`,
+    `.${groupContainerMappings.left} > div:last-child`,
+    `.${groupContainerMappings.header}.${groupContainerMappings.withLeftControls}:not(.${groupContainerMappings.withRightControls})`,
+  ];
+
+  for (const selector of requiredGroupSelectors) {
+    if (!stylesheet.includes(selector)) {
+      throw new Error(`Group extracted selector ${selector} is missing`);
+    }
+  }
+
+  const normalizedStylesheet = stylesheet.replace(/\s+/g, ' ');
+  const compactGroupBlock =
+    `@media (width <= 900px) { ` +
+    `.${groupContainerMappings.header} { ` +
+    'grid-template-columns: minmax(0, 1fr); gap: .75rem; } ' +
+    `.${groupContainerMappings.right} { ` +
+    'grid-template-columns: repeat(3, minmax(0, max-content)); ' +
+    'grid-auto-flow: row; justify-self: start; } }';
+
+  if (!normalizedStylesheet.includes(compactGroupBlock)) {
+    throw new Error(
+      'Group extracted stylesheet is missing the 900px header/right layout'
+    );
+  }
   const antdToggleMappings = cssModuleMappings.get('ANTD text-mode toggle');
   const antdIconSelector = `.${antdToggleMappings.content} .anticon {`;
   const antdIconRuleOccurrences = stylesheet.split(antdIconSelector).length - 1;
@@ -495,6 +580,9 @@ const verifyCssBuild = async () => {
         cloneButtonRulesExactlyOnce: true,
         lockToggleCssModuleClassesUnique: true,
         lockToggleRulesExactlyOnce: true,
+        groupCssModuleClassesUnique: true,
+        groupRulesExactlyOnce: true,
+        groupResponsiveLayout: '900px',
         dropZoneCssModuleClassesUnique: true,
         dropZoneRulesExactlyOnce: true,
         dropZoneThemeToken: '--query-builder-color-grey-300',

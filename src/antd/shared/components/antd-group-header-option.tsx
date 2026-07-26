@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button } from 'antd';
-import { IOptionProps } from '../../../group/option';
+import { IOptionProps } from '../../../group/components/option';
 import { antdControlStyle } from './styles';
 
 export const AntdGroupHeaderOption: FC<IOptionProps> = ({

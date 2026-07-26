@@ -1,0 +1,84 @@
+@layer react-query-builder {
+  .group {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 0.5rem;
+    background: #f4f4f4;
+    border: 1px solid var(--query-builder-color-grey-200);
+    border-radius: var(--query-builder-radius-sm, 4px);
+    box-shadow: var(
+      --query-builder-shadow-group,
+      0 0 5px -1px rgba(0, 0, 0, 0.15)
+    );
+  }
+
+  .withDragHandle {
+    grid-template-columns: auto 1fr;
+  }
+
+  .body {
+    position: relative;
+    padding: var(--query-builder-group-padding, 0.7rem);
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    padding: 0 0 0.5rem;
+    border-bottom: 1px solid var(--query-builder-color-grey-200);
+  }
+
+  .header.withLeftControls:not(.withRightControls),
+  .header.withRightControls:not(.withLeftControls) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .left {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min-content;
+    align-self: end;
+    justify-self: start;
+  }
+
+  .left > div {
+    border-radius: 0;
+  }
+
+  .left > div:first-child {
+    border-right: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  .left > div + div {
+    border-left: 0;
+  }
+
+  .left > div:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+
+  .right {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min-content;
+    gap: var(--query-builder-control-gap, 0.5rem);
+    justify-self: end;
+  }
+
+  @media (max-width: 900px) {
+    .header {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+
+    .right {
+      grid-template-columns: repeat(3, minmax(0, max-content));
+      grid-auto-flow: row;
+      justify-self: start;
+    }
+  }
+}

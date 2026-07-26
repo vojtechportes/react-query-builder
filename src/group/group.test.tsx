@@ -1,4 +1,8 @@
-﻿import React, { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
+import '@testing-library/jest-dom';
+import { renderToString } from 'react-dom/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { fireEvent, render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
@@ -8,6 +12,10 @@ import {
 import { BuilderContext } from '../builder-context';
 import { strings } from '../locales/en-us';
 import { Group } from './group';
+import { Group as GroupContainer } from './components/group-container';
+import groupContainerStyles from './components/group-container/group-container.module.css';
+import { Option, IOptionProps } from './components/option';
+import optionStyles from './components/option/option.module.css';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
@@ -74,28 +82,22 @@ const renderWithContext = (
     </BuilderContext.Provider>
   );
 
-const getStyleRules = (): CSSStyleRule[] => {
-  const rules: CSSStyleRule[] = [];
+const getGroupContainerCss = () =>
+  readFileSync(
+    join(
+      __dirname,
+      'components',
+      'group-container',
+      'group-container.module.css'
+    ),
+    'utf8'
+  );
 
-  const appendRules = (cssRules: CSSRuleList) => {
-    Array.from(cssRules).forEach((rule) => {
-      if (rule instanceof CSSStyleRule) {
-        rules.push(rule);
-        return;
-      }
-
-      if (rule instanceof CSSMediaRule) {
-        appendRules(rule.cssRules);
-      }
-    });
-  };
-
-  Array.from(document.styleSheets).forEach((styleSheet) => {
-    appendRules(styleSheet.cssRules);
-  });
-
-  return rules;
-};
+const getOptionCss = () =>
+  readFileSync(
+    join(__dirname, 'components', 'option', 'option.module.css'),
+    'utf8'
+  );
 
 describe('#components/Group', () => {
   it('renders in editable and read-only modes', () => {
@@ -246,7 +248,7 @@ describe('#components/Group', () => {
     expect(queryByDataTest(container, 'Option[not]')).toBeNull();
   });
 
-  it('uses sibling-aware header join styles when group negation is hidden', () => {
+  it('uses semantic option state classes when group negation is hidden', () => {
     const { container, getByText } = renderWithContext(
       <Group id="test-2" isRoot={false} value="AND" isNegated={false} />,
       { allowGroupNegation: false }
@@ -254,30 +256,18 @@ describe('#components/Group', () => {
 
     expect(queryByDataTest(container, 'Option[not]')).toBeNull();
 
-    const leftContainer = getByText(strings.group?.and || 'AND').parentElement;
+    const andOption = getByText(strings.group?.and || 'AND');
+    const orOption = getByText(strings.group?.or || 'OR');
+    const leftContainer = andOption.parentElement;
 
-    expect(leftContainer).toBeTruthy();
+    expect(leftContainer).toHaveClass(groupContainerStyles.left);
     expect(leftContainer?.children).toHaveLength(2);
-
-    const classNames = Array.from(leftContainer?.classList || []);
-    const rules = getStyleRules();
-    const normalizeSelector = (selector: string) =>
-      selector.replace(/\s+/g, '');
-    const hasRule = (suffix: string) =>
-      classNames.some((className) =>
-        rules.some(
-          (rule) =>
-            normalizeSelector(rule.selectorText) ===
-            normalizeSelector(`.${className}${suffix}`)
-        )
-      );
-
-    expect(hasRule('>div:first-child')).toBe(true);
-    expect(hasRule('>div+div')).toBe(true);
-    expect(hasRule('>div:last-child')).toBe(true);
-    expect(hasRule('>div:nth-child(2)')).toBe(false);
+    expect(andOption).toHaveClass(optionStyles.option, optionStyles.selected);
+    expect(andOption).toHaveAttribute('data-selected', 'true');
+    expect(orOption).toHaveClass(optionStyles.option);
+    expect(orOption).not.toHaveClass(optionStyles.selected);
+    expect(orOption).toHaveAttribute('data-selected', 'false');
   });
-
   it('renders nothing when strings are unavailable', () => {
     const { container } = renderWithContext(<Group id="test-1" isRoot />, {
       strings: {},
@@ -323,5 +313,282 @@ describe('#components/Group', () => {
       'disabled',
       true
     );
+  });
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])(
+    'maps option selected=%s disabled=%s to finite state classes',
+    (isSelected, disabled) => {
+      const onClick = jest.fn();
+      const { getByText } = render(
+        <Option
+          value="next"
+          onClick={onClick}
+          disabled={disabled}
+          isSelected={isSelected}
+          className="incoming-option"
+        >
+          Mode
+        </Option>
+      );
+      const option = getByText('Mode');
+
+      expect(option).toHaveClass(optionStyles.option, 'incoming-option');
+      expect(option.classList.contains(optionStyles.selected)).toBe(isSelected);
+      expect(option.classList.contains(optionStyles.disabled)).toBe(disabled);
+      expect(option).toHaveAttribute('data-selected', String(isSelected));
+      expect(option).toHaveAttribute('data-disabled', String(disabled));
+      expect(option).not.toHaveAttribute('style');
+
+      fireEvent.click(option);
+
+      expect(onClick).toHaveBeenCalledTimes(disabled ? 0 : 1);
+      if (!disabled) {
+        expect(onClick).toHaveBeenCalledWith('next');
+      }
+    }
+  );
+
+  it('maps container drag-handle and control layouts to semantic state', () => {
+    const { container, rerender } = render(
+      <GroupContainer
+        dragHandle={<span data-test="drag-handle" />}
+        controlsLeft={<div>Left</div>}
+        controlsRight={<div>Right</div>}
+        contentOverlay={<span data-test="overlay" />}
+        className="incoming-group"
+      >
+        <span>Content</span>
+      </GroupContainer>
+    );
+    const group = container.firstElementChild as HTMLElement;
+    const header = group.querySelector(
+      '[data-group-controls-left]'
+    ) as HTMLElement;
+
+    expect(group).toHaveClass(
+      groupContainerStyles.group,
+      groupContainerStyles.withDragHandle,
+      'incoming-group'
+    );
+    expect(group).toHaveAttribute('data-group-has-drag-handle', 'true');
+    expect(group).toHaveAttribute('data-group-has-header', 'true');
+    expect(header).toHaveClass(
+      groupContainerStyles.header,
+      groupContainerStyles.withLeftControls,
+      groupContainerStyles.withRightControls
+    );
+    expect(header).toHaveAttribute('data-group-controls-left', 'true');
+    expect(header).toHaveAttribute('data-group-controls-right', 'true');
+    expect(group.querySelector('[data-test="drag-handle"]')).toBeTruthy();
+    expect(group.querySelector('[data-test="overlay"]')).toBeTruthy();
+
+    rerender(
+      <GroupContainer>
+        <span>Content</span>
+      </GroupContainer>
+    );
+
+    expect(group).toHaveClass(groupContainerStyles.group);
+    expect(group).not.toHaveClass(groupContainerStyles.withDragHandle);
+    expect(group).toHaveAttribute('data-group-has-drag-handle', 'false');
+    expect(group).toHaveAttribute('data-group-has-header', 'false');
+    expect(group.querySelector(`.${groupContainerStyles.header}`)).toBeNull();
+
+    rerender(
+      <GroupContainer controlsLeft={<div>Left only</div>}>
+        <span>Content</span>
+      </GroupContainer>
+    );
+
+    const leftOnlyHeader = group.querySelector(
+      '[data-group-controls-left]'
+    ) as HTMLElement;
+
+    expect(leftOnlyHeader).toHaveClass(
+      groupContainerStyles.header,
+      groupContainerStyles.withLeftControls
+    );
+    expect(leftOnlyHeader).not.toHaveClass(
+      groupContainerStyles.withRightControls
+    );
+    expect(leftOnlyHeader).toHaveAttribute('data-group-controls-left', 'true');
+    expect(leftOnlyHeader).toHaveAttribute(
+      'data-group-controls-right',
+      'false'
+    );
+
+    rerender(
+      <GroupContainer controlsRight={<div>Right only</div>}>
+        <span>Content</span>
+      </GroupContainer>
+    );
+
+    const rightOnlyHeader = group.querySelector(
+      '[data-group-controls-right]'
+    ) as HTMLElement;
+
+    expect(rightOnlyHeader).toHaveClass(
+      groupContainerStyles.header,
+      groupContainerStyles.withRightControls
+    );
+    expect(rightOnlyHeader).not.toHaveClass(
+      groupContainerStyles.withLeftControls
+    );
+    expect(rightOnlyHeader).toHaveAttribute(
+      'data-group-controls-left',
+      'false'
+    );
+    expect(rightOnlyHeader).toHaveAttribute(
+      'data-group-controls-right',
+      'true'
+    );
+  });
+
+  it('preserves custom group and read-only option contracts', () => {
+    const CustomGroup = jest.fn(
+      ({
+        controlsLeft,
+        controlsRight,
+        children,
+      }: React.ComponentProps<typeof GroupContainer>) => (
+        <section>
+          {controlsLeft}
+          {controlsRight}
+          {children}
+        </section>
+      )
+    );
+    const CustomOption = jest.fn(
+      ({ children, disabled, isSelected }: IOptionProps) => (
+        <span
+          data-custom-option="true"
+          data-disabled={disabled}
+          data-selected={isSelected}
+        >
+          {children}
+        </span>
+      )
+    );
+
+    renderWithContext(
+      <Group
+        id="test-2"
+        isRoot={false}
+        value="AND"
+        isNegated={false}
+        readOnlyTargets={['negation', 'combinator']}
+      >
+        Nested content
+      </Group>,
+      {
+        components: {
+          ...defaultComponents,
+          Group: CustomGroup,
+          GroupHeaderOption: CustomOption,
+        },
+      }
+    );
+
+    expect(CustomGroup).toHaveBeenCalled();
+    expect(CustomOption).toHaveBeenCalledTimes(3);
+    expect(CustomOption.mock.calls.map(([props]) => props.disabled)).toEqual([
+      true,
+      true,
+      true,
+    ]);
+    expect(CustomOption.mock.calls.map(([props]) => props.isSelected)).toEqual([
+      false,
+      true,
+      false,
+    ]);
+  });
+
+  it('renders root and nested group containers with the same public class contract', () => {
+    const root = renderWithContext(
+      <Group id="test-1" isRoot value="AND" isNegated={false} />
+    );
+    const nested = renderWithContext(
+      <Group id="test-2" isRoot={false} value="OR" isNegated />
+    );
+
+    expect(root.container.firstElementChild).toHaveClass(
+      groupContainerStyles.group
+    );
+    expect(nested.container.firstElementChild).toHaveClass(
+      groupContainerStyles.group
+    );
+    expect(root.container.firstElementChild).toHaveAttribute(
+      'data-group-has-header',
+      'true'
+    );
+    expect(nested.container.firstElementChild).toHaveAttribute(
+      'data-group-has-header',
+      'true'
+    );
+  });
+
+  it('renders group modules on the server without styled-components output', () => {
+    const markup = renderToString(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData: jest.fn(),
+          onChange: jest.fn(),
+          dispatchAction: jest.fn(),
+          readOnly: false,
+        }}
+      >
+        <Group id="test-1" isRoot value="AND" isNegated={false} />
+      </BuilderContext.Provider>
+    );
+
+    expect(markup).toContain('data-group-has-header="true"');
+    expect(markup).toContain('data-selected="true"');
+    expect(markup).not.toContain('data-styled');
+    expect(markup).not.toContain('$theme');
+  });
+
+  it('exposes every CSS Module class used by the group components', () => {
+    expect(optionStyles.option).toBe('option');
+    expect(optionStyles.selected).toBe('selected');
+    expect(optionStyles.disabled).toBe('disabled');
+    expect(groupContainerStyles.group).toBe('group');
+    expect(groupContainerStyles.withDragHandle).toBe('withDragHandle');
+    expect(groupContainerStyles.body).toBe('body');
+    expect(groupContainerStyles.header).toBe('header');
+    expect(groupContainerStyles.withLeftControls).toBe('withLeftControls');
+    expect(groupContainerStyles.withRightControls).toBe('withRightControls');
+    expect(groupContainerStyles.left).toBe('left');
+    expect(groupContainerStyles.right).toBe('right');
+  });
+
+  it('defines extracted token, joined-option, and responsive layout rules', () => {
+    const groupCss = getGroupContainerCss();
+    const optionCss = getOptionCss();
+
+    expect(groupCss).toContain(
+      'box-shadow: var(\n      --query-builder-shadow-group'
+    );
+    expect(groupCss).toContain(
+      'padding: var(--query-builder-group-padding, 0.7rem)'
+    );
+    expect(groupCss).toContain('.left > div:first-child');
+    expect(groupCss).toContain('.left > div + div');
+    expect(groupCss).toContain('.left > div:last-child');
+    expect(groupCss).toContain('@media (max-width: 900px)');
+    expect(groupCss).toContain(
+      'grid-template-columns: repeat(3, minmax(0, max-content))'
+    );
+    expect(optionCss).toContain(
+      'color: var(--query-builder-color-primary-contrast-text)'
+    );
+    expect(optionCss).toContain('.disabled.selected');
   });
 });
