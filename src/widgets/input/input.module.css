@@ -1,0 +1,16 @@
+@layer react-query-builder {
+  .rangeInputs {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: var(--query-builder-control-gap, 0.5rem);
+    width: 100%;
+    min-width: 0;
+  }
+
+  @media (max-width: 900px) {
+    .rangeInputs {
+      grid-auto-flow: row;
+    }
+  }
+}

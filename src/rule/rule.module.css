@@ -1,0 +1,58 @@
+@layer react-query-builder {
+  .readOnly {
+    --query-builder-rule-read-only: 1;
+  }
+
+  .booleanContainer {
+    display: flex;
+    align-items: center;
+    min-height: 2rem;
+  }
+
+  .fieldsContent {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1.35fr) minmax(0, 1fr)
+      minmax(0, 1.4fr);
+    gap: var(--query-builder-control-gap, 0.5rem);
+    align-items: start;
+    width: 100%;
+    --query-builder-control-width: 100%;
+    --query-builder-control-min-width: 0px;
+  }
+
+  .layoutItem {
+    min-width: 0;
+  }
+
+  .valueContent {
+    min-width: 0;
+  }
+
+  .valueEditorGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+    gap: var(--query-builder-control-gap, 0.5rem);
+  }
+
+  .validationIssues {
+    margin: 0.4rem 0 0;
+    padding-left: 1rem;
+    color: var(--query-builder-color-error-primary);
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 900px) {
+    .fieldsContent {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    }
+
+    .valueContent {
+      grid-column: 1 / -1;
+    }
+
+    .valueEditorGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

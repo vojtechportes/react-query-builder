@@ -1,0 +1,48 @@
+@layer react-query-builder {
+  .rule {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 0.5rem;
+    background-color: var(--query-builder-color-white);
+    border: 1px solid var(--query-builder-color-grey-300);
+    border-radius: var(--query-builder-radius-sm, 4px);
+  }
+
+  .withDragHandle {
+    grid-template-columns: auto 1fr;
+  }
+
+  .withControls {
+    grid-template-columns: 1fr auto;
+  }
+
+  .withDragHandle.withControls {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .content {
+    display: grid;
+    min-width: 0;
+    padding: 0.7rem 0 0.7rem 0.7rem;
+  }
+
+  .contentWithoutControls {
+    padding-right: 0.7rem;
+  }
+
+  .controls {
+    display: grid;
+    grid-auto-columns: min-content;
+    grid-auto-flow: column;
+    gap: var(--query-builder-control-gap, 0.5rem);
+    align-self: start;
+    justify-self: end;
+    padding: 0.7rem;
+  }
+
+  @media (max-width: 900px) {
+    .controls {
+      padding-left: 0.5rem;
+    }
+  }
+}

@@ -1,29 +1,16 @@
 import React, { FC, useContext } from 'react';
-import styled from 'styled-components';
-import { BuilderContext } from '../builder-context';
-import { Input as DefaultInput } from '../form/input';
-import { createReplaceNodeAction } from '../history/create-replace-node-action';
-import { findNodeById } from '../history/find-node-by-id';
-import { compactBuilderMedia } from '../styles/responsive.styles';
-import { applyDataUpdate } from '../utils/apply-data-update.util';
-import { coerceNumberInputValue } from '../utils/coerce-number-input-value.util';
-import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
-import { isUndefined } from '../utils/is-undefined.util';
-import { updateItem } from '../utils/update-item.util';
-
-const RangeInputs = styled.div`
-  display: grid;
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
-  gap: 0.5rem;
-  width: 100%;
-
-  ${compactBuilderMedia`
-    grid-auto-flow: row;
-  `}
-`;
+import styles from './input.module.css';
+import { BuilderContext } from '../../builder-context';
+import { Input as DefaultInput } from '../../form/input';
+import { createReplaceNodeAction } from '../../history/create-replace-node-action';
+import { findNodeById } from '../../history/find-node-by-id';
+import { applyDataUpdate } from '../../utils/apply-data-update.util';
+import { coerceNumberInputValue } from '../../utils/coerce-number-input-value.util';
+import { emitBuilderFieldChange } from '../../utils/emit-builder-field-change.util';
+import { isNormalizedGroupNode } from '../../utils/is-normalized-group-node.util';
+import { isStringOrNumberArray } from '../../utils/is-string-or-number-array.util';
+import { isUndefined } from '../../utils/is-undefined.util';
+import { updateItem } from '../../utils/update-item.util';
 
 export interface IInputProps {
   value: string | number | Array<string | number>;
@@ -65,7 +52,7 @@ export const Input: FC<IInputProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }
@@ -93,13 +80,7 @@ export const Input: FC<IInputProps> = ({
           })()
         : nextValue;
 
-      applyDataUpdate(
-        data,
-        setData,
-        onChange,
-        () => nextData,
-        updateData
-      );
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
       emitBuilderFieldChange(
         onFieldChange,
         nextData,
@@ -137,7 +118,7 @@ export const Input: FC<IInputProps> = ({
     dispatchAction(createReplaceNodeAction(id, nextRule));
     emitBuilderFieldChange(
       onFieldChange,
-      updateItem(data, id, item => {
+      updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }
@@ -160,7 +141,7 @@ export const Input: FC<IInputProps> = ({
 
   if (isStringOrNumberArray(value)) {
     return (
-      <RangeInputs>
+      <div className={styles.rangeInputs} data-range-inputs="true">
         <InputComponent
           id={`query-builder-rule-${id}-value-start`}
           name={`query-builder-rule-${id}-value-start`}
@@ -177,7 +158,7 @@ export const Input: FC<IInputProps> = ({
           onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
           disabled={isDisabled}
         />
-      </RangeInputs>
+      </div>
     );
   }
 

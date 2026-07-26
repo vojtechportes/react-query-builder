@@ -1,4 +1,7 @@
-﻿import React, { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { renderToString } from 'react-dom/server';
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import {
@@ -9,6 +12,9 @@ import {
 import { BuilderContext } from '../builder-context';
 import { strings } from '../locales/en-us';
 import { Rule } from './rule';
+import ruleStyles from './rule.module.css';
+import { Rule as RuleContainer } from './components/rule-container';
+import ruleContainerStyles from './components/rule-container/rule-container.module.css';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
@@ -55,6 +61,7 @@ const fields: IBuilderFieldProps[] = [
     label: 'Mock Field 7',
     operators: ['EQUAL'],
     type: 'MULTI_LIST',
+    value: [{ label: 'Multi value', value: 'multi-value' }],
   },
   {
     field: 'MOCK_FIELD_8',
@@ -321,5 +328,231 @@ describe('#components/Rule', () => {
     expect(
       container.querySelector('#query-builder-rule-test-7-value-field-trigger')
     ).toBeTruthy();
+  });
+});
+
+describe('#components/Rule CSS Module presentation', () => {
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])(
+    'maps dragHandle=%s controls=%s to finite container state',
+    (hasDragHandle, hasControls) => {
+      const { container } = render(
+        <RuleContainer
+          dragHandle={hasDragHandle ? <span data-test="drag" /> : null}
+          controls={hasControls ? <button type="button">Control</button> : null}
+          className="incoming-rule"
+          data-test="rule-container"
+        >
+          Content
+        </RuleContainer>
+      );
+      const rule = container.firstElementChild as HTMLElement;
+      const content = rule.children[hasDragHandle ? 1 : 0] as HTMLElement;
+
+      expect(rule).toHaveClass(ruleContainerStyles.rule, 'incoming-rule');
+      expect(rule.classList.contains(ruleContainerStyles.withDragHandle)).toBe(
+        hasDragHandle
+      );
+      expect(rule.classList.contains(ruleContainerStyles.withControls)).toBe(
+        hasControls
+      );
+      expect(rule).toHaveAttribute(
+        'data-rule-has-drag-handle',
+        String(hasDragHandle)
+      );
+      expect(rule).toHaveAttribute(
+        'data-rule-has-controls',
+        String(hasControls)
+      );
+      expect(content).toHaveClass(ruleContainerStyles.content);
+      expect(
+        content.classList.contains(ruleContainerStyles.contentWithoutControls)
+      ).toBe(!hasControls);
+      expect(
+        Boolean(rule.querySelector(`.${ruleContainerStyles.controls}`))
+      ).toBe(hasControls);
+    }
+  );
+
+  it('maps rule layout, comparison, validation, and read-only state classes', () => {
+    const { container } = renderWithContext(
+      <Rule
+        id="test-3"
+        field="MOCK_FIELD_2"
+        operator="EQUAL"
+        valueSource="field"
+        valueField="MOCK_FIELD_8"
+        readOnly
+      />,
+      {
+        allowFieldComparisons: true,
+        showValidation: true,
+        validation: {
+          isValid: false,
+          issues: [
+            {
+              ruleId: 'test-3',
+              field: 'MOCK_FIELD_2',
+              code: 'required',
+              message: 'Value is required',
+            },
+          ],
+          issuesByRuleId: {
+            'test-3': [
+              {
+                ruleId: 'test-3',
+                field: 'MOCK_FIELD_2',
+                code: 'required',
+                message: 'Value is required',
+              },
+            ],
+          },
+        },
+      }
+    );
+    const rule = container.firstElementChild as HTMLElement;
+
+    expect(rule).toHaveClass(ruleContainerStyles.rule, ruleStyles.readOnly);
+    expect(rule.querySelector(`.${ruleStyles.fieldsContent}`)).toBeTruthy();
+    expect(rule.querySelectorAll(`.${ruleStyles.layoutItem}`)).toHaveLength(2);
+    expect(rule.querySelector(`.${ruleStyles.valueContent}`)).toBeTruthy();
+    expect(rule.querySelector(`.${ruleStyles.valueEditorGrid}`)).toBeTruthy();
+    expect(
+      rule.querySelector(`.${ruleStyles.validationIssues}`)
+    ).toHaveTextContent('Value is required');
+  });
+
+  it('renders range and multi-value editor shapes', () => {
+    const { container } = renderWithContext(
+      <>
+        <Rule
+          data-test="date-range"
+          id="test-4"
+          field="MOCK_FIELD_3"
+          operator="EQUAL"
+          value={['2025-01-01', '2025-01-31']}
+        />
+        <Rule
+          data-test="multi-value"
+          id="test-8"
+          field="MOCK_FIELD_7"
+          operator="EQUAL"
+          value={['multi-value']}
+        />
+      </>
+    );
+
+    expect(
+      container.querySelector(
+        '[data-test="date-range"] [data-range-inputs="true"]'
+      )
+    ).toBeTruthy();
+    expect(
+      container.querySelectorAll('[data-test="date-range"] input[type="date"]')
+    ).toHaveLength(2);
+    expect(
+      container.querySelector(
+        '[data-test="multi-value"] [data-test="SelectMultiTrigger"]'
+      )
+    ).toBeTruthy();
+  });
+
+  it('preserves custom rule-container composition', () => {
+    const CustomRule = jest.fn(
+      ({
+        children,
+        className,
+        controls,
+        dragHandle,
+      }: React.ComponentProps<typeof RuleContainer>) => (
+        <section className={className} data-custom-rule="true">
+          {dragHandle}
+          {children}
+          {controls}
+        </section>
+      )
+    );
+    const { container } = renderWithContext(
+      <Rule
+        id="test-2"
+        field="MOCK_FIELD_1"
+        operator="EQUAL"
+        value
+        readOnly
+        dragHandle={<span data-test="custom-drag" />}
+      />,
+      {
+        components: { ...defaultComponents, Rule: CustomRule },
+      }
+    );
+
+    expect(CustomRule).toHaveBeenCalled();
+    expect(container.querySelector('[data-custom-rule="true"]')).toHaveClass(
+      ruleStyles.readOnly
+    );
+    expect(container.querySelector('[data-test="custom-drag"]')).toBeTruthy();
+  });
+
+  it('renders rule modules on the server without styled-components output', () => {
+    const markup = renderToString(
+      <BuilderContext.Provider
+        value={{
+          components,
+          fields,
+          data,
+          strings,
+          setData: jest.fn(),
+          onChange: jest.fn(),
+          dispatchAction: jest.fn(),
+          readOnly: false,
+        }}
+      >
+        <Rule
+          id="test-3"
+          field="MOCK_FIELD_2"
+          operator="EQUAL"
+          value="server"
+        />
+      </BuilderContext.Provider>
+    );
+
+    expect(markup).toContain('data-rule-has-drag-handle="false"');
+    expect(markup).toContain(ruleStyles.fieldsContent);
+    expect(markup).not.toContain('data-styled');
+    expect(markup).not.toContain('$theme');
+  });
+
+  it('defines extracted token, grid, validation, and responsive rules', () => {
+    const ruleCss = readFileSync(join(__dirname, 'rule.module.css'), 'utf8');
+    const containerCss = readFileSync(
+      join(
+        __dirname,
+        'components',
+        'rule-container',
+        'rule-container.module.css'
+      ),
+      'utf8'
+    );
+
+    expect(containerCss).toContain(
+      'background-color: var(--query-builder-color-white)'
+    );
+    expect(containerCss).toContain(
+      'border: 1px solid var(--query-builder-color-grey-300)'
+    );
+    expect(containerCss).toContain('.withDragHandle.withControls');
+    expect(containerCss).toContain('@media (max-width: 900px)');
+    expect(ruleCss).toContain('grid-template-columns: minmax(0, 1.35fr)');
+    expect(ruleCss).toContain('--query-builder-control-min-width: 0px');
+    expect(ruleCss).toContain('min-width: 0');
+    expect(ruleCss).toContain(
+      'color: var(--query-builder-color-error-primary)'
+    );
+    expect(ruleCss).toContain('@media (max-width: 900px)');
+    expect(ruleCss).toContain('grid-column: 1 / -1');
   });
 });
