@@ -1,0 +1,25 @@
+@layer react-query-builder {
+  .option {
+    min-height: 2rem;
+    padding: 0.5rem 0.6rem;
+    color: var(--query-builder-color-primary-contrast-text);
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: var(--query-builder-color-grey-500);
+    border: 1px solid var(--query-builder-color-grey-800);
+    cursor: pointer;
+  }
+
+  .selected {
+    background: var(--query-builder-color-primary-default);
+  }
+
+  .disabled {
+    cursor: initial;
+  }
+
+  .disabled.selected {
+    background: var(--query-builder-color-grey-800);
+  }
+}

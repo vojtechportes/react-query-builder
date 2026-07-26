@@ -23,8 +23,8 @@ import {
   NormalizedNode,
 } from '../utils/query-tree';
 import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
-import { Group as DefaultGroupContainer } from './group-container';
-import { Option as DefaultOption } from './option';
+import { Group as DefaultGroupContainer } from './components/group-container';
+import { Option as DefaultOption } from './components/option';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 import { updateGroupLockState } from '../utils/read-only/update-group-lock-state.util';
 import { canAddRuleForParent } from '../builder/utils/resolve-builder-field-usage.util';

@@ -61,6 +61,7 @@ src/
 - Types, interfaces, enums, utility functions, components and so on should not be mixed together in one folder as a flat structure
 - File placement into top-level `utils/`, `types/`, `hooks/`, `constants/` is allowed if these are either shared or serve top level files themselves
 - Slice-local `types/`, `utils/`, `hooks`, `components` and `constants/` folders are allowed when they serve one concrete slice and contain actual code owned by that slice. Do not create empty or speculative local folders.
+- When a slice has a primary component file and nested owned components, place the nested components under the slice's `components/` folder. For example, `group/group.tsx` owns `group/components/option/` and `group/components/group-container/`; do not place nested component folders alongside the primary component.
 - Prefer granular and colocated files over catch-all files such as `types.ts`, `constants.ts`, or `helpers.ts`
 - Do not introduce new catch-all files such as `types.ts`, `constants.ts`, or `helpers.ts` unless explicitly instructed
 - Do not refactor existing catch-all files such as `types.ts`, `constants.ts`, or `helpers.ts` just to enforce this rule unless explicitly instructed
