@@ -1,0 +1,51 @@
+@layer react-query-builder {
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--query-builder-color-grey-400);
+    border-radius: 999px;
+    background: var(--query-builder-color-white);
+    color: var(--query-builder-color-grey-900);
+    font-size: 0.8rem;
+  }
+
+  .removable {
+    padding: 0.2rem 0.3rem 0.2rem 0.55rem;
+  }
+
+  .label {
+    min-width: 0;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .removeButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--query-builder-color-grey-700);
+    cursor: pointer;
+  }
+
+  .removeButton:hover {
+    background: var(--query-builder-color-grey-200);
+    color: var(--query-builder-color-grey-900);
+  }
+
+  .removeButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

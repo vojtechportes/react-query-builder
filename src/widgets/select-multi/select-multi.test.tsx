@@ -6,6 +6,7 @@ import {
   defaultComponents,
 } from '../../builder';
 import { BuilderContext } from '../../builder-context';
+import triggerStyles from './components/trigger/trigger.module.css';
 import { SelectMulti } from './select-multi';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -37,7 +38,9 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -68,6 +71,20 @@ describe('#components/Widgets/SelectMulti', () => {
 
     expect(editable.container.firstChild).toBeTruthy();
     expect(readOnly.container.firstChild).toBeTruthy();
+    expect(
+      getByDataTest(
+        readOnly.container,
+        'SelectMultiTrigger'
+      ).classList.contains(triggerStyles.trigger)
+    ).toBe(true);
+    expect(
+      (
+        getByDataTest(
+          readOnly.container,
+          'SelectMultiTrigger'
+        ) as HTMLButtonElement
+      ).disabled
+    ).toBe(true);
   });
 
   it('adds and removes values through the options list', () => {
@@ -91,9 +108,9 @@ describe('#components/Widgets/SelectMulti', () => {
       />
     );
 
-    expect(getByDataTest(container, 'SelectMultiSummaryBadge').textContent).toEqual(
-      '+1'
-    );
+    expect(
+      getByDataTest(container, 'SelectMultiSummaryBadge').textContent
+    ).toEqual('+1');
   });
 
   it('falls back to the default form components when custom ones are unavailable', () => {
@@ -102,6 +119,8 @@ describe('#components/Widgets/SelectMulti', () => {
       { components: {} as IBuilderComponentsProps }
     );
 
-    expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
+    expect(
+      container.querySelector('[data-test="SelectMultiTrigger"]')
+    ).toBeTruthy();
   });
 });

@@ -1,0 +1,76 @@
+@layer react-query-builder {
+  .trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 2.2rem 0 0.6rem;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .trigger:disabled {
+    cursor: not-allowed;
+  }
+
+  .label {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .summaryBadge {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    max-width: 4rem;
+    margin-right: 0.35rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    background: var(--query-builder-color-primary-default);
+    color: var(--query-builder-color-primary-contrast-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .chevron {
+    position: absolute;
+    top: 50%;
+    right: 0.7rem;
+    width: 0.55rem;
+    height: 0.35rem;
+    color: var(--query-builder-color-grey-800);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .chevron::before,
+  .chevron::after {
+    content: '';
+    position: absolute;
+    top: 0.08rem;
+    width: 0.38rem;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .chevron::before {
+    left: 0;
+    transform: rotate(45deg);
+    transform-origin: left center;
+  }
+
+  .chevron::after {
+    right: 0;
+    transform: rotate(-45deg);
+    transform-origin: right center;
+  }
+
+  .expanded .chevron {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}

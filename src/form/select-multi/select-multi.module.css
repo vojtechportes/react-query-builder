@@ -1,0 +1,13 @@
+@layer react-query-builder {
+  .container {
+    position: relative;
+    display: inline-block;
+    width: var(--query-builder-control-width, 160px);
+    min-width: var(--query-builder-control-min-width, 160px);
+    max-width: 100%;
+  }
+
+  .hiddenInput {
+    display: none;
+  }
+}
