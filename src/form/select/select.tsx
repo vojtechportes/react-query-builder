@@ -1,22 +1,10 @@
+import clsx from 'clsx';
 import React, { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTheme } from '../theme-provider/hooks/use-theme';
-import { Option } from '../widgets/select-multi/components/option';
-import { Trigger } from '../widgets/select-multi/components/trigger';
-import { useSelectMulti } from '../widgets/select-multi/hooks/use-select-multi';
-import { Popover } from './popover';
-
-const Container = styled.div`
-  position: relative;
-  display: inline-block;
-  width: var(--query-builder-control-width, 160px);
-  min-width: var(--query-builder-control-min-width, 160px);
-  max-width: 100%;
-`;
-
-const HiddenInput = styled.input`
-  display: none;
-`;
+import { Option } from '../../widgets/select-multi/components/option';
+import { Trigger } from '../../widgets/select-multi/components/trigger';
+import { useSelectMulti } from '../../widgets/select-multi/hooks/use-select-multi';
+import { Popover } from '../popover';
+import styles from './select.module.css';
 
 export interface ISelectProps {
   values: Array<{ value: string; label: string; disabled?: boolean }>;
@@ -39,7 +27,6 @@ export const Select: FC<ISelectProps> = ({
   id,
   name,
 }) => {
-  const theme = useTheme();
   const { isOpen, close, rootRef, toggle, triggerRef } = useSelectMulti({
     disabled,
   });
@@ -58,13 +45,14 @@ export const Select: FC<ISelectProps> = ({
   };
 
   return (
-    <Container ref={rootRef} className={className}>
-      <HiddenInput
+    <div ref={rootRef} className={clsx(styles.container, className)}>
+      <input
         type="hidden"
         id={id}
         name={name}
         value={selectedValue || ''}
         readOnly
+        className={styles.hiddenInput}
       />
       <Trigger
         disabled={disabled}
@@ -73,10 +61,9 @@ export const Select: FC<ISelectProps> = ({
         label={selectedOption?.label || emptyValue || 'Select value'}
         onClick={toggle}
         triggerRef={triggerRef}
-        theme={theme}
       />
       {isOpen ? (
-        <Popover theme={theme}>
+        <Popover>
           {values.map(({ value, label, disabled: optionDisabled = false }) => (
             <Option
               key={value}
@@ -85,11 +72,10 @@ export const Select: FC<ISelectProps> = ({
               selected={value === selectedValue}
               disabled={optionDisabled}
               onClick={handleSelect}
-              theme={theme}
             />
           ))}
         </Popover>
       ) : null}
-    </Container>
+    </div>
   );
 };

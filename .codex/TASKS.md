@@ -1560,7 +1560,7 @@ unexpectedly.
 
 ### T044 - Migrate SelectMulti internals and form popover modules
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T042 and T043
 
@@ -2001,3 +2001,5 @@ site/v1 usage.
 **Verification:**
 
 - Run the full publish-artifact workflow locally/CI and record final size/review reports.
+
+
