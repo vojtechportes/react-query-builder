@@ -308,6 +308,7 @@ const verifyCssBuild = async () => {
       ],
       uniqueRuleKeys: ['content', 'label'],
       requiredSelectors: [{ key: 'content', suffix: ' svg {' }],
+      forbiddenFragments: ['styled-components'],
       requiredSelectorRuleFragments: [
         {
           key: 'content',
@@ -325,6 +326,80 @@ const verifyCssBuild = async () => {
             'line-height: 1;',
           ],
         },
+      ],
+    },
+    {
+      name: 'Fluent UI text-mode toggle',
+      modulePattern:
+        /#region src\/fluentui\/shared\/components\/fluent-ui-text-mode-toggle-content\/fluent-ui-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['content', 'label'],
+      entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
+      uniqueRuleKeys: ['content', 'label'],
+      requiredSelectors: [{ key: 'content', suffix: ' svg {' }],
+      forbiddenFragments: ['styled-components'],
+    },
+    {
+      name: 'Fluent UI SelectMulti',
+      modulePattern:
+        /#region src\/fluentui\/shared\/components\/fluent-ui-select-multi\/fluent-ui-select-multi\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['badge'],
+      entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
+      uniqueRuleKeys: ['badge'],
+      requiredRuleFragments: [
+        {
+          key: 'badge',
+          fragments: [
+            'background: var(--fluent-ui-badge-background);',
+            'color: var(--fluent-ui-badge-color);',
+          ],
+        },
+      ],
+    },
+    {
+      name: 'Fluent UI Rule',
+      modulePattern:
+        /#region src\/fluentui\/shared\/components\/fluent-ui-rule\/fluent-ui-rule\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: [
+        'body',
+        'bodyWithoutControls',
+        'controls',
+        'rule',
+        'withControls',
+        'withDragHandle',
+      ],
+      entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
+      uniqueRuleKeys: ['body', 'bodyWithoutControls', 'rule'],
+    },
+    {
+      name: 'Fluent UI Group',
+      modulePattern:
+        /#region src\/fluentui\/shared\/components\/fluent-ui-group\/fluent-ui-group\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: [
+        'body',
+        'group',
+        'header',
+        'left',
+        'right',
+        'withDragHandle',
+        'withLeftControls',
+        'withRightControls',
+      ],
+      entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
+      uniqueRuleKeys: ['body', 'group'],
+    },
+    {
+      name: 'Fluent UI GroupHeaderOption',
+      modulePattern:
+        /#region src\/fluentui\/shared\/components\/fluent-ui-group-header-option\/fluent-ui-group-header-option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['disabled', 'option', 'selected'],
+      entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
+      uniqueRuleKeys: ['disabled', 'option', 'selected'],
+      requiredSelectors: [
+        { key: 'option', suffix: ':hover' },
+        { key: 'option', suffix: ':focus-visible' },
+        { key: 'option', suffix: ':first-child' },
+        { key: 'option', suffix: ':last-child' },
+        { key: 'selected', suffix: ':hover' },
       ],
     },
   ];
@@ -348,6 +423,18 @@ const verifyCssBuild = async () => {
         visited.add(fileName);
 
         const source = await readFile(fileName, 'utf8');
+
+        for (const fragment of contract.forbiddenFragments || []) {
+          if (source.includes(fragment)) {
+            throw new Error(
+              `${contract.name} reaches forbidden dependency ${fragment} through ${path.relative(
+                distributionDirectory,
+                fileName
+              )}`
+            );
+          }
+        }
+
         const moduleMatch = source.match(contract.modulePattern);
 
         if (moduleMatch) {
@@ -498,6 +585,50 @@ const verifyCssBuild = async () => {
       'Group extracted stylesheet is missing the 900px header/right layout'
     );
   }
+
+  const fluentRuleMappings = cssModuleMappings.get('Fluent UI Rule');
+  const fluentGroupMappings = cssModuleMappings.get('Fluent UI Group');
+  const fluentOptionMappings = cssModuleMappings.get(
+    'Fluent UI GroupHeaderOption'
+  );
+  const compactFluentRuleBlock =
+    `@media (width <= 900px) { ` +
+    `.${fluentRuleMappings.controls} { padding-left: .5rem; } }`;
+  const compactFluentGroupBlock =
+    `@media (width <= 900px) { ` +
+    `.${fluentGroupMappings.header} { ` +
+    'grid-template-columns: minmax(0, 1fr); gap: .75rem; } ' +
+    `.${fluentGroupMappings.right} { ` +
+    'grid-template-columns: repeat(3, minmax(0, max-content)); ' +
+    'grid-auto-flow: row; justify-self: start; } }';
+  const requiredFluentSelectors = [
+    `.${fluentRuleMappings.withDragHandle}.${fluentRuleMappings.withControls} {`,
+    `.${fluentGroupMappings.header}.${fluentGroupMappings.withLeftControls}:not(.${fluentGroupMappings.withRightControls})`,
+    `.${fluentOptionMappings.option}:not(:first-child)`,
+  ];
+
+  if (!normalizedStylesheet.includes(compactFluentRuleBlock)) {
+    throw new Error(
+      'Fluent UI Rule stylesheet is missing the 900px controls layout'
+    );
+  }
+
+  if (!normalizedStylesheet.includes(compactFluentGroupBlock)) {
+    throw new Error(
+      'Fluent UI Group stylesheet is missing the 900px header/right layout'
+    );
+  }
+
+  for (const selector of requiredFluentSelectors) {
+    const occurrences = stylesheet.split(selector).length - 1;
+
+    if (occurrences !== 1) {
+      throw new Error(
+        `Expected Fluent UI selector ${selector} exactly once, received ${occurrences}`
+      );
+    }
+  }
+
   const antdToggleMappings = cssModuleMappings.get('ANTD text-mode toggle');
   const antdIconSelector = `.${antdToggleMappings.content} .anticon {`;
   const antdIconRuleOccurrences = stylesheet.split(antdIconSelector).length - 1;
@@ -663,6 +794,9 @@ const verifyCssBuild = async () => {
         dropZoneCssModuleClassesUnique: true,
         dropZoneRulesExactlyOnce: true,
         dropZoneThemeToken: '--query-builder-color-grey-300',
+        fluentUiAdapterEntriesWithCssMappings: 2,
+        fluentUiAdapterRulesExactlyOnce: true,
+        fluentUiResponsiveLayout: '900px',
         esmNonUiLoad: 'passed',
         nonUiEntriesCssAndClsxFree: true,
         sharedJavaScriptChunks: sharedJavaScriptChunks.length,

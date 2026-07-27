@@ -1753,7 +1753,7 @@ unexpectedly.
 
 ### T052 - Migrate Fluent UI structural wrappers
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035 and T049
 
