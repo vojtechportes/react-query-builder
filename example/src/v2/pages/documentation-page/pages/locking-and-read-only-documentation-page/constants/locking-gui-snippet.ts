@@ -1,4 +1,5 @@
-export const lockingGuiSnippet = `<Builder
+export const lockingGuiSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+<Builder
   fields={fields}
   data={data}
   lockable

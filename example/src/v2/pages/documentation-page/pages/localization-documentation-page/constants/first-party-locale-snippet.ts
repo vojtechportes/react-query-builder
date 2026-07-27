@@ -1,4 +1,5 @@
-export const firstPartyLocaleSnippet = `import { Builder } from '@vojtechportes/react-query-builder';
+export const firstPartyLocaleSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import { Builder } from '@vojtechportes/react-query-builder';
 import { strings } from '@vojtechportes/react-query-builder/locale/fr-FR';
 
 <Builder

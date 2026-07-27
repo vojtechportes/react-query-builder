@@ -50,6 +50,24 @@ export const AdaptersDocumentationContent: React.FC = () => (
         merge patterns.
       </li>
     </List>
+    <SectionTitle>Stylesheet order</SectionTitle>
+    <List>
+      <li>
+        Import any host-library stylesheet first, such as Bootstrap, Mantine, or
+        Radix Themes.
+      </li>
+      <li>
+        Import{' '}
+        <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
+        once after the host stylesheet. MUI, ANTD, and Fluent UI do not require
+        an additional static host stylesheet in these examples.
+      </li>
+      <li>
+        Load application-owned overrides after both stylesheets. Host component
+        theme APIs remain authoritative for adapter controls; query-builder
+        variables customize the remaining structural surfaces.
+      </li>
+    </List>{' '}
     <SectionTitle>Extending an adapter</SectionTitle>
     <List>
       <li>

@@ -1,4 +1,5 @@
-export const builderRefBasicSnippet = `import React, { useState } from 'react';
+export const builderRefBasicSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useState } from 'react';
 import {
   Builder,
   useBuilderRef,

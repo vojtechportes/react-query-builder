@@ -4,6 +4,7 @@ export const bootstrapCreateComponentsSnippet = `import {
 } from '@vojtechportes/react-query-builder';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import '@vojtechportes/react-query-builder/styles.css';
 import {
   createBootstrapComponents,
   components as bootstrapComponents,

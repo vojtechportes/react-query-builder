@@ -1,4 +1,5 @@
-export const stringsSnippet = `import { strings } from '@vojtechportes/react-query-builder';
+export const stringsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import { strings } from '@vojtechportes/react-query-builder';
 
 <Builder
   fields={fields}

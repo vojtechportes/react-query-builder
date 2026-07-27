@@ -167,6 +167,12 @@ export const TextModeDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Using Monaco text mode</SectionTitle>
+    <p>
+      Monaco uses the same public{' '}
+      <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
+      import as the default builder. Import it once; the Monaco subpackage does
+      not ship a second stylesheet.
+    </p>
     <CodeBlock
       code={monacoTextModeSnippet}
       language="tsx"
@@ -182,6 +188,22 @@ export const TextModeDocumentationContent: React.FC = () => (
       language="tsx"
       label="Compose Monaco with ANTD"
     />
+    <SectionTitle>Monaco styling hooks</SectionTitle>
+    <List>
+      <li>
+        Use public editor, color, spacing, radius, and shadow CSS variables for
+        supported presentation changes.
+      </li>
+      <li>
+        <InlineCode>.rqb-monaco-text-mode-editor</InlineCode> is the stable
+        class on the Monaco surface when an application needs a wrapper-scoped
+        selector.
+      </li>
+      <li>
+        Generated <InlineCode>rqb_[local]_[hash]</InlineCode> CSS Module classes
+        are private and must not be used as selectors.
+      </li>
+    </List>{' '}
     <SectionTitle>Text-mode strings</SectionTitle>
     <p>
       Text-mode labels and messages are part of the regular{' '}

@@ -1,4 +1,5 @@
-export const historySnippet = `import React, { useState } from 'react';
+export const historySnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useState } from 'react';
 import {
   Builder,
   type DenormalizedQuery,

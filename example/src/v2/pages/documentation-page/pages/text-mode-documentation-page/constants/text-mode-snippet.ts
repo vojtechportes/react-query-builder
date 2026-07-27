@@ -1,4 +1,5 @@
-export const textModeSnippet = `import React, { useState } from 'react';
+export const textModeSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useState } from 'react';
 import {
   Builder,
   type DenormalizedQuery,

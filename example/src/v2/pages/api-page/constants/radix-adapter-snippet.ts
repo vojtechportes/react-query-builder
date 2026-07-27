@@ -1,4 +1,5 @@
 export const radixAdapterSnippet = `import '@radix-ui/themes/styles.css';
+import '@vojtechportes/react-query-builder/styles.css';
 import { Theme } from '@radix-ui/themes';
 import { components } from '@vojtechportes/react-query-builder/radix/v1';
 

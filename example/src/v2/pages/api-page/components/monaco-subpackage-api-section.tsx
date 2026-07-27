@@ -26,6 +26,19 @@ export const MonacoSubpackageApiSection: React.FC = () => (
         <InlineCode>MonacoTextModeEditor</InlineCode>.
       </li>
       <li>
+        <ItemTitle>Stylesheet:</ItemTitle> Import{' '}
+        <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
+        exactly once for both the builder and Monaco integration. The Monaco
+        subpackage does not add another CSS asset.
+      </li>
+      <li>
+        <ItemTitle>Styling hooks:</ItemTitle> Use public{' '}
+        <InlineCode>--query-builder-*</InlineCode> variables or the stable{' '}
+        <InlineCode>.rqb-monaco-text-mode-editor</InlineCode> surface class.
+        Generated <InlineCode>rqb_[local]_[hash]</InlineCode> classes are
+        private.
+      </li>
+      <li>
         <ItemTitle>Peer dependency:</ItemTitle>{' '}
         <InlineCode>monaco-editor</InlineCode> is optional and only required
         when you use that subpackage.

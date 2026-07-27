@@ -1,4 +1,5 @@
-export const fluentUiAdapterSnippet = `import { components } from '@vojtechportes/react-query-builder/fluentui/v8';
+export const fluentUiAdapterSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import { components } from '@vojtechportes/react-query-builder/fluentui/v8';
 
 <Builder
   fields={fields}

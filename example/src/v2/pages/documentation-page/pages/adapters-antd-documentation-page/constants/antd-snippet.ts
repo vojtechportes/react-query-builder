@@ -1,4 +1,5 @@
-export const antdSnippet = `import {
+export const antdSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import {
   Builder,
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';

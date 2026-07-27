@@ -9,7 +9,7 @@ export const apiBaseline = [
     path: '/api/builder',
     title: 'Builder',
     contentHash:
-      '0d672433f0508771a61ec61b0feaef7bb6392980dcc0068ec24004f94f256874',
+      'ddea112faa099eed32044f490e1e52cac2997fa3805b0eb9a12cf6db77244003',
   },
   {
     path: '/api/builder-ref',
@@ -33,55 +33,55 @@ export const apiBaseline = [
     path: '/api/components',
     title: 'Components',
     contentHash:
-      'a2c2c72e9ee40eda72e57ef0968a403ca9f1f4e63e88e1402bc24e2789f1134a',
+      'f111af4d0d78fe777ecadcb45946c166fbae5ad18c146d563e70fb8e3869e7ea',
   },
   {
     path: '/api/adapters',
     title: 'Adapters',
     contentHash:
-      'c65e0be121685c17fadb4706567c0fce8c1ac6d8244b7c6e625743d0e2d2131f',
+      '6c28d824ee47310bcbd44e034218b4d56505af7469c2ac2019303d8bb9989953',
   },
   {
     path: '/api/adapters/mui',
     title: 'MUI',
     contentHash:
-      '21a901d354a34d00f53b5d5000cffe38f7778720e2de92e9567fb8b11b50d6d5',
+      '7081c05e27d303f1e4f710eb200d0433f8d81a6502dd67ce840d29964af20b8c',
   },
   {
     path: '/api/adapters/antd',
     title: 'ANTD',
     contentHash:
-      '6e4ca182f47a0aff4c273eea527ac0bc8403b1072cd00a595ca8a6ba8707d3d4',
+      'c80ce0d70d1ac9f3ea16d997368c1689bd2e9c01337ec065f6d615a1d8f6e98e',
   },
   {
     path: '/api/adapters/fluentui',
     title: 'Fluent UI',
     contentHash:
-      '9199200eef8b5300a81c1ef1b97aaa60d4bf51fff4eeb4bef305456e85cd0e39',
+      'c70e0c9ef054f3e57033885d442fd19f0ac141f2d91fda33c7a6383f5dede525',
   },
   {
     path: '/api/adapters/mantine',
     title: 'Mantine',
     contentHash:
-      '0b8af2c6e902fb802f6d3c5db155abbe5ff016a946387c57272e87b20ec2afd7',
+      'eca39cb4a6e467f4dc671e5e09cdc7bca43ae6466ab5ea3ceee6bc602cd4780a',
   },
   {
     path: '/api/adapters/bootstrap',
     title: 'Bootstrap',
     contentHash:
-      'f588ca36fd5bc3f5844e12d8249177a63923688408e80734377683c398c9de32',
+      '34e27a46c7b04fc1b12b4a1953daf59830280c55f04a500425c491dfed92db66',
   },
   {
     path: '/api/adapters/radix',
     title: 'Radix',
     contentHash:
-      '495f69109cb6361c49b6039a7efea978d4f91231f5f688d88d9bb5c7488ac08c',
+      '67b8726ab4b6f3fa6285a61fdddf173411be956d22e1f2497a0bcc5d87f824fa',
   },
   {
     path: '/api/theming',
     title: 'Theming',
     contentHash:
-      'cdabece33531446920dfa658e19d7b84c6eafbe49459773d09a5a69ecb163e95',
+      '3f1bf8c98969f3c44b07e946f12fbdb172944d46e14a937363e8dd990d8a818f',
   },
   {
     path: '/api/format-query',
