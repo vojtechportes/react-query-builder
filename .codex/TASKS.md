@@ -1803,7 +1803,7 @@ wrappers.
 
 ### T054 - Migrate Monaco editor styling and global selectors
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035 and T049
 
