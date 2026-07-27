@@ -29,12 +29,7 @@ export const prismaFilterUiRecipe: IRecipePage = {
       href: 'https://www.prisma.io/docs/orm/prisma-client/queries/crud#filter-records',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder
-
-import { Builder } from '@vojtechportes/react-query-builder';
-import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder`,
   fieldsCode: `import type {
   DenormalizedQuery,
   IBuilderFieldProps,

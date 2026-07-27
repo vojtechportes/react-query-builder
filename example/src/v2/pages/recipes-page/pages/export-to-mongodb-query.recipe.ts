@@ -32,11 +32,7 @@ export const exportToMongodbQueryRecipe: IRecipePage = {
       href: 'https://www.mongodb.com/docs/manual/tutorial/query-documents/',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder
-
-import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'category', label: 'Category', type: 'TEXT' },
   { field: 'price', label: 'Price', type: 'NUMBER' },
