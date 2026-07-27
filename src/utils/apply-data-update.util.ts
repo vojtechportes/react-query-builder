@@ -1,5 +1,5 @@
 import React from 'react';
-import { NormalizedQuery } from './query-tree';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 
 export const applyDataUpdate = (
   data: NormalizedQuery,

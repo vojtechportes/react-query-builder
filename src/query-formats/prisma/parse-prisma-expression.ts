@@ -1,8 +1,8 @@
-import type { DenormalizedNode, QueryOperator } from '../../utils/query-tree';
-import {
-  inferPrismaStringOperator,
-  parsePrismaFieldReference,
-} from './shared';
+import type {
+  DenormalizedNode,
+  QueryOperator,
+} from '../../shared/query/model/types/query-tree';
+import { inferPrismaStringOperator, parsePrismaFieldReference } from './shared';
 
 type PrismaDocument = Record<string, unknown>;
 
@@ -24,7 +24,7 @@ const createLogicalGroup = (
   type: 'GROUP',
   value: combinator,
   isNegated: negated,
-  children: items.flatMap(item => parsePrismaExpression(item)),
+  children: items.flatMap((item) => parsePrismaExpression(item)),
 });
 
 const createScalarComparisonNode = (
@@ -114,11 +114,17 @@ const parseFieldOperatorExpression = (
       case 'hasSome':
         return [{ field, operator: 'ANY_IN', value: value.hasSome as never }];
       case 'contains':
-        return [{ field, operator: 'CONTAINS', value: value.contains as never }];
+        return [
+          { field, operator: 'CONTAINS', value: value.contains as never },
+        ];
       case 'startsWith':
-        return [{ field, operator: 'STARTS_WITH', value: value.startsWith as never }];
+        return [
+          { field, operator: 'STARTS_WITH', value: value.startsWith as never },
+        ];
       case 'endsWith':
-        return [{ field, operator: 'ENDS_WITH', value: value.endsWith as never }];
+        return [
+          { field, operator: 'ENDS_WITH', value: value.endsWith as never },
+        ];
       case 'not': {
         if (value.not === null) {
           return [{ field, operator: 'IS_NOT_NULL' }];
@@ -164,17 +170,23 @@ const parseFieldOperatorExpression = (
         }
 
         if ('equals' in value.not) {
-          return [createScalarComparisonNode(field, 'NOT_LIKE', value.not.equals)];
+          return [
+            createScalarComparisonNode(field, 'NOT_LIKE', value.not.equals),
+          ];
         }
 
-        throw new Error(`Unsupported Prisma not expression for field "${field}".`);
+        throw new Error(
+          `Unsupported Prisma not expression for field "${field}".`
+        );
       }
       default:
-        throw new Error(`Unsupported Prisma operator "${operatorKey}" for field "${field}".`);
+        throw new Error(
+          `Unsupported Prisma operator "${operatorKey}" for field "${field}".`
+        );
     }
   }
 
-  return operatorKeys.flatMap(operatorKey =>
+  return operatorKeys.flatMap((operatorKey) =>
     parseFieldOperatorExpression(field, { [operatorKey]: value[operatorKey] })
   );
 };

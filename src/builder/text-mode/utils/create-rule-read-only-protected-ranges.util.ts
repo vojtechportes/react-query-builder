@@ -1,6 +1,6 @@
 import { IBuilderFieldProps } from '../../types';
 import { tryParseSql } from '../../../query-formats/sql/try-parse-sql';
-import { IDenormalizedRuleNode } from '../../../utils/query-tree';
+import { IDenormalizedRuleNode } from '../../../shared/query/model/types/query-tree';
 import {
   getRuleReadOnlyTargets,
   isRuleFullyReadOnly,

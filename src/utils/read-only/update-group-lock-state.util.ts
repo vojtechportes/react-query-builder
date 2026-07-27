@@ -1,5 +1,5 @@
 import { normalizeGroupReadOnlyConfig } from '../normalize-group-read-only-config.util';
-import { GroupReadOnly } from '../query-tree';
+import { GroupReadOnly } from '../../shared/query/model/types/query-tree';
 
 const hasGroupReadOnlyTargets = (value?: GroupReadOnly): boolean => {
   const normalizedValue = normalizeGroupReadOnlyConfig(value);

@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedJsonataNode } from './jsonata-token.types';
 
 const toDenormalizedJsonataNode = (
@@ -16,7 +16,7 @@ const toDenormalizedJsonataNode = (
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedJsonataNode(child)),
+    children: node.children.map((child) => toDenormalizedJsonataNode(child)),
   };
 
   return group;
@@ -25,7 +25,9 @@ const toDenormalizedJsonataNode = (
 export const toDenormalizedJsonataQuery = (
   nodes: ParsedJsonataNode[]
 ): DenormalizedQuery => {
-  const denormalizedNodes = nodes.map(node => toDenormalizedJsonataNode(node));
+  const denormalizedNodes = nodes.map((node) =>
+    toDenormalizedJsonataNode(node)
+  );
 
   if (denormalizedNodes.length !== 1) {
     return denormalizedNodes;
@@ -33,4 +35,3 @@ export const toDenormalizedJsonataQuery = (
 
   return [denormalizedNodes[0]];
 };
-

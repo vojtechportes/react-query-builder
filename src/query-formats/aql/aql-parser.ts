@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type {
   IAqlToken,
   AqlTokenType,
@@ -12,10 +12,7 @@ import type {
 } from './aql-token.types';
 import { stripAqlVariableName } from './extract-aql-predicate';
 import { tokenizeAql } from './tokenize-aql';
-import {
-  AQL_DEFAULT_VARIABLE_NAME,
-  extractAqlLikeOperator,
-} from './shared';
+import { AQL_DEFAULT_VARIABLE_NAME, extractAqlLikeOperator } from './shared';
 
 type AqlFieldReference = { kind: 'field'; field: string };
 
@@ -104,7 +101,11 @@ export class AqlParser {
 
       if (this.isKeyword('IN')) {
         this.consume();
-        return { field: left, operator: 'NOT_IN', value: this.parseArrayValue() };
+        return {
+          field: left,
+          operator: 'NOT_IN',
+          value: this.parseArrayValue(),
+        };
       }
 
       if (this.isKeyword('LIKE')) {
@@ -139,7 +140,9 @@ export class AqlParser {
     const token = this.consume();
 
     if (token.type !== 'IDENTIFIER') {
-      throw new Error(`Expected a field identifier but found "${token.value}".`);
+      throw new Error(
+        `Expected a field identifier but found "${token.value}".`
+      );
     }
 
     if (this.variableName) {
@@ -206,7 +209,9 @@ export class AqlParser {
       const value = this.parseScalarValue();
 
       if (typeof value === 'boolean' || value === null) {
-        throw new Error('AQL arrays currently support only string and number values.');
+        throw new Error(
+          'AQL arrays currently support only string and number values.'
+        );
       }
 
       values.push(value);
@@ -220,11 +225,11 @@ export class AqlParser {
 
     this.expect('RBRACKET');
 
-    if (values.every(value => typeof value === 'string')) {
+    if (values.every((value) => typeof value === 'string')) {
       return values as string[];
     }
 
-    if (values.every(value => typeof value === 'number')) {
+    if (values.every((value) => typeof value === 'number')) {
       return values as number[];
     }
 
@@ -292,13 +297,21 @@ export class AqlParser {
 
     const children: ParsedAqlNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
 
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);

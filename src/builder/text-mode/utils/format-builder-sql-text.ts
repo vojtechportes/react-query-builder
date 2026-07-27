@@ -1,5 +1,5 @@
 import { IBuilderFieldProps } from '../../types';
-import { DenormalizedQuery } from '../../../utils/query-tree';
+import { DenormalizedQuery } from '../../../shared/query/model/types/query-tree';
 import { formatBuilderSqlState } from './format-builder-sql-state';
 
 export const formatBuilderSqlText = (

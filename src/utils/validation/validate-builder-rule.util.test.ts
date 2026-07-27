@@ -1,4 +1,4 @@
-﻿import { strings } from '../../locales/en-us';
+import { strings } from '../../shared/localization/locales/en-us';
 import { validateBuilderRule } from './validate-builder-rule.util';
 
 describe('validateBuilderRule field comparisons', () => {

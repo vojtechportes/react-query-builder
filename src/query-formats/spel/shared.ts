@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 export const quoteSpelString = (value: string): string =>
   `'${value.replace(/'/g, "''")}'`;
@@ -22,7 +22,7 @@ export const formatSpelScalarValue = (
 };
 
 export const formatSpelArrayValue = (value: Array<string | number>): string =>
-  `{${value.map(item => formatSpelScalarValue(item)).join(', ')}}`;
+  `{${value.map((item) => formatSpelScalarValue(item)).join(', ')}}`;
 
 export const escapeSpelRegex = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

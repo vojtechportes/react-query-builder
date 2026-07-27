@@ -1,5 +1,5 @@
-import { isNormalizedGroupNode } from '../../../utils/is-normalized-group-node.util';
-import { NormalizedQuery } from '../../../utils/query-tree';
+import { isNormalizedGroupNode } from '../../../shared/query/model/utils/is-normalized-group-node.util';
+import { NormalizedQuery } from '../../../shared/query/model/types/query-tree';
 import { findNodeById } from '../../../history/find-node-by-id';
 
 export const createAppendNodeIndex = (

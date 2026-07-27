@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { formatRsqlValue } from './shared';
 
 const ensureArrayValue = (
@@ -58,7 +58,7 @@ const joinComparisons = (
   }
 
   return `(${values
-    .map(value => `${field}${operator}${formatRsqlValue(value)}`)
+    .map((value) => `${field}${operator}${formatRsqlValue(value)}`)
     .join(combinator)})`;
 };
 
@@ -80,11 +80,11 @@ export const formatRsqlRule = (rule: IDenormalizedRuleNode): string => {
       return `${rule.field}=le=${formatRsqlValue(rule.value as never)}`;
     case 'IN':
       return `${rule.field}=in=(${ensureArrayValue(rule.operator, rule.value)
-        .map(value => formatRsqlValue(value))
+        .map((value) => formatRsqlValue(value))
         .join(',')})`;
     case 'NOT_IN':
       return `${rule.field}=out=(${ensureArrayValue(rule.operator, rule.value)
-        .map(value => formatRsqlValue(value))
+        .map((value) => formatRsqlValue(value))
         .join(',')})`;
     case 'ALL_IN':
       return joinComparisons(

@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery RSQL', () => {
@@ -28,7 +28,7 @@ describe('formatQuery RSQL', () => {
     ];
 
     expect(formatQuery(query, 'RSQL')).toEqual(
-      "(name==Stev*;status=in=(active,trial);(age=ge=18;age=le=30))"
+      '(name==Stev*;status=in=(active,trial);(age=ge=18;age=le=30))'
     );
   });
 

@@ -1,9 +1,12 @@
-﻿import { useEffect, useRef, useState } from 'react';
-import type { IStrings } from '../../locales/types/strings';
-import { DenormalizedQuery, NormalizedQuery } from '../../utils/query-tree';
+import { useEffect, useRef, useState } from 'react';
+import type { IStrings } from '../../shared/localization/types/strings';
+import {
+  DenormalizedQuery,
+  NormalizedQuery,
+} from '../../shared/query/model/types/query-tree';
 import { createBuilderValidationResult } from '../../utils/validation/create-builder-validation-result.util';
 import { validateBuilderQuery } from '../../utils/validation/validate-builder-query.util';
-import { emitQuery } from '../../utils/emit-query.util';
+import { emitQuery } from '../../shared/query/normalization/utils/emit-query.util';
 import { isPromiseLike } from '../../utils/is-promise-like.util';
 import {
   BuilderGroupMode,

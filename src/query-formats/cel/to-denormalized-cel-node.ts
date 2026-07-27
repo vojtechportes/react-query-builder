@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedCelNode } from './cel-token.types';
 
 const toDenormalizedCelNode = (node: ParsedCelNode): DenormalizedNode => {
@@ -14,7 +14,7 @@ const toDenormalizedCelNode = (node: ParsedCelNode): DenormalizedNode => {
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedCelNode(child)),
+    children: node.children.map((child) => toDenormalizedCelNode(child)),
   };
 
   return group;
@@ -23,7 +23,7 @@ const toDenormalizedCelNode = (node: ParsedCelNode): DenormalizedNode => {
 export const toDenormalizedCelQuery = (
   nodes: ParsedCelNode[]
 ): DenormalizedQuery => {
-  const denormalizedNodes = nodes.map(node => toDenormalizedCelNode(node));
+  const denormalizedNodes = nodes.map((node) => toDenormalizedCelNode(node));
 
   if (denormalizedNodes.length !== 1) {
     return denormalizedNodes;

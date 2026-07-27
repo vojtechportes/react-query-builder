@@ -1,4 +1,4 @@
-import { NormalizedQuery } from '../../../utils/query-tree';
+import { NormalizedQuery } from '../../../shared/query/model/types/query-tree';
 import { BuilderNewNodePlacement } from '../../../builder/types';
 import { createAppendNodeIndex } from './create-append-node-index.util';
 

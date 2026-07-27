@@ -1,5 +1,8 @@
 import type { IBuilderFieldProps } from '../builder';
-import type { DenormalizedQuery, QueryGroupValue } from '../utils/query-tree';
+import type {
+  DenormalizedQuery,
+  QueryGroupValue,
+} from '../shared/query/model/types/query-tree';
 
 export type QueryFormat =
   | 'SQL'

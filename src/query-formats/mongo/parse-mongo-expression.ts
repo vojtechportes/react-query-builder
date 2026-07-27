@@ -1,7 +1,7 @@
 import type {
   DenormalizedNode,
   IDenormalizedRuleNode,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import {
   inferRegexOperator,
   isMongoDocument,
@@ -18,7 +18,9 @@ const parseRegexExpression = (
   const pattern = value.$regex;
 
   if (typeof pattern !== 'string') {
-    throw new Error(`Mongo regex for field "${field}" must be a string pattern.`);
+    throw new Error(
+      `Mongo regex for field "${field}" must be a string pattern.`
+    );
   }
 
   return {
@@ -31,14 +33,18 @@ const parseExprExpression = (value: MongoDocument): IDenormalizedRuleNode => {
   const operatorKeys = Object.keys(value);
 
   if (operatorKeys.length !== 1) {
-    throw new Error('Mongo $expr must contain exactly one comparison operator.');
+    throw new Error(
+      'Mongo $expr must contain exactly one comparison operator.'
+    );
   }
 
   const [operatorKey] = operatorKeys;
   const operands = value[operatorKey];
 
   if (!Array.isArray(operands) || operands.length != 2) {
-    throw new Error(`Mongo $expr operator "${operatorKey}" must contain two operands.`);
+    throw new Error(
+      `Mongo $expr operator "${operatorKey}" must contain two operands.`
+    );
   }
 
   const leftField = parseMongoFieldReference(operands[0]);
@@ -139,11 +145,15 @@ const parseFieldOperatorExpression = (
       case '$gt':
         return [{ field, operator: 'LARGER', value: value.$gt as never }];
       case '$gte':
-        return [{ field, operator: 'LARGER_EQUAL', value: value.$gte as never }];
+        return [
+          { field, operator: 'LARGER_EQUAL', value: value.$gte as never },
+        ];
       case '$lt':
         return [{ field, operator: 'SMALLER', value: value.$lt as never }];
       case '$lte':
-        return [{ field, operator: 'SMALLER_EQUAL', value: value.$lte as never }];
+        return [
+          { field, operator: 'SMALLER_EQUAL', value: value.$lte as never },
+        ];
       case '$in':
         return [{ field, operator: 'IN', value: value.$in as never }];
       case '$nin':
@@ -154,7 +164,9 @@ const parseFieldOperatorExpression = (
         return [parseRegexExpression(field, value)];
       case '$not':
         if (!isMongoDocument(value.$not)) {
-          throw new Error(`Mongo $not for field "${field}" must wrap an object.`);
+          throw new Error(
+            `Mongo $not for field "${field}" must wrap an object.`
+          );
         }
 
         if ('$regex' in value.$not) {
@@ -175,13 +187,17 @@ const parseFieldOperatorExpression = (
           ];
         }
 
-        throw new Error(`Unsupported Mongo $not expression for field "${field}".`);
+        throw new Error(
+          `Unsupported Mongo $not expression for field "${field}".`
+        );
       default:
-        throw new Error(`Unsupported Mongo operator "${operatorKey}" for field "${field}".`);
+        throw new Error(
+          `Unsupported Mongo operator "${operatorKey}" for field "${field}".`
+        );
     }
   }
 
-  return operatorKeys.flatMap(operatorKey =>
+  return operatorKeys.flatMap((operatorKey) =>
     parseFieldOperatorExpression(field, { [operatorKey]: value[operatorKey] })
   );
 };
@@ -226,7 +242,7 @@ const createLogicalGroup = (
   items: unknown[],
   negated = false
 ): DenormalizedNode => {
-  const children = items.flatMap(item => parseMongoExpression(item));
+  const children = items.flatMap((item) => parseMongoExpression(item));
 
   if (negated && children.length === 1 && 'type' in children[0]) {
     const [child] = children;

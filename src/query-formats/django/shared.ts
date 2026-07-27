@@ -1,4 +1,7 @@
-import type { QueryOperator, QueryRuleValue } from '../../utils/query-tree';
+import type {
+  QueryOperator,
+  QueryRuleValue,
+} from '../../shared/query/model/types/query-tree';
 
 export const djangoFieldReferenceFunction = 'F';
 

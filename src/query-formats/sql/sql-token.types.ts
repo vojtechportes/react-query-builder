@@ -1,7 +1,7 @@
 import type {
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { IParsedSqlRuleNode } from './types/parsed-sql-rule-node';
 import { ISqlSourceRange } from './types/sql-source-range';
 
@@ -82,4 +82,3 @@ export const sqlOperatorOrder: QueryOperator[] = [
   'STARTS_WITH',
   'ENDS_WITH',
 ];
-

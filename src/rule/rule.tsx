@@ -30,18 +30,18 @@ import { isOptionList } from '../utils/is-option-list.util';
 import { isString } from '../utils/is-string.util';
 import { isStringArray } from '../utils/is-string-array.util';
 import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
-import { operatorRequiresValue } from '../utils/operator-requires-value.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
+import { operatorRequiresValue } from '../shared/query/model/utils/operator-requires-value.util';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
 import {
   QueryRuleValue,
   QueryRuleValueSource,
   RuleReadOnlyTarget,
-} from '../utils/query-tree';
+} from '../shared/query/model/types/query-tree';
 import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
 import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
 import { updateRuleLockState } from '../utils/read-only/update-rule-lock-state.util';
-import { getRuleValueSource } from '../utils/rule-value-source';
+import { getRuleValueSource } from '../shared/query/model/utils/rule-value-source.util';
 import { useBuilderFieldOptionState } from '../builder/hooks/use-builder-field-option-state';
 import styles from './rule.module.css';
 

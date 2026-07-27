@@ -3,8 +3,8 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 
 const inferSpelFieldType = (
   rule: IDenormalizedRuleNode
@@ -21,7 +21,10 @@ const inferSpelFieldType = (
     return 'NUMBER';
   }
 
-  if (Array.isArray(rule.value) && rule.value.every(item => typeof item === 'number')) {
+  if (
+    Array.isArray(rule.value) &&
+    rule.value.every((item) => typeof item === 'number')
+  ) {
     return 'NUMBER';
   }
 
@@ -29,9 +32,13 @@ const inferSpelFieldType = (
 };
 
 const collectRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => ('type' in node ? collectRules(node.children) : [node]));
+  data.flatMap((node) =>
+    'type' in node ? collectRules(node.children) : [node]
+  );
 
-export const inferSpelFields = (data: DenormalizedQuery): IBuilderFieldProps[] => {
+export const inferSpelFields = (
+  data: DenormalizedQuery
+): IBuilderFieldProps[] => {
   const fieldMap = new Map<
     string,
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
@@ -61,7 +68,7 @@ export const inferSpelFields = (data: DenormalizedQuery): IBuilderFieldProps[] =
     }
   };
 
-  collectRules(data).forEach(rule => {
+  collectRules(data).forEach((rule) => {
     const nextType = inferSpelFieldType(rule);
     mergeFieldConfig(rule.field, nextType, rule.operator);
 

@@ -1,5 +1,5 @@
-import { getDescendantIds } from '../utils/get-descendant-ids.util';
-import { NormalizedQuery } from '../utils/query-tree';
+import { getDescendantIds } from '../shared/query/transformations/utils/get-descendant-ids.util';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 import { getNodePosition } from './get-node-position';
 import { getSubtree } from './get-subtree';
 import { insertSubtree } from './insert-subtree';

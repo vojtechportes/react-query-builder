@@ -1,5 +1,5 @@
-﻿import { IBuilderFieldProps, IBuilderValidationContext } from '../builder';
-import { strings } from '../locales/en-us';
+import { IBuilderFieldProps, IBuilderValidationContext } from '../builder';
+import { strings } from '../shared/localization/locales/en-us';
 import { validateBuilderQuery } from './validation/validate-builder-query.util';
 
 describe('validateBuilderQuery', () => {

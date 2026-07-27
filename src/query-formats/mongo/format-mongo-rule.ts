@@ -3,8 +3,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { createMongoFieldReference, escapeRegexPattern } from './shared';
 
 type MongoFieldValue = QueryRuleValue | Record<string, unknown>;
@@ -63,10 +63,7 @@ const createNotBetweenExpression = (
   field: string,
   value: [string, string] | [number, number]
 ): Record<string, unknown> => ({
-  $or: [
-    { [field]: { $lt: value[0] } },
-    { [field]: { $gt: value[1] } },
-  ],
+  $or: [{ [field]: { $lt: value[0] } }, { [field]: { $gt: value[1] } }],
 });
 
 const createFieldComparisonExpression = (
@@ -111,11 +108,17 @@ export const formatMongoRule = (
         : { [rule.field]: { $lte: rule.value } };
     case 'IN':
     case 'ANY_IN':
-      return { [rule.field]: { $in: ensureArrayValue(rule.operator, rule.value) } };
+      return {
+        [rule.field]: { $in: ensureArrayValue(rule.operator, rule.value) },
+      };
     case 'NOT_IN':
-      return { [rule.field]: { $nin: ensureArrayValue(rule.operator, rule.value) } };
+      return {
+        [rule.field]: { $nin: ensureArrayValue(rule.operator, rule.value) },
+      };
     case 'ALL_IN':
-      return { [rule.field]: { $all: ensureArrayValue(rule.operator, rule.value) } };
+      return {
+        [rule.field]: { $all: ensureArrayValue(rule.operator, rule.value) },
+      };
     case 'BETWEEN':
       return {
         [rule.field]: createBetweenExpression(

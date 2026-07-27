@@ -1,4 +1,4 @@
-import { NormalizedNode } from '../utils/query-tree';
+import { NormalizedNode } from '../shared/query/model/types/query-tree';
 import { IReplaceNodeAction } from './types';
 
 export const createReplaceNodeAction = (

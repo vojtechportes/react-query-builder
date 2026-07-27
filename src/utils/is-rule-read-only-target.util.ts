@@ -1,4 +1,7 @@
-import { RuleReadOnly, RuleReadOnlyTarget } from './query-tree';
+import {
+  RuleReadOnly,
+  RuleReadOnlyTarget,
+} from '../shared/query/model/types/query-tree';
 import { getRuleReadOnlyTargets } from './resolve-rule-read-only.util';
 
 export const isRuleReadOnlyTarget = (

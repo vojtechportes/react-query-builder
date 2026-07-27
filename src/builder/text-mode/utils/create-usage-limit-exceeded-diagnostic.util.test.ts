@@ -1,4 +1,4 @@
-﻿import { strings } from '../../../locales/en-us';
+import { strings } from '../../../shared/localization/locales/en-us';
 import { IBuilderFieldProps } from '../../types';
 import { createUsageLimitExceededDiagnostic } from './create-usage-limit-exceeded-diagnostic.util';
 

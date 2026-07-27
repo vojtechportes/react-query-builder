@@ -3,8 +3,8 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { jsonataOperatorOrder } from './jsonata-token.types';
 
 const inferJsonataFieldType = (
@@ -22,7 +22,10 @@ const inferJsonataFieldType = (
     return 'NUMBER';
   }
 
-  if (Array.isArray(rule.value) && rule.value.every(item => typeof item === 'number')) {
+  if (
+    Array.isArray(rule.value) &&
+    rule.value.every((item) => typeof item === 'number')
+  ) {
     return 'NUMBER';
   }
 
@@ -30,7 +33,9 @@ const inferJsonataFieldType = (
 };
 
 const collectRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => ('type' in node ? collectRules(node.children) : [node]));
+  data.flatMap((node) =>
+    'type' in node ? collectRules(node.children) : [node]
+  );
 
 export const inferJsonataFields = (
   data: DenormalizedQuery
@@ -64,7 +69,7 @@ export const inferJsonataFields = (
     }
   };
 
-  collectRules(data).forEach(rule => {
+  collectRules(data).forEach((rule) => {
     const nextType = inferJsonataFieldType(rule);
     mergeFieldConfig(rule.field, nextType, rule.operator);
 
@@ -77,7 +82,7 @@ export const inferJsonataFields = (
     field,
     label: field,
     type: config.type,
-    operators: jsonataOperatorOrder.filter(operator =>
+    operators: jsonataOperatorOrder.filter((operator) =>
       config.operators.includes(operator)
     ),
   })) as IBuilderFieldProps[];

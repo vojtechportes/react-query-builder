@@ -10,7 +10,7 @@ import {
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
-import { strings } from '../locales/en-us';
+import { strings } from '../shared/localization/locales/en-us';
 import { Rule } from './rule';
 import ruleStyles from './rule.module.css';
 import { Rule as RuleContainer } from './components/rule-container';

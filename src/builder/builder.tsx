@@ -11,7 +11,7 @@ import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { BuilderContextProvider } from '../builder-context';
 import { Alert as DefaultAlert } from '../alert';
 import { Button } from '../button';
-import { strings as defaultStrings } from '../locales/en-us';
+import { strings as defaultStrings } from '../shared/localization/locales/en-us';
 import { DragPreview } from '../drag-preview';
 import { createClonedSubtree } from '../history/create-cloned-subtree';
 import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
@@ -25,17 +25,17 @@ import { Iterator } from '../iterator';
 import { Popover } from '../popover';
 import { PopoverItem } from '../popover-item';
 import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
-import { createGroupNode } from '../utils/create-group-node.util';
-import { createId } from '../utils/create-id.util';
-import { emitQuery } from '../utils/emit-query.util';
-import { ingestQuery } from '../utils/ingest-query.util';
-import { isSameQuery } from '../utils/is-same-query.util';
-import { clone } from '../utils/clone.util';
+import { createGroupNode } from '../shared/query/transformations/utils/create-group-node.util';
+import { createId } from '../shared/query/model/utils/create-id.util';
+import { emitQuery } from '../shared/query/normalization/utils/emit-query.util';
+import { ingestQuery } from '../shared/query/normalization/utils/ingest-query.util';
+import { isSameQuery } from '../shared/query/model/utils/is-same-query.util';
+import { clone } from '../shared/query/model/utils/clone.util';
 import {
   DenormalizedQuery,
   INormalizedRuleNode,
   NormalizedQuery,
-} from '../utils/query-tree';
+} from '../shared/query/model/types/query-tree';
 import { defaultComponents } from './constants/default-components';
 import { BuilderRootActions } from './components/builder-root-actions';
 import { StyledBuilder } from './components/styled-builder';
@@ -62,8 +62,8 @@ import { isBuilderFieldInUse } from './utils/is-builder-field-in-use.util';
 import { canAddRuleForParent } from './utils/resolve-builder-field-usage.util';
 import { resolveBuilderFieldOptionState } from './utils/resolve-builder-field-option-state.util';
 import { resolveReconciledBuilderRuleValue } from './utils/resolve-reconciled-builder-rule-value.util';
-import { removeQueryNegation } from '../utils/remove-query-negation.util';
-import { removeNormalizedQueryNegation } from '../utils/remove-normalized-query-negation.util';
+import { removeQueryNegation } from '../shared/query/transformations/utils/remove-query-negation.util';
+import { removeNormalizedQueryNegation } from '../shared/query/transformations/utils/remove-normalized-query-negation.util';
 import { createBuilderRootStyle } from './utils/create-builder-root-style.util';
 
 const tryFormatBuilderTextState = (

@@ -1,4 +1,4 @@
-import type { DenormalizedNode } from '../../utils/query-tree';
+import type { DenormalizedNode } from '../../shared/query/model/types/query-tree';
 import { parseSpelRule } from './parse-spel-rule';
 import { splitTopLevel, stripOuterParentheses } from './split-spel-expression';
 
@@ -10,7 +10,7 @@ const createLogicalGroup = (
   type: 'GROUP',
   value: combinator,
   isNegated,
-  children: items.flatMap(item => parseSpelExpression(item)),
+  children: items.flatMap((item) => parseSpelExpression(item)),
 });
 
 export const parseSpelExpression = (value: string): DenormalizedNode[] => {

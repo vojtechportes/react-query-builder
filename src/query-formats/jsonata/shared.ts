@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 export const quoteJsonataString = (value: string): string =>
   `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
@@ -21,8 +21,10 @@ export const formatJsonataScalarValue = (
   return quoteJsonataString(value);
 };
 
-export const formatJsonataArrayValue = (value: Array<string | number>): string =>
-  `[${value.map(item => formatJsonataScalarValue(item)).join(', ')}]`;
+export const formatJsonataArrayValue = (
+  value: Array<string | number>
+): string =>
+  `[${value.map((item) => formatJsonataScalarValue(item)).join(', ')}]`;
 
 export const escapeJsonataRegex = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
@@ -61,4 +63,3 @@ export const inferJsonataContainsOperator = (
     value: normalizedValue,
   };
 };
-

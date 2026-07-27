@@ -22,12 +22,12 @@ import { isNumber } from '../is-number.util';
 import { isNumberArray } from '../is-number-array.util';
 import { isOptionList } from '../is-option-list.util';
 import { isPromiseLike } from '../is-promise-like.util';
-import { isRangeOperator } from '../is-range-operator.util';
+import { isRangeOperator } from '../../shared/query/model/utils/is-range-operator.util';
 import { isString } from '../is-string.util';
 import { isStringArray } from '../is-string-array.util';
 import { isStringOrNumberArray } from '../is-string-or-number-array.util';
-import { operatorRequiresValue } from '../operator-requires-value.util';
-import { IDenormalizedRuleNode } from '../query-tree';
+import { operatorRequiresValue } from '../../shared/query/model/utils/operator-requires-value.util';
+import { IDenormalizedRuleNode } from '../../shared/query/model/types/query-tree';
 import { getBuilderValidationMessage } from './get-builder-validation-message.util';
 import { getValidationString } from './get-validation-string.util';
 import { resolveBuilderValidationRule } from './resolve-builder-validation-rule.util';
@@ -70,25 +70,38 @@ const validateTextRule = (
   }
 
   if (isRangeOperator(rule.operator) && isStringArray(rule.value)) {
-    const startValidation = resolveRangeBoundValidation<ITextValueValidationRule>(
-      validation,
-      'start'
-    );
+    const startValidation =
+      resolveRangeBoundValidation<ITextValueValidationRule>(
+        validation,
+        'start'
+      );
     const endValidation = resolveRangeBoundValidation<ITextValueValidationRule>(
       validation,
       'end'
     );
 
-    const startIssues = validateTextValue(rule.value[0], startValidation, baseIssue, {
-      ...context,
-      value: rule.value[0],
-      rangeBoundary: 'start',
-    }, validationContext);
-    const endIssues = validateTextValue(rule.value[1], endValidation, baseIssue, {
-      ...context,
-      value: rule.value[1],
-      rangeBoundary: 'end',
-    }, validationContext);
+    const startIssues = validateTextValue(
+      rule.value[0],
+      startValidation,
+      baseIssue,
+      {
+        ...context,
+        value: rule.value[0],
+        rangeBoundary: 'start',
+      },
+      validationContext
+    );
+    const endIssues = validateTextValue(
+      rule.value[1],
+      endValidation,
+      baseIssue,
+      {
+        ...context,
+        value: rule.value[1],
+        rangeBoundary: 'end',
+      },
+      validationContext
+    );
 
     if (isPromiseLike(startIssues)) {
       pendingIssueGroups.push(startIssues);
@@ -156,25 +169,39 @@ const validateNumberRule = (
   }
 
   if (isRangeOperator(rule.operator) && isNumberArray(rule.value)) {
-    const startValidation = resolveRangeBoundValidation<INumberValueValidationRule>(
-      validation,
-      'start'
-    );
-    const endValidation = resolveRangeBoundValidation<INumberValueValidationRule>(
-      validation,
-      'end'
-    );
+    const startValidation =
+      resolveRangeBoundValidation<INumberValueValidationRule>(
+        validation,
+        'start'
+      );
+    const endValidation =
+      resolveRangeBoundValidation<INumberValueValidationRule>(
+        validation,
+        'end'
+      );
 
-    const startIssues = validateNumberValue(rule.value[0], startValidation, baseIssue, {
-      ...context,
-      value: rule.value[0],
-      rangeBoundary: 'start',
-    }, validationContext);
-    const endIssues = validateNumberValue(rule.value[1], endValidation, baseIssue, {
-      ...context,
-      value: rule.value[1],
-      rangeBoundary: 'end',
-    }, validationContext);
+    const startIssues = validateNumberValue(
+      rule.value[0],
+      startValidation,
+      baseIssue,
+      {
+        ...context,
+        value: rule.value[0],
+        rangeBoundary: 'start',
+      },
+      validationContext
+    );
+    const endIssues = validateNumberValue(
+      rule.value[1],
+      endValidation,
+      baseIssue,
+      {
+        ...context,
+        value: rule.value[1],
+        rangeBoundary: 'end',
+      },
+      validationContext
+    );
 
     if (isPromiseLike(startIssues)) {
       pendingIssueGroups.push(startIssues);
@@ -242,25 +269,38 @@ const validateDateRule = (
   }
 
   if (isRangeOperator(rule.operator) && isStringArray(rule.value)) {
-    const startValidation = resolveRangeBoundValidation<IDateValueValidationRule>(
-      validation,
-      'start'
-    );
+    const startValidation =
+      resolveRangeBoundValidation<IDateValueValidationRule>(
+        validation,
+        'start'
+      );
     const endValidation = resolveRangeBoundValidation<IDateValueValidationRule>(
       validation,
       'end'
     );
 
-    const startIssues = validateDateValue(rule.value[0], startValidation, baseIssue, {
-      ...context,
-      value: rule.value[0],
-      rangeBoundary: 'start',
-    }, validationContext);
-    const endIssues = validateDateValue(rule.value[1], endValidation, baseIssue, {
-      ...context,
-      value: rule.value[1],
-      rangeBoundary: 'end',
-    }, validationContext);
+    const startIssues = validateDateValue(
+      rule.value[0],
+      startValidation,
+      baseIssue,
+      {
+        ...context,
+        value: rule.value[0],
+        rangeBoundary: 'start',
+      },
+      validationContext
+    );
+    const endIssues = validateDateValue(
+      rule.value[1],
+      endValidation,
+      baseIssue,
+      {
+        ...context,
+        value: rule.value[1],
+        rangeBoundary: 'end',
+      },
+      validationContext
+    );
 
     if (isPromiseLike(startIssues)) {
       pendingIssueGroups.push(startIssues);
@@ -391,7 +431,11 @@ export const validateBuilderRule = (
     ruleId: rule.id,
   };
 
-  if (field.operators && rule.operator && !field.operators.includes(rule.operator)) {
+  if (
+    field.operators &&
+    rule.operator &&
+    !field.operators.includes(rule.operator)
+  ) {
     issues.push({
       ...baseIssue,
       code: 'operator_not_allowed',
@@ -421,7 +465,7 @@ export const validateBuilderRule = (
   }
 
   if (rule.valueSource === 'field') {
-    if (issues.some(issue => issue.code === 'operator_not_allowed')) {
+    if (issues.some((issue) => issue.code === 'operator_not_allowed')) {
       return issues;
     }
 
@@ -562,8 +606,7 @@ export const validateBuilderRule = (
 
       if (
         typeof rule.value !== 'undefined' &&
-        (typeof rule.value === 'string' ||
-          typeof rule.value === 'number')
+        (typeof rule.value === 'string' || typeof rule.value === 'number')
       ) {
         const listIssues = validateListValue(
           rule.value,
@@ -622,4 +665,3 @@ export const validateBuilderRule = (
 
   return issues;
 };
-

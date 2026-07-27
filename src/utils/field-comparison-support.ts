@@ -1,10 +1,7 @@
-import {
-  BuilderFieldComparisonType,
-  IBuilderFieldProps,
-} from '../builder';
-import { QueryOperator } from './query-tree';
-import { isRangeOperator } from './is-range-operator.util';
-import { operatorRequiresValue } from './operator-requires-value.util';
+import { BuilderFieldComparisonType, IBuilderFieldProps } from '../builder';
+import { QueryOperator } from '../shared/query/model/types/query-tree';
+import { isRangeOperator } from '../shared/query/model/utils/is-range-operator.util';
+import { operatorRequiresValue } from '../shared/query/model/utils/operator-requires-value.util';
 
 const fieldComparisonUnsupportedOperators = new Set<QueryOperator>([
   'ALL_IN',
@@ -23,7 +20,7 @@ const inferListFieldComparisonType = (
     !Array.isArray(field.value) ||
     field.value.length === 0 ||
     !field.value.every(
-      option =>
+      (option) =>
         typeof option === 'object' &&
         option !== null &&
         typeof option.label === 'string' &&
@@ -33,9 +30,9 @@ const inferListFieldComparisonType = (
     return undefined;
   }
 
-  const optionValues = field.value.map(option => option.value);
-  const allStrings = optionValues.every(value => typeof value === 'string');
-  const allNumbers = optionValues.every(value => typeof value === 'number');
+  const optionValues = field.value.map((option) => option.value);
+  const allStrings = optionValues.every((value) => typeof value === 'string');
+  const allNumbers = optionValues.every((value) => typeof value === 'number');
 
   if (allStrings) {
     return 'string';
@@ -128,7 +125,7 @@ export const getCompatibleValueFields = (
     return [];
   }
 
-  return fields.filter(candidate =>
+  return fields.filter((candidate) =>
     areFieldsCompatibleForComparison(sourceField, candidate)
   );
 };

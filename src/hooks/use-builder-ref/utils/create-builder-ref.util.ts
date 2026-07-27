@@ -7,72 +7,69 @@ import {
 import { areBuilderRuleDependencyEntriesEqual } from './are-builder-rule-dependency-entries-equal.util';
 import { areBuilderFieldOptionStatesEqual } from './are-builder-field-option-states-equal.util';
 import { createBuilderRuleDependencyEntries } from './create-builder-rule-dependency-entries.util';
-import { isSameQuery } from '../../../utils/is-same-query.util';
+import { isSameQuery } from '../../../shared/query/model/utils/is-same-query.util';
 
 export const createBuilderRef = (): BuilderRef => {
   let current: IBuilderRef | null = null;
   const listeners = new Set<BuilderRefListener>();
   let isNotificationScheduled = false;
-  const subscribeToRuleDependencies: BuilderRef['subscribeToRuleDependencies'] = (
-    field,
-    dependencyFields,
-    listener
-  ) => {
-    let previousData = current?.getData();
-    let previousEntries =
-      current
+  const subscribeToRuleDependencies: BuilderRef['subscribeToRuleDependencies'] =
+    (field, dependencyFields, listener) => {
+      let previousData = current?.getData();
+      let previousEntries = current
         ? createBuilderRuleDependencyEntries(current, field, dependencyFields)
         : [];
 
-    if (current) {
-      listener(previousEntries);
-    }
-
-    const builderListener: BuilderRefListener = (builder) => {
-      if (!builder) {
-        previousData = undefined;
-        previousEntries = [];
-        return;
+      if (current) {
+        listener(previousEntries);
       }
 
-      const nextData = builder.getData();
+      const builderListener: BuilderRefListener = (builder) => {
+        if (!builder) {
+          previousData = undefined;
+          previousEntries = [];
+          return;
+        }
 
-      if (previousData && isSameQuery(previousData, nextData)) {
-        return;
-      }
+        const nextData = builder.getData();
 
-      const nextEntries = createBuilderRuleDependencyEntries(
-        builder,
-        field,
-        dependencyFields
-      );
+        if (previousData && isSameQuery(previousData, nextData)) {
+          return;
+        }
 
-      if (areBuilderRuleDependencyEntriesEqual(previousEntries, nextEntries)) {
+        const nextEntries = createBuilderRuleDependencyEntries(
+          builder,
+          field,
+          dependencyFields
+        );
+
+        if (
+          areBuilderRuleDependencyEntriesEqual(previousEntries, nextEntries)
+        ) {
+          previousData = nextData;
+          return;
+        }
+
         previousData = nextData;
-        return;
-      }
+        previousEntries = nextEntries;
+        listener(nextEntries);
+      };
 
-      previousData = nextData;
-      previousEntries = nextEntries;
-      listener(nextEntries);
+      listeners.add(builderListener);
+
+      return () => {
+        listeners.delete(builderListener);
+      };
     };
-
-    listeners.add(builderListener);
-
-    return () => {
-      listeners.delete(builderListener);
-    };
-  };
   const bindRuleOptions: BuilderRef['bindRuleOptions'] = (
     field,
     config: IBuilderRuleOptionsBindingConfig
   ) => {
     const abortControllersByRuleId = new Map<string, AbortController>();
     let activeRuleIds = new Set<string>();
-    let previousEntries =
-      current
-        ? createBuilderRuleDependencyEntries(current, field, config.dependencies)
-        : [];
+    let previousEntries = current
+      ? createBuilderRuleDependencyEntries(current, field, config.dependencies)
+      : [];
     let hasSyncedEntries = false;
 
     const stopRuleLoad = (ruleId: string) => {
@@ -106,7 +103,10 @@ export const createBuilderRef = (): BuilderRef => {
 
       stopRuleLoad(entry.ruleId);
 
-      if (hasMissingDependencies && config.clearOnMissingDependencies !== false) {
+      if (
+        hasMissingDependencies &&
+        config.clearOnMissingDependencies !== false
+      ) {
         builder.clearRuleOptions(entry.ruleId);
         return;
       }

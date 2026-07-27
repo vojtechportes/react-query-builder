@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type {
   CelTokenType,
   ICelToken,
@@ -356,7 +356,9 @@ export class CelParser {
       const value = this.parseScalarValue();
 
       if (typeof value === 'boolean' || value === null) {
-        throw new Error('CEL arrays currently support only string and number values.');
+        throw new Error(
+          'CEL arrays currently support only string and number values.'
+        );
       }
 
       values.push(value);
@@ -370,11 +372,11 @@ export class CelParser {
 
     this.expect('RBRACKET');
 
-    if (values.every(value => typeof value === 'string')) {
+    if (values.every((value) => typeof value === 'string')) {
       return values as string[];
     }
 
-    if (values.every(value => typeof value === 'number')) {
+    if (values.every((value) => typeof value === 'number')) {
       return values as number[];
     }
 
@@ -413,13 +415,21 @@ export class CelParser {
 
     const children: ParsedCelNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
 
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);
@@ -438,7 +448,11 @@ export class CelParser {
     left: ParsedCelNode,
     right: ParsedCelNode
   ): IDenormalizedRuleNode | null {
-    if (!this.isRuleNode(left) || !this.isRuleNode(right) || left.field !== right.field) {
+    if (
+      !this.isRuleNode(left) ||
+      !this.isRuleNode(right) ||
+      left.field !== right.field
+    ) {
       return null;
     }
 
@@ -499,7 +513,9 @@ export class CelParser {
     const token = this.consume();
 
     if (token.type !== 'KEYWORD' || token.value !== value) {
-      throw new Error(`Expected keyword "${value}" but found "${token.value}".`);
+      throw new Error(
+        `Expected keyword "${value}" but found "${token.value}".`
+      );
     }
   }
 

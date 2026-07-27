@@ -1,4 +1,7 @@
-import { GroupReadOnly, IGroupReadOnlyConfig } from './query-tree';
+import {
+  GroupReadOnly,
+  IGroupReadOnlyConfig,
+} from '../shared/query/model/types/query-tree';
 
 export const isGroupReadOnlyConfig = (
   value: GroupReadOnly | undefined

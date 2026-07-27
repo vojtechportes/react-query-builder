@@ -16,7 +16,7 @@ import {
   IBuilderRef,
   useBuilderRef,
 } from './index';
-import { DenormalizedQuery } from '../utils/query-tree';
+import { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 
 export const fields: IBuilderFieldProps[] = [
   {
@@ -112,8 +112,7 @@ const stringMultiListFields: IBuilderFieldProps[] = [
 const queryByDataTest = (
   container: HTMLElement,
   value: string
-): HTMLElement | null =>
-  container.querySelector(`[data-test="${value}"]`);
+): HTMLElement | null => container.querySelector(`[data-test="${value}"]`);
 
 const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
   const element = queryByDataTest(container, value);
@@ -146,12 +145,14 @@ const CustomTextModeEditor = ({
     <textarea
       data-test="CustomTextModeEditorInput"
       value={value}
-      onChange={event => onChange(event.target.value)}
+      onChange={(event) => onChange(event.target.value)}
     />
     <div data-test="CustomTextModeEditorProtectedRangeCount">
       {protectedRanges.length}
     </div>
-    {errorMessage ? <div data-test="CustomTextModeEditorError">{errorMessage}</div> : null}
+    {errorMessage ? (
+      <div data-test="CustomTextModeEditorError">{errorMessage}</div>
+    ) : null}
   </div>
 );
 
@@ -276,7 +277,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         textMode
@@ -339,7 +342,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         textMode
@@ -369,7 +374,9 @@ describe('#components/Builder', () => {
                 type: 'GROUP',
                 value: 'AND',
                 isNegated: false,
-                children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+                children: [
+                  { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+                ],
               },
             ],
           },
@@ -396,7 +403,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+            ],
           },
         ],
       },
@@ -427,7 +436,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         defaultMode="text"
@@ -449,7 +460,12 @@ describe('#components/Builder', () => {
             value: 'AND',
             isNegated: false,
             children: [
-              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: true,
+              },
             ],
           },
         ]}
@@ -460,9 +476,9 @@ describe('#components/Builder', () => {
 
     expect(getByDataTest(container, 'TextModeToggle')).toBeDisabled();
     expect(queryByDataTest(container, 'TextModeEditor')).toBeNull();
-    expect(getByDataTest(container, 'TextModeBlockedAlert').textContent).toContain(
-      'not supported in the text editor'
-    );
+    expect(
+      getByDataTest(container, 'TextModeBlockedAlert').textContent
+    ).toContain('not supported in the text editor');
   });
 
   it('Allows a custom TextModeEditor when the query contains locked nodes', () => {
@@ -475,7 +491,12 @@ describe('#components/Builder', () => {
             value: 'AND',
             isNegated: false,
             children: [
-              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: true,
+              },
               { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
             ],
           },
@@ -493,7 +514,10 @@ describe('#components/Builder', () => {
     expect(queryByDataTest(container, 'TextModeBlockedAlert')).toBeNull();
     expect(queryByDataTest(container, 'CustomTextModeEditor')).not.toBeNull();
     expect(
-      Number(getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount').textContent)
+      Number(
+        getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')
+          .textContent
+      )
     ).toBeGreaterThan(0);
   });
 
@@ -527,9 +551,9 @@ describe('#components/Builder', () => {
     expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
       "(MOCK_FIELD = 'alpha' AND MOCK_NUMBER = 2)"
     );
-    expect(getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')).toHaveTextContent(
-      '1'
-    );
+    expect(
+      getByDataTest(container, 'CustomTextModeEditorProtectedRangeCount')
+    ).toHaveTextContent('1');
   });
 
   it('Preserves locked rules after valid text edits in a custom TextModeEditor', async () => {
@@ -543,7 +567,12 @@ describe('#components/Builder', () => {
             value: 'AND',
             isNegated: false,
             children: [
-              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+              {
+                field: 'MOCK_FIELD',
+                value: 'alpha',
+                operator: 'EQUAL',
+                readOnly: true,
+              },
               { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
             ],
           },
@@ -569,7 +598,12 @@ describe('#components/Builder', () => {
           value: 'AND',
           isNegated: false,
           children: [
-            { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL', readOnly: true },
+            {
+              field: 'MOCK_FIELD',
+              value: 'alpha',
+              operator: 'EQUAL',
+              readOnly: true,
+            },
             { field: 'MOCK_NUMBER', value: 3, operator: 'EQUAL' },
           ],
         },
@@ -593,7 +627,9 @@ describe('#components/Builder', () => {
                 value: 'AND',
                 isNegated: false,
                 readOnly: true,
-                children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+                children: [
+                  { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+                ],
               },
               { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
             ],
@@ -625,7 +661,9 @@ describe('#components/Builder', () => {
               value: 'AND',
               isNegated: false,
               readOnly: true,
-              children: [{ field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' }],
+              children: [
+                { field: 'MOCK_FIELD', value: 'beta', operator: 'EQUAL' },
+              ],
             },
             { field: 'MOCK_NUMBER', value: 2, operator: 'EQUAL' },
           ],
@@ -694,7 +732,9 @@ describe('#components/Builder', () => {
     );
 
     fireEvent.change(getByDataTest(container, 'CustomTextModeEditorInput'), {
-      target: { value: "(COUNTRY = 'SK' AND (SEGMENTS IN ('B2B', 'Priority')))" },
+      target: {
+        value: "(COUNTRY = 'SK' AND (SEGMENTS IN ('B2B', 'Priority')))",
+      },
     });
 
     await waitFor(() =>
@@ -824,9 +864,9 @@ describe('#components/Builder', () => {
     });
 
     expect(onChange).not.toHaveBeenCalled();
-    expect(
-      getByDataTest(container, 'CustomTextModeEditorInput')
-    ).toHaveValue("((MOCK_FIELD = 'alpha'))");
+    expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
+      "((MOCK_FIELD = 'alpha'))"
+    );
     expect(
       getByDataTest(container, 'CustomTextModeEditorError').textContent
     ).toContain('Negation is read-only');
@@ -1083,7 +1123,9 @@ describe('#components/Builder', () => {
     expect(getByDataTest(container, 'CustomTextModeEditorInput')).toHaveValue(
       '(MOCK_NUMBER != 8)'
     );
-    expect(getByDataTest(container, 'CustomTextModeEditorError')).toHaveTextContent(
+    expect(
+      getByDataTest(container, 'CustomTextModeEditorError')
+    ).toHaveTextContent(
       'One or more read-only clauses cannot be changed or removed in text mode.'
     );
   });
@@ -1563,7 +1605,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         textMode
@@ -1595,7 +1639,9 @@ describe('#components/Builder', () => {
           type: 'GROUP',
           value: 'AND',
           isNegated: false,
-          children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          children: [
+            { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          ],
         },
       ])
     );
@@ -1620,7 +1666,7 @@ describe('#components/Builder', () => {
             <div className={className} data-test="CustomTextModeInput">
               <textarea
                 value={value}
-                onChange={event => onChange(event.target.value)}
+                onChange={(event) => onChange(event.target.value)}
                 className={inputClassName}
                 data-test={inputDataTest}
               />
@@ -1649,9 +1695,11 @@ describe('#components/Builder', () => {
               <textarea
                 data-test="CustomTextModeEditorInput"
                 value={value}
-                onChange={event => onChange(event.target.value)}
+                onChange={(event) => onChange(event.target.value)}
               />
-              {errorMessage ? <div data-test="CustomTextModeEditorError">{errorMessage}</div> : null}
+              {errorMessage ? (
+                <div data-test="CustomTextModeEditorError">{errorMessage}</div>
+              ) : null}
             </div>
           ),
         }}
@@ -1859,7 +1907,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         onChange={onChange}
@@ -2317,7 +2367,9 @@ describe('#components/Builder', () => {
 
     expect(queryByDataTest(container, 'AddRootGroup')).not.toBeNull();
     expect(queryByDataTest(container, 'AddRootGroupWithModifiers')).toBeNull();
-    expect(queryByDataTest(container, 'AddRootGroupWithoutModifiers')).toBeNull();
+    expect(
+      queryByDataTest(container, 'AddRootGroupWithoutModifiers')
+    ).toBeNull();
 
     fireEvent.click(getByDataTest(container, 'AddRootGroup'));
 
@@ -2378,7 +2430,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: true,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         textMode
@@ -2402,7 +2456,9 @@ describe('#components/Builder', () => {
           type: 'GROUP',
           value: 'AND',
           isNegated: true,
-          children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+          children: [
+            { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          ],
         },
       ],
       allowGroupNegation: false,
@@ -2439,9 +2495,7 @@ describe('#components/Builder', () => {
     expect(queryByDataTest(container, 'AddRootRule')).toBeNull();
     expect(queryByDataTest(container, 'AddRootGroup')).toBeNull();
     expect(getAllByDataTest(container, 'IteratorRule')).toHaveLength(1);
-    expect(
-      screen.getAllByRole('button', { name: 'Delete' })
-    ).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Delete' })).toHaveLength(1);
     expect(getAllByDataTest(container, 'DragHandle')).toHaveLength(1);
   });
 
@@ -2506,7 +2560,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'REQUIRED_TEXT', value: '', operator: 'EQUAL' }],
+            children: [
+              { field: 'REQUIRED_TEXT', value: '', operator: 'EQUAL' },
+            ],
           },
         ]}
         showValidation
@@ -2546,7 +2602,9 @@ describe('#components/Builder', () => {
     );
 
     await waitFor(() => {
-      expect(screen.queryByText('Field "" is not defined')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Field "" is not defined')
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -2596,9 +2654,7 @@ describe('#components/Builder', () => {
 
     const rule = getByDataTest(container, 'IteratorRule');
 
-    expect(
-      rule.querySelector('[data-test="DragHandle"]')
-    ).toBeNull();
+    expect(rule.querySelector('[data-test="DragHandle"]')).toBeNull();
     expect(
       screen.queryByRole('button', { name: 'Delete' })
     ).not.toBeInTheDocument();
@@ -2691,12 +2747,7 @@ describe('#components/Builder', () => {
       ]);
 
       return (
-        <Builder
-          fields={fields}
-          lockable
-          data={value}
-          onChange={setValue}
-        />
+        <Builder fields={fields} lockable data={value} onChange={setValue} />
       );
     };
 
@@ -2892,9 +2943,7 @@ describe('#components/Builder', () => {
     );
 
     expect(getAllByDataTest(container, 'AddRule')).toHaveLength(1);
-    expect(
-      screen.getAllByRole('button', { name: 'Delete' })
-    ).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Delete' })).toHaveLength(1);
     expect(getAllByDataTest(container, 'DragHandle')).toHaveLength(1);
   });
 
@@ -3176,7 +3225,9 @@ describe('#components/Builder', () => {
               type="button"
               data-test={`CustomLockToggle[${nodeType}]`}
               disabled={disabled}
-              onClick={() => onChange?.(state === 'unlocked' ? 'self' : 'unlocked')}
+              onClick={() =>
+                onChange?.(state === 'unlocked' ? 'self' : 'unlocked')
+              }
             >
               custom
             </button>
@@ -3199,8 +3250,12 @@ describe('#components/Builder', () => {
       />
     );
 
-    expect(getAllByDataTest(container, 'CustomLockToggle[group]')).toHaveLength(1);
-    expect(getAllByDataTest(container, 'CustomLockToggle[rule]')).toHaveLength(1);
+    expect(getAllByDataTest(container, 'CustomLockToggle[group]')).toHaveLength(
+      1
+    );
+    expect(getAllByDataTest(container, 'CustomLockToggle[rule]')).toHaveLength(
+      1
+    );
   });
 
   it('Keeps the boundary drop zone before a locked sibling group', () => {
@@ -3252,7 +3307,8 @@ describe('#components/Builder', () => {
 
   it('Exposes imperative builderRef methods for reads, mutations, and history', () => {
     const onChange = jest.fn();
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -3289,7 +3345,8 @@ describe('#components/Builder', () => {
       return currentBuilderRef as IBuilderRef;
     };
     const initialNodes = getBuilderRef().getNodes();
-    const rootGroupId = initialNodes.find((node) => 'type' in node)?.id as string;
+    const rootGroupId = initialNodes.find((node) => 'type' in node)
+      ?.id as string;
     const ruleIds = initialNodes
       .filter((node) => 'field' in node)
       .map((node) => node.id);
@@ -3514,7 +3571,8 @@ describe('#components/Builder', () => {
   });
 
   it('Exposes imperative field option methods without replacing the fields prop', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -3610,7 +3668,8 @@ describe('#components/Builder', () => {
 
   it('reloadFieldOptions invalidates the runtime cache and notifies the consumer', () => {
     const onFieldOptionsReload = jest.fn();
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -3758,7 +3817,8 @@ describe('#components/Builder', () => {
   });
 
   it('Supports rule-scoped field options and nearest field lookup for repeated groups', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -3826,11 +3886,15 @@ describe('#components/Builder', () => {
     const firstCityRuleId = cityRules[0]?.id as string;
     const secondCityRuleId = cityRules[1]?.id as string;
 
-    expect(getBuilderRef().getNearestField(firstCityRuleId, 'COUNTRY')).toMatchObject({
+    expect(
+      getBuilderRef().getNearestField(firstCityRuleId, 'COUNTRY')
+    ).toMatchObject({
       field: 'COUNTRY',
       value: 'CZ',
     });
-    expect(getBuilderRef().getNearestField(secondCityRuleId, 'COUNTRY')).toMatchObject({
+    expect(
+      getBuilderRef().getNearestField(secondCityRuleId, 'COUNTRY')
+    ).toMatchObject({
       field: 'COUNTRY',
       value: 'SK',
     });
@@ -3931,7 +3995,8 @@ describe('#components/Builder', () => {
     const builderRef = builderRefObject as BuilderRef | null;
     expect(builderRef).toBeDefined();
 
-    const snapshots: Array<Array<{ ruleId: string; countryValue?: string }>> = [];
+    const snapshots: Array<Array<{ ruleId: string; countryValue?: string }>> =
+      [];
     const unsubscribe = builderRef?.subscribeToRuleDependencies(
       'CITY',
       ['COUNTRY'],
@@ -3940,7 +4005,8 @@ describe('#components/Builder', () => {
           entries.map(({ ruleId, dependencies }) => ({
             ruleId,
             countryValue:
-              dependencies.COUNTRY && typeof dependencies.COUNTRY.value === 'string'
+              dependencies.COUNTRY &&
+              typeof dependencies.COUNTRY.value === 'string'
                 ? dependencies.COUNTRY.value
                 : undefined,
           }))
@@ -3975,10 +4041,9 @@ describe('#components/Builder', () => {
 
     await waitFor(() => {
       expect(snapshots.length).toBeGreaterThanOrEqual(2);
-      expect(snapshots.at(-1)?.map(({ countryValue }) => countryValue)).toEqual([
-        'SK',
-        'SK',
-      ]);
+      expect(snapshots.at(-1)?.map(({ countryValue }) => countryValue)).toEqual(
+        ['SK', 'SK']
+      );
     });
 
     unsubscribe?.();
@@ -3987,7 +4052,10 @@ describe('#components/Builder', () => {
   it('Binds dependency-aware rule options with automatic hydration and refresh', async () => {
     let builderRefObject: BuilderRef | null = null;
 
-    const cityOptionsByCountry: Record<string, Array<{ value: string; label: string }>> = {
+    const cityOptionsByCountry: Record<
+      string,
+      Array<{ value: string; label: string }>
+    > = {
       CZ: [
         { value: 'PRG', label: 'Prague' },
         { value: 'BRN', label: 'Brno' },
@@ -4075,11 +4143,15 @@ describe('#components/Builder', () => {
     expect(cityRuleIds).toHaveLength(2);
 
     await waitFor(() => {
-      expect(builderRef?.current?.getRuleOptionState(cityRuleIds[0] || '')).toEqual({
+      expect(
+        builderRef?.current?.getRuleOptionState(cityRuleIds[0] || '')
+      ).toEqual({
         options: cityOptionsByCountry.CZ,
         status: 'success',
       });
-      expect(builderRef?.current?.getRuleOptionState(cityRuleIds[1] || '')).toEqual({
+      expect(
+        builderRef?.current?.getRuleOptionState(cityRuleIds[1] || '')
+      ).toEqual({
         options: cityOptionsByCountry.SK,
         status: 'success',
       });
@@ -4105,18 +4177,21 @@ describe('#components/Builder', () => {
     });
 
     await waitFor(() => {
-      expect(builderRef?.current?.getRuleOptionState(cityRuleIds[0] || '')).toEqual({
+      expect(
+        builderRef?.current?.getRuleOptionState(cityRuleIds[0] || '')
+      ).toEqual({
         options: cityOptionsByCountry.SK,
         status: 'success',
       });
-      expect(builderRef?.current?.getNodeById(cityRuleIds[0] || '')).not.toHaveProperty(
-        'value'
-      );
+      expect(
+        builderRef?.current?.getNodeById(cityRuleIds[0] || '')
+      ).not.toHaveProperty('value');
     });
   });
 
   it('Reconciles a rule value against the current rule-scoped options', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4165,7 +4240,8 @@ describe('#components/Builder', () => {
   });
 
   it('Reconciles numeric list values against the current rule-scoped options', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4197,7 +4273,8 @@ describe('#components/Builder', () => {
     };
     const ruleId = getBuilderRef()
       .getNodes()
-      .find((node) => 'field' in node && node.field === 'PRIORITY')?.id as string;
+      .find((node) => 'field' in node && node.field === 'PRIORITY')
+      ?.id as string;
 
     act(() => {
       getBuilderRef().setRuleOptions(ruleId, [{ value: 3, label: 'High' }]);
@@ -4212,7 +4289,8 @@ describe('#components/Builder', () => {
   });
 
   it('Reconciles numeric multi-list values against the current rule-scoped options', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4227,7 +4305,9 @@ describe('#components/Builder', () => {
               type: 'GROUP',
               value: 'AND',
               isNegated: false,
-              children: [{ field: 'SCORES', value: [1, 2], operator: 'ALL_IN' }],
+              children: [
+                { field: 'SCORES', value: [1, 2], operator: 'ALL_IN' },
+              ],
             },
           ]}
           onChange={jest.fn()}
@@ -4261,7 +4341,8 @@ describe('#components/Builder', () => {
   });
 
   it('Reconciles string multi-list values with partial overlap against the current rule-scoped options', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4277,7 +4358,11 @@ describe('#components/Builder', () => {
               value: 'AND',
               isNegated: false,
               children: [
-                { field: 'SEGMENTS', value: ['A', 'B', 'C'], operator: 'ALL_IN' },
+                {
+                  field: 'SEGMENTS',
+                  value: ['A', 'B', 'C'],
+                  operator: 'ALL_IN',
+                },
               ],
             },
           ]}
@@ -4295,7 +4380,8 @@ describe('#components/Builder', () => {
     };
     const ruleId = getBuilderRef()
       .getNodes()
-      .find((node) => 'field' in node && node.field === 'SEGMENTS')?.id as string;
+      .find((node) => 'field' in node && node.field === 'SEGMENTS')
+      ?.id as string;
 
     act(() => {
       getBuilderRef().setRuleOptions(ruleId, [
@@ -4315,7 +4401,8 @@ describe('#components/Builder', () => {
   });
 
   it('Reconciles string multi-list values to an empty array when no options overlap', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4349,7 +4436,8 @@ describe('#components/Builder', () => {
     };
     const ruleId = getBuilderRef()
       .getNodes()
-      .find((node) => 'field' in node && node.field === 'SEGMENTS')?.id as string;
+      .find((node) => 'field' in node && node.field === 'SEGMENTS')
+      ?.id as string;
 
     act(() => {
       getBuilderRef().setRuleOptions(ruleId, [
@@ -4368,7 +4456,8 @@ describe('#components/Builder', () => {
   });
 
   it('Reconciles against shared field options after rule-scoped options are cleared', () => {
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4458,12 +4547,15 @@ describe('#components/Builder', () => {
     expect(builderRef).toBeDefined();
 
     const states: Array<{ status: string; optionCount: number }> = [];
-    const unsubscribe = builderRef?.subscribeToFieldOptionState('STATUS', (state) => {
-      states.push({
-        status: state.status,
-        optionCount: state.options.length,
-      });
-    });
+    const unsubscribe = builderRef?.subscribeToFieldOptionState(
+      'STATUS',
+      (state) => {
+        states.push({
+          status: state.status,
+          optionCount: state.options.length,
+        });
+      }
+    );
 
     expect(states[0]).toEqual({
       status: 'idle',
@@ -4544,7 +4636,10 @@ describe('#components/Builder', () => {
     });
 
     act(() => {
-      builderRef?.current?.setRuleOptionsStatus(cityRuleId as string, 'loading');
+      builderRef?.current?.setRuleOptionsStatus(
+        cityRuleId as string,
+        'loading'
+      );
       builderRef?.current?.setRuleOptions(cityRuleId as string, [
         { value: 'PRG', label: 'Prague' },
       ]);
@@ -4564,7 +4659,8 @@ describe('#components/Builder', () => {
 
   it('reloadRuleOptions invalidates the runtime cache and notifies the consumer', () => {
     const onRuleOptionsReload = jest.fn();
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4622,7 +4718,9 @@ describe('#components/Builder', () => {
             type: 'GROUP',
             value: 'AND',
             isNegated: false,
-            children: [{ field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' }],
+            children: [
+              { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+            ],
           },
         ]}
         onFieldChange={onFieldChange}
@@ -4667,7 +4765,8 @@ describe('#components/Builder', () => {
 
   it('Uses newNodePlacement for imperative add methods when index is omitted', () => {
     const onChange = jest.fn();
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4735,7 +4834,8 @@ describe('#components/Builder', () => {
 
   it('Blocks imperative deleteNode for read-only-targeted nodes', () => {
     const onChange = jest.fn();
-    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null = null;
+    let builderRefObject: React.MutableRefObject<IBuilderRef | null> | null =
+      null;
 
     const TestComponent = () => {
       const builderRef = useBuilderRef();
@@ -4770,17 +4870,20 @@ describe('#components/Builder', () => {
 
     render(<TestComponent />);
 
-    const builderRef = builderRefObject as React.MutableRefObject<IBuilderRef | null> | null;
+    const builderRef =
+      builderRefObject as React.MutableRefObject<IBuilderRef | null> | null;
     const protectedRuleId = builderRef?.current
       ?.getNodes()
-      .find((node: ReturnType<IBuilderRef['getNodes']>[number]) => 'field' in node)?.id;
+      .find(
+        (node: ReturnType<IBuilderRef['getNodes']>[number]) => 'field' in node
+      )?.id;
 
     expect(protectedRuleId).toBeDefined();
 
     act(() => {
-      expect(
-        builderRef?.current?.deleteNode(protectedRuleId as string)
-      ).toBe(false);
+      expect(builderRef?.current?.deleteNode(protectedRuleId as string)).toBe(
+        false
+      );
     });
 
     expect(onChange).not.toHaveBeenCalled();
@@ -5101,5 +5204,3 @@ describe('field-comparison validation surfaces', () => {
     );
   });
 });
-
-

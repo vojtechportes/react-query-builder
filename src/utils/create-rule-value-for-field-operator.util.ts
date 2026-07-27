@@ -1,12 +1,15 @@
 import { IBuilderFieldProps } from '../builder';
-import { operatorRequiresValue } from './operator-requires-value.util';
+import { operatorRequiresValue } from '../shared/query/model/utils/operator-requires-value.util';
 import { isOptionList } from './is-option-list.util';
-import { isRangeOperator } from './is-range-operator.util';
+import { isRangeOperator } from '../shared/query/model/utils/is-range-operator.util';
 import { isBoolean } from './is-boolean.util';
 import { isNumber } from './is-number.util';
 import { isString } from './is-string.util';
 import { isStringArray } from './is-string-array.util';
-import { QueryOperator, QueryRuleValue } from './query-tree';
+import {
+  QueryOperator,
+  QueryRuleValue,
+} from '../shared/query/model/types/query-tree';
 
 export const createRuleValueForFieldOperator = (
   field: IBuilderFieldProps,
@@ -25,7 +28,9 @@ export const createRuleValueForFieldOperator = (
     case 'NUMBER':
       return isRangeOperator(operator) ? [0, 0] : 0;
     case 'LIST': {
-      const firstOption = isOptionList(field.value) ? field.value[0] : undefined;
+      const firstOption = isOptionList(field.value)
+        ? field.value[0]
+        : undefined;
       return firstOption ? firstOption.value : undefined;
     }
     case 'MULTI_LIST':

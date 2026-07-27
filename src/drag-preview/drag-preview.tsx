@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { Rule, IRuleProps } from '../rule/rule';
 import { Group } from '../group/group';
 import { Iterator } from '../iterator';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { NormalizedQuery } from '../utils/query-tree';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 import styles from './drag-preview.module.css';
 
 export interface IDragPreviewProps {

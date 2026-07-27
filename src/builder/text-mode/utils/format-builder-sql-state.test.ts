@@ -1,6 +1,6 @@
 import { formatBuilderSqlState } from './format-builder-sql-state';
 import { IBuilderFieldProps } from '../../types';
-import { DenormalizedQuery } from '../../../utils/query-tree';
+import { DenormalizedQuery } from '../../../shared/query/model/types/query-tree';
 
 const fields: IBuilderFieldProps[] = [
   {
@@ -61,7 +61,9 @@ describe('formatBuilderSqlState', () => {
       textState.protectedRanges
     );
 
-    expect(textState.value).toContain("(MOCK_FIELD = 'alpha' OR MOCK_NUMBER <> 5)");
+    expect(textState.value).toContain(
+      "(MOCK_FIELD = 'alpha' OR MOCK_NUMBER <> 5)"
+    );
     expect(protectedSegments).toEqual(
       expect.arrayContaining(['(', ')', 'MOCK_FIELD', '='])
     );

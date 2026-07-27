@@ -1,4 +1,7 @@
-import { GroupReadOnly, RuleReadOnly } from './query-tree';
+import {
+  GroupReadOnly,
+  RuleReadOnly,
+} from '../shared/query/model/types/query-tree';
 import { normalizeRuleReadOnlyConfig } from './normalize-rule-read-only-config.util';
 import { resolveGroupReadOnly } from './resolve-group-read-only.util';
 

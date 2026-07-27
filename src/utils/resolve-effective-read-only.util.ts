@@ -3,7 +3,7 @@ import {
   GroupReadOnlyTarget,
   RuleReadOnly,
   RuleReadOnlyTarget,
-} from './query-tree';
+} from '../shared/query/model/types/query-tree';
 import {
   getGroupReadOnlyTargets,
   isGroupFullyReadOnly,
@@ -78,7 +78,9 @@ export const resolveEffectiveRuleReadOnly = (
 
   return {
     full: fullReadOnly,
-    targets: fullReadOnly ? ['field', 'operator', 'value'] : getRuleReadOnlyTargets(value),
+    targets: fullReadOnly
+      ? ['field', 'operator', 'value']
+      : getRuleReadOnlyTargets(value),
   };
 };
 

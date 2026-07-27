@@ -17,7 +17,7 @@ import { IPopoverItemProps } from '../../popover-item';
 import { IPopoverProps } from '../../popover';
 import { IRuleProps as IRuleContainerProps } from '../../rule/rule-container';
 import { Text } from '../../text';
-import type { IStrings } from '../../locales/types/strings';
+import type { IStrings } from '../../shared/localization/types/strings';
 import { BuilderLockState } from '../../utils/lock-state';
 import { BuilderDefaultMode } from './builder-default-mode';
 import type { IBuilderFieldChange } from './field-option';
@@ -31,7 +31,7 @@ import {
   QueryGroupValue,
   QueryOperator,
   RuleReadOnlyTarget,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 
 export type BuilderGroupMode = 'with-modifiers' | 'without-modifiers' | 'both';
 export type BuilderNewNodePlacement = 'append' | 'prepend';

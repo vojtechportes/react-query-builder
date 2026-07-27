@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import { formatCelRule } from './format-cel-rule';
 
@@ -37,13 +37,11 @@ export const formatCelGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): string => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const inner = joinFragments(
     group.children
-      .map(child => formatCelNode(child, modifierlessGroupCombinator))
-      .filter(fragment => fragment.trim().length > 0),
+      .map((child) => formatCelNode(child, modifierlessGroupCombinator))
+      .filter((fragment) => fragment.trim().length > 0),
     combinator
   );
 

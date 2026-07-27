@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -61,5 +61,6 @@ export const inferRegexOperator = (
   };
 };
 
-export const isMongoDocument = (value: unknown): value is Record<string, unknown> =>
-  isPlainObject(value);
+export const isMongoDocument = (
+  value: unknown
+): value is Record<string, unknown> => isPlainObject(value);

@@ -1,8 +1,8 @@
 import {
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../../utils/query-tree';
-import { clone } from '../../../utils/clone.util';
+} from '../../../shared/query/model/types/query-tree';
+import { clone } from '../../../shared/query/model/utils/clone.util';
 import {
   collectReadOnlyNodeCandidates,
   collectReadOnlyNodeDescriptors,

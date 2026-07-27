@@ -3,11 +3,11 @@ import { BuilderContext } from '../../builder-context';
 import { SelectMulti as DefaultSelectMulti } from '../../form/select-multi';
 import { createReplaceNodeAction } from '../../history/create-replace-node-action';
 import { findNodeById } from '../../history/find-node-by-id';
-import { isNormalizedGroupNode } from '../../utils/is-normalized-group-node.util';
+import { isNormalizedGroupNode } from '../../shared/query/model/utils/is-normalized-group-node.util';
 import { isStringArray } from '../../utils/is-string-array.util';
 import { applyDataUpdate } from '../../utils/apply-data-update.util';
 import { emitBuilderFieldChange } from '../../utils/emit-builder-field-change.util';
-import { updateItem } from '../../utils/update-item.util';
+import { updateItem } from '../../shared/query/transformations/utils/update-item.util';
 
 export interface ISelectMultiProps {
   values: Array<{ value: string; label: string }>;
@@ -32,8 +32,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     strings,
     readOnly,
     onFieldChange,
-  } =
-    useContext(BuilderContext);
+  } = useContext(BuilderContext);
   const SelectMultiComponent =
     components.form?.SelectMulti || DefaultSelectMulti;
   const isDisabled = Boolean(readOnly || disabled);
@@ -55,10 +54,10 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
 
     if (!dispatchAction && setData && onChange) {
       const nextValue = currentRule.value.filter(
-        currentValue => currentValue !== value
+        (currentValue) => currentValue !== value
       );
       nextValue.push(value);
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
           return;
         }
@@ -68,13 +67,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         item.value = nextValue;
       });
 
-      applyDataUpdate(
-        data,
-        setData,
-        onChange,
-        () => nextData,
-        updateData
-      );
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
       emitBuilderFieldChange(
         onFieldChange,
         nextData,
@@ -96,7 +89,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     }
 
     const nextValue = currentRule.value.filter(
-      currentValue => currentValue !== value
+      (currentValue) => currentValue !== value
     );
     nextValue.push(value);
 
@@ -110,7 +103,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     );
     emitBuilderFieldChange(
       onFieldChange,
-      updateItem(data, id, item => {
+      updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
           return;
         }
@@ -148,9 +141,9 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
 
     if (!dispatchAction && setData && onChange) {
       const nextValue = currentRule.value.filter(
-        currentValue => currentValue !== value
+        (currentValue) => currentValue !== value
       );
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
           return;
         }
@@ -160,13 +153,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
         item.value = nextValue;
       });
 
-      applyDataUpdate(
-        data,
-        setData,
-        onChange,
-        () => nextData,
-        updateData
-      );
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
       emitBuilderFieldChange(
         onFieldChange,
         nextData,
@@ -188,7 +175,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     }
 
     const nextValue = currentRule.value.filter(
-      currentValue => currentValue !== value
+      (currentValue) => currentValue !== value
     );
 
     dispatchAction(
@@ -201,7 +188,7 @@ export const SelectMulti: FC<ISelectMultiProps> = ({
     );
     emitBuilderFieldChange(
       onFieldChange,
-      updateItem(data, id, item => {
+      updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
           return;
         }

@@ -1,5 +1,8 @@
-import { findItemIndex } from '../utils/find-item-index.util';
-import { NormalizedNode, NormalizedQuery } from '../utils/query-tree';
+import { findItemIndex } from '../shared/query/transformations/utils/find-item-index.util';
+import {
+  NormalizedNode,
+  NormalizedQuery,
+} from '../shared/query/model/types/query-tree';
 
 export const findNodeById = (
   data: NormalizedQuery,

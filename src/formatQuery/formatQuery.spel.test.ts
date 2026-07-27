@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery SpEL', () => {
@@ -79,10 +79,30 @@ describe('formatQuery SpEL', () => {
         value: 'AND',
         isNegated: false,
         children: [
-          { field: 'name', operator: 'CONTAINS', valueSource: 'field', valueField: 'needle' },
-          { field: 'name', operator: 'STARTS_WITH', valueSource: 'field', valueField: 'prefix' },
-          { field: 'name', operator: 'ENDS_WITH', valueSource: 'field', valueField: 'suffix' },
-          { field: 'status', operator: 'NOT_CONTAINS', valueSource: 'field', valueField: 'archived_status' },
+          {
+            field: 'name',
+            operator: 'CONTAINS',
+            valueSource: 'field',
+            valueField: 'needle',
+          },
+          {
+            field: 'name',
+            operator: 'STARTS_WITH',
+            valueSource: 'field',
+            valueField: 'prefix',
+          },
+          {
+            field: 'name',
+            operator: 'ENDS_WITH',
+            valueSource: 'field',
+            valueField: 'suffix',
+          },
+          {
+            field: 'status',
+            operator: 'NOT_CONTAINS',
+            valueSource: 'field',
+            valueField: 'archived_status',
+          },
         ],
       },
     ];

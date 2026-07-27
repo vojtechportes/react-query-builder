@@ -5,8 +5,8 @@ import {
   GroupReadOnlyTarget,
   IDenormalizedRuleNode,
   RuleReadOnlyTarget,
-} from '../../../utils/query-tree';
-import { QueryOperator } from '../../../utils/query-operators';
+} from '../../../shared/query/model/types/query-tree';
+import { QueryOperator } from '../../../shared/query/model/constants/query-operators';
 import { resolveGroupReadOnly } from '../../../utils/resolve-group-read-only.util';
 import {
   getRuleReadOnlyTargets,
@@ -62,7 +62,7 @@ const createExactFingerprint = (node: DenormalizedNode): string => {
   }
 
   return JSON.stringify({
-    field: ('field' in node ? node.field : ''),
+    field: 'field' in node ? node.field : '',
     operator:
       'operator' in node
         ? normalizeLockFingerprintOperator(node.operator)
@@ -84,12 +84,14 @@ const createRuleReadOnlyFingerprint = (
   targets: RuleReadOnlyTarget[]
 ): string =>
   JSON.stringify({
-    field: 'field' in node && targets.includes('field') ? node.field : undefined,
+    field:
+      'field' in node && targets.includes('field') ? node.field : undefined,
     operator:
       'operator' in node && targets.includes('operator')
         ? normalizeLockFingerprintOperator(node.operator)
         : undefined,
-    value: 'value' in node && targets.includes('value') ? node.value : undefined,
+    value:
+      'value' in node && targets.includes('value') ? node.value : undefined,
   });
 
 const createGroupReadOnlyFingerprint = (
@@ -121,7 +123,8 @@ const getGroupCandidateRelaxedFingerprint = (
   );
 
 const isSamePath = (left: number[], right: number[]): boolean =>
-  left.length === right.length && left.every((segment, index) => segment === right[index]);
+  left.length === right.length &&
+  left.every((segment, index) => segment === right[index]);
 
 const getSiblingDistance = (
   descriptor: IReadOnlyNodeDescriptor,
@@ -140,7 +143,7 @@ const findCandidate = (
   matcher: (candidate: INodeCandidate) => boolean
 ): INodeCandidate | undefined => {
   const samePathCandidate = candidates.find(
-    candidate =>
+    (candidate) =>
       !usedCandidates.has(candidate.node) &&
       isSamePath(candidate.path, descriptor.path) &&
       matcher(candidate)
@@ -152,14 +155,15 @@ const findCandidate = (
 
   const siblingCandidates = candidates
     .filter(
-      candidate =>
+      (candidate) =>
         !usedCandidates.has(candidate.node) &&
         isSamePath(candidate.parentPath, descriptor.parentPath) &&
         matcher(candidate)
     )
     .sort(
       (left, right) =>
-        getSiblingDistance(descriptor, left) - getSiblingDistance(descriptor, right)
+        getSiblingDistance(descriptor, left) -
+        getSiblingDistance(descriptor, right)
     );
 
   return siblingCandidates[0];
@@ -171,7 +175,7 @@ const findUniqueGlobalCandidate = (
   matcher: (candidate: INodeCandidate) => boolean
 ): INodeCandidate | undefined => {
   const matchingCandidates = candidates.filter(
-    candidate => !usedCandidates.has(candidate.node) && matcher(candidate)
+    (candidate) => !usedCandidates.has(candidate.node) && matcher(candidate)
   );
 
   return matchingCandidates.length === 1 ? matchingCandidates[0] : undefined;
@@ -189,14 +193,16 @@ const findCandidateByParentGroupFingerprint = (
 
   const matchingCandidates = candidates
     .filter(
-      candidate =>
+      (candidate) =>
         !usedCandidates.has(candidate.node) &&
-        candidate.parentGroupFingerprint === descriptor.parentGroupFingerprint &&
+        candidate.parentGroupFingerprint ===
+          descriptor.parentGroupFingerprint &&
         matcher(candidate)
     )
     .sort(
       (left, right) =>
-        getSiblingDistance(descriptor, left) - getSiblingDistance(descriptor, right)
+        getSiblingDistance(descriptor, left) -
+        getSiblingDistance(descriptor, right)
     );
 
   return matchingCandidates[0];
@@ -224,7 +230,9 @@ export const collectReadOnlyNodeDescriptors = (
             ? createExactFingerprint(node)
             : createGroupShellFingerprint(node),
           relaxedFingerprint:
-            groupReadOnly.inheritToChildren || isFullGroupLock || !groupReadOnly.targets
+            groupReadOnly.inheritToChildren ||
+            isFullGroupLock ||
+            !groupReadOnly.targets
               ? undefined
               : createGroupReadOnlyFingerprint(node, groupReadOnly.targets),
           readOnly: node.readOnly,
@@ -248,7 +256,8 @@ export const collectReadOnlyNodeDescriptors = (
         kind: 'rule',
         fingerprint: createExactFingerprint(ruleNode),
         relaxedFingerprint:
-          isRuleFullyReadOnly(ruleNode.readOnly) || ruleReadOnlyTargets.length === 0
+          isRuleFullyReadOnly(ruleNode.readOnly) ||
+          ruleReadOnlyTargets.length === 0
             ? undefined
             : createRuleReadOnlyFingerprint(ruleNode, ruleReadOnlyTargets),
         readOnly: ruleNode.readOnly,
@@ -326,28 +335,45 @@ export const matchReadOnlyDescriptorToCandidate = (
     descriptor,
     candidatePool,
     usedCandidates,
-    candidate => candidate.fingerprint === descriptor.fingerprint
+    (candidate) => candidate.fingerprint === descriptor.fingerprint
   ) ||
   findCandidateByParentGroupFingerprint(
     descriptor,
     candidatePool,
     usedCandidates,
-    candidate => candidate.fingerprint === descriptor.fingerprint
+    (candidate) => candidate.fingerprint === descriptor.fingerprint
   ) ||
   findUniqueGlobalCandidate(
     candidatePool,
     usedCandidates,
-    candidate => candidate.fingerprint === descriptor.fingerprint
+    (candidate) => candidate.fingerprint === descriptor.fingerprint
   ) ||
   (descriptor.relaxedFingerprint
-    ? findCandidate(
+    ? findCandidate(descriptor, candidatePool, usedCandidates, (candidate) => {
+        const relaxedFingerprint =
+          descriptor.kind === 'rule'
+            ? getRuleCandidateRelaxedFingerprint(
+                candidate.node,
+                descriptor.readOnly
+              )
+            : getGroupCandidateRelaxedFingerprint(
+                candidate.node as DenormalizedGroupNode,
+                descriptor.readOnly
+              );
+
+        return relaxedFingerprint === descriptor.relaxedFingerprint;
+      }) ||
+      findCandidateByParentGroupFingerprint(
         descriptor,
         candidatePool,
         usedCandidates,
-        candidate => {
+        (candidate) => {
           const relaxedFingerprint =
             descriptor.kind === 'rule'
-              ? getRuleCandidateRelaxedFingerprint(candidate.node, descriptor.readOnly)
+              ? getRuleCandidateRelaxedFingerprint(
+                  candidate.node,
+                  descriptor.readOnly
+                )
               : getGroupCandidateRelaxedFingerprint(
                   candidate.node as DenormalizedGroupNode,
                   descriptor.readOnly
@@ -355,36 +381,19 @@ export const matchReadOnlyDescriptorToCandidate = (
 
           return relaxedFingerprint === descriptor.relaxedFingerprint;
         }
-      )
-    || findCandidateByParentGroupFingerprint(
-        descriptor,
-        candidatePool,
-        usedCandidates,
-        candidate => {
-          const relaxedFingerprint =
-            descriptor.kind === 'rule'
-              ? getRuleCandidateRelaxedFingerprint(candidate.node, descriptor.readOnly)
-              : getGroupCandidateRelaxedFingerprint(
-                  candidate.node as DenormalizedGroupNode,
-                  descriptor.readOnly
-                );
+      ) ||
+      findUniqueGlobalCandidate(candidatePool, usedCandidates, (candidate) => {
+        const relaxedFingerprint =
+          descriptor.kind === 'rule'
+            ? getRuleCandidateRelaxedFingerprint(
+                candidate.node,
+                descriptor.readOnly
+              )
+            : getGroupCandidateRelaxedFingerprint(
+                candidate.node as DenormalizedGroupNode,
+                descriptor.readOnly
+              );
 
-          return relaxedFingerprint === descriptor.relaxedFingerprint;
-        }
-      )
-    || findUniqueGlobalCandidate(
-        candidatePool,
-        usedCandidates,
-        candidate => {
-          const relaxedFingerprint =
-            descriptor.kind === 'rule'
-              ? getRuleCandidateRelaxedFingerprint(candidate.node, descriptor.readOnly)
-              : getGroupCandidateRelaxedFingerprint(
-                  candidate.node as DenormalizedGroupNode,
-                  descriptor.readOnly
-                );
-
-          return relaxedFingerprint === descriptor.relaxedFingerprint;
-        }
-      )
+        return relaxedFingerprint === descriptor.relaxedFingerprint;
+      })
     : undefined);

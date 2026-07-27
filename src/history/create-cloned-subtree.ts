@@ -1,7 +1,10 @@
-import { clone } from '../utils/clone.util';
-import { createId } from '../utils/create-id.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { NormalizedNode, NormalizedQuery } from '../utils/query-tree';
+import { clone } from '../shared/query/model/utils/clone.util';
+import { createId } from '../shared/query/model/utils/create-id.util';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import {
+  NormalizedNode,
+  NormalizedQuery,
+} from '../shared/query/model/types/query-tree';
 import { getSubtree } from './get-subtree';
 
 export const createClonedSubtree = (

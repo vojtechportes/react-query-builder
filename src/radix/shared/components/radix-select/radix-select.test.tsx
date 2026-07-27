@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import React from 'react';
 import { BuilderContext } from '../../../../builder-context';
-import { strings } from '../../../../locales/en-us';
+import { strings } from '../../../../shared/localization/locales/en-us';
 import { RadixSelect } from './radix-select';
 import styles from './radix-select.module.css';
 class ResizeObserverMock {

@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import { formatPrismaRule } from './format-prisma-rule';
 
@@ -51,13 +51,11 @@ export const formatPrismaGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): PrismaClause => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const expression = combinePrismaExpressions(
     group.children
-      .map(child => formatPrismaNode(child, modifierlessGroupCombinator))
-      .filter(item => Object.keys(item).length > 0),
+      .map((child) => formatPrismaNode(child, modifierlessGroupCombinator))
+      .filter((item) => Object.keys(item).length > 0),
     combinator
   );
 

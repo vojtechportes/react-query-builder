@@ -12,16 +12,16 @@ import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Popover as DefaultPopover } from '../popover';
 import { PopoverItem as DefaultPopoverItem } from '../popover-item';
 import { SecondaryButton } from '../secondary-button';
-import { createGroupNode } from '../utils/create-group-node.util';
-import { createId } from '../utils/create-id.util';
+import { createGroupNode } from '../shared/query/transformations/utils/create-group-node.util';
+import { createId } from '../shared/query/model/utils/create-id.util';
 import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
 import {
   GroupReadOnlyTarget,
   INormalizedRuleNode,
   NormalizedNode,
-} from '../utils/query-tree';
+} from '../shared/query/model/types/query-tree';
 import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
 import { Group as DefaultGroupContainer } from './components/group-container';
 import { Option as DefaultOption } from './components/option';
@@ -87,8 +87,7 @@ export const Group: FC<IGroupProps> = ({
     readOnlyTargets.length === 0 &&
     (!readOnlyProtectsDelete || !isNodeDeletionProtected(data, id));
   const canCloneGroup = !(singleRootGroup && isRoot) && !isReadOnly;
-  const isNegationReadOnly =
-    isReadOnly || readOnlyTargets.includes('negation');
+  const isNegationReadOnly = isReadOnly || readOnlyTargets.includes('negation');
   const isCombinatorReadOnly =
     isReadOnly || readOnlyTargets.includes('combinator');
   const canAddRule = canAddRuleForParent(data, fields, id);
@@ -96,7 +95,11 @@ export const Group: FC<IGroupProps> = ({
   const addItem = (payload: NormalizedNode) => {
     const currentGroup = data.find((item) => item.id === id);
 
-    if (!dispatchAction || !currentGroup || !isNormalizedGroupNode(currentGroup)) {
+    if (
+      !dispatchAction ||
+      !currentGroup ||
+      !isNormalizedGroupNode(currentGroup)
+    ) {
       return;
     }
 
@@ -199,7 +202,11 @@ export const Group: FC<IGroupProps> = ({
   const handleChangeLockState = (nextState: BuilderLockState) => {
     const currentGroup = data.find((item) => item.id === id);
 
-    if (!dispatchAction || !currentGroup || !isNormalizedGroupNode(currentGroup)) {
+    if (
+      !dispatchAction ||
+      !currentGroup ||
+      !isNormalizedGroupNode(currentGroup)
+    ) {
       return;
     }
 

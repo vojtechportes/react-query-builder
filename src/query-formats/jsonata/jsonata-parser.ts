@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type {
   IJsonataToken,
   JsonataTokenType,
@@ -140,7 +140,8 @@ export class JsonataParser {
 
     const operatorToken = this.expect('OPERATOR');
     const nextToken = this.peek();
-    const valueField = nextToken.type === 'IDENTIFIER' ? this.parseIdentifier() : undefined;
+    const valueField =
+      nextToken.type === 'IDENTIFIER' ? this.parseIdentifier() : undefined;
     const value = valueField ? undefined : this.parseScalarValue();
 
     if (operatorToken.value === '=' && value === null) {
@@ -168,7 +169,9 @@ export class JsonataParser {
   private parseIdentifier(): string {
     const token = this.consume();
     if (token.type !== 'IDENTIFIER') {
-      throw new Error(`Expected a field identifier but found "${token.value}".`);
+      throw new Error(
+        `Expected a field identifier but found "${token.value}".`
+      );
     }
     return token.value;
   }
@@ -189,16 +192,20 @@ export class JsonataParser {
     while (this.peek().type !== 'RBRACKET') {
       const value = this.parseScalarValue();
       if (typeof value === 'boolean' || value === null) {
-        throw new Error('JSONata arrays currently support only string and number values.');
+        throw new Error(
+          'JSONata arrays currently support only string and number values.'
+        );
       }
       values.push(value);
       if (this.peek().type === 'COMMA') this.consume();
       else break;
     }
     this.expect('RBRACKET');
-    if (values.every(v => typeof v === 'string')) return values as string[];
-    if (values.every(v => typeof v === 'number')) return values as number[];
-    throw new Error('JSONata arrays must contain values of the same scalar type.');
+    if (values.every((v) => typeof v === 'string')) return values as string[];
+    if (values.every((v) => typeof v === 'number')) return values as number[];
+    throw new Error(
+      'JSONata arrays must contain values of the same scalar type.'
+    );
   }
 
   private mapOperator(value: string): QueryOperator {
@@ -231,12 +238,20 @@ export class JsonataParser {
     }
 
     const children: ParsedJsonataNode[] = [];
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);
@@ -311,7 +326,9 @@ export class JsonataParser {
   private expectKeyword(value: string): void {
     const token = this.consume();
     if (token.type !== 'KEYWORD' || token.value !== value) {
-      throw new Error(`Expected keyword "${value}" but found "${token.value}".`);
+      throw new Error(
+        `Expected keyword "${value}" but found "${token.value}".`
+      );
     }
   }
 

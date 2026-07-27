@@ -1,4 +1,7 @@
-import { IRuleReadOnlyConfig, RuleReadOnly } from './query-tree';
+import {
+  IRuleReadOnlyConfig,
+  RuleReadOnly,
+} from '../shared/query/model/types/query-tree';
 
 export const isRuleReadOnlyConfig = (
   value: RuleReadOnly | undefined
