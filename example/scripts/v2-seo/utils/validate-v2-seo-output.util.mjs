@@ -75,7 +75,10 @@ export const validateV2SeoOutput = ({
     ) {
       errors.push(`${page.path} has incomplete social metadata.`);
     }
-    if (html.includes('/v1/') || html.includes('data-seo-fallback')) {
+    const headEnd = html.indexOf('</head>');
+    const headHtml = headEnd === -1 ? html : html.slice(0, headEnd);
+
+    if (headHtml.includes('/v1/') || html.includes('data-seo-fallback')) {
       errors.push(`${page.path} contains v1 SEO output.`);
     }
     if (!structuredDataMatch) {

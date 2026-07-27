@@ -1,7 +1,8 @@
-﻿export const v2VersionSwitchRoutes = [
+export const v2VersionSwitchRoutes = [
   '/',
   '/documentation',
   '/documentation/installation',
+  '/documentation/migration-to-2-0',
   '/documentation/usage',
   '/documentation/builder-behavior',
   '/documentation/builder-ref',

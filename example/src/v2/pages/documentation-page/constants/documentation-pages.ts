@@ -1,5 +1,6 @@
 import { overviewDocumentationPage } from '../pages/overview-documentation-page/overview-documentation-page';
 import { installationDocumentationPage } from '../pages/installation-documentation-page/installation-documentation-page';
+import { migrationTo20DocumentationPage } from '../pages/migration-to-2-0-documentation-page/migration-to-2-0-documentation-page';
 import { usageDocumentationPage } from '../pages/usage-documentation-page/usage-documentation-page';
 import { builderBehaviorDocumentationPage } from '../pages/builder-behavior-documentation-page/builder-behavior-documentation-page';
 import { builderRefDocumentationPage } from '../pages/builder-ref-documentation-page/builder-ref-documentation-page';
@@ -26,6 +27,7 @@ import type { IDocumentationPage } from '../types/documentation-page';
 export const documentationPages: IDocumentationPage[] = [
   overviewDocumentationPage,
   installationDocumentationPage,
+  migrationTo20DocumentationPage,
   usageDocumentationPage,
   builderBehaviorDocumentationPage,
   builderRefDocumentationPage,

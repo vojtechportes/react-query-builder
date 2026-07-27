@@ -3,13 +3,19 @@ export const documentationBaseline = [
     path: '/documentation',
     title: 'Documentation Overview',
     contentHash:
-      'e0c673c5c2a60ff73de78b2ac97b249a4311669b1522dd8b7706c9f74ea1ffa9',
+      '7e9b2c3e8f9e8d75dbe2d388b190db3619d40e7faf1f98dd96ebc7f3fa1ee262',
   },
   {
     path: '/documentation/installation',
     title: 'Installation',
     contentHash:
       '26f755387de8956b275296a1e6023355e4187b4ae5b8f516910e1c7d8b773438',
+  },
+  {
+    path: '/documentation/migration-to-2-0',
+    title: 'Migration to 2.0',
+    contentHash:
+      '381e81a33917a8b9e6ef175b660f232088fc98a3763bec5edec3f109b501c277',
   },
   {
     path: '/documentation/usage',
