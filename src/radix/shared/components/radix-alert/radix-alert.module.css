@@ -1,0 +1,35 @@
+@layer react-query-builder {
+  .alert {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--radix-alert-border);
+    border-radius: max(var(--radius-3, 10px), 10px);
+    background: var(--radix-alert-background);
+    color: var(--radix-alert-color);
+  }
+
+  .error {
+    --radix-alert-border: var(--red-7, #e5484d);
+    --radix-alert-background: var(--red-2, #fff7f7);
+    --radix-alert-color: var(--red-11, #d13438);
+  }
+
+  .success {
+    --radix-alert-border: var(--green-7, #30a46c);
+    --radix-alert-background: var(--green-2, #f6fef9);
+    --radix-alert-color: var(--green-11, #18794e);
+  }
+
+  .info {
+    --radix-alert-border: var(--blue-7, #3e63dd);
+    --radix-alert-background: var(--blue-2, #f5f8ff);
+    --radix-alert-color: var(--blue-11, #2050c7);
+  }
+
+  .warning {
+    --radix-alert-border: var(--amber-7, #f5a524);
+    --radix-alert-background: var(--amber-2, #fffcf2);
+    --radix-alert-color: var(--amber-11, #946800);
+  }
+}

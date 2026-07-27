@@ -1,0 +1,26 @@
+@layer react-query-builder {
+  .hiddenInput {
+    display: none;
+  }
+
+  .triggerText {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    gap: 0.4rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: var(--accent-9, #3e63dd);
+    color: white;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+}

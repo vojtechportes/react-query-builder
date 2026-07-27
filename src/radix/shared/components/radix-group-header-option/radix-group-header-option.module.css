@@ -1,0 +1,51 @@
+@layer react-query-builder {
+  .option {
+    min-width: 4.75rem;
+    min-height: 2rem;
+    padding: 0 0.9rem;
+    margin: 0;
+    border: 1px solid var(--gray-7, #c8c7d0);
+    border-right-width: 0;
+    background: var(--color-panel-solid, #fff);
+    color: var(--gray-12, #1c2024);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .selected {
+    border-color: var(--accent-9, #3e63dd);
+    border-right-width: 1px;
+    background: var(--accent-9, #3e63dd);
+    color: white;
+  }
+
+  .disabled {
+    border-color: var(--gray-6, #d9d9e0);
+    background: var(--gray-3, #f3f3f6);
+    color: var(--gray-9, #8b8d98);
+    cursor: not-allowed;
+  }
+
+  .selected.disabled {
+    border-color: var(--gray-8, #8d8d98);
+    background: var(--gray-4, #ececf0);
+  }
+
+  .option:first-child {
+    border-top-left-radius: max(var(--radius-2, 8px), 8px);
+    border-bottom-left-radius: max(var(--radius-2, 8px), 8px);
+  }
+
+  .option:last-child {
+    border-right-width: 1px;
+    border-top-right-radius: max(var(--radius-2, 8px), 8px);
+    border-bottom-right-radius: max(var(--radius-2, 8px), 8px);
+  }
+
+  .option:not(:first-child) {
+    margin-left: -1px;
+  }
+}

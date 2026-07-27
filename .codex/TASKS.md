@@ -1778,7 +1778,7 @@ wrappers without unrelated adapter refactoring.
 
 ### T053 - Migrate Radix structural wrappers
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035 and T049
 

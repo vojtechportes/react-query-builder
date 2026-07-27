@@ -402,6 +402,157 @@ const verifyCssBuild = async () => {
         { key: 'selected', suffix: ':hover' },
       ],
     },
+    {
+      name: 'Radix Alert',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-alert\/radix-alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['alert', 'error', 'info', 'success', 'warning'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['alert', 'error', 'info', 'success', 'warning'],
+      forbiddenFragments: ['styled-components'],
+      requiredRuleFragments: [
+        {
+          key: 'alert',
+          fragments: [
+            'border: 1px solid var(--radix-alert-border);',
+            'background: var(--radix-alert-background);',
+            'color: var(--radix-alert-color);',
+          ],
+        },
+        {
+          key: 'error',
+          fragments: [
+            '--radix-alert-border: var(--red-7, #e5484d);',
+            '--radix-alert-background: var(--red-2, #fff7f7);',
+          ],
+        },
+        {
+          key: 'success',
+          fragments: ['--radix-alert-border: var(--green-7, #30a46c);'],
+        },
+        {
+          key: 'info',
+          fragments: ['--radix-alert-border: var(--blue-7, #3e63dd);'],
+        },
+        {
+          key: 'warning',
+          fragments: ['--radix-alert-border: var(--amber-7, #f5a524);'],
+        },
+      ],
+    },
+    {
+      name: 'Radix Select',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-select\/radix-select\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['hiddenInput'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['hiddenInput'],
+      forbiddenFragments: ['styled-components'],
+    },
+    {
+      name: 'Radix SelectMulti',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-select-multi\/radix-select-multi\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['badge', 'hiddenInput', 'triggerText'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['badge', 'hiddenInput', 'triggerText'],
+      forbiddenFragments: ['styled-components'],
+      requiredRuleFragments: [
+        {
+          key: 'badge',
+          fragments: ['background: var(--accent-9, #3e63dd);', 'color: #fff;'],
+        },
+      ],
+    },
+    {
+      name: 'Radix text-mode toggle',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-text-mode-toggle-content\/radix-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['content', 'label'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['content', 'label'],
+      requiredSelectors: [{ key: 'content', suffix: ' svg {' }],
+      forbiddenFragments: ['styled-components'],
+    },
+    {
+      name: 'Radix HistoryControls',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-history-controls\/radix-history-controls\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['controls'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['controls'],
+      forbiddenFragments: ['styled-components'],
+    },
+    {
+      name: 'Radix Rule',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-rule\/radix-rule\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: [
+        'body',
+        'bodyWithoutControls',
+        'controls',
+        'rule',
+        'withControls',
+        'withDragHandle',
+      ],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['body', 'bodyWithoutControls', 'controls', 'rule'],
+      forbiddenFragments: ['styled-components'],
+      requiredRuleFragments: [
+        {
+          key: 'rule',
+          fragments: [
+            'border: 1px solid var(--gray-6, #d9d9e0);',
+            'background: var(--color-panel-solid, #fff);',
+            'box-shadow: 0 10px 24px #0f172a0f;',
+          ],
+        },
+      ],
+    },
+    {
+      name: 'Radix Group',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-group\/radix-group\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['body', 'group', 'header', 'left', 'right', 'withDragHandle'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['body', 'group'],
+      forbiddenFragments: ['styled-components'],
+      requiredRuleFragments: [
+        {
+          key: 'group',
+          fragments: [
+            'border: 1px solid var(--gray-6, #d9d9e0);',
+            'box-shadow: inset 0 1px #fff9;',
+          ],
+        },
+      ],
+    },
+    {
+      name: 'Radix GroupHeaderOption',
+      modulePattern:
+        /#region src\/radix\/shared\/components\/radix-group-header-option\/radix-group-header-option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['disabled', 'option', 'selected'],
+      entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
+      uniqueRuleKeys: ['option'],
+      requiredSelectors: [
+        { key: 'option', suffix: ':first-child' },
+        { key: 'option', suffix: ':last-child' },
+      ],
+      forbiddenFragments: ['styled-components'],
+      requiredRuleFragments: [
+        {
+          key: 'option',
+          fragments: [
+            'border: 1px solid var(--gray-7, #c8c7d0);',
+            'background: var(--color-panel-solid, #fff);',
+          ],
+        },
+        {
+          key: 'selected',
+          fragments: ['background: var(--accent-9, #3e63dd);'],
+        },
+      ],
+    },
   ];
   const cssModuleMappings = new Map();
 
@@ -629,6 +780,35 @@ const verifyCssBuild = async () => {
     }
   }
 
+  const radixRuleMappings = cssModuleMappings.get('Radix Rule');
+  const radixGroupMappings = cssModuleMappings.get('Radix Group');
+  const radixOptionMappings = cssModuleMappings.get('Radix GroupHeaderOption');
+  const compactRadixGroupBlock =
+    `@media (width <= 900px) { ` +
+    `.${radixGroupMappings.header} { ` +
+    'grid-template-columns: minmax(0, 1fr); gap: .75rem; } ' +
+    `.${radixGroupMappings.right} { justify-self: start; } }`;
+  const requiredRadixSelectors = [
+    `.${radixRuleMappings.withDragHandle}.${radixRuleMappings.withControls} {`,
+    `.${radixOptionMappings.selected}.${radixOptionMappings.disabled} {`,
+    `.${radixOptionMappings.option}:not(:first-child)`,
+  ];
+
+  if (!normalizedStylesheet.includes(compactRadixGroupBlock)) {
+    throw new Error(
+      'Radix Group stylesheet is missing the 900px header/right layout'
+    );
+  }
+
+  for (const selector of requiredRadixSelectors) {
+    const occurrences = stylesheet.split(selector).length - 1;
+
+    if (occurrences !== 1) {
+      throw new Error(
+        `Expected Radix selector ${selector} exactly once, received ${occurrences}`
+      );
+    }
+  }
   const antdToggleMappings = cssModuleMappings.get('ANTD text-mode toggle');
   const antdIconSelector = `.${antdToggleMappings.content} .anticon {`;
   const antdIconRuleOccurrences = stylesheet.split(antdIconSelector).length - 1;
@@ -797,6 +977,9 @@ const verifyCssBuild = async () => {
         fluentUiAdapterEntriesWithCssMappings: 2,
         fluentUiAdapterRulesExactlyOnce: true,
         fluentUiResponsiveLayout: '900px',
+        radixAdapterEntriesWithCssMappings: 2,
+        radixAdapterRulesExactlyOnce: true,
+        radixResponsiveLayout: '900px',
         esmNonUiLoad: 'passed',
         nonUiEntriesCssAndClsxFree: true,
         sharedJavaScriptChunks: sharedJavaScriptChunks.length,

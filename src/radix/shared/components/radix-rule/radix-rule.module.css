@@ -1,0 +1,42 @@
+@layer react-query-builder {
+  .rule {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-6, #d9d9e0);
+    border-radius: max(var(--radius-3, 10px), 10px);
+    background: var(--color-panel-solid, #fff);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  .withControls {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .withDragHandle {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .withDragHandle.withControls {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .body {
+    min-width: 0;
+    padding: 0.9rem 0 0.9rem 0.9rem;
+  }
+
+  .bodyWithoutControls {
+    padding-right: 0.9rem;
+  }
+
+  .controls {
+    display: grid;
+    grid-auto-columns: min-content;
+    grid-auto-flow: column;
+    gap: 0.5rem;
+    align-self: start;
+    padding: 0.9rem;
+  }
+}
