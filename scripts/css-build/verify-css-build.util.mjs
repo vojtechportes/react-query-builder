@@ -559,7 +559,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Monaco TextModeEditor',
       modulePattern:
-        /#region src\/monaco\/components\/monaco-text-mode-editor\/monaco-text-mode-editor\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/monaco\/components\/monaco-text-mode-editor\/monaco-text-mode-editor\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['errorMessage', 'frame', 'root', 'surface'],
       entryFiles: ['monaco/index.mjs', 'monaco/index.cjs'],
       uniqueRuleKeys: ['errorMessage', 'frame', 'root'],
