@@ -1,5 +1,5 @@
 import type { IStrings } from '../../../shared/localization/types/strings';
-import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
+import { ParsedNode } from '../../../shared/query-formats/sql/sql-token.types';
 import { getValidationString } from '../../../utils/validation/get-validation-string.util';
 import { validateFieldComparison } from '../../../utils/validation/validate-field-comparison.util';
 import { IBuilderFieldProps } from '../../types';

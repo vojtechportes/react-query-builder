@@ -1,12 +1,12 @@
 import { IBuilderFieldProps } from '../../types';
-import { tryParseSql } from '../../../query-formats/sql/try-parse-sql';
+import { tryParseSql } from '../../../shared/query-formats/sql/try-parse-sql';
 import { IDenormalizedRuleNode } from '../../../shared/query/model/types/query-tree';
 import {
   getRuleReadOnlyTargets,
   isRuleFullyReadOnly,
 } from '../../../utils/resolve-rule-read-only.util';
-import { formatSql } from '../../../query-formats/sql/format-sql';
-import { IParsedSqlRuleNode } from '../../../query-formats/sql/types/parsed-sql-rule-node';
+import { formatSql } from '../../../shared/query-formats/sql/format-sql';
+import { IParsedSqlRuleNode } from '../../../shared/query-formats/sql/types/parsed-sql-rule-node';
 
 export interface ILocalProtectedRange {
   start: number;

@@ -1,4 +1,4 @@
-import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
+import { ParsedNode } from '../../../shared/query-formats/sql/sql-token.types';
 
 export interface IParsedRuleEntry {
   parentScopeId: string;
@@ -11,7 +11,10 @@ export const collectParsedRuleEntries = (
 ): IParsedRuleEntry[] =>
   nodes.flatMap((node, index) => {
     if ('kind' in node) {
-      return collectParsedRuleEntries(node.children, `${parentScopeId}.${index}`);
+      return collectParsedRuleEntries(
+        node.children,
+        `${parentScopeId}.${index}`
+      );
     }
 
     return [{ rule: node, parentScopeId }];

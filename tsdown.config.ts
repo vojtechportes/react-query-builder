@@ -17,8 +17,8 @@ export default defineConfig({
   },
   entry: {
     index: 'src/index.tsx',
-    parseQuery: 'src/parseQuery/index.ts',
-    formatQuery: 'src/formatQuery/index.ts',
+    parseQuery: 'src/subpackages/parse-query/index.ts',
+    formatQuery: 'src/subpackages/format-query/index.ts',
     'bootstrap/v5/index': 'src/bootstrap/v5/index.ts',
     'antd/v5/index': 'src/antd/v5/index.ts',
     'antd/v6/index': 'src/antd/v6/index.ts',

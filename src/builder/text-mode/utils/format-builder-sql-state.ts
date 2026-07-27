@@ -11,7 +11,7 @@ import {
   isGroupFullyReadOnly,
   resolveGroupReadOnly,
 } from '../../../utils/resolve-group-read-only.util';
-import { isGroupNode } from '../../../query-formats/sql/shared';
+import { isGroupNode } from '../../../shared/query-formats/sql/shared';
 import { IBuilderTextModeSqlState } from '../types/builder-text-mode-sql-state';
 import {
   createRuleReadOnlyProtectedRanges,

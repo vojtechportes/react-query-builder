@@ -1,5 +1,5 @@
 import { strings } from '../../../shared/localization/locales/en-us';
-import { tryParseSql } from '../../../query-formats/sql/try-parse-sql';
+import { tryParseSql } from '../../../shared/query-formats/sql/try-parse-sql';
 import { IBuilderFieldProps } from '../../types';
 import { validateBuilderSqlTextSemantics } from './validate-builder-sql-text-semantics';
 
