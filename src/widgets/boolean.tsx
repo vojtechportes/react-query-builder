@@ -5,7 +5,7 @@ import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
-import { updateItem } from '../utils/update-item.util';
+import { updateItem } from '../shared/query/transformations/utils/update-item.util';
 
 export interface IBooleanProps {
   selectedValue: boolean;
@@ -44,7 +44,7 @@ export const Boolean: FC<IBooleanProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if ('children' in item) {
           return;
         }
@@ -54,13 +54,7 @@ export const Boolean: FC<IBooleanProps> = ({
         item.value = value;
       });
 
-      applyDataUpdate(
-        data,
-        setData,
-        onChange,
-        () => nextData,
-        updateData
-      );
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
       emitBuilderFieldChange(
         onFieldChange,
         nextData,
@@ -91,7 +85,7 @@ export const Boolean: FC<IBooleanProps> = ({
     );
     emitBuilderFieldChange(
       onFieldChange,
-      updateItem(data, id, item => {
+      updateItem(data, id, (item) => {
         if ('children' in item) {
           return;
         }

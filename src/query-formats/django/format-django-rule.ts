@@ -2,12 +2,9 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
-import {
-  formatDjangoFieldReference,
-  formatDjangoScalarValue,
-} from './shared';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
+import { formatDjangoFieldReference, formatDjangoScalarValue } from './shared';
 
 const ensureArrayValue = (
   operator: QueryOperator | undefined,
@@ -64,15 +61,21 @@ export const formatDjangoRule = (rule: IDenormalizedRuleNode): string => {
     case 'IN':
     case 'ANY_IN':
       return `Q(${rule.field}__in=[${ensureArrayValue(rule.operator, rule.value)
-        .map(value => formatDjangoScalarValue(value))
+        .map((value) => formatDjangoScalarValue(value))
         .join(', ')}])`;
     case 'NOT_IN':
-      return `~Q(${rule.field}__in=[${ensureArrayValue(rule.operator, rule.value)
-        .map(value => formatDjangoScalarValue(value))
+      return `~Q(${rule.field}__in=[${ensureArrayValue(
+        rule.operator,
+        rule.value
+      )
+        .map((value) => formatDjangoScalarValue(value))
         .join(', ')}])`;
     case 'ALL_IN':
       return `(${ensureArrayValue(rule.operator, rule.value)
-        .map(value => `Q(${rule.field}__contains=${formatDjangoScalarValue(value)})`)
+        .map(
+          (value) =>
+            `Q(${rule.field}__contains=${formatDjangoScalarValue(value)})`
+        )
         .join(' & ')})`;
     case 'BETWEEN': {
       const [start, end] = ensureRangeValue(rule.operator, rule.value);

@@ -3,8 +3,8 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { isDateString } from './shared';
 import { sqlOperatorOrder } from './sql-token.types';
 
@@ -24,13 +24,13 @@ const inferSqlFieldType = (
   }
 
   if (Array.isArray(rule.value)) {
-    if (rule.value.every(item => typeof item === 'number')) {
+    if (rule.value.every((item) => typeof item === 'number')) {
       return 'NUMBER';
     }
 
     if (
       rule.value.every(
-        item => typeof item === 'string' && isDateString(item as string)
+        (item) => typeof item === 'string' && isDateString(item as string)
       )
     ) {
       return 'DATE';
@@ -47,7 +47,7 @@ const inferSqlFieldType = (
 };
 
 const collectSqlRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => {
+  data.flatMap((node) => {
     if (!('type' in node)) {
       return [node];
     }
@@ -82,7 +82,9 @@ const mergeSqlFieldType = (
   return nextType;
 };
 
-export const inferSqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] => {
+export const inferSqlFields = (
+  data: DenormalizedQuery
+): IBuilderFieldProps[] => {
   const fieldMap = new Map<
     string,
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
@@ -110,7 +112,7 @@ export const inferSqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     }
   };
 
-  collectSqlRules(data).forEach(rule => {
+  collectSqlRules(data).forEach((rule) => {
     const nextType = inferSqlFieldType(rule);
 
     mergeFieldConfig(rule.field, nextType, rule.operator);
@@ -124,9 +126,8 @@ export const inferSqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     field,
     label: field,
     type: config.type,
-    operators: sqlOperatorOrder.filter(operator =>
+    operators: sqlOperatorOrder.filter((operator) =>
       config.operators.includes(operator)
     ),
   })) as IBuilderFieldProps[];
 };
-

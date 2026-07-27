@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery OData', () => {
@@ -26,9 +26,9 @@ describe('formatQuery OData', () => {
       },
     ];
 
-    expect(
-      formatQuery(query, 'OData', { wrapFilterClause: true })
-    ).toEqual("$filter=(startswith(name,'Stev') and (age ge 18 and age le 30))");
+    expect(formatQuery(query, 'OData', { wrapFilterClause: true })).toEqual(
+      "$filter=(startswith(name,'Stev') and (age ge 18 and age le 30))"
+    );
   });
 
   it('formats supported field-to-field comparisons', () => {
@@ -66,9 +66,24 @@ describe('formatQuery OData', () => {
         value: 'AND',
         isNegated: false,
         children: [
-          { field: 'name', operator: 'CONTAINS', valueSource: 'field', valueField: 'needle' },
-          { field: 'name', operator: 'STARTS_WITH', valueSource: 'field', valueField: 'prefix' },
-          { field: 'name', operator: 'ENDS_WITH', valueSource: 'field', valueField: 'suffix' },
+          {
+            field: 'name',
+            operator: 'CONTAINS',
+            valueSource: 'field',
+            valueField: 'needle',
+          },
+          {
+            field: 'name',
+            operator: 'STARTS_WITH',
+            valueSource: 'field',
+            valueField: 'prefix',
+          },
+          {
+            field: 'name',
+            operator: 'ENDS_WITH',
+            valueSource: 'field',
+            valueField: 'suffix',
+          },
         ],
       },
     ];

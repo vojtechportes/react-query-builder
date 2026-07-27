@@ -4,14 +4,15 @@ import {
   DenormalizedQuery,
   NormalizedNode,
   NormalizedQuery,
-} from '../../../utils/query-tree';
+} from '../../../shared/query/model/types/query-tree';
 
 const hasLockedNode = (node: DenormalizedNode | NormalizedNode): boolean => {
   if ('type' in node && node.type === 'GROUP') {
     return (
       resolveGroupReadOnly(node.readOnly).enabled ||
       node.children.some(
-        child => typeof child !== 'string' && hasLockedNode(child as DenormalizedNode)
+        (child) =>
+          typeof child !== 'string' && hasLockedNode(child as DenormalizedNode)
       )
     );
   }
@@ -21,4 +22,4 @@ const hasLockedNode = (node: DenormalizedNode | NormalizedNode): boolean => {
 
 export const hasBuilderTextModeLocks = (
   data: DenormalizedQuery | NormalizedQuery
-): boolean => data.some(node => hasLockedNode(node));
+): boolean => data.some((node) => hasLockedNode(node));

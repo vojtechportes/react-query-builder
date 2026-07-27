@@ -1,5 +1,8 @@
-﻿import type { IStrings } from '../../locales/types/strings';
-import type { QueryGroupValue, QueryOperator } from '../../utils/query-tree';
+import type { IStrings } from '../../shared/localization/types/strings';
+import type {
+  QueryGroupValue,
+  QueryOperator,
+} from '../../shared/query/model/types/query-tree';
 import type {
   IParsedGroup,
   IToken,

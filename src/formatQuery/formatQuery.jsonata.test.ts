@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery JSONata', () => {
@@ -8,9 +8,9 @@ describe('formatQuery JSONata', () => {
       { field: 'active', operator: 'EQUAL', value: true },
     ];
 
-    expect(
-      formatQuery(query, 'JSONata', { rootlessCombinator: 'OR' })
-    ).toEqual('(price > 10 or active = true)');
+    expect(formatQuery(query, 'JSONata', { rootlessCombinator: 'OR' })).toEqual(
+      '(price > 10 or active = true)'
+    );
   });
 
   it('formats text operators through JSONata string helpers', () => {
@@ -18,9 +18,7 @@ describe('formatQuery JSONata', () => {
       { field: 'name', operator: 'STARTS_WITH', value: 'Stev' },
     ];
 
-    expect(formatQuery(query, 'JSONata')).toEqual(
-      '$contains(name, /^Stev/)'
-    );
+    expect(formatQuery(query, 'JSONata')).toEqual('$contains(name, /^Stev/)');
   });
 
   it('formats supported field-to-field scalar comparisons', () => {

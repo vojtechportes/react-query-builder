@@ -1,5 +1,5 @@
-import { clone } from '../utils/clone.util';
-import { NormalizedQuery } from '../utils/query-tree';
+import { clone } from '../shared/query/model/utils/clone.util';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 import { createInsertSubtreeAction } from './create-insert-subtree-action';
 import { createMoveNodeAction } from './create-move-node-action';
 import { createRemoveSubtreeAction } from './create-remove-subtree-action';

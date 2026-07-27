@@ -1,5 +1,5 @@
-﻿import { BuilderLockState } from './lock-state';
-import type { IStrings } from '../locales/types/strings';
+import { BuilderLockState } from './lock-state';
+import type { IStrings } from '../shared/localization/types/strings';
 
 export const getLockToggleTitle = (
   strings: IStrings | undefined,

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useRef, useState } from 'react';
-import { clone } from '../../utils/clone.util';
+import { clone } from '../../shared/query/model/utils/clone.util';
 import { applyHistoryAction } from '../../history/apply-history-action';
 import { createBuilderHistoryState } from '../../history/create-builder-history-state';
 import {
@@ -7,7 +7,7 @@ import {
   IBuilderHistoryConfig,
   IBuilderHistoryState,
 } from '../../history/types';
-import { NormalizedQuery } from '../../utils/query-tree';
+import { NormalizedQuery } from '../../shared/query/model/types/query-tree';
 
 export interface IUseBuilderHistoryArgs {
   data: NormalizedQuery;

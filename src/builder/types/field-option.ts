@@ -3,7 +3,7 @@ import {
   QueryOperator,
   QueryRuleValue,
   QueryRuleValueSource,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 
 export type BuilderFieldOption = {
   value: string | number;

@@ -1,5 +1,5 @@
-import { isNormalizedGroupNode } from '../../../utils/is-normalized-group-node.util';
-import { NormalizedNode } from '../../../utils/query-tree';
+import { isNormalizedGroupNode } from '../../../shared/query/model/utils/is-normalized-group-node.util';
+import { NormalizedNode } from '../../../shared/query/model/types/query-tree';
 import { updateGroupLockState } from '../../../utils/read-only/update-group-lock-state.util';
 import { updateRuleLockState } from '../../../utils/read-only/update-rule-lock-state.util';
 

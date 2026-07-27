@@ -1,8 +1,8 @@
 import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type {
   DjangoTokenType,
   IDjangoToken,
@@ -135,7 +135,14 @@ export class DjangoParser {
 
   private createRuleFromLookup(
     lookup: string,
-    value: string | number | boolean | null | string[] | number[] | DjangoFieldReference
+    value:
+      | string
+      | number
+      | boolean
+      | null
+      | string[]
+      | number[]
+      | DjangoFieldReference
   ): IDenormalizedRuleNode {
     const parts = lookup.split('__');
     const field = parts[0];
@@ -204,14 +211,24 @@ export class DjangoParser {
     };
   }
 
-  private parseValue(): string | number | boolean | null | string[] | number[] | DjangoFieldReference {
+  private parseValue():
+    | string
+    | number
+    | boolean
+    | null
+    | string[]
+    | number[]
+    | DjangoFieldReference {
     const token = this.peek();
 
     if (token.type === 'LBRACKET') {
       return this.parseList();
     }
 
-    if (token.type === 'IDENTIFIER' && token.value === djangoFieldReferenceFunction) {
+    if (
+      token.type === 'IDENTIFIER' &&
+      token.value === djangoFieldReferenceFunction
+    ) {
       return this.parseFieldReference();
     }
 
@@ -237,21 +254,30 @@ export class DjangoParser {
       return null;
     }
 
-    throw new Error(`Expected a Django scalar value but found "${token.value}".`);
+    throw new Error(
+      `Expected a Django scalar value but found "${token.value}".`
+    );
   }
 
   private parseFieldReference(): DjangoFieldReference {
     const identifier = this.consume();
 
-    if (identifier.type !== 'IDENTIFIER' || identifier.value !== djangoFieldReferenceFunction) {
-      throw new Error(`Expected Django field reference function "${djangoFieldReferenceFunction}".`);
+    if (
+      identifier.type !== 'IDENTIFIER' ||
+      identifier.value !== djangoFieldReferenceFunction
+    ) {
+      throw new Error(
+        `Expected Django field reference function "${djangoFieldReferenceFunction}".`
+      );
     }
 
     this.expect('LPAREN');
     const fieldToken = this.consume();
 
     if (fieldToken.type !== 'STRING') {
-      throw new Error('Django F() references must contain a quoted field name.');
+      throw new Error(
+        'Django F() references must contain a quoted field name.'
+      );
     }
 
     this.expect('RPAREN');
@@ -275,7 +301,9 @@ export class DjangoParser {
         Array.isArray(value) ||
         this.isFieldReference(value)
       ) {
-        throw new Error('Django lists currently support only string and number values.');
+        throw new Error(
+          'Django lists currently support only string and number values.'
+        );
       }
 
       values.push(value);
@@ -289,15 +317,17 @@ export class DjangoParser {
 
     this.expect('RBRACKET');
 
-    if (values.every(value => typeof value === 'string')) {
+    if (values.every((value) => typeof value === 'string')) {
       return values as string[];
     }
 
-    if (values.every(value => typeof value === 'number')) {
+    if (values.every((value) => typeof value === 'number')) {
       return values as number[];
     }
 
-    throw new Error('Django lists must contain values of the same scalar type.');
+    throw new Error(
+      'Django lists must contain values of the same scalar type.'
+    );
   }
 
   private parseIdentifier(): string {
@@ -347,13 +377,21 @@ export class DjangoParser {
 
     const children: ParsedDjangoNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
 
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);
@@ -420,10 +458,7 @@ export class DjangoParser {
       };
     }
 
-    if (
-      left.operator === 'CONTAINS' &&
-      right.operator === 'CONTAINS'
-    ) {
+    if (left.operator === 'CONTAINS' && right.operator === 'CONTAINS') {
       return {
         field: left.field,
         operator: combinator === 'AND' ? 'ALL_IN' : 'ANY_IN',
@@ -467,7 +502,9 @@ export class DjangoParser {
     const token = this.consume();
 
     if (token.type !== 'KEYWORD' || token.value !== value) {
-      throw new Error(`Expected keyword "${value}" but found "${token.value}".`);
+      throw new Error(
+        `Expected keyword "${value}" but found "${token.value}".`
+      );
     }
   }
 
@@ -481,4 +518,3 @@ export class DjangoParser {
     return this.tokens[this.index];
   }
 }
-

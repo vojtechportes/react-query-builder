@@ -3,8 +3,8 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 
 const inferMongoFieldType = (
   rule: IDenormalizedRuleNode
@@ -22,7 +22,7 @@ const inferMongoFieldType = (
   }
 
   if (Array.isArray(rule.value)) {
-    if (rule.value.every(item => typeof item === 'number')) {
+    if (rule.value.every((item) => typeof item === 'number')) {
       return 'NUMBER';
     }
 
@@ -52,7 +52,7 @@ const mergeMongoFieldType = (
 };
 
 const collectMongoRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => {
+  data.flatMap((node) => {
     if (!('type' in node)) {
       return [node];
     }
@@ -60,7 +60,9 @@ const collectMongoRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
     return collectMongoRules(node.children);
   });
 
-export const inferMongoFields = (data: DenormalizedQuery): IBuilderFieldProps[] => {
+export const inferMongoFields = (
+  data: DenormalizedQuery
+): IBuilderFieldProps[] => {
   const fieldMap = new Map<
     string,
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
@@ -88,7 +90,7 @@ export const inferMongoFields = (data: DenormalizedQuery): IBuilderFieldProps[] 
     }
   };
 
-  collectMongoRules(data).forEach(rule => {
+  collectMongoRules(data).forEach((rule) => {
     const nextType = inferMongoFieldType(rule);
     mergeFieldConfig(rule.field, nextType, rule.operator);
 

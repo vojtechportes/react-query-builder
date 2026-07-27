@@ -6,8 +6,8 @@ import { createReplaceNodeAction } from '../history/create-replace-node-action';
 import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { updateItem } from '../utils/update-item.util';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import { updateItem } from '../shared/query/transformations/utils/update-item.util';
 
 export interface IValueFieldSelectProps {
   id: string;
@@ -48,7 +48,7 @@ export const ValueFieldSelect: FC<IValueFieldSelectProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }
@@ -90,7 +90,7 @@ export const ValueFieldSelect: FC<IValueFieldSelectProps> = ({
     );
     emitBuilderFieldChange(
       onFieldChange,
-      updateItem(data, id, item => {
+      updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }
@@ -120,7 +120,7 @@ export const ValueFieldSelect: FC<IValueFieldSelectProps> = ({
     <Select
       id={`query-builder-rule-${id}-value-field`}
       name={`query-builder-rule-${id}-value-field`}
-      values={compatibleFields.map(field => ({
+      values={compatibleFields.map((field) => ({
         value: field.field,
         label: field.label,
       }))}

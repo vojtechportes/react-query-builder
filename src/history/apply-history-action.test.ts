@@ -3,7 +3,7 @@ import { createInsertSubtreeAction } from './create-insert-subtree-action';
 import { createMoveNodeAction } from './create-move-node-action';
 import { createRemoveSubtreeAction } from './create-remove-subtree-action';
 import { createReplaceNodeAction } from './create-replace-node-action';
-import { NormalizedQuery } from '../utils/query-tree';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 
 const createQuery = (): NormalizedQuery => [
   {
@@ -143,7 +143,9 @@ describe('#history/applyHistoryAction', () => {
       children: ['group-2'],
     });
 
-    const movedGroup = appliedAction?.data.find((item) => item.id === 'group-2');
+    const movedGroup = appliedAction?.data.find(
+      (item) => item.id === 'group-2'
+    );
     const movedRule = appliedAction?.data.find((item) => item.id === 'rule-1');
 
     expect(movedGroup).toMatchObject({

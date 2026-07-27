@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 export const quoteCelString = (value: string): string =>
   `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
@@ -22,7 +22,7 @@ export const formatCelScalarValue = (
 };
 
 export const formatCelArrayValue = (value: Array<string | number>): string =>
-  `[${value.map(item => formatCelScalarValue(item)).join(', ')}]`;
+  `[${value.map((item) => formatCelScalarValue(item)).join(', ')}]`;
 
 export const escapeCelRegex = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

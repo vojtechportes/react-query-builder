@@ -2,7 +2,7 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { parseRsqlScalar, inferRsqlPatternOperator } from './shared';
 import type {
   IParsedRsqlGroup,
@@ -187,13 +187,21 @@ export class RsqlParser {
 
     const children: ParsedRsqlNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
 
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);
@@ -212,7 +220,11 @@ export class RsqlParser {
     left: ParsedRsqlNode,
     right: ParsedRsqlNode
   ): IDenormalizedRuleNode | null {
-    if (!this.isRuleNode(left) || !this.isRuleNode(right) || left.field !== right.field) {
+    if (
+      !this.isRuleNode(left) ||
+      !this.isRuleNode(right) ||
+      left.field !== right.field
+    ) {
       return null;
     }
 

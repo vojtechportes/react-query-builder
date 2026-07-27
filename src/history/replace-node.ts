@@ -1,6 +1,6 @@
-import { clone } from '../utils/clone.util';
-import { findItemIndex } from '../utils/find-item-index.util';
-import { NormalizedQuery } from '../utils/query-tree';
+import { clone } from '../shared/query/model/utils/clone.util';
+import { findItemIndex } from '../shared/query/transformations/utils/find-item-index.util';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 
 export const replaceNode = (
   data: NormalizedQuery,

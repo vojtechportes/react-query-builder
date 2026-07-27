@@ -1,5 +1,5 @@
-import type { IDenormalizedRuleNode } from '../../../utils/query-tree';
-import { isFieldComparisonRule } from '../../../utils/rule-value-source';
+import type { IDenormalizedRuleNode } from '../../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../../shared/query/model/utils/rule-value-source.util';
 
 const operatorsWithoutValue = new Set(['IS_NULL', 'IS_NOT_NULL']);
 const operatorsWithArrayValue = new Set(['ALL_IN', 'ANY_IN', 'IN', 'NOT_IN']);
@@ -35,7 +35,11 @@ export const isSqlRuleFormattable = (rule: IDenormalizedRuleNode): boolean => {
   }
 
   if (operatorsWithArrayValue.has(rule.operator)) {
-    return Array.isArray(rule.value) || typeof rule.value === 'string' || typeof rule.value === 'number';
+    return (
+      Array.isArray(rule.value) ||
+      typeof rule.value === 'string' ||
+      typeof rule.value === 'number'
+    );
   }
 
   if (operatorsWithRangeValue.has(rule.operator)) {

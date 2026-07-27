@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 export interface IJsonLogicVar {
   var: string;

@@ -1,4 +1,4 @@
-﻿import type { IStrings } from '../../locales/types/strings';
+import type { IStrings } from '../../shared/localization/types/strings';
 import { extractSqlPredicate } from './extract-sql-predicate';
 import { IToken, SQL_KEYWORDS } from './sql-token.types';
 import { createSqlParseError } from './utils/create-sql-parse-error';

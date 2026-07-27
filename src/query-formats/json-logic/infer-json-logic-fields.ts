@@ -3,8 +3,8 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 
 const operatorOrder: QueryOperator[] = [
   'EQUAL',
@@ -30,7 +30,9 @@ const operatorOrder: QueryOperator[] = [
 ];
 
 const collectRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => ('type' in node ? collectRules(node.children) : [node]));
+  data.flatMap((node) =>
+    'type' in node ? collectRules(node.children) : [node]
+  );
 
 const inferFieldType = (
   rule: IDenormalizedRuleNode
@@ -47,7 +49,10 @@ const inferFieldType = (
     return 'NUMBER';
   }
 
-  if (Array.isArray(rule.value) && rule.value.every(item => typeof item === 'number')) {
+  if (
+    Array.isArray(rule.value) &&
+    rule.value.every((item) => typeof item === 'number')
+  ) {
     return 'NUMBER';
   }
 
@@ -86,7 +91,7 @@ export const inferJsonLogicFields = (
     }
   };
 
-  collectRules(data).forEach(rule => {
+  collectRules(data).forEach((rule) => {
     const nextType = inferFieldType(rule);
     mergeFieldConfig(rule.field, nextType, rule.operator);
 
@@ -99,7 +104,7 @@ export const inferJsonLogicFields = (
     field,
     label: field,
     type: config.type,
-    operators: operatorOrder.filter(operator =>
+    operators: operatorOrder.filter((operator) =>
       config.operators.includes(operator)
     ),
   })) as IBuilderFieldProps[];

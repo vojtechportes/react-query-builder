@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { DragPreview } from './drag-preview';
-import { NormalizedQuery } from '../utils/query-tree';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 import styles from './drag-preview.module.css';
 
 jest.mock('../rule/rule', () => ({

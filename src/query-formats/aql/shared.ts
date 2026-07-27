@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 export const AQL_DEFAULT_VARIABLE_NAME = 'doc';
 
@@ -36,7 +36,7 @@ export const formatAqlScalarValue = (
 };
 
 export const formatAqlArrayValue = (value: Array<string | number>): string =>
-  `[${value.map(item => formatAqlScalarValue(item)).join(', ')}]`;
+  `[${value.map((item) => formatAqlScalarValue(item)).join(', ')}]`;
 
 export const extractAqlLikeOperator = (
   pattern: string,
@@ -72,4 +72,3 @@ export const extractAqlLikeOperator = (
     value: pattern,
   };
 };
-

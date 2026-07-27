@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import type { JsonLogicRule } from './shared';
 import { formatJsonLogicRule } from './format-json-logic-rule';
@@ -38,11 +38,9 @@ export const formatJsonLogicGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): JsonLogicRule => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const rule = combineJsonLogicRules(
-    group.children.map(child =>
+    group.children.map((child) =>
       formatJsonLogicNode(child, modifierlessGroupCombinator)
     ),
     combinator
@@ -54,4 +52,3 @@ export const formatJsonLogicGroup = (
 
   return rule;
 };
-

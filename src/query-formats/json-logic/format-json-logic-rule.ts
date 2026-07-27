@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type { JsonLogicRule } from './shared';
 import { createVarRule } from './shared';
 
@@ -40,7 +40,9 @@ const ensureStringValue = (
   return value;
 };
 
-const formatFieldOrScalarValue = (rule: IDenormalizedRuleNode): JsonLogicRule =>
+const formatFieldOrScalarValue = (
+  rule: IDenormalizedRuleNode
+): JsonLogicRule =>
   isFieldComparisonRule(rule)
     ? createVarRule(rule.valueField)
     : (rule.value as JsonLogicRule);

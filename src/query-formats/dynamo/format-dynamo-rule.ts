@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { formatDynamoScalarValue } from './shared';
 
 const ensureArrayValue = (
@@ -61,16 +61,18 @@ export const formatDynamoRule = (rule: IDenormalizedRuleNode): string => {
     case 'IN':
     case 'ANY_IN':
       return `${rule.field} IN (${ensureArrayValue(rule.operator, rule.value)
-        .map(value => formatDynamoScalarValue(value))
+        .map((value) => formatDynamoScalarValue(value))
         .join(', ')})`;
     case 'NOT_IN': {
-      const values = ensureArrayValue(rule.operator, rule.value)
-        .map(value => `${rule.field} <> ${formatDynamoScalarValue(value)}`);
+      const values = ensureArrayValue(rule.operator, rule.value).map(
+        (value) => `${rule.field} <> ${formatDynamoScalarValue(value)}`
+      );
       return values.length === 1 ? values[0] : `(${values.join(' AND ')})`;
     }
     case 'ALL_IN': {
-      const values = ensureArrayValue(rule.operator, rule.value)
-        .map(value => `contains(${rule.field}, ${formatDynamoScalarValue(value)})`);
+      const values = ensureArrayValue(rule.operator, rule.value).map(
+        (value) => `contains(${rule.field}, ${formatDynamoScalarValue(value)})`
+      );
       return values.length === 1 ? values[0] : `(${values.join(' AND ')})`;
     }
     case 'BETWEEN': {

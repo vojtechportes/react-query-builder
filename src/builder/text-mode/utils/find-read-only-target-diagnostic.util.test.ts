@@ -1,4 +1,4 @@
-import { DenormalizedQuery } from '../../../utils/query-tree';
+import { DenormalizedQuery } from '../../../shared/query/model/types/query-tree';
 import { findReadOnlyTargetDiagnostic } from './find-read-only-target-diagnostic.util';
 
 describe('findReadOnlyTargetDiagnostic', () => {

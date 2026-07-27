@@ -1,8 +1,11 @@
-import { clone } from '../utils/clone.util';
-import { findItemIndex } from '../utils/find-item-index.util';
-import { getBranchEndIndex } from '../utils/get-branch-end-index.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { NormalizedNode, NormalizedQuery } from '../utils/query-tree';
+import { clone } from '../shared/query/model/utils/clone.util';
+import { findItemIndex } from '../shared/query/transformations/utils/find-item-index.util';
+import { getBranchEndIndex } from '../shared/query/transformations/utils/get-branch-end-index.util';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import {
+  NormalizedNode,
+  NormalizedQuery,
+} from '../shared/query/model/types/query-tree';
 
 const getInsertAtIndex = (
   data: NormalizedQuery,
@@ -31,7 +34,11 @@ const getInsertAtIndex = (
 
   const parentNode = data[parentIndex];
 
-  if (!isNormalizedGroupNode(parentNode) || index < 0 || index > parentNode.children.length) {
+  if (
+    !isNormalizedGroupNode(parentNode) ||
+    index < 0 ||
+    index > parentNode.children.length
+  ) {
     return null;
   }
 

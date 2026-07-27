@@ -2,7 +2,7 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 
 export type ODataTokenType =
   | 'LPAREN'

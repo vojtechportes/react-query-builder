@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { createPrismaFieldReference } from './shared';
 
 type PrismaClause = Record<string, unknown>;
@@ -52,7 +52,11 @@ export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
   switch (rule.operator) {
     case 'EQUAL':
       return isFieldComparisonRule(rule)
-        ? { [rule.field]: { equals: createPrismaFieldReference(rule.valueField) } }
+        ? {
+            [rule.field]: {
+              equals: createPrismaFieldReference(rule.valueField),
+            },
+          }
         : { [rule.field]: rule.value as QueryRuleValue };
     case 'NOT_EQUAL':
       return { [rule.field]: { not: formatPrismaScalarComparisonValue(rule) } };
@@ -66,9 +70,13 @@ export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
       return { [rule.field]: { lte: formatPrismaScalarComparisonValue(rule) } };
     case 'IN':
     case 'ANY_IN':
-      return { [rule.field]: { in: ensureArrayValue(rule.operator, rule.value) } };
+      return {
+        [rule.field]: { in: ensureArrayValue(rule.operator, rule.value) },
+      };
     case 'NOT_IN':
-      return { [rule.field]: { notIn: ensureArrayValue(rule.operator, rule.value) } };
+      return {
+        [rule.field]: { notIn: ensureArrayValue(rule.operator, rule.value) },
+      };
     case 'ALL_IN':
       return {
         [rule.field]: { hasEvery: ensureArrayValue(rule.operator, rule.value) },
@@ -80,10 +88,7 @@ export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
     case 'NOT_BETWEEN': {
       const [start, end] = ensureRangeValue(rule.operator, rule.value);
       return {
-        OR: [
-          { [rule.field]: { lt: start } },
-          { [rule.field]: { gt: end } },
-        ],
+        OR: [{ [rule.field]: { lt: start } }, { [rule.field]: { gt: end } }],
       };
     }
     case 'IS_NULL':
@@ -92,7 +97,9 @@ export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
       return { [rule.field]: { not: null } };
     case 'CONTAINS':
       return {
-        [rule.field]: { contains: ensureStringValue(rule.operator, rule.value) },
+        [rule.field]: {
+          contains: ensureStringValue(rule.operator, rule.value),
+        },
       };
     case 'NOT_CONTAINS':
       return {
@@ -108,7 +115,9 @@ export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
       };
     case 'ENDS_WITH':
       return {
-        [rule.field]: { endsWith: ensureStringValue(rule.operator, rule.value) },
+        [rule.field]: {
+          endsWith: ensureStringValue(rule.operator, rule.value),
+        },
       };
     case 'LIKE':
       return {
@@ -116,7 +125,9 @@ export const formatPrismaRule = (rule: IDenormalizedRuleNode): PrismaClause => {
       };
     case 'NOT_LIKE':
       return {
-        [rule.field]: { not: { equals: ensureStringValue(rule.operator, rule.value) } },
+        [rule.field]: {
+          not: { equals: ensureStringValue(rule.operator, rule.value) },
+        },
       };
     default:
       throw new Error(

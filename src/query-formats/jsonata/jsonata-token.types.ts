@@ -2,7 +2,7 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 
 export type JsonataTokenType =
   | 'LPAREN'
@@ -68,4 +68,3 @@ export const jsonataOperatorOrder: QueryOperator[] = [
   'STARTS_WITH',
   'ENDS_WITH',
 ];
-

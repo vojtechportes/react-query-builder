@@ -5,8 +5,12 @@ import {
   resolveEffectiveGroupReadOnly,
   resolveEffectiveRuleReadOnly,
 } from './resolve-effective-read-only.util';
-import { isNormalizedGroupNode } from './is-normalized-group-node.util';
-import { NormalizedGroupNode, NormalizedNode, NormalizedQuery } from './query-tree';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import {
+  NormalizedGroupNode,
+  NormalizedNode,
+  NormalizedQuery,
+} from '../shared/query/model/types/query-tree';
 
 const isNodeOwnReadOnlyProtected = (
   node: NormalizedNode,
@@ -124,11 +128,7 @@ const hasProtectedNodeInSubtree = (
       return false;
     }
 
-    return hasProtectedNodeInSubtree(
-      data,
-      childNode,
-      nextInheritedReadOnly
-    );
+    return hasProtectedNodeInSubtree(data, childNode, nextInheritedReadOnly);
   });
 };
 

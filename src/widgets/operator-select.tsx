@@ -7,12 +7,15 @@ import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
-import { getCompatibleValueFields, supportsFieldComparisonForOperator } from '../utils/field-comparison-support';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { isRangeOperator } from '../utils/is-range-operator.util';
-import { operatorRequiresValue } from '../utils/operator-requires-value.util';
-import { getRuleValueSource } from '../utils/rule-value-source';
-import { updateItem } from '../utils/update-item.util';
+import {
+  getCompatibleValueFields,
+  supportsFieldComparisonForOperator,
+} from '../utils/field-comparison-support';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import { isRangeOperator } from '../shared/query/model/utils/is-range-operator.util';
+import { operatorRequiresValue } from '../shared/query/model/utils/operator-requires-value.util';
+import { getRuleValueSource } from '../shared/query/model/utils/rule-value-source.util';
+import { updateItem } from '../shared/query/transformations/utils/update-item.util';
 
 export interface IOperatorSelectValuesProps {
   value: BuilderFieldOperator;
@@ -43,8 +46,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
     strings,
     readOnly,
     onFieldChange,
-  } =
-    useContext(BuilderContext);
+  } = useContext(BuilderContext);
   const Select = components.form?.Select || DefaultSelect;
   const isDisabled = Boolean(readOnly || disabled);
 
@@ -60,7 +62,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
     }
 
     const nextField = fields.find(
-      fieldItem => currentRule.field === fieldItem.field
+      (fieldItem) => currentRule.field === fieldItem.field
     );
 
     if (!nextField) {
@@ -95,14 +97,18 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
       supportsFieldComparisonForOperator(nextField, value);
     const shouldPreserveUnsupportedFieldComparison =
       currentValueSource === 'field' && operatorRequiresValue(value);
-    const nextCompatibleFields = getCompatibleValueFields(fields, nextField, value);
+    const nextCompatibleFields = getCompatibleValueFields(
+      fields,
+      nextField,
+      value
+    );
     const hasRuleValueChanged =
       nextRuleValue !== currentRule.value ||
       currentValueSource !== 'value' ||
       typeof currentRule.valueField !== 'undefined';
 
     if (!dispatchAction && setData && onChange) {
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }
@@ -112,7 +118,9 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
             item.valueSource = 'field';
             item.valueField =
               currentRule.valueField &&
-              nextCompatibleFields.some(fieldItem => fieldItem.field === currentRule.valueField)
+              nextCompatibleFields.some(
+                (fieldItem) => fieldItem.field === currentRule.valueField
+              )
                 ? currentRule.valueField
                 : nextCompatibleFields[0].field;
             delete item.value;
@@ -134,20 +142,10 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
         item.operator = value;
       });
 
-      applyDataUpdate(
-        data,
-        setData,
-        onChange,
-        () => nextData,
-        updateData
-      );
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
       const nextRule = findNodeById(nextData, id);
 
-      if (
-        nextRule &&
-        !isNormalizedGroupNode(nextRule) &&
-        hasRuleValueChanged
-      ) {
+      if (nextRule && !isNormalizedGroupNode(nextRule) && hasRuleValueChanged) {
         emitBuilderFieldChange(
           onFieldChange,
           nextData,
@@ -176,7 +174,9 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
         nextRule.valueSource = 'field';
         nextRule.valueField =
           currentRule.valueField &&
-          nextCompatibleFields.some(fieldItem => fieldItem.field === currentRule.valueField)
+          nextCompatibleFields.some(
+            (fieldItem) => fieldItem.field === currentRule.valueField
+          )
             ? currentRule.valueField
             : nextCompatibleFields[0].field;
         delete nextRule.value;
@@ -201,7 +201,7 @@ export const OperatorSelect: FC<IOperatorSelectProps> = ({
     if (hasRuleValueChanged) {
       emitBuilderFieldChange(
         onFieldChange,
-        updateItem(data, id, item => {
+        updateItem(data, id, (item) => {
           if (isNormalizedGroupNode(item)) {
             return;
           }

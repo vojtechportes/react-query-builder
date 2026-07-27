@@ -5,7 +5,7 @@ import { DraggableItem } from './draggable-item';
 import { DropZone as DefaultDropZone } from './drop-zone';
 import { EmptyGroupDropZone as DefaultEmptyGroupDropZone } from './empty-group-drop-zone';
 import { Group } from './group/group';
-import { isNormalizedGroupNode } from './utils/is-normalized-group-node.util';
+import { isNormalizedGroupNode } from './shared/query/model/utils/is-normalized-group-node.util';
 import {
   resolveGroupLockState,
   resolveRuleLockState,
@@ -16,7 +16,7 @@ import {
   resolveEffectiveGroupReadOnly,
   resolveEffectiveRuleReadOnly,
 } from './utils/resolve-effective-read-only.util';
-import { NormalizedQuery } from './utils/query-tree';
+import { NormalizedQuery } from './shared/query/model/types/query-tree';
 
 export interface IIteratorProps {
   originalData: NormalizedQuery;
@@ -146,7 +146,8 @@ export const Iterator: FC<IIteratorProps> = ({
       ];
     }
 
-    const { field, value, valueSource, valueField, id, operator } = item as IRuleProps;
+    const { field, value, valueSource, valueField, id, operator } =
+      item as IRuleProps;
     const ruleReadOnly = resolveEffectiveRuleReadOnly(
       item.readOnly,
       inheritedReadOnly

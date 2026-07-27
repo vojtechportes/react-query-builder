@@ -5,7 +5,7 @@ import {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryGroupValue,
-} from '../../../utils/query-tree';
+} from '../../../shared/query/model/types/query-tree';
 import {
   getGroupReadOnlyTargets,
   isGroupFullyReadOnly,
@@ -31,7 +31,7 @@ const shiftRanges = (
   ranges: ILocalProtectedRange[],
   offset: number
 ): ILocalProtectedRange[] =>
-  ranges.map(range => ({
+  ranges.map((range) => ({
     start: range.start + offset,
     end: range.end + offset,
   }));
@@ -47,7 +47,11 @@ const addProtectedGroupBracketRanges = (
   const openingIndex = text.indexOf('(');
   const closingIndex = text.lastIndexOf(')');
 
-  if (openingIndex === -1 || closingIndex === -1 || closingIndex <= openingIndex) {
+  if (
+    openingIndex === -1 ||
+    closingIndex === -1 ||
+    closingIndex <= openingIndex
+  ) {
     return ranges;
   }
 
@@ -78,8 +82,8 @@ const formatGroupFragment = (
   const combinator =
     'value' in group && group.value ? group.value : ('AND' as QueryGroupValue);
   const childFragments = group.children
-    .map(child => formatNodeFragment(child, fields, false, options))
-    .filter(fragment => fragment.text.trim().length > 0);
+    .map((child) => formatNodeFragment(child, fields, false, options))
+    .filter((fragment) => fragment.text.trim().length > 0);
   const groupReadOnly = resolveGroupReadOnly(group.readOnly);
   const groupReadOnlyTargets = getGroupReadOnlyTargets(group.readOnly);
 
@@ -113,7 +117,9 @@ const formatGroupFragment = (
         });
       }
 
-      innerRanges.push(...shiftRanges(fragment.protectedRanges, innerText.length));
+      innerRanges.push(
+        ...shiftRanges(fragment.protectedRanges, innerText.length)
+      );
       innerText += fragment.text;
     });
 
@@ -148,7 +154,10 @@ const formatGroupFragment = (
     }
   }
 
-  if (options.protectGroupDeletionBoundaries !== false && protectedRanges.length > 0) {
+  if (
+    options.protectGroupDeletionBoundaries !== false &&
+    protectedRanges.length > 0
+  ) {
     protectedRanges = addProtectedGroupBracketRanges(text, protectedRanges);
   }
 
@@ -190,8 +199,8 @@ export const formatBuilderSqlState = (
   options: IFormatBuilderSqlStateOptions = {}
 ): IBuilderTextModeSqlState => {
   const fragments = data
-    .map(node => formatNodeFragment(node, fields, true, options))
-    .filter(fragment => fragment.text.trim().length > 0);
+    .map((node) => formatNodeFragment(node, fields, true, options))
+    .filter((fragment) => fragment.text.trim().length > 0);
 
   if (fragments.length === 0) {
     return {
@@ -208,7 +217,9 @@ export const formatBuilderSqlState = (
       value += ' AND ';
     }
 
-    protectedRanges.push(...shiftRanges(fragment.protectedRanges, value.length));
+    protectedRanges.push(
+      ...shiftRanges(fragment.protectedRanges, value.length)
+    );
     value += fragment.text;
   });
 

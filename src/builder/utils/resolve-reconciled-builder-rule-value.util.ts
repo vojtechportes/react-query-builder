@@ -3,7 +3,7 @@ import type {
   BuilderFieldType,
   IBuilderRuleValueReconciliationConfig,
 } from '../types';
-import type { QueryRuleValue } from '../../utils/query-tree';
+import type { QueryRuleValue } from '../../shared/query/model/types/query-tree';
 
 export const resolveReconciledBuilderRuleValue = (
   fieldType: BuilderFieldType,
@@ -31,10 +31,14 @@ export const resolveReconciledBuilderRuleValue = (
     }
 
     if (value.every((item) => typeof item === 'number')) {
-      return value.filter((item): item is number => allowedValues.has(String(item)));
+      return value.filter((item): item is number =>
+        allowedValues.has(String(item))
+      );
     }
 
-    return value.filter((item): item is string => allowedValues.has(String(item)));
+    return value.filter((item): item is string =>
+      allowedValues.has(String(item))
+    );
   }
 
   return value;

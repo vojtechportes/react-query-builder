@@ -2,7 +2,7 @@ import {
   GroupReadOnly,
   GroupReadOnlyTarget,
   IGroupReadOnlyConfig,
-} from './query-tree';
+} from '../shared/query/model/types/query-tree';
 import { isGroupReadOnlyConfig } from './is-group-read-only-config.util';
 
 export interface IResolvedGroupReadOnly {

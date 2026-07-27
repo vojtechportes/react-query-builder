@@ -2,7 +2,7 @@ import type {
   DenormalizedNode,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import {
   isJsonLogicArray,
   isJsonLogicObject,
@@ -133,8 +133,17 @@ const parseSimpleRule = (rule: JsonLogicRule): IDenormalizedRuleNode | null => {
     return membershipArrayRule;
   }
 
-  if ('==' in rule || '!=' in rule || '>' in rule || '>=' in rule || '<' in rule || '<=' in rule) {
-    const operatorKey = ['==', '!=', '>', '>=', '<', '<='].find(key => key in rule);
+  if (
+    '==' in rule ||
+    '!=' in rule ||
+    '>' in rule ||
+    '>=' in rule ||
+    '<' in rule ||
+    '<=' in rule
+  ) {
+    const operatorKey = ['==', '!=', '>', '>=', '<', '<='].find(
+      (key) => key in rule
+    );
 
     if (!operatorKey) {
       return null;
@@ -245,11 +254,13 @@ const parseLogicalGroup = (
     type: 'GROUP',
     value: combinator,
     isNegated: false,
-    children: items.flatMap(item => parseJsonLogicExpression(item)),
+    children: items.flatMap((item) => parseJsonLogicExpression(item)),
   },
 ];
 
-export const parseJsonLogicExpression = (value: unknown): DenormalizedNode[] => {
+export const parseJsonLogicExpression = (
+  value: unknown
+): DenormalizedNode[] => {
   const parsedSimpleRule = parseSimpleRule(value as JsonLogicRule);
 
   if (parsedSimpleRule) {

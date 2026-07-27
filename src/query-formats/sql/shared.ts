@@ -4,7 +4,7 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryRuleValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 
 export const DEFAULT_ROOTLESS_COMBINATOR: QueryGroupValue = 'AND';
 export const DEFAULT_MODIFIERLESS_GROUP_COMBINATOR: QueryGroupValue = 'AND';
@@ -42,10 +42,8 @@ export const formatScalarValue = (
   return `'${escapeSqlString(value)}'`;
 };
 
-export const formatListValue = (
-  value: Array<string | number>
-): string => `(${value.map(item => formatScalarValue(item)).join(', ')})`;
+export const formatListValue = (value: Array<string | number>): string =>
+  `(${value.map((item) => formatScalarValue(item)).join(', ')})`;
 
 export const isDateString = (value: string): boolean =>
   /^\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?$/.test(value);
-

@@ -1,6 +1,6 @@
-﻿import React, { FC } from 'react';
+import React, { FC } from 'react';
 import { IButtonProps } from '../../button';
-import type { IStrings } from '../../locales/types/strings';
+import type { IStrings } from '../../shared/localization/types/strings';
 import { IPopoverItemProps } from '../../popover-item';
 import { IPopoverProps } from '../../popover';
 import { BuilderGroupMode, IHistoryControlsProps } from '../types';

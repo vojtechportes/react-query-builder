@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { escapeElasticsearchWildcard } from './shared';
 
 type ElasticsearchClause = Record<string, unknown>;
@@ -49,7 +49,9 @@ const ensureElasticsearchSupportsRule = (rule: IDenormalizedRuleNode): void => {
   }
 };
 
-const createMustNotClause = (clause: ElasticsearchClause): ElasticsearchClause => ({
+const createMustNotClause = (
+  clause: ElasticsearchClause
+): ElasticsearchClause => ({
   bool: {
     must_not: [clause],
   },
@@ -75,7 +77,9 @@ export const formatElasticsearchRule = (
       return { range: { [rule.field]: { lte: rule.value } } };
     case 'IN':
     case 'ANY_IN':
-      return { terms: { [rule.field]: ensureArrayValue(rule.operator, rule.value) } };
+      return {
+        terms: { [rule.field]: ensureArrayValue(rule.operator, rule.value) },
+      };
     case 'NOT_IN':
       return createMustNotClause({
         terms: { [rule.field]: ensureArrayValue(rule.operator, rule.value) },
@@ -83,7 +87,7 @@ export const formatElasticsearchRule = (
     case 'ALL_IN':
       return {
         bool: {
-          must: ensureArrayValue(rule.operator, rule.value).map(item => ({
+          must: ensureArrayValue(rule.operator, rule.value).map((item) => ({
             term: { [rule.field]: item },
           })),
         },

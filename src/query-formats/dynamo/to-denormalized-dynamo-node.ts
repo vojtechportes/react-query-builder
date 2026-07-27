@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedDynamoNode } from './dynamo-token.types';
 
 const toDenormalizedDynamoNode = (node: ParsedDynamoNode): DenormalizedNode => {
@@ -14,7 +14,7 @@ const toDenormalizedDynamoNode = (node: ParsedDynamoNode): DenormalizedNode => {
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedDynamoNode(child)),
+    children: node.children.map((child) => toDenormalizedDynamoNode(child)),
   };
 
   return group;
@@ -22,4 +22,4 @@ const toDenormalizedDynamoNode = (node: ParsedDynamoNode): DenormalizedNode => {
 
 export const toDenormalizedDynamoQuery = (
   nodes: ParsedDynamoNode[]
-): DenormalizedQuery => nodes.map(node => toDenormalizedDynamoNode(node));
+): DenormalizedQuery => nodes.map((node) => toDenormalizedDynamoNode(node));

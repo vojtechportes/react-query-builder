@@ -1,4 +1,4 @@
-import type { QueryOperator } from '../../utils/query-tree';
+import type { QueryOperator } from '../../shared/query/model/types/query-tree';
 
 export const escapeElasticsearchWildcard = (value: string): string =>
   value.replace(/([\\*?])/g, '\\$1');

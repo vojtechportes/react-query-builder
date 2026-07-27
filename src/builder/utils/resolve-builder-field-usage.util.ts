@@ -1,8 +1,5 @@
-import {
-  BuilderFieldUsageLimitScope,
-  IBuilderFieldProps,
-} from '../types';
-import { NormalizedQuery } from '../../utils/query-tree';
+import { BuilderFieldUsageLimitScope, IBuilderFieldProps } from '../types';
+import { NormalizedQuery } from '../../shared/query/model/types/query-tree';
 
 interface IBuilderFieldUsageBucketKeyArgs {
   field: IBuilderFieldProps;
@@ -54,7 +51,9 @@ export const getBuilderFieldUsageCount = ({
       return count;
     }
 
-    const matchingField = fields.find((fieldItem) => fieldItem.field === node.field);
+    const matchingField = fields.find(
+      (fieldItem) => fieldItem.field === node.field
+    );
 
     if (!matchingField) {
       return count;
