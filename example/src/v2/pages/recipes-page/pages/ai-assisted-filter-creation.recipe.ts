@@ -24,9 +24,7 @@ export const aiAssistedFilterCreationRecipe: IRecipePage = {
   ],
   illustrative: true,
   installCode: `npm install @vojtechportes/react-query-builder
-# Add the server-side AI SDK and validation library used by your app.
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+# Add the server-side AI SDK and validation library used by your app.`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   {
     field: 'status',

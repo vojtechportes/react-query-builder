@@ -28,11 +28,7 @@ export const exportToPrismaWhereClauseRecipe: IRecipePage = {
       href: 'https://www.prisma.io/docs/orm/prisma-client/queries/crud#filter-records',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder
-
-import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'status', label: 'Status', type: 'TEXT' },
   { field: 'total', label: 'Total', type: 'NUMBER' },
