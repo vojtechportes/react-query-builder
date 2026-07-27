@@ -1952,7 +1952,7 @@ for the example site and v1 library demos.
 
 ### T060 - Remove published styled-components dependencies and audit declarations
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T059
 
