@@ -20,4 +20,8 @@
   .button:hover {
     background-color: var(--query-builder-color-primary-dark);
   }
+
+  .button:focus-visible {
+    box-shadow: 0 0 0 3px var(--query-builder-color-primary-light);
+  }
 }

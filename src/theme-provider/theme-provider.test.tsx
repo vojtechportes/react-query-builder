@@ -65,7 +65,7 @@ describe('#components/ThemeProvider', () => {
     );
   });
 
-  it('supports standalone exported controls with partial colors', () => {
+  it('keeps legacy provider variables off standalone controls', () => {
     render(
       <ThemeProvider
         colors={{
@@ -85,13 +85,13 @@ describe('#components/ThemeProvider', () => {
 
       expect(
         buttonStyle.getPropertyValue('--query-builder-color-primary-default')
-      ).toBe('rgb(1, 2, 3)');
+      ).toBe('');
       expect(
         buttonStyle.getPropertyValue('--query-builder-color-secondary-light')
-      ).toBe('rgb(4, 5, 6)');
+      ).toBe('');
       expect(
         buttonStyle.getPropertyValue('--query-builder-color-grey-300')
-      ).toBe('rgb(7, 8, 9)');
+      ).toBe('');
       expect(
         buttonStyle.getPropertyValue('--query-builder-color-grey-400')
       ).toBe('');

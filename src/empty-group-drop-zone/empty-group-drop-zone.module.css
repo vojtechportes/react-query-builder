@@ -55,4 +55,11 @@
   .transitionDisabled {
     transition: none;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .placeholder,
+    .placeholderInner {
+      transition: none;
+    }
+  }
 }
