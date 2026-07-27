@@ -1,0 +1,7 @@
+@layer react-query-builder {
+  .controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
