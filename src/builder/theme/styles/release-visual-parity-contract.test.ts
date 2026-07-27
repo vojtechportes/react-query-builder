@@ -80,7 +80,7 @@ describe('T059 visual and accessibility parity contract', () => {
       'builder/text-mode/components/text-mode-editor/text-mode-editor.module.css'
     );
     const monaco = readCss(
-      'monaco/components/monaco-text-mode-editor/monaco-text-mode-editor.module.css'
+      'subpackages/monaco/components/monaco-text-mode-editor/monaco-text-mode-editor.module.css'
     );
 
     expect(dropZone).toMatch(/\.anchor\.dragging\.active/);

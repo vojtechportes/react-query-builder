@@ -33,6 +33,16 @@ describe('versioned package bindings', () => {
     );
   });
 
+  it('maps every local source export to an existing file', () => {
+    const sourceRoot = resolve(import.meta.dirname, '../../../src');
+
+    expect(
+      packageExports.every(({ localSourcePath }) =>
+        existsSync(resolve(sourceRoot, localSourcePath))
+      )
+    ).toBe(true);
+  });
+
   it.each(bindings)(
     'matches the actual package exports for $target',
     (binding) => {

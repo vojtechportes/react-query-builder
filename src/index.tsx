@@ -153,7 +153,7 @@ export type {
   IColorVariant,
   IGreyColorVariant,
 } from './builder/theme/styles/colors';
-export { strings } from './locales/en-us';
+export { strings } from './shared/localization/locales/en-us';
 export type { IStrings } from './shared/localization/types/strings';
 export { queryOperators } from './shared/query/model/constants/query-operators';
 export {

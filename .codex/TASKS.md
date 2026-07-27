@@ -1,4 +1,4 @@
-﻿This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
+This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
 
 ## Status Legend
 
@@ -2177,7 +2177,7 @@ site/v1 usage.
 
 ### T068 - Move locales and Monaco into public subpackages
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T066 and T067
 
