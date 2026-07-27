@@ -11,10 +11,10 @@
       "react-dom/*": ["../node_modules/@types/react-dom/*"],
       "@vojtechportes/react-query-builder": ["../src/index.tsx"],
       "@vojtechportes/react-query-builder/parseQuery": [
-        "../src/parseQuery/index.ts"
+        "../src/subpackages/parse-query/index.ts"
       ],
       "@vojtechportes/react-query-builder/formatQuery": [
-        "../src/formatQuery/index.ts"
+        "../src/subpackages/format-query/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/en-US": [
         "../src/locales/en-us/index.ts"

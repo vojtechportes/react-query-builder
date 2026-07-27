@@ -1,5 +1,7 @@
 import React from 'react';
 import type { IBuilderStyle } from './builder-style';
+import type { IBuilderFieldProps } from '../../shared/builder-components/types';
+export type * from '../../shared/builder-components/types';
 import { IAlertProps } from '../../alert';
 import { IButtonProps } from '../../button';
 import { ICloneButtonProps } from '../../clone-button';
@@ -29,7 +31,6 @@ import {
   DenormalizedQuery,
   GroupReadOnlyTarget,
   QueryGroupValue,
-  QueryOperator,
   RuleReadOnlyTarget,
 } from '../../shared/query/model/types/query-tree';
 
@@ -37,17 +38,6 @@ export type BuilderGroupMode = 'with-modifiers' | 'without-modifiers' | 'both';
 export type BuilderNewNodePlacement = 'append' | 'prepend';
 export type { BuilderDefaultMode } from './builder-default-mode';
 
-export type BuilderFieldType =
-  | 'BOOLEAN'
-  | 'TEXT'
-  | 'DATE'
-  | 'NUMBER'
-  | 'STATEMENT'
-  | 'LIST'
-  | 'MULTI_LIST'
-  | 'GROUP';
-
-export type BuilderFieldOperator = QueryOperator;
 export type BuilderGroupValues = QueryGroupValue;
 export type { BuilderLockState };
 export type { GroupReadOnlyTarget, RuleReadOnlyTarget };
@@ -73,239 +63,6 @@ export type {
   IBuilderHistoryConfig,
   IBuilderHistoryState,
 } from '../../history/types';
-
-export type BuilderFieldValue =
-  | string
-  | number
-  | string[]
-  | number[]
-  | boolean
-  | Array<{ value: string | number; label: string }>;
-
-export type BuilderFieldUsageLimitScope = 'global' | 'parent';
-export type BuilderFieldComparisonType =
-  | 'string'
-  | 'number'
-  | 'date'
-  | 'boolean';
-
-export interface IBuilderFieldUsageLimit {
-  key?: string;
-  max: number;
-  scope?: BuilderFieldUsageLimitScope;
-  message?: BuilderValidationMessage;
-}
-
-export interface IBuilderFieldComparisonConfig {
-  type?: BuilderFieldComparisonType;
-  comparableFields?: string[];
-}
-
-export interface IBuilderValidationMessageContext {
-  field: IBuilderFieldProps;
-  operator?: BuilderFieldOperator;
-  value?: BuilderFieldValue;
-  ruleId?: string;
-  rangeBoundary?: 'start' | 'end';
-  usageLimit?: IBuilderFieldUsageLimit;
-}
-
-export type BuilderValidationMessage =
-  | string
-  | ((context: IBuilderValidationMessageContext) => string);
-
-export interface IBuilderRangeValidation<
-  TValueValidation = unknown,
-  TRangeValue = string | number,
-> {
-  common?: Partial<TValueValidation>;
-  start?: Partial<TValueValidation>;
-  end?: Partial<TValueValidation>;
-  allowEqual?: boolean;
-  requireAscending?: boolean;
-  validate?: (
-    range: [TRangeValue, TRangeValue],
-    context: IBuilderValidationMessageContext
-  ) => boolean | Promise<boolean>;
-  message?: BuilderValidationMessage;
-}
-
-export interface IBuilderFieldValidationBase<TValue = unknown> {
-  required?: boolean;
-  oneOf?: TValue[];
-  custom?: (
-    value: TValue,
-    context: IBuilderValidationMessageContext
-  ) => boolean | Promise<boolean>;
-  customMessage?: BuilderValidationMessage;
-}
-
-export interface ITextValueValidationRule extends IBuilderFieldValidationBase<
-  string | string[]
-> {
-  minLength?: number;
-  maxLength?: number;
-  matches?: RegExp;
-}
-
-export interface INumberValueValidationRule extends IBuilderFieldValidationBase<
-  number | number[]
-> {
-  min?: number;
-  max?: number;
-  integer?: boolean;
-  positive?: boolean;
-  negative?: boolean;
-}
-
-export interface IDateValueValidationRule extends IBuilderFieldValidationBase<
-  string | string[]
-> {
-  minDate?: string | Date;
-  maxDate?: string | Date;
-}
-
-export type IBooleanValueValidationRule = IBuilderFieldValidationBase<boolean>;
-export type IListValueValidationRule = IBuilderFieldValidationBase<
-  string | number
->;
-
-export interface IMultiListValueValidationRule extends IBuilderFieldValidationBase<
-  Array<string | number>
-> {
-  minItems?: number;
-  maxItems?: number;
-}
-
-export type IStatementValueValidationRule =
-  IBuilderFieldValidationBase<string> & {
-    minLength?: number;
-    maxLength?: number;
-    matches?: RegExp;
-  };
-
-export type IBuilderOperatorValidationRule<TRule> = Partial<TRule> & {
-  operators: BuilderFieldOperator[];
-};
-
-export interface IBuilderValidationConfig<TRule> {
-  common?: Partial<TRule>;
-  rules?: Array<IBuilderOperatorValidationRule<TRule>>;
-}
-
-export interface ITextFieldValidationRule extends ITextValueValidationRule {
-  range?: IBuilderRangeValidation<ITextValueValidationRule, string>;
-}
-
-export interface INumberFieldValidationRule extends INumberValueValidationRule {
-  range?: IBuilderRangeValidation<INumberValueValidationRule, number>;
-}
-
-export interface IDateFieldValidationRule extends IDateValueValidationRule {
-  range?: IBuilderRangeValidation<IDateValueValidationRule, string>;
-}
-
-export type IStatementFieldValidationRule = IStatementValueValidationRule;
-export type IBooleanFieldValidationRule = IBooleanValueValidationRule;
-export type IListFieldValidationRule = IListValueValidationRule;
-export type IMultiListFieldValidationRule = IMultiListValueValidationRule;
-
-export type ITextFieldValidation =
-  | Partial<ITextFieldValidationRule>
-  | IBuilderValidationConfig<ITextFieldValidationRule>;
-
-export type INumberFieldValidation =
-  | Partial<INumberFieldValidationRule>
-  | IBuilderValidationConfig<INumberFieldValidationRule>;
-
-export type IDateFieldValidation =
-  | Partial<IDateFieldValidationRule>
-  | IBuilderValidationConfig<IDateFieldValidationRule>;
-
-export type IBooleanFieldValidation =
-  | Partial<IBooleanFieldValidationRule>
-  | IBuilderValidationConfig<IBooleanFieldValidationRule>;
-
-export type IListFieldValidation =
-  | Partial<IListFieldValidationRule>
-  | IBuilderValidationConfig<IListFieldValidationRule>;
-
-export type IMultiListFieldValidation =
-  | Partial<IMultiListFieldValidationRule>
-  | IBuilderValidationConfig<IMultiListFieldValidationRule>;
-
-export type IStatementFieldValidation =
-  | Partial<IStatementFieldValidationRule>
-  | IBuilderValidationConfig<IStatementFieldValidationRule>;
-
-interface IBuilderFieldBase<
-  TType extends BuilderFieldType,
-  TValue extends BuilderFieldValue | undefined,
-  TValidation,
-> {
-  field: string;
-  label: string;
-  value?: TValue;
-  type: TType;
-  operators?: BuilderFieldOperator[];
-  validation?: TValidation;
-  usageLimit?: IBuilderFieldUsageLimit;
-  fieldComparison?: IBuilderFieldComparisonConfig;
-}
-
-export type IBooleanFieldProps = IBuilderFieldBase<
-  'BOOLEAN',
-  boolean,
-  IBooleanFieldValidation
->;
-
-export type ITextFieldProps = IBuilderFieldBase<
-  'TEXT',
-  string,
-  ITextFieldValidation
->;
-
-export type IDateFieldProps = IBuilderFieldBase<
-  'DATE',
-  string,
-  IDateFieldValidation
->;
-
-export type INumberFieldProps = IBuilderFieldBase<
-  'NUMBER',
-  number,
-  INumberFieldValidation
->;
-
-export type IStatementFieldProps = IBuilderFieldBase<
-  'STATEMENT',
-  string,
-  IStatementFieldValidation
->;
-
-export type IListFieldProps = IBuilderFieldBase<
-  'LIST',
-  Array<{ value: string | number; label: string }>,
-  IListFieldValidation
->;
-
-export type IMultiListFieldProps = IBuilderFieldBase<
-  'MULTI_LIST',
-  Array<{ value: string | number; label: string }>,
-  IMultiListFieldValidation
->;
-
-export type IGroupFieldProps = IBuilderFieldBase<'GROUP', undefined, never>;
-
-export type IBuilderFieldProps =
-  | IBooleanFieldProps
-  | ITextFieldProps
-  | IDateFieldProps
-  | INumberFieldProps
-  | IStatementFieldProps
-  | IListFieldProps
-  | IMultiListFieldProps
-  | IGroupFieldProps;
 
 export type BuilderValidationSeverity = 'error' | 'warning';
 
