@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import { formatAqlRule } from './format-aql-rule';
 
@@ -39,15 +39,13 @@ export const formatAqlGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): string => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const inner = joinAqlFragments(
     group.children
-      .map(child =>
+      .map((child) =>
         formatAqlNode(child, variableName, modifierlessGroupCombinator)
       )
-      .filter(fragment => fragment.trim().length > 0),
+      .filter((fragment) => fragment.trim().length > 0),
     combinator
   );
 
@@ -61,4 +59,3 @@ export const formatAqlGroup = (
 
   return inner;
 };
-

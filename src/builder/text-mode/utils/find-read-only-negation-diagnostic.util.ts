@@ -3,7 +3,7 @@ import {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../../utils/query-tree';
+} from '../../../shared/query/model/types/query-tree';
 import {
   createInheritedReadOnlyState,
   IInheritedReadOnlyState,
@@ -99,7 +99,8 @@ export const findReadOnlyNegationDiagnostic = (
   const hasViolation = descriptors.some((descriptor) => {
     const matchingCandidate = candidates.find(
       (candidate) =>
-        createGroupFingerprintWithoutNegation(candidate) === descriptor.fingerprint
+        createGroupFingerprintWithoutNegation(candidate) ===
+        descriptor.fingerprint
     );
 
     if (!matchingCandidate) {

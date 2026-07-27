@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import type { ParsedNode } from './sql-token.types';
 import { stripParsedSqlSource } from './utils/strip-parsed-sql-source';
 
@@ -29,4 +29,3 @@ export const toDenormalizedSqlQuery = (
 
   return [node];
 };
-

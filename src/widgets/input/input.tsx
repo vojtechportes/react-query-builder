@@ -7,10 +7,10 @@ import { findNodeById } from '../../history/find-node-by-id';
 import { applyDataUpdate } from '../../utils/apply-data-update.util';
 import { coerceNumberInputValue } from '../../utils/coerce-number-input-value.util';
 import { emitBuilderFieldChange } from '../../utils/emit-builder-field-change.util';
-import { isNormalizedGroupNode } from '../../utils/is-normalized-group-node.util';
+import { isNormalizedGroupNode } from '../../shared/query/model/utils/is-normalized-group-node.util';
 import { isStringOrNumberArray } from '../../utils/is-string-or-number-array.util';
 import { isUndefined } from '../../utils/is-undefined.util';
-import { updateItem } from '../../utils/update-item.util';
+import { updateItem } from '../../shared/query/transformations/utils/update-item.util';
 
 export interface IInputProps {
   value: string | number | Array<string | number>;

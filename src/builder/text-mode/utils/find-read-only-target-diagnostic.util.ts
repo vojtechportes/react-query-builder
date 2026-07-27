@@ -1,19 +1,24 @@
 import { ITextModeDiagnostic } from '../types/text-mode-diagnostic';
-import { DenormalizedNode, DenormalizedQuery } from '../../../utils/query-tree';
+import {
+  DenormalizedNode,
+  DenormalizedQuery,
+} from '../../../shared/query/model/types/query-tree';
 import {
   collectReadOnlyNodeCandidates,
   collectReadOnlyNodeDescriptors,
   matchReadOnlyDescriptorToCandidate,
 } from './match-read-only-nodes.util';
 
-const hasOnlyNegationTarget = (readOnly: DenormalizedNode['readOnly']): boolean =>
+const hasOnlyNegationTarget = (
+  readOnly: DenormalizedNode['readOnly']
+): boolean =>
   Boolean(
     readOnly &&
-      typeof readOnly === 'object' &&
-      readOnly.enabled &&
-      readOnly.targets &&
-      readOnly.targets.length === 1 &&
-      readOnly.targets[0] === 'negation'
+    typeof readOnly === 'object' &&
+    readOnly.enabled &&
+    readOnly.targets &&
+    readOnly.targets.length === 1 &&
+    readOnly.targets[0] === 'negation'
   );
 
 export const findReadOnlyTargetDiagnostic = (
@@ -24,7 +29,7 @@ export const findReadOnlyTargetDiagnostic = (
   } = {}
 ): ITextModeDiagnostic | null => {
   const descriptors = collectReadOnlyNodeDescriptors(previousQuery).filter(
-    descriptor => !hasOnlyNegationTarget(descriptor.readOnly)
+    (descriptor) => !hasOnlyNegationTarget(descriptor.readOnly)
   );
 
   if (descriptors.length === 0) {

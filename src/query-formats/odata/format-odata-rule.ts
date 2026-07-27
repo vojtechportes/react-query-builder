@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { formatODataScalarValue } from './shared';
 
 const ensureArrayValue = (
@@ -64,23 +64,27 @@ export const formatODataRule = (rule: IDenormalizedRuleNode): string => {
     case 'SMALLER_EQUAL':
       return `${rule.field} le ${formatFieldOrScalarValue(rule)}`;
     case 'IN': {
-      const values = ensureArrayValue(rule.operator, rule.value)
-        .map(item => `${rule.field} eq ${formatODataScalarValue(item)}`);
+      const values = ensureArrayValue(rule.operator, rule.value).map(
+        (item) => `${rule.field} eq ${formatODataScalarValue(item)}`
+      );
       return values.length === 1 ? values[0] : `(${values.join(' or ')})`;
     }
     case 'NOT_IN': {
-      const values = ensureArrayValue(rule.operator, rule.value)
-        .map(item => `${rule.field} ne ${formatODataScalarValue(item)}`);
+      const values = ensureArrayValue(rule.operator, rule.value).map(
+        (item) => `${rule.field} ne ${formatODataScalarValue(item)}`
+      );
       return values.length === 1 ? values[0] : `(${values.join(' and ')})`;
     }
     case 'ALL_IN': {
-      const values = ensureArrayValue(rule.operator, rule.value)
-        .map(item => `contains(${rule.field},${formatODataScalarValue(item)})`);
+      const values = ensureArrayValue(rule.operator, rule.value).map(
+        (item) => `contains(${rule.field},${formatODataScalarValue(item)})`
+      );
       return values.length === 1 ? values[0] : `(${values.join(' and ')})`;
     }
     case 'ANY_IN': {
-      const values = ensureArrayValue(rule.operator, rule.value)
-        .map(item => `contains(${rule.field},${formatODataScalarValue(item)})`);
+      const values = ensureArrayValue(rule.operator, rule.value).map(
+        (item) => `contains(${rule.field},${formatODataScalarValue(item)})`
+      );
       return values.length === 1 ? values[0] : `(${values.join(' or ')})`;
     }
     case 'BETWEEN': {

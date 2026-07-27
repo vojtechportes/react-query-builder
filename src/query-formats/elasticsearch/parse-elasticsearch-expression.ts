@@ -1,6 +1,4 @@
-import type {
-  DenormalizedNode,
-} from '../../utils/query-tree';
+import type { DenormalizedNode } from '../../shared/query/model/types/query-tree';
 import { inferWildcardOperator } from './shared';
 
 type ElasticsearchDocument = Record<string, unknown>;
@@ -8,7 +6,9 @@ type ElasticsearchDocument = Record<string, unknown>;
 const isPlainObject = (value: unknown): value is ElasticsearchDocument =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const isScalarValue = (value: unknown): value is string | number | boolean | null =>
+const isScalarValue = (
+  value: unknown
+): value is string | number | boolean | null =>
   value === null || ['string', 'number', 'boolean'].includes(typeof value);
 
 const wrapAndGroup = (children: DenormalizedNode[]): DenormalizedNode => ({
@@ -29,7 +29,9 @@ const createGroup = (
   children,
 });
 
-const parseTermExpression = (value: ElasticsearchDocument): DenormalizedNode[] => {
+const parseTermExpression = (
+  value: ElasticsearchDocument
+): DenormalizedNode[] => {
   const [field, rawFieldValue] = Object.entries(value)[0] ?? [];
 
   if (!field) {
@@ -56,11 +58,15 @@ const parseTermExpression = (value: ElasticsearchDocument): DenormalizedNode[] =
   ];
 };
 
-const parseTermsExpression = (value: ElasticsearchDocument): DenormalizedNode[] => {
+const parseTermsExpression = (
+  value: ElasticsearchDocument
+): DenormalizedNode[] => {
   const [field, fieldValue] = Object.entries(value)[0] ?? [];
 
   if (!field || !Array.isArray(fieldValue)) {
-    throw new Error('Elasticsearch terms query must contain an array field value.');
+    throw new Error(
+      'Elasticsearch terms query must contain an array field value.'
+    );
   }
 
   if (!fieldValue.every(isScalarValue)) {
@@ -78,7 +84,9 @@ const parseTermsExpression = (value: ElasticsearchDocument): DenormalizedNode[] 
   ];
 };
 
-const parseRangeExpression = (value: ElasticsearchDocument): DenormalizedNode[] => {
+const parseRangeExpression = (
+  value: ElasticsearchDocument
+): DenormalizedNode[] => {
   const [field, fieldValue] = Object.entries(value)[0] ?? [];
 
   if (!field || !isPlainObject(fieldValue)) {
@@ -117,34 +125,49 @@ const parseRangeExpression = (value: ElasticsearchDocument): DenormalizedNode[] 
       case 'gt':
         return [{ field, operator: 'LARGER', value: fieldValue.gt as never }];
       case 'gte':
-        return [{ field, operator: 'LARGER_EQUAL', value: fieldValue.gte as never }];
+        return [
+          { field, operator: 'LARGER_EQUAL', value: fieldValue.gte as never },
+        ];
       case 'lt':
         return [{ field, operator: 'SMALLER', value: fieldValue.lt as never }];
       case 'lte':
-        return [{ field, operator: 'SMALLER_EQUAL', value: fieldValue.lte as never }];
+        return [
+          { field, operator: 'SMALLER_EQUAL', value: fieldValue.lte as never },
+        ];
       default:
         break;
     }
   }
 
-  throw new Error(`Unsupported Elasticsearch range query for field "${field}".`);
+  throw new Error(
+    `Unsupported Elasticsearch range query for field "${field}".`
+  );
 };
 
-const parseExistsExpression = (value: ElasticsearchDocument, negated = false): DenormalizedNode[] => {
+const parseExistsExpression = (
+  value: ElasticsearchDocument,
+  negated = false
+): DenormalizedNode[] => {
   const field = value.field;
 
   if (typeof field !== 'string') {
-    throw new Error('Elasticsearch exists query must contain a string "field".');
+    throw new Error(
+      'Elasticsearch exists query must contain a string "field".'
+    );
   }
 
   return [{ field, operator: negated ? 'IS_NULL' : 'IS_NOT_NULL' }];
 };
 
-const parsePrefixExpression = (value: ElasticsearchDocument): DenormalizedNode[] => {
+const parsePrefixExpression = (
+  value: ElasticsearchDocument
+): DenormalizedNode[] => {
   const [field, fieldValue] = Object.entries(value)[0] ?? [];
 
   if (!field || typeof fieldValue !== 'string') {
-    throw new Error('Elasticsearch prefix query must contain a string field value.');
+    throw new Error(
+      'Elasticsearch prefix query must contain a string field value.'
+    );
   }
 
   return [{ field, operator: 'STARTS_WITH', value: fieldValue }];
@@ -161,7 +184,9 @@ const parseWildcardFieldValue = (
       : fieldValue;
 
   if (typeof value !== 'string') {
-    throw new Error(`Elasticsearch wildcard query for field "${field}" must be a string.`);
+    throw new Error(
+      `Elasticsearch wildcard query for field "${field}" must be a string.`
+    );
   }
 
   return [
@@ -190,7 +215,7 @@ const parseBoolClauseArray = (value: unknown): DenormalizedNode[] => {
     throw new Error('Elasticsearch bool clauses must be arrays.');
   }
 
-  return value.flatMap(item => parseElasticsearchExpression(item));
+  return value.flatMap((item) => parseElasticsearchExpression(item));
 };
 
 const parseMustNotClause = (value: unknown): DenormalizedNode[] => {
@@ -199,33 +224,47 @@ const parseMustNotClause = (value: unknown): DenormalizedNode[] => {
   }
 
   if (value.length === 1 && isPlainObject(value[0]) && 'exists' in value[0]) {
-    return parseExistsExpression(value[0].exists as ElasticsearchDocument, true);
+    return parseExistsExpression(
+      value[0].exists as ElasticsearchDocument,
+      true
+    );
   }
 
   if (value.length === 1 && isPlainObject(value[0]) && 'wildcard' in value[0]) {
-    return parseWildcardExpression(value[0].wildcard as ElasticsearchDocument, true);
+    return parseWildcardExpression(
+      value[0].wildcard as ElasticsearchDocument,
+      true
+    );
   }
 
   if (value.length === 1 && isPlainObject(value[0]) && 'term' in value[0]) {
-    const parsed = parseTermExpression(value[0].term as ElasticsearchDocument)[0];
+    const parsed = parseTermExpression(
+      value[0].term as ElasticsearchDocument
+    )[0];
     return [{ ...parsed, operator: 'NOT_EQUAL' }];
   }
 
   if (value.length === 1 && isPlainObject(value[0]) && 'terms' in value[0]) {
-    const parsed = parseTermsExpression(value[0].terms as ElasticsearchDocument)[0];
+    const parsed = parseTermsExpression(
+      value[0].terms as ElasticsearchDocument
+    )[0];
     return [{ ...parsed, operator: 'NOT_IN' }];
   }
 
   return [createGroup('AND', parseBoolClauseArray(value), true)];
 };
 
-const parseBoolExpression = (value: ElasticsearchDocument): DenormalizedNode[] => {
+const parseBoolExpression = (
+  value: ElasticsearchDocument
+): DenormalizedNode[] => {
   const hasMust = Array.isArray(value.must);
   const hasShould = Array.isArray(value.should);
   const hasMustNot = Array.isArray(value.must_not);
 
   if (!hasMust && !hasShould && !hasMustNot) {
-    throw new Error('Elasticsearch bool query must contain must, should, or must_not.');
+    throw new Error(
+      'Elasticsearch bool query must contain must, should, or must_not.'
+    );
   }
 
   const children: DenormalizedNode[] = [];
@@ -249,7 +288,9 @@ const parseBoolExpression = (value: ElasticsearchDocument): DenormalizedNode[] =
   return [wrapAndGroup(children)];
 };
 
-const unwrapQueryContainer = (value: ElasticsearchDocument): ElasticsearchDocument => {
+const unwrapQueryContainer = (
+  value: ElasticsearchDocument
+): ElasticsearchDocument => {
   if ('query' in value && isPlainObject(value.query)) {
     return value.query;
   }
@@ -257,7 +298,9 @@ const unwrapQueryContainer = (value: ElasticsearchDocument): ElasticsearchDocume
   return value;
 };
 
-export const parseElasticsearchExpression = (value: unknown): DenormalizedNode[] => {
+export const parseElasticsearchExpression = (
+  value: unknown
+): DenormalizedNode[] => {
   if (!isPlainObject(value)) {
     throw new Error('Elasticsearch query must be a JSON object.');
   }
@@ -293,7 +336,9 @@ export const parseElasticsearchExpression = (value: unknown): DenormalizedNode[]
   }
 
   if ('wildcard' in normalized) {
-    return parseWildcardExpression(normalized.wildcard as ElasticsearchDocument);
+    return parseWildcardExpression(
+      normalized.wildcard as ElasticsearchDocument
+    );
   }
 
   throw new Error('Unsupported Elasticsearch query structure.');

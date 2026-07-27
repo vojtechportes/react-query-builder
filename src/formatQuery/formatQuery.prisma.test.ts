@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery Prisma', () => {
@@ -32,9 +32,7 @@ describe('formatQuery Prisma', () => {
       },
     ];
 
-    expect(
-      formatQuery(query, 'Prisma', { wrapWhereClause: true })
-    ).toEqual(
+    expect(formatQuery(query, 'Prisma', { wrapWhereClause: true })).toEqual(
       JSON.stringify(
         {
           where: {

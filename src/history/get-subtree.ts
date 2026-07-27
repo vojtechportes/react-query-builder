@@ -1,6 +1,6 @@
-import { clone } from '../utils/clone.util';
-import { getDescendantIds } from '../utils/get-descendant-ids.util';
-import { NormalizedQuery } from '../utils/query-tree';
+import { clone } from '../shared/query/model/utils/clone.util';
+import { getDescendantIds } from '../shared/query/transformations/utils/get-descendant-ids.util';
+import { NormalizedQuery } from '../shared/query/model/types/query-tree';
 
 export const getSubtree = (
   data: NormalizedQuery,

@@ -1,7 +1,7 @@
 import { strings as rootStrings } from '../index';
 import { strings as csCZStrings } from './cs-cz';
 import { strings as deDEStrings } from './de-de';
-import { strings as enUSStrings } from './en-us';
+import { strings as enUSStrings } from '../shared/localization/locales/en-us';
 import { strings as esESStrings } from './es-es';
 import { strings as frFRStrings } from './fr-fr';
 import { strings as itITStrings } from './it-it';

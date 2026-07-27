@@ -1,4 +1,4 @@
-﻿import type { IStrings } from '../locales/types/strings';
+import type { IStrings } from '../shared/localization/types/strings';
 
 export const getCloneButtonTitle = (
   strings: IStrings | undefined,

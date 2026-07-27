@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import { formatQuery } from '../../formatQuery';
 import { parseQuery } from '../../parseQuery';
 

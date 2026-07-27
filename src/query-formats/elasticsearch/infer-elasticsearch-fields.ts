@@ -3,7 +3,7 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 
 const inferElasticsearchFieldType = (
   rule: IDenormalizedRuleNode
@@ -21,7 +21,7 @@ const inferElasticsearchFieldType = (
   }
 
   if (Array.isArray(rule.value)) {
-    if (rule.value.every(item => typeof item === 'number')) {
+    if (rule.value.every((item) => typeof item === 'number')) {
       return 'NUMBER';
     }
 
@@ -34,7 +34,7 @@ const inferElasticsearchFieldType = (
 const collectElasticsearchRules = (
   data: DenormalizedQuery
 ): IDenormalizedRuleNode[] =>
-  data.flatMap(node => {
+  data.flatMap((node) => {
     if (!('type' in node)) {
       return [node];
     }
@@ -50,7 +50,7 @@ export const inferElasticsearchFields = (
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
   >();
 
-  collectElasticsearchRules(data).forEach(rule => {
+  collectElasticsearchRules(data).forEach((rule) => {
     const current = fieldMap.get(rule.field);
     const nextType = inferElasticsearchFieldType(rule);
 

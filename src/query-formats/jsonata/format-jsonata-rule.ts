@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryOperator,
   QueryRuleValue,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import {
   escapeJsonataRegex,
   formatJsonataArrayValue,
@@ -85,14 +85,14 @@ export const formatJsonataRule = (rule: IDenormalizedRuleNode): string => {
     case 'ALL_IN':
       return joinExpressions(
         ensureArrayValue(rule.operator, rule.value).map(
-          item => `${formatJsonataScalarValue(item)} in ${rule.field}`
+          (item) => `${formatJsonataScalarValue(item)} in ${rule.field}`
         ),
         'and'
       );
     case 'ANY_IN':
       return joinExpressions(
         ensureArrayValue(rule.operator, rule.value).map(
-          item => `${formatJsonataScalarValue(item)} in ${rule.field}`
+          (item) => `${formatJsonataScalarValue(item)} in ${rule.field}`
         ),
         'or'
       );

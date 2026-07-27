@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import type { IFormatAqlOptions } from '../types';
 import {
   DEFAULT_MODIFIERLESS_GROUP_COMBINATOR,
@@ -28,7 +28,7 @@ export const formatAql = (
 ): string => {
   const expression = joinRootFragments(
     value
-      .map(node =>
+      .map((node) =>
         formatAqlNode(
           node,
           options.variableName ?? AQL_DEFAULT_VARIABLE_NAME,
@@ -36,7 +36,7 @@ export const formatAql = (
             DEFAULT_MODIFIERLESS_GROUP_COMBINATOR
         )
       )
-      .filter(fragment => fragment.trim().length > 0),
+      .filter((fragment) => fragment.trim().length > 0),
     options.rootlessCombinator ?? DEFAULT_ROOTLESS_COMBINATOR
   );
 
@@ -44,6 +44,7 @@ export const formatAql = (
     return '';
   }
 
-  return options.wrapFilterClause === false ? expression : `FILTER ${expression}`;
+  return options.wrapFilterClause === false
+    ? expression
+    : `FILTER ${expression}`;
 };
-

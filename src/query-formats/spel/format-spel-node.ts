@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import { formatSpelRule } from './format-spel-rule';
 
@@ -37,13 +37,11 @@ export const formatSpelGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): string => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const inner = joinFragments(
     group.children
-      .map(child => formatSpelNode(child, modifierlessGroupCombinator))
-      .filter(fragment => fragment.trim().length > 0),
+      .map((child) => formatSpelNode(child, modifierlessGroupCombinator))
+      .filter((fragment) => fragment.trim().length > 0),
     combinator
   );
 

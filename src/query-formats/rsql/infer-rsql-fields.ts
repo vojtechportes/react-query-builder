@@ -3,7 +3,7 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { rsqlOperatorOrder } from './rsql-token.types';
 
 const inferRsqlFieldType = (
@@ -21,7 +21,10 @@ const inferRsqlFieldType = (
     return 'NUMBER';
   }
 
-  if (Array.isArray(rule.value) && rule.value.every(item => typeof item === 'number')) {
+  if (
+    Array.isArray(rule.value) &&
+    rule.value.every((item) => typeof item === 'number')
+  ) {
     return 'NUMBER';
   }
 
@@ -29,15 +32,19 @@ const inferRsqlFieldType = (
 };
 
 const collectRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => ('type' in node ? collectRules(node.children) : [node]));
+  data.flatMap((node) =>
+    'type' in node ? collectRules(node.children) : [node]
+  );
 
-export const inferRsqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] => {
+export const inferRsqlFields = (
+  data: DenormalizedQuery
+): IBuilderFieldProps[] => {
   const fieldMap = new Map<
     string,
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
   >();
 
-  collectRules(data).forEach(rule => {
+  collectRules(data).forEach((rule) => {
     const current = fieldMap.get(rule.field);
     const nextType = inferRsqlFieldType(rule);
 
@@ -62,7 +69,7 @@ export const inferRsqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =
     field,
     label: field,
     type: config.type,
-    operators: rsqlOperatorOrder.filter(operator =>
+    operators: rsqlOperatorOrder.filter((operator) =>
       config.operators.includes(operator)
     ),
   })) as IBuilderFieldProps[];

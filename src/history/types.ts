@@ -1,4 +1,7 @@
-import { NormalizedNode, NormalizedQuery } from '../utils/query-tree';
+import {
+  NormalizedNode,
+  NormalizedQuery,
+} from '../shared/query/model/types/query-tree';
 
 export interface IInsertSubtreeAction {
   type: 'insert-subtree';

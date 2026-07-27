@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery JsonLogic', () => {
@@ -8,7 +8,9 @@ describe('formatQuery JsonLogic', () => {
       { field: 'active', operator: 'EQUAL', value: true },
     ];
 
-    expect(formatQuery(query, 'JsonLogic', { rootlessCombinator: 'OR' })).toEqual(
+    expect(
+      formatQuery(query, 'JsonLogic', { rootlessCombinator: 'OR' })
+    ).toEqual(
       JSON.stringify(
         {
           or: [

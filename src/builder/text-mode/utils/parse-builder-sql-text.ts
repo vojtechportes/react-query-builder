@@ -1,6 +1,6 @@
-﻿import { IBuilderTextModeParseResult } from '../types/builder-text-mode-parse-result';
+import { IBuilderTextModeParseResult } from '../types/builder-text-mode-parse-result';
 import { IBuilderFieldProps } from '../../types';
-import type { IStrings } from '../../../locales/types/strings';
+import type { IStrings } from '../../../shared/localization/types/strings';
 import { tryParseSql } from '../../../query-formats/sql/try-parse-sql';
 import { validateBuilderSqlTextSemantics } from './validate-builder-sql-text-semantics';
 

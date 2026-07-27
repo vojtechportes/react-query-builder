@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import { formatMongoRule } from './format-mongo-rule';
 
@@ -53,13 +53,11 @@ export const formatMongoGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): Record<string, unknown> => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const expression = combineMongoExpressions(
     group.children
-      .map(child => formatMongoNode(child, modifierlessGroupCombinator))
-      .filter(item => Object.keys(item).length > 0),
+      .map((child) => formatMongoNode(child, modifierlessGroupCombinator))
+      .filter((item) => Object.keys(item).length > 0),
     combinator
   );
 
@@ -69,4 +67,3 @@ export const formatMongoGroup = (
 
   return expression;
 };
-

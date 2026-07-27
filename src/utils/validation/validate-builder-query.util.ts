@@ -4,9 +4,12 @@ import {
   IBuilderValidationIssue,
   IBuilderValidationResult,
 } from '../../builder';
-import { isDenormalizedGroupNode } from '../is-denormalized-group-node.util';
+import { isDenormalizedGroupNode } from '../../shared/query/model/utils/is-denormalized-group-node.util';
 import { isPromiseLike } from '../is-promise-like.util';
-import { DenormalizedQuery, IDenormalizedRuleNode } from '../query-tree';
+import {
+  DenormalizedQuery,
+  IDenormalizedRuleNode,
+} from '../../shared/query/model/types/query-tree';
 import { createBuilderValidationResult } from './create-builder-validation-result.util';
 import { getBuilderValidationMessage } from './get-builder-validation-message.util';
 import { getValidationString } from './get-validation-string.util';
@@ -50,7 +53,9 @@ export const validateBuilderQuery = (
       continue;
     }
 
-    const field = context.fields.find((fieldItem) => fieldItem.field === rule.field);
+    const field = context.fields.find(
+      (fieldItem) => fieldItem.field === rule.field
+    );
 
     if (!field) {
       if (rule.id) {

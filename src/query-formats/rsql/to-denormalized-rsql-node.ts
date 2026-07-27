@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedRsqlNode } from './rsql-token.types';
 
 const toDenormalizedRsqlNode = (node: ParsedRsqlNode): DenormalizedNode => {
@@ -14,7 +14,7 @@ const toDenormalizedRsqlNode = (node: ParsedRsqlNode): DenormalizedNode => {
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedRsqlNode(child)),
+    children: node.children.map((child) => toDenormalizedRsqlNode(child)),
   };
 
   return group;
@@ -22,4 +22,4 @@ const toDenormalizedRsqlNode = (node: ParsedRsqlNode): DenormalizedNode => {
 
 export const toDenormalizedRsqlQuery = (
   nodes: ParsedRsqlNode[]
-): DenormalizedQuery => nodes.map(node => toDenormalizedRsqlNode(node));
+): DenormalizedQuery => nodes.map((node) => toDenormalizedRsqlNode(node));

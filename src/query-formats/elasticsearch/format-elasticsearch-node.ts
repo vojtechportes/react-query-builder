@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import { isGroupNode } from '../sql/shared';
 import { formatElasticsearchRule } from './format-elasticsearch-rule';
 
@@ -66,15 +66,13 @@ export const formatElasticsearchGroup = (
   modifierlessGroupCombinator: QueryGroupValue
 ): ElasticsearchClause => {
   const combinator =
-    'value' in group && group.value
-      ? group.value
-      : modifierlessGroupCombinator;
+    'value' in group && group.value ? group.value : modifierlessGroupCombinator;
   const expression = combineElasticsearchExpressions(
     group.children
-      .map(child =>
+      .map((child) =>
         formatElasticsearchNode(child, modifierlessGroupCombinator)
       )
-      .filter(item => Object.keys(item).length > 0),
+      .filter((item) => Object.keys(item).length > 0),
     combinator
   );
 

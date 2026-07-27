@@ -1,4 +1,4 @@
-﻿import React, { FC, createContext } from 'react';
+import React, { FC, createContext } from 'react';
 import {
   BuilderGroupMode,
   BuilderNewNodePlacement,
@@ -8,10 +8,10 @@ import {
   IBuilderValidationResult,
 } from './builder/types';
 import { defaultComponents } from './builder/constants/default-components';
-import type { IStrings } from './locales/types/strings';
-import { strings as defaultStrings } from './locales/en-us';
+import type { IStrings } from './shared/localization/types/strings';
+import { strings as defaultStrings } from './shared/localization/locales/en-us';
 import { BuilderHistoryAction, IBuilderHistoryState } from './history/types';
-import { NormalizedQuery } from './utils/query-tree';
+import { NormalizedQuery } from './shared/query/model/types/query-tree';
 import { IBuilderFieldOptionsStore } from './builder/utils/builder-field-options-store';
 
 export interface IBuilderContextProps {

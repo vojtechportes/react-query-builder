@@ -1,4 +1,4 @@
-import type { IDenormalizedRuleNode } from '../../utils/query-tree';
+import type { IDenormalizedRuleNode } from '../../shared/query/model/types/query-tree';
 import { inferSpelMatchesOperator } from './shared';
 import { stripOuterParentheses } from './split-spel-expression';
 
@@ -101,22 +101,24 @@ const parseInlineList = (value: string): string[] | number[] | null => {
   }
 
   const items = splitInlineList(inner)
-    .map(item => parseScalarValue(item))
-    .filter(item => typeof item !== 'undefined');
+    .map((item) => parseScalarValue(item))
+    .filter((item) => typeof item !== 'undefined');
 
   if (items.length === 0) {
     return [];
   }
 
-  if (items.every(item => typeof item === 'string')) {
+  if (items.every((item) => typeof item === 'string')) {
     return items as string[];
   }
 
-  if (items.every(item => typeof item === 'number')) {
+  if (items.every((item) => typeof item === 'number')) {
     return items as number[];
   }
 
-  throw new Error('SpEL inline lists must contain only strings or only numbers.');
+  throw new Error(
+    'SpEL inline lists must contain only strings or only numbers.'
+  );
 };
 
 const parseNegatedRule = (value: string): IDenormalizedRuleNode | null => {
@@ -158,9 +160,7 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
 
   const normalized = stripOuterParentheses(trimmed);
   let match = normalized.match(
-    new RegExp(
-      `^(${FIELD_PATTERN})\\s*>=\\s*(.+)\\s+and\\s+\\1\\s*<=\\s*(.+)$`
-    )
+    new RegExp(`^(${FIELD_PATTERN})\\s*>=\\s*(.+)\\s+and\\s+\\1\\s*<=\\s*(.+)$`)
   );
 
   if (match) {
@@ -183,9 +183,7 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   }
 
   match = normalized.match(
-    new RegExp(
-      `^(${FIELD_PATTERN})\\s*<\\s*(.+)\\s+or\\s+\\1\\s*>\\s*(.+)$`
-    )
+    new RegExp(`^(${FIELD_PATTERN})\\s*<\\s*(.+)\\s+or\\s+\\1\\s*>\\s*(.+)$`)
   );
 
   if (match) {
@@ -208,9 +206,7 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
   }
 
   match = normalized.match(
-    new RegExp(
-      `^(${FIELD_PATTERN})\\s*(==|!=|>=|<=|>|<)\\s*(.+)$`
-    )
+    new RegExp(`^(${FIELD_PATTERN})\\s*(==|!=|>=|<=|>|<)\\s*(.+)$`)
   );
 
   if (match) {
@@ -376,4 +372,3 @@ export const parseSpelRule = (value: string): IDenormalizedRuleNode | null => {
 
   return null;
 };
-

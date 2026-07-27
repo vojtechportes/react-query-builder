@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import type { IFormatMongoOptions } from '../types';
 import {
   DEFAULT_MODIFIERLESS_GROUP_COMBINATOR,
@@ -29,17 +29,16 @@ export const formatMongo = (
 ): string => {
   const expression = combineRootExpressions(
     value
-      .map(node =>
+      .map((node) =>
         formatMongoNode(
           node,
           options.modifierlessGroupCombinator ??
             DEFAULT_MODIFIERLESS_GROUP_COMBINATOR
         )
       )
-      .filter(item => Object.keys(item).length > 0),
+      .filter((item) => Object.keys(item).length > 0),
     options.rootlessCombinator ?? DEFAULT_ROOTLESS_COMBINATOR
   );
 
   return JSON.stringify(expression, null, 2);
 };
-

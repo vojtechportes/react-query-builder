@@ -10,7 +10,7 @@ import {
   defaultComponents,
 } from '../builder';
 import { BuilderContext } from '../builder-context';
-import { strings } from '../locales/en-us';
+import { strings } from '../shared/localization/locales/en-us';
 import { Group } from './group';
 import { Group as GroupContainer } from './components/group-container';
 import groupContainerStyles from './components/group-container/group-container.module.css';

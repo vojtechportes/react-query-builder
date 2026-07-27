@@ -1,4 +1,4 @@
-﻿import React, { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { render } from '@testing-library/react';
 import {
   IBuilderComponentsProps,
@@ -6,9 +6,9 @@ import {
   defaultComponents,
 } from './builder';
 import { BuilderContext } from './builder-context';
-import { strings } from './locales/en-us';
+import { strings } from './shared/localization/locales/en-us';
 import { Iterator } from './iterator';
-import { NormalizedQuery } from './utils/query-tree';
+import { NormalizedQuery } from './shared/query/model/types/query-tree';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [

@@ -1,0 +1,66 @@
+import {
+  DenormalizedNode,
+  DenormalizedQuery,
+  IDenormalizedRuleNode,
+} from '../types/query-tree';
+import { isDenormalizedGroupNode } from './is-denormalized-group-node.util';
+import { getRuleValueSource } from './rule-value-source.util';
+
+const isSameReadOnly = (
+  leftReadOnly: unknown,
+  rightReadOnly: unknown
+): boolean =>
+  JSON.stringify(leftReadOnly ?? null) ===
+  JSON.stringify(rightReadOnly ?? null);
+
+const isSameValue = (leftValue: any, rightValue: any) => {
+  if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
+    return (
+      leftValue.length === rightValue.length &&
+      leftValue.every((item, index) => item === rightValue[index])
+    );
+  }
+
+  return leftValue === rightValue;
+};
+
+const isSameNode = (
+  left: DenormalizedNode,
+  right: DenormalizedNode
+): boolean => {
+  if (isDenormalizedGroupNode(left) !== isDenormalizedGroupNode(right)) {
+    return false;
+  }
+
+  if (isDenormalizedGroupNode(left) && isDenormalizedGroupNode(right)) {
+    return (
+      left.value === right.value &&
+      left.isNegated === right.isNegated &&
+      isSameReadOnly(left.readOnly, right.readOnly) &&
+      isSameQuery(left.children, right.children)
+    );
+  }
+
+  const leftRule = left as IDenormalizedRuleNode;
+  const rightRule = right as IDenormalizedRuleNode;
+
+  return (
+    leftRule.field === rightRule.field &&
+    leftRule.operator === rightRule.operator &&
+    getRuleValueSource(leftRule) === getRuleValueSource(rightRule) &&
+    isSameValue(leftRule.value, rightRule.value) &&
+    leftRule.valueField === rightRule.valueField &&
+    isSameReadOnly(leftRule.readOnly, rightRule.readOnly)
+  );
+};
+
+export const isSameQuery = (
+  leftQuery: DenormalizedQuery,
+  rightQuery: DenormalizedQuery
+): boolean => {
+  if (leftQuery.length !== rightQuery.length) {
+    return false;
+  }
+
+  return leftQuery.every((item, index) => isSameNode(item, rightQuery[index]));
+};

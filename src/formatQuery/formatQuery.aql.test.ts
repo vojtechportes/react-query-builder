@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 import { formatQuery } from './index';
 
 describe('formatQuery AQL', () => {
@@ -75,6 +75,8 @@ describe('formatQuery AQL', () => {
         wrapFilterClause: false,
         variableName: 'item',
       })
-    ).toEqual('(item.price >= item.cost AND item.discount < item.max_discount AND item.name == item.fallback_name AND item.status != item.archived_status)');
+    ).toEqual(
+      '(item.price >= item.cost AND item.discount < item.max_discount AND item.name == item.fallback_name AND item.status != item.archived_status)'
+    );
   });
 });

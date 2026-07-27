@@ -1,7 +1,7 @@
 import {
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../../utils/query-tree';
+} from '../../../shared/query/model/types/query-tree';
 
 const normalizeBuilderTextModeNode = (
   node: DenormalizedNode
@@ -14,7 +14,10 @@ const normalizeBuilderTextModeNode = (
     normalizeBuilderTextModeNode(child)
   );
 
-  if (typeof node.value !== 'undefined' && typeof node.isNegated !== 'undefined') {
+  if (
+    typeof node.value !== 'undefined' &&
+    typeof node.isNegated !== 'undefined'
+  ) {
     return {
       ...node,
       children,
@@ -31,5 +34,4 @@ const normalizeBuilderTextModeNode = (
 
 export const normalizeBuilderTextModeQuery = (
   query: DenormalizedQuery
-): DenormalizedQuery =>
-  query.map((node) => normalizeBuilderTextModeNode(node));
+): DenormalizedQuery => query.map((node) => normalizeBuilderTextModeNode(node));

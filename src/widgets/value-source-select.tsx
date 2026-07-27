@@ -7,9 +7,9 @@ import { findNodeById } from '../history/find-node-by-id';
 import { applyDataUpdate } from '../utils/apply-data-update.util';
 import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
 import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
-import { isNormalizedGroupNode } from '../utils/is-normalized-group-node.util';
-import { QueryRuleValueSource } from '../utils/query-tree';
-import { updateItem } from '../utils/update-item.util';
+import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
+import { QueryRuleValueSource } from '../shared/query/model/types/query-tree';
+import { updateItem } from '../shared/query/transformations/utils/update-item.util';
 
 export interface IValueSourceSelectProps {
   id: string;
@@ -79,7 +79,7 @@ export const ValueSourceSelect: FC<IValueSourceSelectProps> = ({
     }
 
     if (!dispatchAction && setData && onChange) {
-      const nextData = updateItem(data, id, item => {
+      const nextData = updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }
@@ -119,7 +119,7 @@ export const ValueSourceSelect: FC<IValueSourceSelectProps> = ({
     dispatchAction(createReplaceNodeAction(id, nextRule));
     emitBuilderFieldChange(
       onFieldChange,
-      updateItem(data, id, item => {
+      updateItem(data, id, (item) => {
         if (isNormalizedGroupNode(item)) {
           return;
         }

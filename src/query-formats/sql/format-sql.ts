@@ -4,10 +4,10 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryGroupValue,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { IBuilderFieldProps } from '../../builder';
 import type { IFormatSqlOptions } from '../types';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import {
   DEFAULT_MODIFIERLESS_GROUP_COMBINATOR,
   DEFAULT_ROOTLESS_COMBINATOR,
@@ -22,7 +22,7 @@ const resolveFieldConfig = (
   rule: IDenormalizedRuleNode,
   fields?: IBuilderFieldProps[]
 ): IBuilderFieldProps | undefined =>
-  fields?.find(field => field.field === rule.field);
+  fields?.find((field) => field.field === rule.field);
 
 const formatValueWithField = (
   value: string | number | boolean,
@@ -49,7 +49,9 @@ const formatValueWithField = (
     case 'LIST':
     case 'MULTI_LIST':
       if (typeof value !== 'string' && typeof value !== 'number') {
-        throw new Error(`Field "${field.field}" expects a scalar SQL-compatible value.`);
+        throw new Error(
+          `Field "${field.field}" expects a scalar SQL-compatible value.`
+        );
       }
       return formatScalarValue(value);
     default:
@@ -61,7 +63,7 @@ const formatArrayValueWithField = (
   value: Array<string | number>,
   field?: IBuilderFieldProps
 ): string =>
-  `(${value.map(item => formatValueWithField(item, field)).join(', ')})`;
+  `(${value.map((item) => formatValueWithField(item, field)).join(', ')})`;
 
 const formatRuleValue = (
   rule: IDenormalizedRuleNode,
@@ -71,10 +73,7 @@ const formatRuleValue = (
     return quoteIdentifier(rule.valueField);
   }
 
-  return formatValueWithField(
-    rule.value as number | string | boolean,
-    field
-  );
+  return formatValueWithField(rule.value as number | string | boolean, field);
 };
 
 const joinFragments = (
@@ -180,7 +179,9 @@ const formatRule = (
       )}`;
     case 'NOT_BETWEEN':
       if (!Array.isArray(rule.value) || rule.value.length !== 2) {
-        throw new Error('Operator "NOT_BETWEEN" requires a two-item array value.');
+        throw new Error(
+          'Operator "NOT_BETWEEN" requires a two-item array value.'
+        );
       }
 
       return `${field} NOT BETWEEN ${formatValueWithField(
@@ -227,13 +228,15 @@ const formatRule = (
 
 const formatNode = (
   node: DenormalizedNode,
-  options: Required<Pick<
-    IFormatSqlOptions,
-    | 'rootlessCombinator'
-    | 'modifierlessGroupCombinator'
-    | 'wrapWhereClause'
-    | 'fields'
-  >>,
+  options: Required<
+    Pick<
+      IFormatSqlOptions,
+      | 'rootlessCombinator'
+      | 'modifierlessGroupCombinator'
+      | 'wrapWhereClause'
+      | 'fields'
+    >
+  >,
   isRoot = false
 ): string => {
   if (!isGroupNode(node)) {
@@ -245,22 +248,25 @@ const formatNode = (
 
 const formatGroup = (
   group: DenormalizedGroupNode,
-  options: Required<Pick<
-    IFormatSqlOptions,
-    | 'rootlessCombinator'
-    | 'modifierlessGroupCombinator'
-    | 'wrapWhereClause'
-    | 'fields'
-  >>,
+  options: Required<
+    Pick<
+      IFormatSqlOptions,
+      | 'rootlessCombinator'
+      | 'modifierlessGroupCombinator'
+      | 'wrapWhereClause'
+      | 'fields'
+    >
+  >,
   isRoot = false
 ): string => {
-  const combinator = 'value' in group && group.value
-    ? group.value
-    : options.modifierlessGroupCombinator;
+  const combinator =
+    'value' in group && group.value
+      ? group.value
+      : options.modifierlessGroupCombinator;
   const inner = joinFragments(
     group.children
-      .map(child => formatNode(child, options, false))
-      .filter(fragment => fragment.trim().length > 0),
+      .map((child) => formatNode(child, options, false))
+      .filter((fragment) => fragment.trim().length > 0),
     combinator
   );
 
@@ -268,9 +274,8 @@ const formatGroup = (
     return '';
   }
 
-  const wrappedInner = inner.startsWith('(') && inner.endsWith(')')
-    ? inner
-    : `(${inner})`;
+  const wrappedInner =
+    inner.startsWith('(') && inner.endsWith(')') ? inner : `(${inner})`;
 
   if ('isNegated' in group && group.isNegated) {
     return `NOT ${wrappedInner}`;
@@ -299,8 +304,8 @@ export const formatSql = (
 
   const sql = joinFragments(
     value
-      .map(node => formatNode(node, normalizedOptions, true))
-      .filter(fragment => fragment.trim().length > 0),
+      .map((node) => formatNode(node, normalizedOptions, true))
+      .filter((fragment) => fragment.trim().length > 0),
     normalizedOptions.rootlessCombinator
   );
 
@@ -310,5 +315,3 @@ export const formatSql = (
 
   return normalizedOptions.wrapWhereClause ? `WHERE ${sql}` : sql;
 };
-
-

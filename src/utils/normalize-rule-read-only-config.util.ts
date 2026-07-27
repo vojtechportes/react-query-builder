@@ -2,7 +2,7 @@ import {
   IRuleReadOnlyConfig,
   RuleReadOnly,
   RuleReadOnlyTarget,
-} from './query-tree';
+} from '../shared/query/model/types/query-tree';
 import { isRuleReadOnlyConfig } from './is-rule-read-only-config.util';
 
 export interface IResolvedRuleReadOnly {

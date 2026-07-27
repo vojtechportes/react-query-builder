@@ -3,7 +3,7 @@ import {
   areFieldsCompatibleForComparison,
   supportsFieldComparisonForOperator,
 } from '../field-comparison-support';
-import { QueryOperator } from '../query-operators';
+import { QueryOperator } from '../../shared/query/model/constants/query-operators';
 
 export type FieldComparisonValidationCode =
   | 'field_comparison_disabled'
@@ -59,7 +59,9 @@ export const validateFieldComparison = ({
     };
   }
 
-  const resolvedValueField = fields.find(fieldItem => fieldItem.field === valueField);
+  const resolvedValueField = fields.find(
+    (fieldItem) => fieldItem.field === valueField
+  );
 
   if (!resolvedValueField) {
     return {

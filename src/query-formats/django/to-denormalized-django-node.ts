@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedDjangoNode } from './django-token.types';
 
 const toDenormalizedDjangoNode = (node: ParsedDjangoNode): DenormalizedNode => {
@@ -14,7 +14,7 @@ const toDenormalizedDjangoNode = (node: ParsedDjangoNode): DenormalizedNode => {
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedDjangoNode(child)),
+    children: node.children.map((child) => toDenormalizedDjangoNode(child)),
   };
 
   return group;
@@ -22,4 +22,4 @@ const toDenormalizedDjangoNode = (node: ParsedDjangoNode): DenormalizedNode => {
 
 export const toDenormalizedDjangoQuery = (
   nodes: ParsedDjangoNode[]
-): DenormalizedQuery => nodes.map(node => toDenormalizedDjangoNode(node));
+): DenormalizedQuery => nodes.map((node) => toDenormalizedDjangoNode(node));

@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import { formatQuery } from '../../formatQuery';
 import { parseQuery } from '../../parseQuery';
 
@@ -78,10 +78,30 @@ describe('CEL roundtrip', () => {
         value: 'AND',
         isNegated: false,
         children: [
-          { field: 'name', operator: 'CONTAINS', valueSource: 'field', valueField: 'needle' },
-          { field: 'name', operator: 'STARTS_WITH', valueSource: 'field', valueField: 'prefix' },
-          { field: 'name', operator: 'ENDS_WITH', valueSource: 'field', valueField: 'suffix' },
-          { field: 'name', operator: 'LIKE', valueSource: 'field', valueField: 'pattern' },
+          {
+            field: 'name',
+            operator: 'CONTAINS',
+            valueSource: 'field',
+            valueField: 'needle',
+          },
+          {
+            field: 'name',
+            operator: 'STARTS_WITH',
+            valueSource: 'field',
+            valueField: 'prefix',
+          },
+          {
+            field: 'name',
+            operator: 'ENDS_WITH',
+            valueSource: 'field',
+            valueField: 'suffix',
+          },
+          {
+            field: 'name',
+            operator: 'LIKE',
+            valueSource: 'field',
+            valueField: 'pattern',
+          },
         ],
       },
     ];

@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import type { IFormatCelOptions } from '../types';
 import {
   DEFAULT_MODIFIERLESS_GROUP_COMBINATOR,
@@ -27,13 +27,13 @@ export const formatCel = (
 ): string =>
   joinRoot(
     value
-      .map(node =>
+      .map((node) =>
         formatCelNode(
           node,
           options.modifierlessGroupCombinator ??
             DEFAULT_MODIFIERLESS_GROUP_COMBINATOR
         )
       )
-      .filter(fragment => fragment.trim().length > 0),
+      .filter((fragment) => fragment.trim().length > 0),
     options.rootlessCombinator ?? DEFAULT_ROOTLESS_COMBINATOR
   );

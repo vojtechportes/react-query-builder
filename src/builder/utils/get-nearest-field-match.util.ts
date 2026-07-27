@@ -1,6 +1,6 @@
-import { NormalizedQuery } from '../../utils/query-tree';
+import { NormalizedQuery } from '../../shared/query/model/types/query-tree';
 import { INearestFieldMatch } from '../types/field-option';
-import { getRuleValueSource } from '../../utils/rule-value-source';
+import { getRuleValueSource } from '../../shared/query/model/utils/rule-value-source.util';
 
 export const getNearestFieldMatch = (
   data: NormalizedQuery,
@@ -29,7 +29,11 @@ export const getNearestFieldMatch = (
     );
 
     if (anchorIndex !== -1) {
-      for (let distance = 1; distance < parentNode.children.length; distance += 1) {
+      for (
+        let distance = 1;
+        distance < parentNode.children.length;
+        distance += 1
+      ) {
         const previousChildId = parentNode.children[anchorIndex - distance];
 
         if (previousChildId) {

@@ -1,10 +1,10 @@
 import { IBuilderFieldChange } from '../builder/types';
-import { emitQuery } from './emit-query.util';
+import { emitQuery } from '../shared/query/normalization/utils/emit-query.util';
 import {
   NormalizedQuery,
   QueryRuleValue,
   QueryRuleValueSource,
-} from './query-tree';
+} from '../shared/query/model/types/query-tree';
 
 export const emitBuilderFieldChange = (
   onFieldChange: ((change: IBuilderFieldChange) => void) | undefined,

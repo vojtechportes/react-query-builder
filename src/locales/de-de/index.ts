@@ -1,4 +1,4 @@
-﻿import type { IStrings } from '../types/strings';
+﻿import type { IStrings } from '../../shared/localization/types/strings';
 
 export const strings: IStrings = {
   textMode: {

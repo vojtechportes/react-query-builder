@@ -1,5 +1,5 @@
 import { normalizeRuleReadOnlyConfig } from '../normalize-rule-read-only-config.util';
-import { RuleReadOnly } from '../query-tree';
+import { RuleReadOnly } from '../../shared/query/model/types/query-tree';
 
 const hasRuleReadOnlyTargets = (value?: RuleReadOnly): boolean => {
   const normalizedValue = normalizeRuleReadOnlyConfig(value);

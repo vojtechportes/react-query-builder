@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type {
   IODataToken,
   IParsedODataGroup,
@@ -179,7 +179,9 @@ export class ODataParser {
     const token = this.consume();
 
     if (token.type !== 'IDENTIFIER') {
-      throw new Error(`Expected a field identifier but found "${token.value}".`);
+      throw new Error(
+        `Expected a field identifier but found "${token.value}".`
+      );
     }
 
     return token.value;
@@ -274,13 +276,21 @@ export class ODataParser {
 
     const children: ParsedODataNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
 
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);
@@ -299,7 +309,11 @@ export class ODataParser {
     left: ParsedODataNode,
     right: ParsedODataNode
   ): IDenormalizedRuleNode | null {
-    if (!this.isRuleNode(left) || !this.isRuleNode(right) || left.field !== right.field) {
+    if (
+      !this.isRuleNode(left) ||
+      !this.isRuleNode(right) ||
+      left.field !== right.field
+    ) {
       return null;
     }
 

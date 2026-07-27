@@ -150,13 +150,13 @@ export type {
   IGreyColorVariant,
 } from './constants/colors';
 export { strings } from './locales/en-us';
-export type { IStrings } from './locales/types/strings';
-export { queryOperators } from './utils/query-operators';
+export type { IStrings } from './shared/localization/types/strings';
+export { queryOperators } from './shared/query/model/constants/query-operators';
 export {
   getRuleValueSource,
   isFieldComparisonRule,
   isLiteralComparisonRule,
-} from './utils/rule-value-source';
+} from './shared/query/model/utils/rule-value-source.util';
 export type {
   DenormalizedNode,
   DenormalizedQuery,
@@ -186,4 +186,4 @@ export type {
   QueryRuleValueSource,
   RuleReadOnly,
   RuleReadOnlyTarget,
-} from './utils/query-tree';
+} from './shared/query/model/types/query-tree';

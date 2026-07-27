@@ -15,7 +15,7 @@ import type {
   IFormatSqlOptions,
   QueryFormat,
 } from '../query-formats/types';
-import type { DenormalizedQuery } from '../utils/query-tree';
+import type { DenormalizedQuery } from '../shared/query/model/types/query-tree';
 
 export type {
   IFormatAqlOptions,

@@ -1,4 +1,4 @@
-import { NormalizedQuery } from '../../utils/query-tree';
+import { NormalizedQuery } from '../../shared/query/model/types/query-tree';
 
 export const isBuilderFieldInUse = (
   data: NormalizedQuery,

@@ -5,7 +5,7 @@ import {
   NormalizedQuery,
   QueryGroupType,
   DenormalizedQuery,
-} from '../../../utils/query-tree';
+} from '../../../shared/query/model/types/query-tree';
 import {
   BuilderFieldOption,
   BuilderFieldOptionsStatus,
@@ -41,10 +41,7 @@ export interface IBuilderRef {
     index?: number
   ) => boolean;
   moveNode: (nodeId: string, index: number, parentId?: string) => boolean;
-  setNodeLock: (
-    nodeId: string,
-    state: 'unlocked' | 'self' | 'all'
-  ) => boolean;
+  setNodeLock: (nodeId: string, state: 'unlocked' | 'self' | 'all') => boolean;
   lockNode: (nodeId: string, state?: 'self' | 'all') => boolean;
   unlockNode: (nodeId: string) => boolean;
   getNodeById: (nodeId: string) => NormalizedNode | undefined;
@@ -131,13 +128,8 @@ export interface IBuilderRuleOptionsBindingConfig {
   resolve: (
     context: IBuilderRuleOptionsResolverContext
   ) => Promise<BuilderFieldOption[]>;
-  onError?: (
-    error: unknown,
-    context: IBuilderRuleOptionsErrorContext
-  ) => void;
-  onOptionsResolved?: (
-    context: IBuilderRuleOptionsResolvedContext
-  ) => void;
+  onError?: (error: unknown, context: IBuilderRuleOptionsErrorContext) => void;
+  onOptionsResolved?: (context: IBuilderRuleOptionsResolvedContext) => void;
   clearOnMissingDependencies?: boolean;
 }
 export type BuilderFieldOptionStateListener = (

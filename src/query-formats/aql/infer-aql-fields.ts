@@ -3,8 +3,8 @@ import type {
   DenormalizedQuery,
   IDenormalizedRuleNode,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import { aqlOperatorOrder } from './aql-token.types';
 
 const inferAqlFieldType = (
@@ -22,7 +22,10 @@ const inferAqlFieldType = (
     return 'NUMBER';
   }
 
-  if (Array.isArray(rule.value) && rule.value.every(item => typeof item === 'number')) {
+  if (
+    Array.isArray(rule.value) &&
+    rule.value.every((item) => typeof item === 'number')
+  ) {
     return 'NUMBER';
   }
 
@@ -49,7 +52,7 @@ const mergeAqlFieldType = (
 };
 
 const collectAqlRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
-  data.flatMap(node => {
+  data.flatMap((node) => {
     if (!('type' in node)) {
       return [node];
     }
@@ -57,7 +60,9 @@ const collectAqlRules = (data: DenormalizedQuery): IDenormalizedRuleNode[] =>
     return collectAqlRules(node.children);
   });
 
-export const inferAqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] => {
+export const inferAqlFields = (
+  data: DenormalizedQuery
+): IBuilderFieldProps[] => {
   const fieldMap = new Map<
     string,
     { type: IBuilderFieldProps['type']; operators: QueryOperator[] }
@@ -85,7 +90,7 @@ export const inferAqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     }
   };
 
-  collectAqlRules(data).forEach(rule => {
+  collectAqlRules(data).forEach((rule) => {
     const nextType = inferAqlFieldType(rule);
     mergeFieldConfig(rule.field, nextType, rule.operator);
 
@@ -98,7 +103,7 @@ export const inferAqlFields = (data: DenormalizedQuery): IBuilderFieldProps[] =>
     field,
     label: field,
     type: config.type,
-    operators: aqlOperatorOrder.filter(operator =>
+    operators: aqlOperatorOrder.filter((operator) =>
       config.operators.includes(operator)
     ),
   })) as IBuilderFieldProps[];

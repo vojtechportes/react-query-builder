@@ -2032,7 +2032,7 @@ site/v1 usage.
 
 ### T063 - Establish shared query and domain contracts
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Goal:** Establish domain-based shared ownership without creating generic shared dumping grounds.
 

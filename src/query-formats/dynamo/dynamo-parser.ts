@@ -2,8 +2,8 @@ import type {
   IDenormalizedRuleNode,
   QueryGroupValue,
   QueryOperator,
-} from '../../utils/query-tree';
-import { isFieldComparisonRule } from '../../utils/rule-value-source';
+} from '../../shared/query/model/types/query-tree';
+import { isFieldComparisonRule } from '../../shared/query/model/utils/rule-value-source.util';
 import type {
   IDynamoToken,
   DynamoTokenType,
@@ -143,8 +143,15 @@ export class DynamoParser {
       this.expectKeyword('AND');
       const end = this.parseScalarValue();
 
-      if (typeof start === 'boolean' || typeof end === 'boolean' || start === null || end === null) {
-        throw new Error('Dynamo BETWEEN supports only string and number values.');
+      if (
+        typeof start === 'boolean' ||
+        typeof end === 'boolean' ||
+        start === null ||
+        end === null
+      ) {
+        throw new Error(
+          'Dynamo BETWEEN supports only string and number values.'
+        );
       }
 
       return {
@@ -189,7 +196,9 @@ export class DynamoParser {
       const value = this.parseScalarValue();
 
       if (typeof value === 'boolean' || value === null) {
-        throw new Error('Dynamo IN lists currently support only string and number values.');
+        throw new Error(
+          'Dynamo IN lists currently support only string and number values.'
+        );
       }
 
       values.push(value);
@@ -203,15 +212,17 @@ export class DynamoParser {
 
     this.expect('RPAREN');
 
-    if (values.every(value => typeof value === 'string')) {
+    if (values.every((value) => typeof value === 'string')) {
       return values as string[];
     }
 
-    if (values.every(value => typeof value === 'number')) {
+    if (values.every((value) => typeof value === 'number')) {
       return values as number[];
     }
 
-    throw new Error('Dynamo arrays must contain values of the same scalar type.');
+    throw new Error(
+      'Dynamo arrays must contain values of the same scalar type.'
+    );
   }
 
   private parseScalarValue(): string | number | boolean | null {
@@ -257,7 +268,9 @@ export class DynamoParser {
     const token = this.consume();
 
     if (token.type !== 'IDENTIFIER') {
-      throw new Error(`Expected a field identifier but found "${token.value}".`);
+      throw new Error(
+        `Expected a field identifier but found "${token.value}".`
+      );
     }
 
     return token.value;
@@ -296,13 +309,21 @@ export class DynamoParser {
 
     const children: ParsedDynamoNode[] = [];
 
-    if (this.isParsedGroup(left) && !left.isNegated && left.combinator === combinator) {
+    if (
+      this.isParsedGroup(left) &&
+      !left.isNegated &&
+      left.combinator === combinator
+    ) {
       children.push(...left.children);
     } else {
       children.push(left);
     }
 
-    if (this.isParsedGroup(right) && !right.isNegated && right.combinator === combinator) {
+    if (
+      this.isParsedGroup(right) &&
+      !right.isNegated &&
+      right.combinator === combinator
+    ) {
       children.push(...right.children);
     } else {
       children.push(right);
@@ -321,7 +342,11 @@ export class DynamoParser {
     left: ParsedDynamoNode,
     right: ParsedDynamoNode
   ): IDenormalizedRuleNode | null {
-    if (!this.isRuleNode(left) || !this.isRuleNode(right) || left.field !== right.field) {
+    if (
+      !this.isRuleNode(left) ||
+      !this.isRuleNode(right) ||
+      left.field !== right.field
+    ) {
       return null;
     }
 
@@ -403,7 +428,9 @@ export class DynamoParser {
     const token = this.consume();
 
     if (token.type !== 'KEYWORD' || token.value !== value) {
-      throw new Error(`Expected keyword "${value}" but found "${token.value}".`);
+      throw new Error(
+        `Expected keyword "${value}" but found "${token.value}".`
+      );
     }
   }
 

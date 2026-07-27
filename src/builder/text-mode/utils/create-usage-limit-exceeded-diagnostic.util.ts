@@ -1,4 +1,4 @@
-﻿import type { IStrings } from '../../../locales/types/strings';
+import type { IStrings } from '../../../shared/localization/types/strings';
 import { getBuilderValidationMessage } from '../../../utils/validation/get-builder-validation-message.util';
 import { getValidationString } from '../../../utils/validation/get-validation-string.util';
 import { IBuilderFieldProps } from '../../types';

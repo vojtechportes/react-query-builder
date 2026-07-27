@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedAqlNode } from './aql-token.types';
 
 const toDenormalizedAqlNode = (node: ParsedAqlNode): DenormalizedNode => {
@@ -14,7 +14,7 @@ const toDenormalizedAqlNode = (node: ParsedAqlNode): DenormalizedNode => {
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedAqlNode(child)),
+    children: node.children.map((child) => toDenormalizedAqlNode(child)),
   };
 
   return group;
@@ -23,7 +23,7 @@ const toDenormalizedAqlNode = (node: ParsedAqlNode): DenormalizedNode => {
 export const toDenormalizedAqlQuery = (
   nodes: ParsedAqlNode[]
 ): DenormalizedQuery => {
-  const denormalizedNodes = nodes.map(node => toDenormalizedAqlNode(node));
+  const denormalizedNodes = nodes.map((node) => toDenormalizedAqlNode(node));
 
   if (denormalizedNodes.length !== 1) {
     return denormalizedNodes;
@@ -47,4 +47,3 @@ export const toDenormalizedAqlQuery = (
 
   return [node];
 };
-

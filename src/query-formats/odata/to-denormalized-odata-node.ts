@@ -2,7 +2,7 @@ import type {
   DenormalizedGroupNode,
   DenormalizedNode,
   DenormalizedQuery,
-} from '../../utils/query-tree';
+} from '../../shared/query/model/types/query-tree';
 import type { ParsedODataNode } from './odata-token.types';
 
 const toDenormalizedODataNode = (node: ParsedODataNode): DenormalizedNode => {
@@ -14,7 +14,7 @@ const toDenormalizedODataNode = (node: ParsedODataNode): DenormalizedNode => {
     type: 'GROUP',
     value: node.combinator,
     isNegated: node.isNegated,
-    children: node.children.map(child => toDenormalizedODataNode(child)),
+    children: node.children.map((child) => toDenormalizedODataNode(child)),
   };
 
   return group;
@@ -23,7 +23,7 @@ const toDenormalizedODataNode = (node: ParsedODataNode): DenormalizedNode => {
 export const toDenormalizedODataQuery = (
   nodes: ParsedODataNode[]
 ): DenormalizedQuery => {
-  const denormalizedNodes = nodes.map(node => toDenormalizedODataNode(node));
+  const denormalizedNodes = nodes.map((node) => toDenormalizedODataNode(node));
 
   if (denormalizedNodes.length !== 1) {
     return denormalizedNodes;

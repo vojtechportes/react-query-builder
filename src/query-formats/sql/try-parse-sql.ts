@@ -1,4 +1,4 @@
-﻿import type { IStrings } from '../../locales/types/strings';
+import type { IStrings } from '../../shared/localization/types/strings';
 import type { ISqlParseResult } from './types/sql-parse-result';
 import { inferSqlFields } from './infer-sql-fields';
 import { SqlParser } from './sql-parser';

@@ -3,7 +3,7 @@ import {
   IMultiListFieldValidationRule,
   IBuilderFieldProps,
 } from '../../types';
-import { QueryOperator } from '../../../utils/query-tree';
+import { QueryOperator } from '../../../shared/query/model/types/query-tree';
 import { resolveBuilderValidationRule } from '../../../utils/validation/resolve-builder-validation-rule.util';
 import { collectFieldOptionValues } from './collect-field-option-values';
 
@@ -23,10 +23,11 @@ export const resolveFieldAllowedValues = (
   }
 
   if (field.type === 'MULTI_LIST') {
-    const validation = resolveBuilderValidationRule<IMultiListFieldValidationRule>(
-      field.validation,
-      operator
-    );
+    const validation =
+      resolveBuilderValidationRule<IMultiListFieldValidationRule>(
+        field.validation,
+        operator
+      );
 
     return validation?.oneOf?.length
       ? (validation.oneOf as unknown as Array<string | number>)

@@ -1,4 +1,4 @@
-import type { DenormalizedQuery } from '../../utils/query-tree';
+import type { DenormalizedQuery } from '../../shared/query/model/types/query-tree';
 import type { IFormatJsonLogicOptions } from '../types';
 import {
   DEFAULT_MODIFIERLESS_GROUP_COMBINATOR,
@@ -26,7 +26,7 @@ export const formatJsonLogic = (
   options: IFormatJsonLogicOptions = {}
 ): string => {
   const rule = combineRootRules(
-    value.map(node =>
+    value.map((node) =>
       formatJsonLogicNode(
         node,
         options.modifierlessGroupCombinator ??
@@ -38,4 +38,3 @@ export const formatJsonLogic = (
 
   return JSON.stringify(rule, null, 2);
 };
-
