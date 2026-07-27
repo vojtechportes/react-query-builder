@@ -4,10 +4,10 @@ import {
   DenormalizedQuery,
   NormalizedQuery,
 } from '../../shared/query/model/types/query-tree';
-import { createBuilderValidationResult } from '../../utils/validation/create-builder-validation-result.util';
-import { validateBuilderQuery } from '../../utils/validation/validate-builder-query.util';
+import { createBuilderValidationResult } from '../validation/utils/create-builder-validation-result.util';
+import { validateBuilderQuery } from '../validation/utils/validate-builder-query.util';
 import { emitQuery } from '../../shared/query/normalization/utils/emit-query.util';
-import { isPromiseLike } from '../../utils/is-promise-like.util';
+import { isPromiseLike } from '../utils/is-promise-like.util';
 import {
   BuilderGroupMode,
   IBuilderFieldProps,

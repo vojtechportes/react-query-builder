@@ -5,7 +5,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { ValueFieldSelect } from './value-field-select';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -27,7 +27,9 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -139,7 +141,9 @@ describe('#components/Widgets/ValueFieldSelect', () => {
 
     fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
 
-    expect(container.querySelector('[data-test="SelectMultiOption[TEXT_C]"]')).toBeNull();
+    expect(
+      container.querySelector('[data-test="SelectMultiOption[TEXT_C]"]')
+    ).toBeNull();
     expect(onChange).not.toHaveBeenCalled();
   });
 });

@@ -9,7 +9,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../../builder';
-import { BuilderContext } from '../../builder-context';
+import { BuilderContext } from '../../builder/context';
 import { Input } from './input';
 import styles from './input.module.css';
 

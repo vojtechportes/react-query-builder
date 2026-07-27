@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react';
-import { BuilderContext } from './builder-context';
+import { BuilderContext } from './builder/context';
 import { Rule, IRuleProps } from './rule/rule';
 import { DraggableItem } from './draggable-item';
 import { DropZone as DefaultDropZone } from './drop-zone';
@@ -9,13 +9,13 @@ import { isNormalizedGroupNode } from './shared/query/model/utils/is-normalized-
 import {
   resolveGroupLockState,
   resolveRuleLockState,
-} from './utils/lock-state';
+} from './builder/read-only/utils/lock-state.util';
 import {
   createInheritedReadOnlyState,
   IInheritedReadOnlyState,
   resolveEffectiveGroupReadOnly,
   resolveEffectiveRuleReadOnly,
-} from './utils/resolve-effective-read-only.util';
+} from './builder/read-only/utils/resolve-effective-read-only.util';
 import { NormalizedQuery } from './shared/query/model/types/query-tree';
 
 export interface IIteratorProps {

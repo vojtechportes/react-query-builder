@@ -2088,7 +2088,7 @@ site/v1 usage.
 
 ### T065 - Consolidate builder core and state subsystems
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T063 and T064
 

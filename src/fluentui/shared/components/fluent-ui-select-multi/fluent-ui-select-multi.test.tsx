@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { BuilderContext } from '../../../../builder-context';
+import { BuilderContext } from '../../../../builder/context';
 import { strings } from '../../../../shared/localization/locales/en-us';
 import { FluentUiSelectMulti } from './fluent-ui-select-multi';
 import styles from './fluent-ui-select-multi.module.css';

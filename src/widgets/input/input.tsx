@@ -1,15 +1,15 @@
 import React, { FC, useContext } from 'react';
 import styles from './input.module.css';
-import { BuilderContext } from '../../builder-context';
+import { BuilderContext } from '../../builder/context';
 import { Input as DefaultInput } from '../../form/input';
-import { createReplaceNodeAction } from '../../history/create-replace-node-action';
-import { findNodeById } from '../../history/find-node-by-id';
-import { applyDataUpdate } from '../../utils/apply-data-update.util';
-import { coerceNumberInputValue } from '../../utils/coerce-number-input-value.util';
-import { emitBuilderFieldChange } from '../../utils/emit-builder-field-change.util';
+import { createReplaceNodeAction } from '../../builder/history/utils/create-replace-node-action.util';
+import { findNodeById } from '../../builder/history/utils/find-node-by-id.util';
+import { applyDataUpdate } from '../../builder/utils/apply-data-update.util';
+import { coerceNumberInputValue } from '../../builder/utils/coerce-number-input-value.util';
+import { emitBuilderFieldChange } from '../../builder/utils/emit-builder-field-change.util';
 import { isNormalizedGroupNode } from '../../shared/query/model/utils/is-normalized-group-node.util';
-import { isStringOrNumberArray } from '../../utils/is-string-or-number-array.util';
-import { isUndefined } from '../../utils/is-undefined.util';
+import { isStringOrNumberArray } from '../../builder/utils/is-string-or-number-array.util';
+import { isUndefined } from '../../builder/utils/is-undefined.util';
 import { updateItem } from '../../shared/query/transformations/utils/update-item.util';
 
 export interface IInputProps {

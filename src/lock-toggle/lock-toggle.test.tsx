@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BuilderLockState } from '../utils/lock-state';
+import { BuilderLockState } from '../builder/read-only/utils/lock-state.util';
 import { LockToggle } from './lock-toggle';
 import styles from './lock-toggle.module.css';
 

@@ -1,13 +1,11 @@
 import React, { FC, useCallback } from 'react';
-import {
-  ILockToggleProps,
-} from '../../../lock-toggle';
+import { ILockToggleProps } from '../../../lock-toggle';
 import {
   BuilderLockState,
   getNextGroupLockState,
   getNextRuleLockState,
-} from '../../../utils/lock-state';
-import { getLockToggleTitle } from '../../../utils/get-lock-toggle-title.util';
+} from '../../../builder/read-only/utils/lock-state.util';
+import { getLockToggleTitle } from '../../../builder/utils/get-lock-toggle-title.util';
 import { BootstrapLockIcon } from './icons';
 import {
   bootstrapIconButtonContentStyles,

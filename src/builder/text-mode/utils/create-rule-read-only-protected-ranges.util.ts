@@ -4,7 +4,7 @@ import { IDenormalizedRuleNode } from '../../../shared/query/model/types/query-t
 import {
   getRuleReadOnlyTargets,
   isRuleFullyReadOnly,
-} from '../../../utils/resolve-rule-read-only.util';
+} from '../../read-only/utils/resolve-rule-read-only.util';
 import { formatSql } from '../../../shared/query-formats/sql/format-sql';
 import { IParsedSqlRuleNode } from '../../../shared/query-formats/sql/types/parsed-sql-rule-node';
 

@@ -8,7 +8,7 @@ import {
   createInheritedReadOnlyState,
   IInheritedReadOnlyState,
   resolveEffectiveGroupReadOnly,
-} from '../../../utils/resolve-effective-read-only.util';
+} from '../../read-only/utils/resolve-effective-read-only.util';
 
 interface IReadOnlyNegationDescriptor {
   fingerprint: string;

@@ -4,7 +4,7 @@ import {
   IBuilderFieldProps,
 } from '../../types';
 import { QueryOperator } from '../../../shared/query/model/types/query-tree';
-import { resolveBuilderValidationRule } from '../../../utils/validation/resolve-builder-validation-rule.util';
+import { resolveBuilderValidationRule } from '../../validation/utils/resolve-builder-validation-rule.util';
 import { collectFieldOptionValues } from './collect-field-option-values';
 
 export const resolveFieldAllowedValues = (

@@ -1,12 +1,12 @@
 import React, { FC, useContext } from 'react';
 import { IBuilderFieldProps } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { Select as DefaultSelect } from '../form/select';
-import { createReplaceNodeAction } from '../history/create-replace-node-action';
-import { findNodeById } from '../history/find-node-by-id';
-import { applyDataUpdate } from '../utils/apply-data-update.util';
-import { createRuleValueForFieldOperator } from '../utils/create-rule-value-for-field-operator.util';
-import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
+import { createReplaceNodeAction } from '../builder/history/utils/create-replace-node-action.util';
+import { findNodeById } from '../builder/history/utils/find-node-by-id.util';
+import { applyDataUpdate } from '../builder/utils/apply-data-update.util';
+import { createRuleValueForFieldOperator } from '../builder/utils/create-rule-value-for-field-operator.util';
+import { emitBuilderFieldChange } from '../builder/utils/emit-builder-field-change.util';
 import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
 import { QueryRuleValueSource } from '../shared/query/model/types/query-tree';
 import { updateItem } from '../shared/query/transformations/utils/update-item.util';

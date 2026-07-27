@@ -1,6 +1,6 @@
 import { Button, DropdownMenu } from '@radix-ui/themes';
 import React, { FC, useContext } from 'react';
-import { BuilderContext } from '../../../../builder-context';
+import { BuilderContext } from '../../../../builder/context';
 import { ISelectMultiProps } from '../../../../form/select-multi';
 import { createSummary } from '../../../../widgets/select-multi/utils/create-summary.util';
 import { getRadixSelectPlaceholder } from '../../utils/get-radix-select-placeholder.util';

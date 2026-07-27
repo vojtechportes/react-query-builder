@@ -5,7 +5,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { Boolean } from './boolean';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -16,7 +16,9 @@ const data: any[] = [{ id: 'test', value: false }];
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -54,7 +56,9 @@ describe('#components/Widgets/Boolean', () => {
       <Boolean id="test" selectedValue={false} />
     );
 
-    fireEvent.click(container.querySelector('[data-test="Switch"]') as HTMLElement);
+    fireEvent.click(
+      container.querySelector('[data-test="Switch"]') as HTMLElement
+    );
 
     expect(container.firstChild).toBeTruthy();
   });
