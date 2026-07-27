@@ -47,23 +47,31 @@
         "../src/locales/zh-tw/index.ts"
       ],
       "@vojtechportes/react-query-builder/bootstrap/v5": [
-        "../src/bootstrap/v5/index.ts"
+        "../src/subpackages/adapters/bootstrap/v5/index.ts"
       ],
-      "@vojtechportes/react-query-builder/mui/v7": ["../src/mui/v7/index.ts"],
-      "@vojtechportes/react-query-builder/mui/v9": ["../src/mui/v9/index.ts"],
-      "@vojtechportes/react-query-builder/antd/v5": ["../src/antd/v5/index.ts"],
-      "@vojtechportes/react-query-builder/antd/v6": ["../src/antd/v6/index.ts"],
+      "@vojtechportes/react-query-builder/mui/v7": [
+        "../src/subpackages/adapters/mui/v7/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/mui/v9": [
+        "../src/subpackages/adapters/mui/v9/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/antd/v5": [
+        "../src/subpackages/adapters/antd/v5/index.ts"
+      ],
+      "@vojtechportes/react-query-builder/antd/v6": [
+        "../src/subpackages/adapters/antd/v6/index.ts"
+      ],
       "@vojtechportes/react-query-builder/fluentui/v8": [
-        "../src/fluentui/v8/index.ts"
+        "../src/subpackages/adapters/fluent-ui/v8/index.ts"
       ],
       "@vojtechportes/react-query-builder/mantine/v8": [
-        "../src/mantine/v8/index.ts"
+        "../src/subpackages/adapters/mantine/v8/index.ts"
       ],
       "@vojtechportes/react-query-builder/mantine/v9": [
-        "../src/mantine/v9/index.ts"
+        "../src/subpackages/adapters/mantine/v9/index.ts"
       ],
       "@vojtechportes/react-query-builder/radix/v1": [
-        "../src/radix/v1/index.ts"
+        "../src/subpackages/adapters/radix/v1/index.ts"
       ],
       "@vojtechportes/react-query-builder/monaco": ["../src/monaco/index.ts"]
     }
