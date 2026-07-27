@@ -3,6 +3,7 @@ export const mantineSnippet = `import {
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
 import '@mantine/core/styles.css';
+import '@vojtechportes/react-query-builder/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { components } from '@vojtechportes/react-query-builder/mantine/v9';
 

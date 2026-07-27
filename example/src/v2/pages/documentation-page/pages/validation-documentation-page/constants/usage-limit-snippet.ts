@@ -1,4 +1,5 @@
-export const usageLimitSnippet = `const fields: IBuilderFieldProps[] = [
+export const usageLimitSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const fields: IBuilderFieldProps[] = [
   {
     field: 'PRIMARY_EMAIL',
     label: 'Primary email',

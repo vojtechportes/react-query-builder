@@ -1,4 +1,5 @@
-export const fieldComparisonSnippet = `import React, { useState } from 'react';
+export const fieldComparisonSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useState } from 'react';
 import {
   Builder,
   type DenormalizedQuery,

@@ -1,4 +1,5 @@
-export const basicUsageSnippet = `import React, { useState } from 'react';
+export const basicUsageSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useState } from 'react';
 import {
   Builder,
   type DenormalizedQuery,

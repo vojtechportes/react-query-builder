@@ -1,4 +1,5 @@
-export const cloneButtonSnippet = `const components = {
+export const cloneButtonSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const components = {
   CloneButton: MyCloneButton,
 };
 

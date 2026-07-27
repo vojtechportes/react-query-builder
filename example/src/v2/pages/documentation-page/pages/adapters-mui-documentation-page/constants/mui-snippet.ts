@@ -1,4 +1,5 @@
-export const muiSnippet = `import {
+export const muiSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import {
   Builder,
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';

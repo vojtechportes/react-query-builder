@@ -6,6 +6,7 @@ import type { CustomizationMode } from '../types/customization-mode';
 import { formatBuilderSource } from './format-builder-source.util';
 
 const canonicalPackageName = '@vojtechportes/react-query-builder';
+const packageStylesheetImport = `import '${canonicalPackageName}/styles.css';`;
 const exportedPackageSpecifiers = new Set(
   packageExports.map(({ subpath }) => `${canonicalPackageName}${subpath}`)
 );
@@ -54,6 +55,7 @@ describe('v2 formatBuilderSource', () => {
     expect(source).toContain(
       "import { demoFields, initialQueryTree } from '../constants/demo-data';"
     );
+    expect(source.split(packageStylesheetImport)).toHaveLength(2);
     expect(source).toContain('singleRootGroup');
     expect(source).toContain('showValidation');
     expect(source).not.toContain('ThemeProvider');
@@ -62,9 +64,13 @@ describe('v2 formatBuilderSource', () => {
   it.each(adapterCases)(
     'renders the %s adapter import',
     (customizationMode: CustomizationMode, packagePath) => {
-      expect(
-        formatBuilderSource({ ...defaultOptions, customizationMode })
-      ).toContain(packagePath);
+      const source = formatBuilderSource({
+        ...defaultOptions,
+        customizationMode,
+      });
+
+      expect(source).toContain(packagePath);
+      expect(source.split(packageStylesheetImport)).toHaveLength(2);
     }
   );
 
@@ -92,6 +98,7 @@ describe('v2 formatBuilderSource', () => {
     expect(source).toContain(
       "import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';"
     );
+    expect(source.split(packageStylesheetImport)).toHaveLength(2);
     expect(source).not.toContain(
       '@vojtechportes/react-query-builder/theme-provider'
     );
@@ -105,6 +112,24 @@ describe('v2 formatBuilderSource', () => {
     expect(source).toContain('primary: {');
     expect(source).toContain('default: "#123456"');
   });
+
+  it.each([
+    ['bootstrap', 'bootstrap-icons/font/bootstrap-icons.css'],
+    ['mantine', '@mantine/core/styles.css'],
+    ['radix', '@radix-ui/themes/styles.css'],
+  ] as const)(
+    'loads the %s host stylesheet before the package stylesheet',
+    (customizationMode, hostStylesheet) => {
+      const source = formatBuilderSource({
+        ...defaultOptions,
+        customizationMode,
+      });
+
+      expect(source.indexOf(hostStylesheet)).toBeLessThan(
+        source.indexOf(packageStylesheetImport)
+      );
+    }
+  );
 
   it('emits only package specifiers exposed by the v2 binding', () => {
     const generatedSources = [

@@ -1,4 +1,5 @@
-export const themeSnippet = `import {
+export const themeSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import {
   Builder,
   ThemeProvider,
 } from '@vojtechportes/react-query-builder';

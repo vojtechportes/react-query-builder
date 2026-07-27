@@ -1,4 +1,5 @@
-export const lockToggleSnippet = `const components = {
+export const lockToggleSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const components = {
   LockToggle: MyLockToggle,
 };
 

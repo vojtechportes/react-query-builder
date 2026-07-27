@@ -1876,7 +1876,7 @@ for the example site and v1 library demos.
 
 ### T057 - Update v2 consumer, adapter, Monaco, and theming documentation
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T056
 

@@ -9,7 +9,11 @@ import { basicUsageSnippet } from '../constants/basic-usage-snippet';
 
 export const UsageDocumentationContent: React.FC = () => (
   <>
-    <p>Basic controlled usage.</p>
+    <p>
+      Basic controlled usage. The stylesheet side-effect import belongs once in
+      your application entrypoint; it is included in this standalone example so
+      the copied setup is complete.
+    </p>
     <CodeBlock code={basicUsageSnippet} language="tsx" label="Basic setup" />
     <p>
       The example includes a single rule with{' '}

@@ -10,6 +10,12 @@ export const InstallationDocumentationContent: React.FC = () => (
       Install the package and use it with React <InlineCode>18+</InlineCode>.
     </p>
     <CodeBlock code={installationSnippet} language="bash" label="npm" />
+    <p>
+      Import{' '}
+      <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
+      once in the client or framework entrypoint that renders v2 builders. The
+      package does not inject component styles at runtime.
+    </p>{' '}
     <AlertBox title="Peer dependencies" variant="info">
       The package expects compatible <InlineCode>react</InlineCode> and{' '}
       <InlineCode>react-dom</InlineCode> versions in the consuming app. In

@@ -1,4 +1,5 @@
-export const builderFieldComparisonSnippet = `const data: DenormalizedQuery = [
+export const builderFieldComparisonSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const data: DenormalizedQuery = [
   {
     type: 'GROUP',
     value: 'AND',

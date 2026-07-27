@@ -1,4 +1,5 @@
-export const textModeDefaultModeSnippet = `<Builder
+export const textModeDefaultModeSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+<Builder
   fields={fields}
   data={data}
   textMode

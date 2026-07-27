@@ -1,4 +1,5 @@
-export const dynamicFieldOptionsSnippet = `import React, { useCallback, useEffect, useState } from 'react';
+export const dynamicFieldOptionsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Builder,
   useBuilderRef,

@@ -1,4 +1,5 @@
-export const dynamicRuleOptionsSnippet = `import React, { useEffect, useState } from 'react';
+export const dynamicRuleOptionsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useEffect, useState } from 'react';
 import {
   Builder,
   useBuilderRef,

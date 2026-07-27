@@ -1,4 +1,5 @@
-export const antdCreateComponentsSnippet = `import {
+export const antdCreateComponentsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import {
   Builder,
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';

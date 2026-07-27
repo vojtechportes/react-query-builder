@@ -3,6 +3,7 @@ export const radixCreateComponentsSnippet = `import {
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';
 import '@radix-ui/themes/styles.css';
+import '@vojtechportes/react-query-builder/styles.css';
 import { Theme } from '@radix-ui/themes';
 import {
   createRadixComponents,
