@@ -1,4 +1,4 @@
-This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
+﻿This backlog is derived from `AGENTS.md`. Keep tasks incremental and update statuses as work lands.
 
 ## Status Legend
 
@@ -2118,7 +2118,7 @@ site/v1 usage.
 
 ### T066 - Consolidate builder components, theme, drag-and-drop, and styles
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T065
 
@@ -2148,7 +2148,7 @@ site/v1 usage.
 
 ### T067 - Move versioned adapters into public subpackages
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T066
 

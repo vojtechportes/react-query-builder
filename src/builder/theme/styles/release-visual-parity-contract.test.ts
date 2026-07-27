@@ -34,7 +34,7 @@ const transitionModules = [
   'builder/components/clone-button/clone-button.module.css',
   'builder/drag-and-drop/components/drop-zone/drop-zone.module.css',
   'builder/drag-and-drop/components/empty-group-drop-zone/empty-group-drop-zone.module.css',
-  'fluentui/shared/components/fluent-ui-group-header-option/fluent-ui-group-header-option.module.css',
+  'subpackages/adapters/fluent-ui/shared/components/fluent-ui-group-header-option/fluent-ui-group-header-option.module.css',
   'builder/components/form-controls/switch/switch.module.css',
   'builder/components/lock-toggle/lock-toggle.module.css',
   'builder/components/rule-controls/select-multi/components/option/option.module.css',
@@ -100,11 +100,11 @@ describe('T059 visual and accessibility parity contract', () => {
 
   it('keeps adapter-owned structural and state modules', () => {
     const adapterModules = [
-      'antd/shared/components/antd-text-mode-toggle-content/antd-text-mode-toggle-content.module.css',
-      'fluentui/shared/components/fluent-ui-group/fluent-ui-group.module.css',
-      'mantine/shared/components/mantine-text-mode-toggle-content/mantine-text-mode-toggle-content.module.css',
-      'mui/shared/components/mui-text-mode-toggle-content/mui-text-mode-toggle-content.module.css',
-      'radix/shared/components/radix-group/radix-group.module.css',
+      'subpackages/adapters/antd/shared/components/antd-text-mode-toggle-content/antd-text-mode-toggle-content.module.css',
+      'subpackages/adapters/fluent-ui/shared/components/fluent-ui-group/fluent-ui-group.module.css',
+      'subpackages/adapters/mantine/shared/components/mantine-text-mode-toggle-content/mantine-text-mode-toggle-content.module.css',
+      'subpackages/adapters/mui/shared/components/mui-text-mode-toggle-content/mui-text-mode-toggle-content.module.css',
+      'subpackages/adapters/radix/shared/components/radix-group/radix-group.module.css',
     ];
 
     for (const adapterModule of adapterModules) {
