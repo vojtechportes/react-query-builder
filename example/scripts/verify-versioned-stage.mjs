@@ -52,3 +52,68 @@ if (!indexHtml.includes('<div id="root">') || !indexHtml.includes('<h1')) {
     `${target} staging is missing the server-rendered hydration surface.`
   );
 }
+const stylesheetMarker = '--query-builder-color-primary-default:';
+const stagedFiles = fs
+  .readdirSync(stageRoot, { recursive: true })
+  .map((file) => file.replaceAll('\\', '/'));
+const stylesheetFiles = stagedFiles.filter((file) => file.endsWith('.css'));
+const stylesheetMarkerCount = stylesheetFiles.reduce((count, file) => {
+  const stylesheet = fs.readFileSync(path.join(stageRoot, file), 'utf8');
+
+  return count + stylesheet.split(stylesheetMarker).length - 1;
+}, 0);
+const expectedMarkerCount = target === 'v2' ? 1 : 0;
+
+if (stylesheetMarkerCount !== expectedMarkerCount) {
+  throw new Error(
+    `${target} staging contains ${stylesheetMarkerCount} React Query Builder stylesheet copies; expected ${expectedMarkerCount}.`
+  );
+}
+
+const htmlFiles = stagedFiles.filter((file) => file.endsWith('.html'));
+
+for (const htmlFile of htmlFiles) {
+  const html = fs.readFileSync(path.join(stageRoot, htmlFile), 'utf8');
+
+  if (!html.includes('<div id="root">')) {
+    continue;
+  }
+
+  const stylesheetUrls = [
+    ...html.matchAll(/<link[^>]+href="([^"]+)"[^>]+rel="stylesheet"/g),
+    ...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g),
+  ].map((match) => match[1]);
+  const packageStylesheetUrls = stylesheetUrls.filter((stylesheetUrl) => {
+    const pathname = new URL(stylesheetUrl, 'https://example.test').pathname;
+    const versionPathIndex = pathname.lastIndexOf(`/${target}/`);
+
+    if (versionPathIndex < 0) {
+      return false;
+    }
+
+    const stylesheetPath = decodeURIComponent(
+      pathname.slice(versionPathIndex + target.length + 2)
+    );
+
+    if (!stylesheetFiles.includes(stylesheetPath)) {
+      throw new Error(
+        `${target} staging references a missing stylesheet from ${htmlFile}: ${stylesheetUrl}.`
+      );
+    }
+
+    return fs
+      .readFileSync(path.join(stageRoot, stylesheetPath), 'utf8')
+      .includes(stylesheetMarker);
+  });
+  const expectedPackageStylesheetUrls = target === 'v2' ? 1 : 0;
+
+  if (packageStylesheetUrls.length !== expectedPackageStylesheetUrls) {
+    throw new Error(
+      `${target} staging page ${htmlFile} references ${packageStylesheetUrls.length} React Query Builder stylesheets; expected ${expectedPackageStylesheetUrls}.`
+    );
+  }
+}
+
+if (!indexHtml.includes('data-styled=')) {
+  throw new Error(`${target} staging is missing server-rendered site styles.`);
+}

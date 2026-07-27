@@ -9,6 +9,7 @@ export interface IPackageBinding {
   reactDomRoot: string;
   reactRoot: string;
   ssrNoExternal: (string | RegExp)[];
+  stylesheetPath?: string;
   target: PackageBindingTarget;
   typeScriptPaths: Record<string, string[]>;
 }

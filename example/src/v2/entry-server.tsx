@@ -1,3 +1,4 @@
+import '@vojtechportes/react-query-builder/styles.css';
 import * as React from 'react';
 import { renderApp } from '../shared/ssr/render-app.util';
 import { V2AppRoutes } from './app/v2-app-routes';
