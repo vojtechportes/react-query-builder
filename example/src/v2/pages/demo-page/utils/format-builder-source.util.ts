@@ -21,8 +21,8 @@ export const formatBuilderSource = ({
   singleRootGroup,
   showValidation,
   customizationMode,
-  themeColors,
-  defaultThemeColors,
+  themeStyle,
+  defaultThemeStyle,
 }: IBuilderSourceOptions) => {
   const usesMuiAdapter = customizationMode === 'mui';
   const usesAntdAdapter = customizationMode === 'antd';
@@ -32,17 +32,17 @@ export const formatBuilderSource = ({
   const usesBootstrapAdapter = customizationMode === 'bootstrap';
   const themeOverrides =
     customizationMode === 'default'
-      ? createThemeOverrides(themeColors, defaultThemeColors)
-      : null;
-  const usesThemeProvider = Boolean(themeOverrides);
+      ? createThemeOverrides(themeStyle, defaultThemeStyle)
+      : undefined;
+  const usesThemeStyle = Boolean(themeOverrides);
   const builderImportItems = [...baseBuilderImportItems];
 
   if (locale === 'en-US') {
     builderImportItems.splice(1, 0, 'strings');
   }
 
-  if (usesThemeProvider) {
-    builderImportItems.splice(1, 0, 'colors', 'ThemeProvider');
+  if (usesThemeStyle) {
+    builderImportItems.splice(1, 0, 'type IBuilderStyle');
   }
 
   const imports = [
@@ -108,6 +108,7 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     usesFluentUiAdapter ? 'components={fluentUiComponents}' : null,
     usesRadixAdapter ? 'components={radixComponents}' : null,
     usesBootstrapAdapter ? 'components={bootstrapComponents}' : null,
+    usesThemeStyle ? 'style={builderStyle}' : null,
   ].filter((prop): prop is string => Boolean(prop));
 
   const componentExpression = useMonacoTextEditor
@@ -144,38 +145,25 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     '    />',
   ].join('\n');
 
-  const themedBuilderMarkup = usesThemeProvider
-    ? [
-        '    <ThemeProvider',
-        '      colors={',
-        formatThemeOverrides(themeOverrides!)
-          .split('\n')
-          .map((line) => `      ${line}`)
-          .join('\n'),
-        '      }',
-        '    >',
-        builderMarkup,
-        '    </ThemeProvider>',
-      ].join('\n')
-    : builderMarkup;
-
   const wrappedBuilderMarkup = usesMantineAdapter
     ? [
         '    <MantineProvider>',
-        indentBlock(themedBuilderMarkup, 2),
+        indentBlock(builderMarkup, 2),
         '    </MantineProvider>',
       ].join('\n')
     : usesRadixAdapter
-      ? [
-          '    <Theme>',
-          indentBlock(themedBuilderMarkup, 2),
-          '    </Theme>',
-        ].join('\n')
-      : themedBuilderMarkup;
+      ? ['    <Theme>', indentBlock(builderMarkup, 2), '    </Theme>'].join(
+          '\n'
+        )
+      : builderMarkup;
 
   return [
     imports,
     '',
+    usesThemeStyle
+      ? `const builderStyle: IBuilderStyle = ${formatThemeOverrides(themeOverrides!)};`
+      : null,
+    usesThemeStyle ? '' : null,
     'export const DemoBuilderExample = () => {',
     '  const [data, setData] = useState<DenormalizedQuery>(initialQueryTree);',
     componentExpression ? `  const components = ${componentExpression};` : null,

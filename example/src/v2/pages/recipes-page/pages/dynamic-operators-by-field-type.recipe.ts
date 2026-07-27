@@ -26,7 +26,9 @@ export const dynamicOperatorsByFieldTypeRecipe: IRecipePage = {
     '/documentation/field-comparisons',
     '/api/fields',
   ],
-  installCode: `npm install @vojtechportes/react-query-builder`,
+  installCode: `npm install @vojtechportes/react-query-builder
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `import type {
   DenormalizedQuery,
   IBuilderFieldProps,

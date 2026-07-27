@@ -31,7 +31,9 @@ export const persistFiltersInUrlRecipe: IRecipePage = {
   ],
   installCode: `npm install @vojtechportes/react-query-builder
 
-import { Builder, type DenormalizedQuery } from '@vojtechportes/react-query-builder';`,
+import { Builder, type DenormalizedQuery } from '@vojtechportes/react-query-builder';
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'status', label: 'Status', type: 'LIST', value: statusOptions },
   { field: 'owner', label: 'Owner', type: 'TEXT' },

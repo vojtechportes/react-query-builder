@@ -9,6 +9,7 @@ import { unsupportedFieldComparisonFormats } from '../constants/unsupported-fiel
 import { useDemoPlaygroundState } from '../hooks/use-demo-playground-state';
 import type { OutputFormat } from '../types/output-format';
 import { containsFieldComparisons } from '../utils/contains-field-comparisons.util';
+import { createThemeOverrides } from '../utils/create-theme-overrides.util';
 import { formatBuilderSource } from '../utils/format-builder-source.util';
 import { formatQueryText } from '../utils/format-query-text.util';
 import { getBuilderComponents } from '../utils/get-builder-components.util';
@@ -57,18 +58,25 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     outputFormat,
     settings,
     showSourceCode,
-    themeColors,
+    themeStyle,
     setCustomizationMode,
     setData,
     setOutputFormat,
     setShowSourceCode,
-    setThemeColors,
+    setThemeStyle,
     updateSetting,
   } = useDemoPlaygroundState(initialData);
 
   const builderComponents = React.useMemo(
     () => getBuilderComponents(customizationMode, settings.useMonacoTextEditor),
     [customizationMode, settings.useMonacoTextEditor]
+  );
+  const themeOverrides = React.useMemo(
+    () =>
+      customizationMode === 'default'
+        ? createThemeOverrides(themeStyle, defaultTheme)
+        : undefined,
+    [customizationMode, themeStyle]
   );
   const builderProps = {
     data,
@@ -89,6 +97,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     groupTypes: 'both' as const,
     singleRootGroup: settings.singleRootGroup,
     showValidation: settings.showValidation,
+    style: themeOverrides,
     ...(builderComponents ? { components: builderComponents } : {}),
   };
   const hasFieldComparisons = React.useMemo(
@@ -119,10 +128,10 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
       formatBuilderSource({
         ...settings,
         customizationMode,
-        themeColors,
-        defaultThemeColors: defaultTheme.colors,
+        themeStyle,
+        defaultThemeStyle: defaultTheme,
       }),
-    [customizationMode, settings, themeColors]
+    [customizationMode, settings, themeStyle]
   );
 
   return (
@@ -146,8 +155,8 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         />
         <DemoPlaygroundTheme
           customizationMode={customizationMode}
-          value={themeColors}
-          onChange={setThemeColors}
+          value={themeStyle}
+          onChange={setThemeStyle}
         />
       </Sidebar>
       <Main>
@@ -159,7 +168,6 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         <DemoPlaygroundBuilder
           builderProps={builderProps}
           customizationMode={customizationMode}
-          themeColors={themeColors}
         />
         <DemoPlaygroundOutput
           format={outputFormat}

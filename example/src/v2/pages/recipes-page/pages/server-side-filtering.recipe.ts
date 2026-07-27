@@ -23,7 +23,9 @@ export const serverSideFilteringRecipe: IRecipePage = {
     '/api/builder',
   ],
   illustrative: true,
-  installCode: `npm install @vojtechportes/react-query-builder`,
+  installCode: `npm install @vojtechportes/react-query-builder
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'status', label: 'Status', type: 'LIST', value: statuses },
   { field: 'amount', label: 'Amount', type: 'NUMBER' },
@@ -32,7 +34,9 @@ export const serverSideFilteringRecipe: IRecipePage = {
 const initialQuery: DenormalizedQuery = [
   { type: 'GROUP', value: 'AND', isNegated: false, children: [] },
 ];`,
-  builderCode: `const [query, setQuery] = useState(initialQuery);
+  builderCode: `import '@vojtechportes/react-query-builder/styles.css';
+
+const [query, setQuery] = useState(initialQuery);
 const [rows, setRows] = useState<Order[]>([]);
 
 const search = async () => {

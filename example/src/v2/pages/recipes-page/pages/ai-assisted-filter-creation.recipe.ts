@@ -24,7 +24,9 @@ export const aiAssistedFilterCreationRecipe: IRecipePage = {
   ],
   illustrative: true,
   installCode: `npm install @vojtechportes/react-query-builder
-# Add the server-side AI SDK and validation library used by your app.`,
+# Add the server-side AI SDK and validation library used by your app.
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   {
     field: 'status',
@@ -44,7 +46,9 @@ export const aiAssistedFilterCreationRecipe: IRecipePage = {
 const emptyQuery: DenormalizedQuery = [
   { type: 'GROUP', value: 'AND', isNegated: false, children: [] },
 ];`,
-  builderCode: `const [applied, setApplied] = useState(emptyQuery);
+  builderCode: `import '@vojtechportes/react-query-builder/styles.css';
+
+const [applied, setApplied] = useState(emptyQuery);
 const [draft, setDraft] = useState<DenormalizedQuery>();
 
 const generateDraft = async (prompt: string) =>
