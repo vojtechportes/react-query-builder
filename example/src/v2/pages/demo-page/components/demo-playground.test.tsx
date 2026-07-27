@@ -34,6 +34,7 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
       singleRootGroup,
       showValidation,
       components,
+      style,
     }: {
       strings?: { group?: { addRule?: string } };
       readOnly?: boolean;
@@ -50,9 +51,12 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
       singleRootGroup?: boolean;
       showValidation?: boolean;
       components?: unknown;
+      style?: React.CSSProperties;
     }) => (
       <div>
-        <div data-testid="builder">{strings?.group?.addRule}</div>
+        <div data-testid="builder" style={style}>
+          {strings?.group?.addRule}
+        </div>
         <output data-testid="builder-props">
           {JSON.stringify({
             readOnly,
@@ -281,21 +285,53 @@ describe('DemoPlayground locale selection', () => {
     ).toMatchObject({ textMode: false, singleRootGroup: false });
   });
 
-  it('updates generated theme source and disables theme editing for adapters', async () => {
+  it('applies CSS variables per Builder and emits copy-ready source', async () => {
     const user = userEvent.setup();
     render(<DemoPlayground />);
 
     fireEvent.change(screen.getByLabelText('Primary'), {
       target: { value: '#123456' },
     });
+    await user.clear(screen.getByLabelText('Builder padding'));
+    await user.type(screen.getByLabelText('Builder padding'), '1.5rem');
+    await user.clear(screen.getByLabelText('Control radius'));
+    await user.type(screen.getByLabelText('Control radius'), '10px');
+    await user.clear(screen.getByLabelText('Builder shadow'));
+    await user.type(
+      screen.getByLabelText('Builder shadow'),
+      '0 12px 30px rgb(15 23 42 / 20%)'
+    );
+
+    const builder = screen.getByTestId('builder');
+
+    expect(
+      builder.style.getPropertyValue('--query-builder-color-primary-default')
+    ).toBe('#123456');
+    expect(builder.style.getPropertyValue('--query-builder-root-padding')).toBe(
+      '1.5rem'
+    );
+    expect(builder.style.getPropertyValue('--query-builder-radius-sm')).toBe(
+      '10px'
+    );
+    expect(builder.style.getPropertyValue('--query-builder-shadow-root')).toBe(
+      '0 12px 30px rgb(15 23 42 / 20%)'
+    );
+
     await user.click(
       screen.getByRole('button', { name: 'Show Builder source' })
     );
 
-    expect(
+    const source =
       screen.getByText('Builder source').parentElement?.parentElement
-        ?.textContent
-    ).toContain('#123456');
+        ?.textContent;
+
+    expect(source).toContain(
+      "import '@vojtechportes/react-query-builder/styles.css';"
+    );
+    expect(source).toContain('const builderStyle: IBuilderStyle');
+    expect(source).toContain('--query-builder-root-padding');
+    expect(source).toContain('style={builderStyle}');
+    expect(source).not.toContain('ThemeProvider');
 
     await user.click(screen.getByRole('radio', { name: 'MUI adapter' }));
 

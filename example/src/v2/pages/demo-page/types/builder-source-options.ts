@@ -1,4 +1,4 @@
-import type { IColors } from '@vojtechportes/react-query-builder';
+import type { IBuilderStyle } from '@vojtechportes/react-query-builder';
 import type { LocaleId } from './locale-id';
 import type { CustomizationMode } from './customization-mode';
 
@@ -19,6 +19,6 @@ export interface IBuilderSourceOptions {
   singleRootGroup: boolean;
   showValidation: boolean;
   customizationMode: CustomizationMode;
-  themeColors: IColors;
-  defaultThemeColors: IColors;
+  themeStyle: IBuilderStyle;
+  defaultThemeStyle: IBuilderStyle;
 }

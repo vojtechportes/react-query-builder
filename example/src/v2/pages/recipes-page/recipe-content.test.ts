@@ -19,67 +19,67 @@ describe('v2 recipe content', () => {
     expect(baseline).toMatchInlineSnapshot(`
       [
         {
-          "contentHash": "df43eaafb7973359e1fcb1b4fef5d7f750d7a312d1d6246be30b5703a2c988cb",
+          "contentHash": "e190eda8bac80801d73f616f98b13bb6dc7d950b6928960360bb037e1302044b",
           "path": "/recipes/prisma-filter-ui",
           "title": "Build a Prisma Filter UI with React Query Builder",
         },
         {
-          "contentHash": "e67fa9f6f73973d919f3ded618fe82528832b9cfc1f0e81c22e3b361773098d9",
+          "contentHash": "d8d2cdf6fc72b3bb8e630910a84ff9b8905a99d21824fa310c1f302623b666f0",
           "path": "/recipes/mui-datagrid-advanced-filtering",
           "title": "MUI DataGrid Advanced Filtering with React Query Builder",
         },
         {
-          "contentHash": "a8416e25a7951628f9c31baccbd0a48313607664bbab6fe5401f9e632d2c76a0",
+          "contentHash": "0d544fd055507e33b7502adee80238435b143b1027209ac7f822fd6da72580ed",
           "path": "/recipes/ag-grid-query-builder",
           "title": "Build an AG Grid Query Builder Filter Panel",
         },
         {
-          "contentHash": "fe0980de931436ad18d30c896f0dcbb6e9813a4d7f3fc8b51494cfe32ce1fc6c",
+          "contentHash": "812490e45cdb3b2a162917a288634f407fae1046eaf05c74789acd6deb5188ae",
           "path": "/recipes/tanstack-table-filtering",
           "title": "TanStack Table Filtering with React Query Builder",
         },
         {
-          "contentHash": "6460a8be231b44a57684c4f249b80852ba5bf6d937bb02f64a7b7b2bcc224570",
+          "contentHash": "a57dabdaa031d07363cd90c1086e75b4461ce6fd27aceafbd09d17dc4eeb7cd3",
           "path": "/recipes/react-hook-form-query-builder",
           "title": "React Hook Form Query Builder Integration",
         },
         {
-          "contentHash": "55871c2ab3891c48bef5af18b80d1508510ef2c3ea49e6e958d275ade4bcb55d",
+          "contentHash": "269e0f7dce47927bc74cdf5e206dfb799257b174a4df7be0c7a0be45eb8b30b2",
           "path": "/recipes/persist-filters-in-url",
           "title": "Persist React Filters in URL Query Parameters",
         },
         {
-          "contentHash": "f7333675a6e7b52edb8c5a194bd014450a77193594d154cee7c2f5d8b9bed912",
+          "contentHash": "e77e3311d4c4977fc170cff22e3d75d6c9dddeb2f309df63282a7a2e1ab963d6",
           "path": "/recipes/save-load-filter-presets",
           "title": "Save and Load React Filter Presets",
         },
         {
-          "contentHash": "a69fa12ee062ee14ef8ea7d01d6c25ab846db5d5bcc3136ac62425cc84a76288",
+          "contentHash": "643b39d0767ccac673d9dc90cb09bb7e177bc4737fcfde5d133d357575c4163d",
           "path": "/recipes/server-side-filtering",
           "title": "Server-side Filtering with React Query Builder",
         },
         {
-          "contentHash": "98d161ce0b3c927bc915b6bfe835d56f9a260fe95ba6cf72f80d71103fe6d5ef",
+          "contentHash": "bc42fbe21d30f4b89ba78ec8829122a48ccddb45abbaccbc99a7e7852d923072",
           "path": "/recipes/sql-where-to-react-query-builder",
           "title": "Convert SQL WHERE to React Query Builder Data",
         },
         {
-          "contentHash": "fafd1078f7a673e625ef3a8ffd37f0d756b8bebe735139cb20efc4c3da7b58db",
+          "contentHash": "510636321aa8a5c5b4d03e7efa91e739400b66a7fa8e6a12d22591460e9a78de",
           "path": "/recipes/export-to-mongodb-query",
           "title": "Export React Filters to a MongoDB Query",
         },
         {
-          "contentHash": "84e2d8576c16f0468babf8ee3253ea64fe90fb6d9fed07a82ae29c1f3644e701",
+          "contentHash": "3fbca97dd39f0fa0df493c5b12d87daad2c362a2f545f7b9dbc440995e04ecbb",
           "path": "/recipes/export-to-prisma-where-clause",
           "title": "Export to a Prisma Where Clause",
         },
         {
-          "contentHash": "b088c78030a0b3744fb0a26a51acd52e0247e884cff86d178910a5a9a8552470",
+          "contentHash": "670742123969bdb7d78c6143b5a973d5a91967e8317464d76b0696f6df9faf98",
           "path": "/recipes/dynamic-operators-by-field-type",
           "title": "Dynamic Query Operators by Field Type",
         },
         {
-          "contentHash": "f24dac6fac75c3c031778878dc6f637b6a1dc14093e1cff0f06a345d5dcabc7e",
+          "contentHash": "930948de128c502d32be8b18094d8aa8fb175bda0c4a49f65702934981117605",
           "path": "/recipes/ai-assisted-filter-creation",
           "title": "Experimental AI-assisted Filter Creation",
         },

@@ -1900,7 +1900,7 @@ for the example site and v1 library demos.
 
 ### T058 - Update the v2 theme editor and recipe snippets
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T057
 

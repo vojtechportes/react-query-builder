@@ -30,7 +30,9 @@ export const exportToPrismaWhereClauseRecipe: IRecipePage = {
   ],
   installCode: `npm install @vojtechportes/react-query-builder
 
-import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';`,
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'status', label: 'Status', type: 'TEXT' },
   { field: 'total', label: 'Total', type: 'NUMBER' },

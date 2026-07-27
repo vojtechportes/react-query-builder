@@ -4,11 +4,9 @@ import {
   type DenormalizedQuery,
   type IBuilderFieldProps,
 } from '@vojtechportes/react-query-builder';
-import { ThemeProvider } from '@vojtechportes/react-query-builder';
 import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
 import { AlertBox } from '../../../../components/alert-box';
 import { CodeBlock } from '../../../../components/code-block';
-import { defaultTheme } from '../../demo-page/constants/default-theme';
 import { demoFields } from '../../demo-page/constants/demo-fields';
 import { supportedFormats } from '../../demo-page/constants/supported-formats';
 import type { SupportedQueryFormat } from '../../demo-page/types/supported-query-format';
@@ -139,16 +137,14 @@ export const ParsingSandbox: React.FC = () => {
       <ParsingSandboxBuilderCard>
         <ParsingSandboxBuilderScrollArea>
           <ParsingSandboxBuilderViewport>
-            <ThemeProvider colors={defaultTheme.colors}>
-              <Builder
-                data={builderData}
-                fields={builderFields}
-                groupTypes="both"
-                singleRootGroup
-                showValidation
-                onChange={setBuilderData}
-              />
-            </ThemeProvider>
+            <Builder
+              data={builderData}
+              fields={builderFields}
+              groupTypes="both"
+              singleRootGroup
+              showValidation
+              onChange={setBuilderData}
+            />
           </ParsingSandboxBuilderViewport>
         </ParsingSandboxBuilderScrollArea>
       </ParsingSandboxBuilderCard>

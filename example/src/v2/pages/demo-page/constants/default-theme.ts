@@ -1,3 +1,38 @@
-import { colors } from '@vojtechportes/react-query-builder';
+import { colors, type IBuilderStyle } from '@vojtechportes/react-query-builder';
 
-export const defaultTheme = { colors };
+export const defaultTheme: IBuilderStyle = {
+  '--query-builder-color-primary-default': colors.primary.default,
+  '--query-builder-color-primary-light': colors.primary.light,
+  '--query-builder-color-primary-dark': colors.primary.dark,
+  '--query-builder-color-primary-contrast-text': colors.primary.contrastText,
+  '--query-builder-color-secondary-default': colors.secondary.default,
+  '--query-builder-color-secondary-light': colors.secondary.light,
+  '--query-builder-color-secondary-dark': colors.secondary.dark,
+  '--query-builder-color-secondary-contrast-text':
+    colors.secondary.contrastText,
+  '--query-builder-color-grey-100': colors.grey[100],
+  '--query-builder-color-grey-200': colors.grey[200],
+  '--query-builder-color-grey-300': colors.grey[300],
+  '--query-builder-color-grey-400': colors.grey[400],
+  '--query-builder-color-grey-500': colors.grey[500],
+  '--query-builder-color-grey-600': colors.grey[600],
+  '--query-builder-color-grey-700': colors.grey[700],
+  '--query-builder-color-grey-800': colors.grey[800],
+  '--query-builder-color-grey-900': colors.grey[900],
+  '--query-builder-color-info-primary': colors.info.primary,
+  '--query-builder-color-info-light': colors.info.light,
+  '--query-builder-color-success-primary': colors.success.primary,
+  '--query-builder-color-success-light': colors.success.light,
+  '--query-builder-color-warning-primary': colors.warning.primary,
+  '--query-builder-color-warning-light': colors.warning.light,
+  '--query-builder-color-error-primary': colors.error.primary,
+  '--query-builder-color-error-light': colors.error.light,
+  '--query-builder-color-white': colors.white,
+  '--query-builder-root-padding': '1rem',
+  '--query-builder-group-padding': '0.7rem',
+  '--query-builder-rule-padding': '0.7rem',
+  '--query-builder-radius-sm': '4px',
+  '--query-builder-root-radius': '0',
+  '--query-builder-shadow-group': '0 0 5px -1px rgba(0, 0, 0, 0.15)',
+  '--query-builder-shadow-root': 'none',
+};

@@ -2,11 +2,7 @@ import * as React from 'react';
 import '@radix-ui/themes/styles.css';
 import { MantineProvider } from '@mantine/core';
 import mantineStyles from '@mantine/core/styles.css?inline';
-import {
-  Builder,
-  ThemeProvider,
-  type IColors,
-} from '@vojtechportes/react-query-builder';
+import { Builder } from '@vojtechportes/react-query-builder';
 import { Theme as RadixTheme } from '@radix-ui/themes';
 import styled from 'styled-components';
 import { bootstrapScopeClassName } from '../constants/bootstrap-scope-class-name';
@@ -82,13 +78,11 @@ const scopedMantineDemoOverrides = `
 export interface IDemoPlaygroundBuilderProps {
   builderProps: React.ComponentProps<typeof Builder>;
   customizationMode: CustomizationMode;
-  themeColors: IColors;
 }
 
 export const DemoPlaygroundBuilder: React.FC<IDemoPlaygroundBuilderProps> = ({
   builderProps,
   customizationMode,
-  themeColors,
 }) => {
   const mantineRootRef = React.useRef<HTMLDivElement>(null);
   const isMuiMode = customizationMode === 'mui';
@@ -141,9 +135,7 @@ export const DemoPlaygroundBuilder: React.FC<IDemoPlaygroundBuilderProps> = ({
               <Builder {...builderProps} />
             </RadixTheme>
           ) : (
-            <ThemeProvider colors={themeColors}>
-              <Builder {...builderProps} />
-            </ThemeProvider>
+            <Builder {...builderProps} />
           )}
         </BuilderDemoSurface>
       )}

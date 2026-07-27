@@ -32,7 +32,9 @@ export const muiDataGridAdvancedFilteringRecipe: IRecipePage = {
   installCode: `npm install @vojtechportes/react-query-builder @mui/material @emotion/react @emotion/styled
 npm install @mui/x-data-grid
 
-import { createMuiComponents } from '@vojtechportes/react-query-builder/mui/v9';`,
+import { createMuiComponents } from '@vojtechportes/react-query-builder/mui/v9';
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'customer', label: 'Customer', type: 'TEXT' },
   { field: 'total', label: 'Order total', type: 'NUMBER' },
