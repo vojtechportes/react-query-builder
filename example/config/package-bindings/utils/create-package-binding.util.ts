@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { canonicalPackageName } from '../constants/canonical-package-name';
 import type { IPackageBinding } from '../types/package-binding';
 import type { PackageBindingTarget } from '../types/package-binding-target';
 import { createPackageAliases } from './create-package-aliases.util';
@@ -18,13 +19,17 @@ export const createPackageBinding = (
     isV1 ? '../node_modules/rqb-v1' : 'node_modules/rqb-v2'
   );
 
-  const localSourceRoot = isV1 ? undefined : resolve(repositoryRoot, 'src');
+  const runtimePackageRoot = isV1 ? packageRoot : repositoryRoot;
+  const implementationRoot = resolve(runtimePackageRoot, isV1 ? '.' : 'dist');
   const reactRoot = resolve(repositoryRoot, 'node_modules/react');
   const reactDomRoot = resolve(repositoryRoot, 'node_modules/react-dom');
+  const stylesheetPath = isV1
+    ? undefined
+    : resolve(implementationRoot, 'styles.css');
 
   return {
     target,
-    implementationRoot: localSourceRoot ?? packageRoot,
+    implementationRoot,
     packageSpecifier,
     packageRoot,
     reactRoot,
@@ -32,9 +37,18 @@ export const createPackageBinding = (
     aliases: [
       { find: 'react-dom', replacement: reactDomRoot },
       { find: 'react', replacement: reactRoot },
-      ...createPackageAliases(packageRoot, localSourceRoot),
+      ...(stylesheetPath
+        ? [
+            {
+              find: `${canonicalPackageName}/styles.css`,
+              replacement: stylesheetPath,
+            },
+          ]
+        : []),
+      ...createPackageAliases(runtimePackageRoot),
     ],
-    typeScriptPaths: createPackageTypeScriptPaths(packageRoot, localSourceRoot),
+    typeScriptPaths: createPackageTypeScriptPaths(runtimePackageRoot),
+    stylesheetPath,
     ssrNoExternal: [
       'prism-react-renderer',
       'styled-components',

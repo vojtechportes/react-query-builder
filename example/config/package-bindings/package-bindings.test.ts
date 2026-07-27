@@ -28,6 +28,9 @@ describe('versioned package bindings', () => {
 
     expect(v2PackageBinding.packageSpecifier).toBe('rqb-v2');
     expect(realpathSync(v2PackageBinding.packageRoot)).toBe(repositoryRoot);
+    expect(realpathSync(v2PackageBinding.implementationRoot)).toBe(
+      realpathSync(resolve(repositoryRoot, 'dist'))
+    );
   });
 
   it.each(bindings)(
@@ -56,9 +59,12 @@ describe('versioned package bindings', () => {
         typeof find === 'string' && find.startsWith(canonicalPackageName)
     );
 
-    expect(packageAliases.map(({ find }) => find)).toEqual(
-      packageExports.map(({ subpath }) => `${canonicalPackageName}${subpath}`)
-    );
+    expect(packageAliases.map(({ find }) => find)).toEqual([
+      ...(binding.stylesheetPath ? [`${canonicalPackageName}/styles.css`] : []),
+      ...packageExports.map(
+        ({ subpath }) => `${canonicalPackageName}${subpath}`
+      ),
+    ]);
     expect(Object.keys(binding.typeScriptPaths)).toEqual(
       packageExports.map(({ subpath }) => `${canonicalPackageName}${subpath}`)
     );
@@ -78,8 +84,10 @@ describe('versioned package bindings', () => {
         .map(({ replacement }) => replacement);
 
       expect(
-        packageReplacements.every((path) =>
-          path.startsWith(binding.implementationRoot)
+        packageReplacements.every(
+          (path) =>
+            path.startsWith(binding.implementationRoot) ||
+            path === binding.stylesheetPath
         )
       ).toBe(true);
       expect(
@@ -89,6 +97,14 @@ describe('versioned package bindings', () => {
       ).toBe(true);
     }
   );
+
+  it('resolves the public stylesheet only for v2', () => {
+    expect(v1PackageBinding.stylesheetPath).toBeUndefined();
+    expect(v2PackageBinding.stylesheetPath).toBe(
+      resolve(v2PackageBinding.implementationRoot, 'styles.css')
+    );
+    expect(existsSync(v2PackageBinding.stylesheetPath!)).toBe(true);
+  });
 
   it('keeps package runtimes mutually exclusive', () => {
     const v1Replacements = v1PackageBinding.aliases.map(

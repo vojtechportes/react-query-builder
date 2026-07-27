@@ -1852,7 +1852,7 @@ wrappers.
 
 ### T056 - Integrate v2 stylesheet resolution without changing site styling
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T035 and T055
 
