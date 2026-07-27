@@ -206,6 +206,7 @@
     "test:update": "jest --updateSnapshot --runInBand",
     "test:watch": "jest --watch",
     "test:css-infrastructure": "jest --runInBand --collectCoverage=false src/styles/css-module-contract.test.ts && npm run build && node scripts/css-build/verify-css-build.util.mjs && node scripts/css-build/verify-public-stylesheet.util.mjs && node scripts/css-build/verify-stylesheet-consumers.util.mjs",
+    "test:packed-entries": "npm run build && node scripts/verify-packed-entry-consumers.util.mjs",
     "lint": "eslint .",
     "prettier:check": "prettier --check .",
     "example:dev": "npm run dev --workspace example",

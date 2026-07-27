@@ -1827,7 +1827,7 @@ wrappers.
 
 ### T055 - Verify Bootstrap, every adapter entry, and CSS-free non-UI entries
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T051, T052, T053, and T054
 
