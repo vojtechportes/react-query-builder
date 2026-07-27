@@ -39,6 +39,7 @@ the project website:
 - <a href="https://www.react-query-builder.com/documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
 - <a href="https://www.react-query-builder.com/api" target="_blank" rel="noopener noreferrer">API</a>
 - <a href="https://www.react-query-builder.com/demo" target="_blank" rel="noopener noreferrer">Demo</a>
+- [Migrating from 1.33.1 to 2.0.0](./MIGRATION-2.0.md)
 
 ## Installation
 

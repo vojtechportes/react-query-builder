@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "version": "1.33.1",
+    "productionDependencyCount": 21,
+    "tarballBytes": 262530,
+    "unpackedBytes": 1526692,
+    "fileCount": 142,
+    "artifacts": {
+      "dist/index.mjs": { "minifiedBytes": 80206, "gzipBytes": 23319 },
+      "dist/index.cjs": { "minifiedBytes": 83826, "gzipBytes": 23550 }
+    }
+  },
+  "budget": {
+    "productionDependencyCount": 14,
+    "tarballBytes": 285000,
+    "unpackedBytes": 1650000,
+    "fileCount": 145,
+    "artifacts": {
+      "dist/index.mjs": { "minifiedBytes": 85000, "gzipBytes": 25000 },
+      "dist/index.cjs": { "minifiedBytes": 110000, "gzipBytes": 27000 },
+      "dist/styles.css": { "minifiedBytes": 41000, "gzipBytes": 7000 }
+    }
+  }
+}

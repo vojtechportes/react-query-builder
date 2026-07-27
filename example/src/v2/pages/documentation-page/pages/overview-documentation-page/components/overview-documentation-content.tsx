@@ -7,6 +7,13 @@ export const OverviewDocumentationContent: React.FC = () => (
     <List>
       <li>Start with installation and the first controlled builder example.</li>
       <li>
+        Upgrading from 1.33.1? Follow the{' '}
+        <TextLink to="/documentation/migration-to-2-0">
+          Migration to 2.0
+        </TextLink>{' '}
+        guide for stylesheet, token, and legacy API changes.
+      </li>
+      <li>
         Use{' '}
         <TextLink to="/documentation/dynamic-field-options">
           Dynamic Field Options

@@ -238,6 +238,13 @@
       "section": "Documentation"
     },
     {
+      "path": "/documentation/migration-to-2-0",
+      "title": "Migrate React Query Builder from 1.33.1 to 2.0",
+      "description": "Migration guide for React Query Builder 2.0 covering the package stylesheet, CSS tokens, legacy ThemeProvider, and OptionContainer compatibility.",
+      "keywords": "migration, migrate, upgrade, 1.33.1, 2.0, stylesheet, styles.css, CSS tokens, ThemeProvider, colors, OptionContainer, versioned documentation, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "Documentation"
+    },
+    {
       "path": "/documentation/localization",
       "title": "React Query Builder Localization Guide",
       "description": "Documentation for localizing field labels, option labels, and built-in UI strings.",

@@ -1977,7 +1977,7 @@ site/v1 usage.
 
 ### T061 - Add release CI, size report, and 2.0.0 migration notes
 
-**Status:** `[ ]` Not started
+**Status:** [x] Done
 
 **Depends on:** T060
 

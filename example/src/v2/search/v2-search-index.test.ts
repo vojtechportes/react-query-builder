@@ -12,7 +12,7 @@ describe('v2 search index', () => {
     const documentPaths = v2SearchDocuments.map((document) => document.path);
     const manifestPaths = v2RouteManifest.map((route) => route.path);
 
-    expect(documentPaths).toHaveLength(55);
+    expect(documentPaths).toHaveLength(56);
     expect(new Set(documentPaths).size).toBe(documentPaths.length);
     expect(new Set(documentPaths)).toEqual(new Set(manifestPaths));
   });
@@ -35,6 +35,7 @@ describe('v2 search index', () => {
   it.each([
     ['interactive playground localization', '/demo'],
     ['dynamic field options', '/documentation/dynamic-field-options'],
+    ['ThemeProvider migration 2.0', '/documentation/migration-to-2-0'],
     ['createMuiComponents API', '/api/adapters/mui'],
     ['AG Grid filter panel', '/recipes/ag-grid-query-builder'],
   ])('returns the relevant v2 result for %s', (query, expectedPath) => {
