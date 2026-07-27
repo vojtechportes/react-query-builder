@@ -1,4 +1,5 @@
 export const mantineAdapterSnippet = `import '@mantine/core/styles.css';
+import '@vojtechportes/react-query-builder/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { components } from '@vojtechportes/react-query-builder/mantine/v9';
 

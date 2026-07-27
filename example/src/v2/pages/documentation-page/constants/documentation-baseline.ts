@@ -9,55 +9,55 @@ export const documentationBaseline = [
     path: '/documentation/installation',
     title: 'Installation',
     contentHash:
-      'e0385ad2c7ce036afbf95470e5627f1573553a63d0a5bfc3ef7467e1d38975a2',
+      '26f755387de8956b275296a1e6023355e4187b4ae5b8f516910e1c7d8b773438',
   },
   {
     path: '/documentation/usage',
     title: 'Usage',
     contentHash:
-      '764fd4078f038a9d1cb5c0835a99d652f53cc3a18094b28e8606015577897d74',
+      '9f42cdb8f36b3552a82257f755e2b7411c46bfa06362a4ce8119a612fb621dce',
   },
   {
     path: '/documentation/builder-behavior',
     title: 'Builder Behavior',
     contentHash:
-      'c2bb396032346ebbcfa6ed1c6e0beb7099e1f88d087246f26f5b50c085f7561e',
+      'c8437b2414d82677efb3ab9909e59b42b14cd7990dbcbb50ec81c8d9793c1e79',
   },
   {
     path: '/documentation/builder-ref',
     title: 'Builder Ref',
     contentHash:
-      'a70765ebd3d09c74aeb8351ad5cc6c4cae0327e2386230b4ef7bfa143fbd4617',
+      '362e1499b9c686152b0c8d64789793ec26b6d61839909c4886b6810681e2b3bd',
   },
   {
     path: '/documentation/field-comparisons',
     title: 'Field Comparisons',
     contentHash:
-      '410d28b3955d51ad0ad0df72e18280d378ed97e8a340fa8e525129e76f310788',
+      'aff5a2c22a402364df01f35ee1c069467c7177123a2dbf050158c776d193653d',
   },
   {
     path: '/documentation/dynamic-field-options',
     title: 'Dynamic Field Options',
     contentHash:
-      '29528dee02cb21bcdabebbd8344706087bb0f25d7635b752ca4f75b6955bd58e',
+      '12b2e254cb3f8a1680c2d98268b240a79b87d6f5be03fc3eeef0ea8aae3181e0',
   },
   {
     path: '/documentation/validation',
     title: 'Validation',
     contentHash:
-      '630b117a9d402d25c5d128ee3ec8fa6d839d6b32043384a922f124f44a8ec7f2',
+      '1e86ba1dfbd7ad79c8e958ce165e3df001916dd381bbfb3019e27384f0b40b49',
   },
   {
     path: '/documentation/history',
     title: 'Undo and Redo',
     contentHash:
-      'ee78f399929c36c9f266f354c6e57e11c3682d0e7b01ec662cc890f80afefcf3',
+      '917d165e545f00e95c19bcd5d16667adaf917a5284b472b96836a7126e91bee3',
   },
   {
     path: '/documentation/locking-and-read-only',
     title: 'Locking and Read-only',
     contentHash:
-      '12ce1ecf0bad544558206d4c76c3de13b4c34be03541a87efb75e94310cfeadd',
+      '2c72c33f2d903d9e7ef94b7f9204333972d4d9b5cff0950d9b13756a5871a73b',
   },
   {
     path: '/documentation/parsing-and-formatting',
@@ -75,66 +75,66 @@ export const documentationBaseline = [
     path: '/documentation/text-mode',
     title: 'Text Mode',
     contentHash:
-      '961a240ccec92394dd30b92bf1f72ca352fbbcd328143d8b0eae532fe003cce1',
+      'a3e41b12ad7170847c9b0a54e4649c6b6429e93202b9b91f0071aca8730d5299',
   },
   {
     path: '/documentation/components',
     title: 'Components',
     contentHash:
-      '03899815efa95fb6ec42356df1610cbb2a74d040901d223089441338926ae550',
+      '4be720a20a3d26302b6e76f6d142f18267604194b19f8f81ee04f530b1d65f88',
   },
   {
     path: '/documentation/adapters',
     title: 'Adapters',
     contentHash:
-      '623743d4ecbfc64411b4227e477638944843b18a25b4b1a86394b5814c63252f',
+      '9babf32fce1bd29b0beb124636d98260b9e8bff717ad72443580d210dbcb4f70',
   },
   {
     path: '/documentation/adapters/mui',
     title: 'MUI',
     contentHash:
-      '551a2029e27410e98ac5d36998f2def51f9a82094a1c005126dd222e15e14cc8',
+      '4be6cf45b2ebb9f8c671401c63b1ea2340ce6292705933984216b1ac26f32c13',
   },
   {
     path: '/documentation/adapters/antd',
     title: 'ANTD',
     contentHash:
-      '55c9b1b47f48aa2e783dcb327e6498b3e6b7742f1fa05a940f7c7bf296dfd6bb',
+      'daab9c9a0c910410ad7ee63ca93c1df1d42f06803f18e36d3f7e60b63322cf66',
   },
   {
     path: '/documentation/adapters/fluentui',
     title: 'Fluent UI',
     contentHash:
-      '76664ff1e9ee04935ca58f7255881ea6db80088af37bacd2b855f7a30418c25e',
+      '2ccbb0c4441b08ac03a65d8cebed7c49e815063f0f72b650b5c096ec31eed8c4',
   },
   {
     path: '/documentation/adapters/mantine',
     title: 'Mantine',
     contentHash:
-      'a868177d59eb4efba6e7d67c3041524a464adf5fd4b4afc4ce000ce1def02b5d',
+      '4afc2211677a2d15cfce65a257bdf5852ce8eadfd47d7a8c0e41537335168f70',
   },
   {
     path: '/documentation/adapters/bootstrap',
     title: 'Bootstrap',
     contentHash:
-      '4beca84339cbe889e8b545fac29b402dc4bd2f3c803550e2b77232441c94c2cb',
+      'ec14430149ab3bf70d7c282457a0fd0d994c3f0d1dcceff75224a2ae5e93db46',
   },
   {
     path: '/documentation/adapters/radix',
     title: 'Radix',
     contentHash:
-      '8c0055ec6bddb17983d3c2eeb16b22fca9aa20aff1b88b83b3848ca3e3a103b1',
+      'a07fa7486890a753cfa272c1255dc279017191ad4f6a74f180822c9ce76e18af',
   },
   {
     path: '/documentation/theming',
     title: 'Theming',
     contentHash:
-      '0af5b3b47ec8d9727aacf26812a5b7cf272971f7ed8b8818e2ed849f54b5aee9',
+      'da3123de6a20d2f28018009c6452a5629938f8d959f35e1b6ed7f10b2758f4bd',
   },
   {
     path: '/documentation/localization',
     title: 'Localization',
     contentHash:
-      '0d75a7ba7623017766f09a994f7b59a0fae5a96d3906c025f7354f775680a46e',
+      'c3301e706ae607ca391dabe73f52f42f0dbf009d6f05fd310c9fe08e62454c33',
   },
 ] as const;

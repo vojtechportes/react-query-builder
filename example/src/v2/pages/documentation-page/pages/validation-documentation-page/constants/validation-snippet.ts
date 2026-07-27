@@ -1,4 +1,5 @@
-export const validationSnippet = `const fields: IBuilderFieldProps[] = [
+export const validationSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const fields: IBuilderFieldProps[] = [
   {
     field: 'COMPANY_NAME',
     label: 'Company name',

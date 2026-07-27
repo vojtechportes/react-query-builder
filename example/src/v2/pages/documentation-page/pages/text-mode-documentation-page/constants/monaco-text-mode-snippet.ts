@@ -1,4 +1,5 @@
-export const monacoTextModeSnippet = `import React, { useState } from 'react';
+export const monacoTextModeSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useState } from 'react';
 import {
   Builder,
   type DenormalizedQuery,

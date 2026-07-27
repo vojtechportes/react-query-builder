@@ -77,6 +77,7 @@ import { components as mantineComponents } from '@vojtechportes/react-query-buil
 import { Theme } from '@radix-ui/themes';
 import { components as radixComponents } from '@vojtechportes/react-query-builder/radix/v1';`
       : null,
+    `import '@vojtechportes/react-query-builder/styles.css';`,
     `import { demoFields, initialQueryTree } from '../constants/demo-data';`,
   ]
     .filter(Boolean)

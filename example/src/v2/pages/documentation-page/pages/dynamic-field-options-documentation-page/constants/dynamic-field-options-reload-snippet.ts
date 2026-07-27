@@ -1,4 +1,5 @@
-export const dynamicFieldOptionsReloadSnippet = `const builderRef = useBuilderRef();
+export const dynamicFieldOptionsReloadSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const builderRef = useBuilderRef();
 
 <Builder
   ref={builderRef}

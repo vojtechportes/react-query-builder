@@ -1,4 +1,5 @@
-export const monacoWithAntdSnippet = `import { Builder } from '@vojtechportes/react-query-builder';
+export const monacoWithAntdSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import { Builder } from '@vojtechportes/react-query-builder';
 import { components as antdComponents } from '@vojtechportes/react-query-builder/antd/v6';
 import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
 

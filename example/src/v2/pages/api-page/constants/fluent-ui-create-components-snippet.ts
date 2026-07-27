@@ -1,4 +1,5 @@
-export const fluentUiCreateComponentsSnippet = `import {
+export const fluentUiCreateComponentsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import {
   Builder,
   type DenormalizedQuery,
 } from '@vojtechportes/react-query-builder';

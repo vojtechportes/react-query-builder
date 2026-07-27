@@ -56,6 +56,20 @@ export const AdaptersApiContent: React.FC = () => (
         and the Radix-specific merge helper.
       </li>
     </List>
+    <SectionTitle>Stylesheet order</SectionTitle>
+    <List>
+      <li>
+        Load the host-library stylesheet first when the host requires one, then
+        load{' '}
+        <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
+        exactly once.
+      </li>
+      <li>
+        Load application overrides last. Configure adapter controls through the
+        host theme API and use public query-builder variables for the library's
+        structural surfaces.
+      </li>
+    </List>{' '}
     <SectionTitle>What adapters export</SectionTitle>
     <List>
       <li>

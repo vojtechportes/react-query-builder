@@ -1,4 +1,5 @@
-export const historyControlsSnippet = `const components = {
+export const historyControlsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const components = {
   HistoryControls: ({
     undoButton,
     redoButton,

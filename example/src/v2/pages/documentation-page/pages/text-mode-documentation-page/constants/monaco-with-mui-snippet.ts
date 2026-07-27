@@ -1,4 +1,5 @@
-export const monacoWithMuiSnippet = `import { Builder } from '@vojtechportes/react-query-builder';
+export const monacoWithMuiSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import { Builder } from '@vojtechportes/react-query-builder';
 import { components as muiComponents } from '@vojtechportes/react-query-builder/mui/v9';
 import { createMonacoComponents } from '@vojtechportes/react-query-builder/monaco';
 

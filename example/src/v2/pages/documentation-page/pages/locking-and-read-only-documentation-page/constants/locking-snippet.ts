@@ -1,4 +1,5 @@
-export const lockingSnippet = `const data: DenormalizedQuery = [
+export const lockingSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+const data: DenormalizedQuery = [
   {
     type: 'GROUP',
     value: 'AND',

@@ -1,4 +1,5 @@
-export const textModeStringsSnippet = `import { strings } from '@vojtechportes/react-query-builder';
+export const textModeStringsSnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import { strings } from '@vojtechportes/react-query-builder';
 
 <Builder
   fields={fields}

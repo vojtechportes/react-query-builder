@@ -1,4 +1,5 @@
-export const dynamicFieldOptionsReactQuerySnippet = `import React, { useEffect, useState } from 'react';
+export const dynamicFieldOptionsReactQuerySnippet = `import '@vojtechportes/react-query-builder/styles.css';
+import React, { useEffect, useState } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import {
   Builder,
