@@ -1,5 +1,4 @@
 import React, { FC, useContext, useMemo } from 'react';
-import styled from 'styled-components';
 import {
   ActionIcon,
   Alert as MantineAlert,
@@ -16,13 +15,7 @@ import {
 } from '@mantine/core';
 import { IAlertProps } from '../../alert';
 import { IButtonProps } from '../../button';
-import {
-  IBuilderComponentsProps,
-  IHistoryControlsProps,
-  ITextModeToggleContentProps,
-} from '../../builder';
-import { BuilderModeIcon } from '../../builder/components/builder-mode-icon';
-import { TextModeIcon } from '../../builder/components/text-mode-icon';
+import { IBuilderComponentsProps, IHistoryControlsProps } from '../../builder';
 import { ITextModeInputProps } from '../../builder/text-mode/types/text-mode-input-props';
 import { BuilderContext } from '../../builder-context';
 import { ICloneButtonProps } from '../../clone-button';
@@ -47,6 +40,7 @@ import {
 } from '../../utils/lock-state';
 import { getCloneButtonTitle } from '../../utils/get-clone-button-title.util';
 import { getLockToggleTitle } from '../../utils/get-lock-toggle-title.util';
+import { MantineTextModeToggleContent } from './components/mantine-text-mode-toggle-content';
 
 const useMantineBuilderStrings = () => useContext(BuilderContext).strings;
 
@@ -70,23 +64,6 @@ const getMantineLockTitle = (
 
 const resolveButtonContent = ({ children, label }: IButtonProps) =>
   children || label;
-
-const TextModeToggleContentContainer = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  line-height: 1;
-
-  svg {
-    display: block;
-    flex-shrink: 0;
-  }
-
-  span {
-    display: block;
-    line-height: 1;
-  }
-`;
 
 const CloneSvg: FC = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
@@ -147,7 +124,7 @@ export const MantineInput: FC<IInputProps> = ({
     name={name}
     type={type}
     value={`${value}`}
-    onChange={event => onChange(event.currentTarget.value)}
+    onChange={(event) => onChange(event.currentTarget.value)}
     className={className}
     disabled={disabled}
     data-test="Input"
@@ -176,7 +153,7 @@ export const MantineSelect: FC<ISelectProps> = ({
       name={name}
       value={selectedValue || null}
       data={values}
-      onChange={value => onChange(value || '')}
+      onChange={(value) => onChange(value || '')}
       className={className}
       disabled={disabled}
       placeholder={placeholder}
@@ -211,15 +188,15 @@ export const MantineSelectMulti: FC<ISelectMultiProps> = ({
       name={name}
       value={selectedValue}
       data={values}
-      onChange={nextValues => {
+      onChange={(nextValues) => {
         for (const removedValue of selectedValue.filter(
-          value => !nextValues.includes(value)
+          (value) => !nextValues.includes(value)
         )) {
           onDelete(removedValue);
         }
 
         for (const addedValue of nextValues.filter(
-          value => !selectedValue.includes(value)
+          (value) => !selectedValue.includes(value)
         )) {
           onChange(addedValue);
         }
@@ -243,7 +220,7 @@ export const MantineSwitch: FC<ISwitchProps> = ({
 }) => (
   <Switch
     checked={switched}
-    onChange={event => onChange?.(event.currentTarget.checked)}
+    onChange={(event) => onChange?.(event.currentTarget.checked)}
     disabled={disabled}
     className={className}
     data-test="Switch"
@@ -274,7 +251,7 @@ export const MantineAlertComponent: FC<IAlertProps> = ({
   </MantineAlert>
 );
 
-export const MantineAddButton: FC<IButtonProps> = props => (
+export const MantineAddButton: FC<IButtonProps> = (props) => (
   <Button
     onClick={props.onClick}
     disabled={props.disabled}
@@ -287,7 +264,7 @@ export const MantineAddButton: FC<IButtonProps> = props => (
   </Button>
 );
 
-export const MantineRemoveButton: FC<IButtonProps> = props => (
+export const MantineRemoveButton: FC<IButtonProps> = (props) => (
   <Button
     onClick={props.onClick}
     disabled={props.disabled}
@@ -301,7 +278,7 @@ export const MantineRemoveButton: FC<IButtonProps> = props => (
   </Button>
 );
 
-export const MantineOutlinedButton: FC<IButtonProps> = props => (
+export const MantineOutlinedButton: FC<IButtonProps> = (props) => (
   <Button
     onClick={props.onClick}
     disabled={props.disabled}
@@ -466,7 +443,9 @@ export const MantineGroup: FC<IGroupProps> = ({
       style={{
         display: 'grid',
         overflow: 'hidden',
-        gridTemplateColumns: dragHandle ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
+        gridTemplateColumns: dragHandle
+          ? 'auto minmax(0, 1fr)'
+          : 'minmax(0, 1fr)',
       }}
     >
       {dragHandle}
@@ -550,13 +529,13 @@ export const MantineText: FC<{
   </Text>
 );
 
-export const MantineDropZone: FC<IDropZoneProps> = props => (
+export const MantineDropZone: FC<IDropZoneProps> = (props) => (
   <CoreDropZone {...props} />
 );
 
-export const MantineEmptyGroupDropZone: FC<IEmptyGroupDropZoneProps> = props => (
-  <CoreEmptyGroupDropZone {...props} />
-);
+export const MantineEmptyGroupDropZone: FC<IEmptyGroupDropZoneProps> = (
+  props
+) => <CoreEmptyGroupDropZone {...props} />;
 
 type PopoverItemElement = React.ReactElement<IPopoverItemProps>;
 
@@ -570,7 +549,7 @@ export const MantinePopover: FC<IPopoverProps> = ({
     () =>
       React.Children.toArray(children)
         .filter(React.isValidElement)
-        .map(child => child as PopoverItemElement),
+        .map((child) => child as PopoverItemElement),
     [children]
   );
 
@@ -585,7 +564,7 @@ export const MantinePopover: FC<IPopoverProps> = ({
         {items.map((item, index) => (
           <Menu.Item
             key={`${index}-${item.props.label}`}
-            onClick={event =>
+            onClick={(event) =>
               item.props.onClick(
                 event as unknown as React.MouseEvent<HTMLButtonElement>
               )
@@ -613,7 +592,7 @@ export const MantineTextModeInput: FC<ITextModeInputProps> = ({
 }) => (
   <Textarea
     value={value}
-    onChange={event => onChange(event.currentTarget.value)}
+    onChange={(event) => onChange(event.currentTarget.value)}
     className={className}
     classNames={inputClassName ? { input: inputClassName } : undefined}
     disabled={disabled}
@@ -629,16 +608,6 @@ export const MantineTextModeInput: FC<ITextModeInputProps> = ({
       },
     }}
   />
-);
-
-export const MantineTextModeToggleContent: FC<ITextModeToggleContentProps> = ({
-  mode,
-  label,
-}) => (
-  <TextModeToggleContentContainer>
-    {mode === 'text' ? <BuilderModeIcon /> : <TextModeIcon />}
-    <span>{label}</span>
-  </TextModeToggleContentContainer>
 );
 
 export const createMantineComponentSet = (): IBuilderComponentsProps => ({
@@ -666,3 +635,5 @@ export const createMantineComponentSet = (): IBuilderComponentsProps => ({
   Popover: MantinePopover,
   PopoverItem: MantinePopoverItem,
 });
+
+export { MantineTextModeToggleContent } from './components/mantine-text-mode-toggle-content';
