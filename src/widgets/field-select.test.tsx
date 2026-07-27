@@ -5,14 +5,24 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { FieldSelect } from './field-select';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
   { field: 'MOCK_FIELD_1', label: 'Mock Field', type: 'BOOLEAN' },
-  { field: 'MOCK_FIELD_2', label: 'Mock Field', type: 'DATE', operators: ['BETWEEN'] },
-  { field: 'MOCK_FIELD_3', label: 'Mock Field', type: 'DATE', operators: ['LARGER'] },
+  {
+    field: 'MOCK_FIELD_2',
+    label: 'Mock Field',
+    type: 'DATE',
+    operators: ['BETWEEN'],
+  },
+  {
+    field: 'MOCK_FIELD_3',
+    label: 'Mock Field',
+    type: 'DATE',
+    operators: ['LARGER'],
+  },
   {
     field: 'MOCK_FIELD_4',
     label: 'Mock Field',
@@ -27,8 +37,18 @@ const fields: IBuilderFieldProps[] = [
     operators: ['BETWEEN'],
     fieldComparison: { type: 'string' },
   },
-  { field: 'MOCK_FIELD_6', label: 'Mock Field', type: 'NUMBER', operators: ['EQUAL'] },
-  { field: 'MOCK_FIELD_7', label: 'Mock Field', type: 'NUMBER', operators: ['BETWEEN'] },
+  {
+    field: 'MOCK_FIELD_6',
+    label: 'Mock Field',
+    type: 'NUMBER',
+    operators: ['EQUAL'],
+  },
+  {
+    field: 'MOCK_FIELD_7',
+    label: 'Mock Field',
+    type: 'NUMBER',
+    operators: ['BETWEEN'],
+  },
   {
     field: 'MOCK_FIELD_8',
     label: 'Mock Field',
@@ -64,7 +84,9 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -85,10 +107,15 @@ const renderWithContext = (
 
 describe('#components/Widgets/FieldSelect', () => {
   it('renders in editable and read-only modes', () => {
-    const editable = renderWithContext(<FieldSelect id="test" selectedValue="" />);
-    const readOnly = renderWithContext(<FieldSelect id="test" selectedValue="" />, {
-      readOnly: true,
-    });
+    const editable = renderWithContext(
+      <FieldSelect id="test" selectedValue="" />
+    );
+    const readOnly = renderWithContext(
+      <FieldSelect id="test" selectedValue="" />,
+      {
+        readOnly: true,
+      }
+    );
 
     expect(editable.container.firstChild).toBeTruthy();
     expect(readOnly.container.firstChild).toBeTruthy();
@@ -101,7 +128,9 @@ describe('#components/Widgets/FieldSelect', () => {
 
     for (const item of fields) {
       fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
-      fireEvent.click(getByDataTest(container, `SelectMultiOption[${item.field}]`));
+      fireEvent.click(
+        getByDataTest(container, `SelectMultiOption[${item.field}]`)
+      );
     }
 
     expect(container.firstChild).toBeTruthy();
@@ -113,7 +142,9 @@ describe('#components/Widgets/FieldSelect', () => {
       { components: {} as IBuilderComponentsProps }
     );
 
-    expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
+    expect(
+      container.querySelector('[data-test="SelectMultiTrigger"]')
+    ).toBeTruthy();
   });
 
   it('disables exhausted field options while keeping the current selection available', () => {
@@ -186,7 +217,9 @@ describe('#components/Widgets/FieldSelect', () => {
     );
 
     fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
-    fireEvent.click(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_8]'));
+    fireEvent.click(
+      getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_8]')
+    );
 
     expect(onFieldChange).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -227,7 +260,9 @@ describe('#components/Widgets/FieldSelect', () => {
     );
 
     fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
-    fireEvent.click(getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_1]'));
+    fireEvent.click(
+      getByDataTest(container, 'SelectMultiOption[MOCK_FIELD_1]')
+    );
 
     expect(onFieldChange).toHaveBeenCalledWith(
       expect.objectContaining({

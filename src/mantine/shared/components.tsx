@@ -17,7 +17,7 @@ import { IAlertProps } from '../../alert';
 import { IButtonProps } from '../../button';
 import { IBuilderComponentsProps, IHistoryControlsProps } from '../../builder';
 import { ITextModeInputProps } from '../../builder/text-mode/types/text-mode-input-props';
-import { BuilderContext } from '../../builder-context';
+import { BuilderContext } from '../../builder/context';
 import { ICloneButtonProps } from '../../clone-button';
 import { DropZone as CoreDropZone } from '../../drop-zone';
 import { EmptyGroupDropZone as CoreEmptyGroupDropZone } from '../../empty-group-drop-zone';
@@ -37,9 +37,9 @@ import {
   BuilderLockState,
   getNextGroupLockState,
   getNextRuleLockState,
-} from '../../utils/lock-state';
-import { getCloneButtonTitle } from '../../utils/get-clone-button-title.util';
-import { getLockToggleTitle } from '../../utils/get-lock-toggle-title.util';
+} from '../../builder/read-only/utils/lock-state.util';
+import { getCloneButtonTitle } from '../../builder/utils/get-clone-button-title.util';
+import { getLockToggleTitle } from '../../builder/utils/get-lock-toggle-title.util';
 import { MantineTextModeToggleContent } from './components/mantine-text-mode-toggle-content';
 
 const useMantineBuilderStrings = () => useContext(BuilderContext).strings;

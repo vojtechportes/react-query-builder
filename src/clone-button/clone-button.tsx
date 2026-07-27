@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { FC, useCallback } from 'react';
-import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
+import { getCloneButtonTitle } from '../builder/utils/get-clone-button-title.util';
 import styles from './clone-button.module.css';
 import { CloneIcon } from './clone-icon';
 

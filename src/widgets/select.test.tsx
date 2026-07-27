@@ -5,7 +5,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { Select } from './select';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -32,7 +32,9 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -82,7 +84,9 @@ describe('#components/Widgets/Select', () => {
       { components: {} as IBuilderComponentsProps }
     );
 
-    expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
+    expect(
+      container.querySelector('[data-test="SelectMultiTrigger"]')
+    ).toBeTruthy();
   });
 
   it('resets field-comparison rules back to literal mode in the dispatch path', () => {

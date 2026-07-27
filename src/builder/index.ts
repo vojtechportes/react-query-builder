@@ -7,8 +7,8 @@ export { OutlinedButton } from '../outlined-button';
 export { TextModeToggleContent } from './text-mode/components/text-mode-toggle-content';
 export { TextModeEditor } from './text-mode/components/text-mode-editor';
 export { TextModeInput } from './text-mode/components/text-mode-input';
-export { useBuilderRef } from '../hooks/use-builder-ref';
-export { useBuilderRuleDependencies } from '../hooks/use-builder-rule-dependencies';
+export { useBuilderRef } from './hooks/use-builder-ref';
+export { useBuilderRuleDependencies } from './hooks/use-builder-rule-dependencies';
 export type { IHistoryButtonProps } from './components/history-button';
 export type {
   IBuilderRuleOptionsBindingConfig,

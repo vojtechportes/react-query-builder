@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Builder, IBuilderFieldProps, IStrings } from '../../index';
-import { BuilderContext, IBuilderContextProps } from '../../builder-context';
+import { BuilderContext, IBuilderContextProps } from '../../builder/context';
 import { strings } from '../../shared/localization/locales/en-us';
 import { components as muiV7Components } from '../v7';
 import { components as muiV9Components } from '../v9';

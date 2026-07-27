@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { ICloneButtonProps } from '../../../clone-button';
-import { getCloneButtonTitle } from '../../../utils/get-clone-button-title.util';
+import { getCloneButtonTitle } from '../../../builder/utils/get-clone-button-title.util';
 import { BootstrapCopyIcon } from './icons';
 import {
   bootstrapIconButtonContentStyles,

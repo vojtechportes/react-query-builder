@@ -1,12 +1,12 @@
 import React, { FC, useContext } from 'react';
-import { BuilderContext } from '../../builder-context';
+import { BuilderContext } from '../../builder/context';
 import { SelectMulti as DefaultSelectMulti } from '../../form/select-multi';
-import { createReplaceNodeAction } from '../../history/create-replace-node-action';
-import { findNodeById } from '../../history/find-node-by-id';
+import { createReplaceNodeAction } from '../../builder/history/utils/create-replace-node-action.util';
+import { findNodeById } from '../../builder/history/utils/find-node-by-id.util';
 import { isNormalizedGroupNode } from '../../shared/query/model/utils/is-normalized-group-node.util';
-import { isStringArray } from '../../utils/is-string-array.util';
-import { applyDataUpdate } from '../../utils/apply-data-update.util';
-import { emitBuilderFieldChange } from '../../utils/emit-builder-field-change.util';
+import { isStringArray } from '../../builder/utils/is-string-array.util';
+import { applyDataUpdate } from '../../builder/utils/apply-data-update.util';
+import { emitBuilderFieldChange } from '../../builder/utils/emit-builder-field-change.util';
 import { updateItem } from '../../shared/query/transformations/utils/update-item.util';
 
 export interface ISelectMultiProps {

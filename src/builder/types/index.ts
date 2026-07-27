@@ -13,14 +13,14 @@ import { ISelectMultiProps } from '../../form/select-multi';
 import { ISwitchProps } from '../../form/switch';
 import { IGroupProps as IGroupContainerProps } from '../../group/components/group-container';
 import { IOptionProps as IGroupHeaderOptionProps } from '../../group/components/option';
-import { IBuilderHistoryConfig } from '../../history/types';
+import { IBuilderHistoryConfig } from '../history/types';
 import { ILockToggleProps } from '../../lock-toggle';
 import { IPopoverItemProps } from '../../popover-item';
 import { IPopoverProps } from '../../popover';
 import { IRuleProps as IRuleContainerProps } from '../../rule/rule-container';
 import { Text } from '../../text';
 import type { IStrings } from '../../shared/localization/types/strings';
-import { BuilderLockState } from '../../utils/lock-state';
+import { BuilderLockState } from '../read-only/utils/lock-state.util';
 import { BuilderDefaultMode } from './builder-default-mode';
 import type { IBuilderFieldChange } from './field-option';
 import { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
@@ -62,7 +62,7 @@ export type {
   BuilderHistoryAction as IBuilderHistoryAction,
   IBuilderHistoryConfig,
   IBuilderHistoryState,
-} from '../../history/types';
+} from '../history/types';
 
 export type BuilderValidationSeverity = 'error' | 'warning';
 
@@ -210,4 +210,4 @@ export type {
   BuilderFieldDependenciesListener,
   BuilderRefListener,
   IBuilderRef,
-} from '../../hooks/use-builder-ref/types';
+} from '../hooks/use-builder-ref/types';

@@ -5,7 +5,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../../builder';
-import { BuilderContext } from '../../builder-context';
+import { BuilderContext } from '../../builder/context';
 import triggerStyles from './components/trigger/trigger.module.css';
 import { SelectMulti } from './select-multi';
 
