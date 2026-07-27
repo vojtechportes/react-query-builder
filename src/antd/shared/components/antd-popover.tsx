@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react';
 import { Button, Popover, Space } from 'antd';
-import { IPopoverProps } from '../../../popover';
+import { IPopoverProps } from '../../../builder/components/popover';
 import { antdTextButtonStyle } from './styles';
 
 export const AntdPopover: FC<IPopoverProps> = ({
@@ -14,7 +14,7 @@ export const AntdPopover: FC<IPopoverProps> = ({
   const content = useMemo(
     () => (
       <Space direction="vertical" size={4} style={{ minWidth: 180 }}>
-        {React.Children.map(children, child => {
+        {React.Children.map(children, (child) => {
           if (!React.isValidElement(child)) {
             return child;
           }
@@ -45,7 +45,7 @@ export const AntdPopover: FC<IPopoverProps> = ({
     >
       <Button
         type="primary"
-        onClick={() => setOpen(value => !value)}
+        onClick={() => setOpen((value) => !value)}
         className={className}
         data-test={dataTest}
         style={antdTextButtonStyle}

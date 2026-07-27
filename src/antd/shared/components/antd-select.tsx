@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Select } from 'antd';
-import { ISelectProps } from '../../../form/select';
+import { ISelectProps } from '../../../builder/components/form-controls/select';
 import { getAntdSelectPlaceholder, useAntdBuilderStrings } from './copy';
 import { antdControlStyle } from './styles';
 
@@ -24,7 +24,7 @@ export const AntdSelect: FC<ISelectProps> = ({
     <Select
       value={selectedValue || undefined}
       options={values}
-      onChange={value => onChange(value)}
+      onChange={(value) => onChange(value)}
       className={className}
       disabled={disabled}
       placeholder={placeholder}

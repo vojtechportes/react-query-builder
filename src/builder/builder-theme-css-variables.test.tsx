@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import React from 'react';
-import { colors } from '../constants/colors';
-import { ThemeProvider } from '../theme-provider/theme-provider';
+import { colors } from './theme/styles/colors';
+import { ThemeProvider } from './theme/components/theme-provider/theme-provider';
 import { Builder } from './builder';
 import builderStyles from './components/styled-builder/styled-builder.module.css';
 

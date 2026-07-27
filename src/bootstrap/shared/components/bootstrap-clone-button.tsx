@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ICloneButtonProps } from '../../../clone-button';
+import { ICloneButtonProps } from '../../../builder/components/clone-button';
 import { getCloneButtonTitle } from '../../../builder/utils/get-clone-button-title.util';
 import { BootstrapCopyIcon } from './icons';
 import {

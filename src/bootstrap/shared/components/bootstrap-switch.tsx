@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ISwitchProps } from '../../../form/switch';
+import { ISwitchProps } from '../../../builder/components/form-controls/switch';
 import { joinClassNames } from './styles';
 
 export const BootstrapSwitch: FC<ISwitchProps> = ({
@@ -15,7 +15,7 @@ export const BootstrapSwitch: FC<ISwitchProps> = ({
       className="form-check-input"
       checked={switched}
       disabled={disabled}
-      onChange={event => onChange?.(event.target.checked)}
+      onChange={(event) => onChange?.(event.target.checked)}
     />
   </div>
 );

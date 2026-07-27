@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Paper } from '@mui/material';
-import { IRuleProps } from '../../../rule/rule-container';
+import { IRuleProps } from '../../../builder/components/rule/rule-container';
 
 export const MuiRule: FC<IRuleProps> = ({
   children,

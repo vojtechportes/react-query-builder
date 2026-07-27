@@ -1,5 +1,5 @@
 import React, { FC, useCallback } from 'react';
-import { ILockToggleProps } from '../../../lock-toggle';
+import { ILockToggleProps } from '../../../builder/components/lock-toggle';
 import {
   BuilderLockState,
   getNextGroupLockState,

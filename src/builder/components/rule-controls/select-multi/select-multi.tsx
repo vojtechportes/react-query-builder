@@ -1,0 +1,228 @@
+import React, { FC, useContext } from 'react';
+import { BuilderContext } from '../../../context';
+import { SelectMulti as DefaultSelectMulti } from '../../form-controls/select-multi';
+import { createReplaceNodeAction } from '../../../history/utils/create-replace-node-action.util';
+import { findNodeById } from '../../../history/utils/find-node-by-id.util';
+import { isNormalizedGroupNode } from '../../../../shared/query/model/utils/is-normalized-group-node.util';
+import { isStringArray } from '../../../utils/is-string-array.util';
+import { applyDataUpdate } from '../../../utils/apply-data-update.util';
+import { emitBuilderFieldChange } from '../../../utils/emit-builder-field-change.util';
+import { updateItem } from '../../../../shared/query/transformations/utils/update-item.util';
+
+export interface ISelectMultiProps {
+  values: Array<{ value: string; label: string }>;
+  selectedValue: string[];
+  id: string;
+  disabled?: boolean;
+}
+
+export const SelectMulti: FC<ISelectMultiProps> = ({
+  values,
+  selectedValue,
+  id,
+  disabled = false,
+}) => {
+  const {
+    data,
+    setData,
+    onChange,
+    updateData,
+    dispatchAction,
+    components,
+    strings,
+    readOnly,
+    onFieldChange,
+  } = useContext(BuilderContext);
+  const SelectMultiComponent =
+    components.form?.SelectMulti || DefaultSelectMulti;
+  const isDisabled = Boolean(readOnly || disabled);
+
+  const handleChange = (value: string) => {
+    if (isDisabled) {
+      return;
+    }
+
+    const currentRule = findNodeById(data, id);
+
+    if (
+      !currentRule ||
+      isNormalizedGroupNode(currentRule) ||
+      !isStringArray(currentRule.value)
+    ) {
+      return;
+    }
+
+    if (!dispatchAction && setData && onChange) {
+      const nextValue = currentRule.value.filter(
+        (currentValue) => currentValue !== value
+      );
+      nextValue.push(value);
+      const nextData = updateItem(data, id, (item) => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.valueSource = 'value';
+        delete item.valueField;
+        item.value = nextValue;
+      });
+
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        nextValue,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    const nextValue = currentRule.value.filter(
+      (currentValue) => currentValue !== value
+    );
+    nextValue.push(value);
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        ...currentRule,
+        valueSource: 'value',
+        value: nextValue,
+        valueField: undefined,
+      })
+    );
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, (item) => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.valueSource = 'value';
+        delete item.valueField;
+        item.value = nextValue;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      nextValue,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: 'value',
+      }
+    );
+  };
+
+  const handleDelete = (value: string) => {
+    if (isDisabled) {
+      return;
+    }
+
+    const currentRule = findNodeById(data, id);
+
+    if (
+      !currentRule ||
+      isNormalizedGroupNode(currentRule) ||
+      !isStringArray(currentRule.value)
+    ) {
+      return;
+    }
+
+    if (!dispatchAction && setData && onChange) {
+      const nextValue = currentRule.value.filter(
+        (currentValue) => currentValue !== value
+      );
+      const nextData = updateItem(data, id, (item) => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.valueSource = 'value';
+        delete item.valueField;
+        item.value = nextValue;
+      });
+
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        nextValue,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    const nextValue = currentRule.value.filter(
+      (currentValue) => currentValue !== value
+    );
+
+    dispatchAction(
+      createReplaceNodeAction(id, {
+        ...currentRule,
+        valueSource: 'value',
+        value: nextValue,
+        valueField: undefined,
+      })
+    );
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, (item) => {
+        if (isNormalizedGroupNode(item) || !isStringArray(item.value)) {
+          return;
+        }
+
+        item.valueSource = 'value';
+        delete item.valueField;
+        item.value = nextValue;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      nextValue,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: 'value',
+      }
+    );
+  };
+
+  if (!strings.form) {
+    return null;
+  }
+
+  return (
+    <SelectMultiComponent
+      id={`query-builder-rule-${id}-value`}
+      name={`query-builder-rule-${id}-value`}
+      onChange={handleChange}
+      onDelete={handleDelete}
+      selectedValue={selectedValue}
+      emptyValue={strings.form.selectYourValue}
+      values={values}
+      disabled={isDisabled}
+    />
+  );
+};

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Select, Tag } from 'antd';
-import { ISelectMultiProps } from '../../../form/select-multi';
-import { createSummary } from '../../../widgets/select-multi/utils/create-summary.util';
+import { ISelectMultiProps } from '../../../builder/components/form-controls/select-multi';
+import { createSummary } from '../../../builder/components/rule-controls/select-multi/utils/create-summary.util';
 import { getAntdSelectPlaceholder, useAntdBuilderStrings } from './copy';
 import { antdControlStyle } from './styles';
 
@@ -24,13 +24,13 @@ export const AntdSelectMulti: FC<ISelectMultiProps> = ({
 
   const handleChange = (nextValues: string[]) => {
     for (const removedValue of selectedValue.filter(
-      value => !nextValues.includes(value)
+      (value) => !nextValues.includes(value)
     )) {
       onDelete(removedValue);
     }
 
     for (const addedValue of nextValues.filter(
-      value => !selectedValue.includes(value)
+      (value) => !selectedValue.includes(value)
     )) {
       onChange(addedValue);
     }
@@ -58,7 +58,7 @@ export const AntdSelectMulti: FC<ISelectMultiProps> = ({
       aria-label={name}
       title={title}
       maxTagCount={1}
-      maxTagPlaceholder={omittedValues => (
+      maxTagPlaceholder={(omittedValues) => (
         <Tag data-test="SelectMultiSummaryBadge">+{omittedValues.length}</Tag>
       )}
     />

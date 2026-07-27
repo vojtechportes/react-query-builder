@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { IOptionProps } from '../../../../group/components/option';
+import { IOptionProps } from '../../../../builder/components/group/components/option';
 import styles from './radix-group-header-option.module.css';
 
 export const RadixGroupHeaderOption: FC<IOptionProps> = ({

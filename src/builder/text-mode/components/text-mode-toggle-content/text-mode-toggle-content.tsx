@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { BuilderModeIcon } from '../../../components/builder-mode-icon';
+import { BuilderModeIcon } from '../builder-mode-icon/builder-mode-icon';
 import styles from './text-mode-toggle-content.module.css';
-import { TextModeIcon } from '../../../components/text-mode-icon';
+import { TextModeIcon } from '../text-mode-icon/text-mode-icon';
 
 export interface ITextModeToggleContentProps {
   mode: 'builder' | 'text';

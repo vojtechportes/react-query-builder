@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { IRuleProps } from '../../../../rule/rule-container';
+import { IRuleProps } from '../../../../builder/components/rule/rule-container';
 import styles from './radix-rule.module.css';
 
 export const RadixRule: FC<IRuleProps> = ({

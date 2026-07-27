@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IRuleProps } from '../../../rule/rule-container';
+import { IRuleProps } from '../../../builder/components/rule/rule-container';
 import { bootstrapCardStyles, joinClassNames } from './styles';
 
 export const BootstrapRule: FC<IRuleProps> = ({
@@ -29,9 +29,13 @@ export const BootstrapRule: FC<IRuleProps> = ({
       }}
     >
       {dragHandle}
-      <div className={joinClassNames('min-w-0 p-3', !hasControls && 'pe-3')}>{children}</div>
+      <div className={joinClassNames('min-w-0 p-3', !hasControls && 'pe-3')}>
+        {children}
+      </div>
       {hasControls ? (
-        <div className="d-flex flex-wrap align-items-start gap-2 p-3">{controls}</div>
+        <div className="d-flex flex-wrap align-items-start gap-2 p-3">
+          {controls}
+        </div>
       ) : null}
     </div>
   );

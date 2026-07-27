@@ -1,7 +1,7 @@
 import { getTheme } from '@fluentui/react';
 import clsx from 'clsx';
 import React, { CSSProperties, FC } from 'react';
-import { IOptionProps } from '../../../../group/components/option';
+import { IOptionProps } from '../../../../builder/components/group/components/option';
 import styles from './fluent-ui-group-header-option.module.css';
 
 const theme = getTheme();

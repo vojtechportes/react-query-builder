@@ -1,0 +1,179 @@
+import React, { FC, useContext } from 'react';
+import styles from './input.module.css';
+import { BuilderContext } from '../../../context';
+import { Input as DefaultInput } from '../../form-controls/input';
+import { createReplaceNodeAction } from '../../../history/utils/create-replace-node-action.util';
+import { findNodeById } from '../../../history/utils/find-node-by-id.util';
+import { applyDataUpdate } from '../../../utils/apply-data-update.util';
+import { coerceNumberInputValue } from '../../../utils/coerce-number-input-value.util';
+import { emitBuilderFieldChange } from '../../../utils/emit-builder-field-change.util';
+import { isNormalizedGroupNode } from '../../../../shared/query/model/utils/is-normalized-group-node.util';
+import { isStringOrNumberArray } from '../../../utils/is-string-or-number-array.util';
+import { isUndefined } from '../../../utils/is-undefined.util';
+import { updateItem } from '../../../../shared/query/transformations/utils/update-item.util';
+
+export interface IInputProps {
+  value: string | number | Array<string | number>;
+  type: 'text' | 'date' | 'number';
+  id: string;
+  disabled?: boolean;
+}
+
+export const Input: FC<IInputProps> = ({
+  value,
+  type,
+  id,
+  disabled = false,
+}) => {
+  const {
+    data,
+    setData,
+    onChange,
+    updateData,
+    dispatchAction,
+    components,
+    readOnly,
+    onFieldChange,
+  } = useContext(BuilderContext);
+  const InputComponent = components.form?.Input || DefaultInput;
+  const isDisabled = Boolean(readOnly || disabled);
+
+  const handleChange = (selectedValue: string, index = 0) => {
+    if (isDisabled) {
+      return;
+    }
+
+    const nextValue =
+      type === 'number' ? coerceNumberInputValue(selectedValue) : selectedValue;
+    const currentRule = findNodeById(data, id);
+
+    if (!currentRule || isNormalizedGroupNode(currentRule)) {
+      return;
+    }
+
+    if (!dispatchAction && setData && onChange) {
+      const nextData = updateItem(data, id, (item) => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        if (isStringOrNumberArray(item.value)) {
+          const nextRangeValue = item.value.slice() as typeof item.value;
+          nextRangeValue[index] = nextValue;
+          item.valueSource = 'value';
+          delete item.valueField;
+          item.value = nextRangeValue;
+          return;
+        }
+
+        item.valueSource = 'value';
+        delete item.valueField;
+        item.value = nextValue;
+      });
+
+      const emittedValue = isStringOrNumberArray(currentRule.value)
+        ? (() => {
+            const nextRangeValue =
+              currentRule.value.slice() as typeof currentRule.value;
+            nextRangeValue[index] = nextValue;
+            return nextRangeValue;
+          })()
+        : nextValue;
+
+      applyDataUpdate(data, setData, onChange, () => nextData, updateData);
+      emitBuilderFieldChange(
+        onFieldChange,
+        nextData,
+        id,
+        currentRule.field,
+        currentRule.value,
+        emittedValue,
+        {
+          previousValueSource: currentRule.valueSource ?? 'value',
+          previousValueField: currentRule.valueField,
+          valueSource: 'value',
+        }
+      );
+      return;
+    }
+
+    if (!dispatchAction) {
+      return;
+    }
+
+    const nextRule = { ...currentRule };
+
+    if (isStringOrNumberArray(currentRule.value)) {
+      const nextRangeValue =
+        currentRule.value.slice() as typeof currentRule.value;
+      nextRangeValue[index] = nextValue;
+      nextRule.value = nextRangeValue;
+    } else {
+      nextRule.value = nextValue;
+    }
+
+    nextRule.valueSource = 'value';
+    delete nextRule.valueField;
+
+    dispatchAction(createReplaceNodeAction(id, nextRule));
+    emitBuilderFieldChange(
+      onFieldChange,
+      updateItem(data, id, (item) => {
+        if (isNormalizedGroupNode(item)) {
+          return;
+        }
+
+        item.valueSource = 'value';
+        delete item.valueField;
+        item.value = nextRule.value;
+      }),
+      id,
+      currentRule.field,
+      currentRule.value,
+      nextRule.value,
+      {
+        previousValueSource: currentRule.valueSource ?? 'value',
+        previousValueField: currentRule.valueField,
+        valueSource: nextRule.valueSource ?? 'value',
+      }
+    );
+  };
+
+  if (isStringOrNumberArray(value)) {
+    return (
+      <div className={styles.rangeInputs} data-range-inputs="true">
+        <InputComponent
+          id={`query-builder-rule-${id}-value-start`}
+          name={`query-builder-rule-${id}-value-start`}
+          type={type}
+          value={value[0]}
+          onChange={(selectedValue: string) => handleChange(selectedValue, 0)}
+          disabled={isDisabled}
+        />
+        <InputComponent
+          id={`query-builder-rule-${id}-value-end`}
+          name={`query-builder-rule-${id}-value-end`}
+          type={type}
+          value={value[1]}
+          onChange={(selectedValue: string) => handleChange(selectedValue, 1)}
+          disabled={isDisabled}
+        />
+      </div>
+    );
+  }
+
+  if (isUndefined(value)) {
+    return null;
+  }
+
+  return (
+    <InputComponent
+      id={`query-builder-rule-${id}-value`}
+      name={`query-builder-rule-${id}-value`}
+      type={type}
+      value={value}
+      onChange={handleChange}
+      disabled={isDisabled}
+    />
+  );
+};
