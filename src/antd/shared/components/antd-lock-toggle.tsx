@@ -5,7 +5,7 @@ import {
   SafetyOutlined,
   UnlockOutlined,
 } from '@ant-design/icons';
-import { ILockToggleProps } from '../../../lock-toggle';
+import { ILockToggleProps } from '../../../builder/components/lock-toggle';
 import {
   getNextGroupLockState,
   getNextRuleLockState,

@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { ISelectProps } from '../../../form/select';
+import { ISelectProps } from '../../../builder/components/form-controls/select';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { getMuiSelectPlaceholder, useMuiBuilderStrings } from './copy';
 import { menuPaperSx } from './styles';

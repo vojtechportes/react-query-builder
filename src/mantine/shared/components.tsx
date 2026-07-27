@@ -13,26 +13,26 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { IAlertProps } from '../../alert';
-import { IButtonProps } from '../../button';
+import { IAlertProps } from '../../builder/components/alert';
+import { IButtonProps } from '../../builder/components/button';
 import { IBuilderComponentsProps, IHistoryControlsProps } from '../../builder';
 import { ITextModeInputProps } from '../../builder/text-mode/types/text-mode-input-props';
 import { BuilderContext } from '../../builder/context';
-import { ICloneButtonProps } from '../../clone-button';
-import { DropZone as CoreDropZone } from '../../drop-zone';
-import { EmptyGroupDropZone as CoreEmptyGroupDropZone } from '../../empty-group-drop-zone';
-import { IDropZoneProps } from '../../drop-zone';
-import { IEmptyGroupDropZoneProps } from '../../empty-group-drop-zone';
-import { IInputProps } from '../../form/input';
-import { ISelectProps } from '../../form/select';
-import { ISelectMultiProps } from '../../form/select-multi';
-import { ISwitchProps } from '../../form/switch';
-import { IGroupProps } from '../../group/components/group-container';
-import { IOptionProps } from '../../group/components/option';
-import { ILockToggleProps } from '../../lock-toggle';
-import { IPopoverItemProps } from '../../popover-item';
-import { IPopoverProps } from '../../popover';
-import { IRuleProps } from '../../rule/rule-container';
+import { ICloneButtonProps } from '../../builder/components/clone-button';
+import { DropZone as CoreDropZone } from '../../builder/drag-and-drop/components/drop-zone';
+import { EmptyGroupDropZone as CoreEmptyGroupDropZone } from '../../builder/drag-and-drop/components/empty-group-drop-zone';
+import { IDropZoneProps } from '../../builder/drag-and-drop/components/drop-zone';
+import { IEmptyGroupDropZoneProps } from '../../builder/drag-and-drop/components/empty-group-drop-zone';
+import { IInputProps } from '../../builder/components/form-controls/input';
+import { ISelectProps } from '../../builder/components/form-controls/select';
+import { ISelectMultiProps } from '../../builder/components/form-controls/select-multi';
+import { ISwitchProps } from '../../builder/components/form-controls/switch';
+import { IGroupProps } from '../../builder/components/group/components/group-container';
+import { IOptionProps } from '../../builder/components/group/components/option';
+import { ILockToggleProps } from '../../builder/components/lock-toggle';
+import { IPopoverItemProps } from '../../builder/components/popover-item';
+import { IPopoverProps } from '../../builder/components/popover';
+import { IRuleProps } from '../../builder/components/rule/rule-container';
 import {
   BuilderLockState,
   getNextGroupLockState,

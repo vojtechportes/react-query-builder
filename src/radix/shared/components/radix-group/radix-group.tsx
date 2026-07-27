@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { IGroupProps } from '../../../../group/components/group-container';
+import { IGroupProps } from '../../../../builder/components/group/components/group-container';
 import styles from './radix-group.module.css';
 
 export const RadixGroup: FC<IGroupProps> = ({

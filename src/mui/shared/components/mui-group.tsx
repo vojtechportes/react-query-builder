@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Paper } from '@mui/material';
-import { IGroupProps } from '../../../group/components/group-container';
+import { IGroupProps } from '../../../builder/components/group/components/group-container';
 import { MuiGroupHeaderControls } from './mui-group-header-controls';
 
 export const MuiGroup: FC<IGroupProps> = ({

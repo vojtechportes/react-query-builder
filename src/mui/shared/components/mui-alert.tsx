@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import MuiAlert from '@mui/material/Alert';
-import { IAlertProps } from '../../../alert';
+import { IAlertProps } from '../../../builder/components/alert';
 
 const severityMap = {
   info: 'info',

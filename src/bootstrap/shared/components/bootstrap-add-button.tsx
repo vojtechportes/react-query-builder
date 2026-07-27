@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
-import { IButtonProps } from '../../../button';
+import { IButtonProps } from '../../../builder/components/button';
 import { resolveButtonContent } from './button-utils';
 import { joinClassNames } from './styles';
 
-export const BootstrapAddButton: FC<IButtonProps> = props => (
+export const BootstrapAddButton: FC<IButtonProps> = (props) => (
   <button
     type="button"
     onClick={props.onClick}

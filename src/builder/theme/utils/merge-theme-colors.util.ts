@@ -1,0 +1,38 @@
+import { colors, IColors } from '../styles/colors';
+import type { ThemeColorOverrides } from '../types/theme-color-overrides';
+
+export const mergeThemeColors = (
+  nextColors?: ThemeColorOverrides
+): IColors => ({
+  ...colors,
+  ...nextColors,
+  primary: {
+    ...colors.primary,
+    ...nextColors?.primary,
+  },
+  secondary: {
+    ...colors.secondary,
+    ...nextColors?.secondary,
+  },
+  grey: {
+    ...colors.grey,
+    ...nextColors?.grey,
+  },
+  info: {
+    ...colors.info,
+    ...nextColors?.info,
+  },
+  success: {
+    ...colors.success,
+    ...nextColors?.success,
+  },
+  warning: {
+    ...colors.warning,
+    ...nextColors?.warning,
+  },
+  error: {
+    ...colors.error,
+    ...nextColors?.error,
+  },
+  white: nextColors?.white ?? colors.white,
+});

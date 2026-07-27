@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { ISelectMultiProps } from '../../../form/select-multi';
-import { useSelectMulti } from '../../../widgets/select-multi/hooks/use-select-multi';
-import { createSummary } from '../../../widgets/select-multi/utils/create-summary.util';
-import { getSelectedOptions } from '../../../widgets/select-multi/utils/get-selected-options.util';
+import { ISelectMultiProps } from '../../../builder/components/form-controls/select-multi';
+import { useSelectMulti } from '../../../builder/components/rule-controls/select-multi/hooks/use-select-multi';
+import { createSummary } from '../../../builder/components/rule-controls/select-multi/utils/create-summary.util';
+import { getSelectedOptions } from '../../../builder/components/rule-controls/select-multi/utils/get-selected-options.util';
 import { BootstrapCheckIcon, BootstrapChevronDownIcon } from './icons';
 import { bootstrapControlStyles, joinClassNames } from './styles';
 
@@ -21,7 +21,9 @@ export const BootstrapSelectMulti: FC<ISelectMultiProps> = ({
   const selectedOptions = getSelectedOptions(values, selectedValue);
   const selectedLabels = selectedOptions.map(({ label }) => label);
   const summary = createSummary(selectedLabels);
-  const title = summary.text ? selectedLabels.join(', ') : emptyValue || 'Select value';
+  const title = summary.text
+    ? selectedLabels.join(', ')
+    : emptyValue || 'Select value';
 
   const handleToggleValue = (value: string) => {
     if (selectedValue.includes(value)) {
@@ -38,7 +40,13 @@ export const BootstrapSelectMulti: FC<ISelectMultiProps> = ({
       className={joinClassNames('position-relative', className)}
       style={bootstrapControlStyles}
     >
-      <input type="hidden" id={id} name={name} value={selectedValue.join(',')} readOnly />
+      <input
+        type="hidden"
+        id={id}
+        name={name}
+        value={selectedValue.join(',')}
+        readOnly
+      />
       <button
         ref={triggerRef}
         type="button"

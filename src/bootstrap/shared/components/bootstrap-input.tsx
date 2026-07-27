@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IInputProps } from '../../../form/input';
+import { IInputProps } from '../../../builder/components/form-controls/input';
 import { joinClassNames } from './styles';
 
 export const BootstrapInput: FC<IInputProps> = ({
@@ -16,7 +16,7 @@ export const BootstrapInput: FC<IInputProps> = ({
     name={name}
     type={type}
     value={value}
-    onChange={event => onChange(event.target.value)}
+    onChange={(event) => onChange(event.target.value)}
     className={joinClassNames('form-control form-control-sm', className)}
     disabled={disabled}
   />

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button } from 'antd';
-import { IButtonProps } from '../../../button';
+import { IButtonProps } from '../../../builder/components/button';
 import { resolveButtonContent } from './button-utils';
 import { antdTextButtonStyle } from './styles';
 

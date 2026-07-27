@@ -1,1 +1,1 @@
-export { EmptyGroupDropZone as BootstrapEmptyGroupDropZone } from '../../../empty-group-drop-zone';
+export { EmptyGroupDropZone as BootstrapEmptyGroupDropZone } from '../../../builder/drag-and-drop/components/empty-group-drop-zone';

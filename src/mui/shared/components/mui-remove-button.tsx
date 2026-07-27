@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button } from '@mui/material';
-import { IButtonProps } from '../../../button';
+import { IButtonProps } from '../../../builder/components/button';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { resolveButtonContent } from './button-utils';
 

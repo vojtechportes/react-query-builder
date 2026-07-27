@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { IPopoverProps } from '../../../popover';
+import { IPopoverProps } from '../../../builder/components/popover';
 import { joinClassNames } from './styles';
 
 export const BootstrapPopover: FC<IPopoverProps> = ({
@@ -29,7 +29,7 @@ export const BootstrapPopover: FC<IPopoverProps> = ({
     };
   }, []);
 
-  const wrappedChildren = React.Children.map(children, child => {
+  const wrappedChildren = React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) {
       return child;
     }
@@ -48,11 +48,14 @@ export const BootstrapPopover: FC<IPopoverProps> = ({
   });
 
   return (
-    <div className={joinClassNames('position-relative d-inline-flex', className)} ref={containerRef}>
+    <div
+      className={joinClassNames('position-relative d-inline-flex', className)}
+      ref={containerRef}
+    >
       <button
         type="button"
         className="btn btn-primary btn-sm dropdown-toggle"
-        onClick={() => setIsOpen(open => !open)}
+        onClick={() => setIsOpen((open) => !open)}
         data-test={dataTest}
         aria-expanded={isOpen}
       >

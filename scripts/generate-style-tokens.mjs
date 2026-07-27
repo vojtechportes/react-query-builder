@@ -4,8 +4,22 @@ import { cwd } from 'node:process';
 import ts from 'typescript';
 
 const rootDir = cwd();
-const colorsPath = join(rootDir, 'src', 'constants', 'colors.ts');
-const tokensPath = join(rootDir, 'src', 'styles', 'tokens.css');
+const colorsPath = join(
+  rootDir,
+  'src',
+  'builder',
+  'theme',
+  'styles',
+  'colors.ts'
+);
+const tokensPath = join(
+  rootDir,
+  'src',
+  'builder',
+  'theme',
+  'styles',
+  'tokens.css'
+);
 const sourceText = readFileSync(colorsPath, 'utf8');
 const sourceFile = ts.createSourceFile(
   colorsPath,

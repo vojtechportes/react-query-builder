@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { TextField } from '@mui/material';
-import { IInputProps } from '../../../form/input';
+import { IInputProps } from '../../../builder/components/form-controls/input';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 
 export const MuiInput: FC<IInputProps> = ({

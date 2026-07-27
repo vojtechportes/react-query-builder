@@ -1,7 +1,7 @@
 import { getTheme } from '@fluentui/react';
 import clsx from 'clsx';
 import React, { CSSProperties, FC } from 'react';
-import { IRuleProps } from '../../../../rule/rule-container';
+import { IRuleProps } from '../../../../builder/components/rule/rule-container';
 import styles from './fluent-ui-rule.module.css';
 
 const theme = getTheme();

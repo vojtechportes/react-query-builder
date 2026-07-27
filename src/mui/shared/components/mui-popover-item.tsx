@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { MenuItem } from '@mui/material';
-import { IPopoverItemProps } from '../../../popover-item';
+import { IPopoverItemProps } from '../../../builder/components/popover-item';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 
 export const MuiPopoverItem: FC<IPopoverItemProps> = ({

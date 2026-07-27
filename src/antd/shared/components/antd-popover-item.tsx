@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Button } from 'antd';
-import { IPopoverItemProps } from '../../../popover-item';
+import { IPopoverItemProps } from '../../../builder/components/popover-item';
 
 export const AntdPopoverItem: FC<IPopoverItemProps> = ({
   label,
@@ -10,7 +10,7 @@ export const AntdPopoverItem: FC<IPopoverItemProps> = ({
 }) => (
   <Button
     type="text"
-    onClick={event =>
+    onClick={(event) =>
       onClick(event as unknown as React.MouseEvent<HTMLButtonElement>)
     }
     className={className}

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { theme } from 'antd';
-import { IRuleProps } from '../../../rule/rule-container';
+import { IRuleProps } from '../../../builder/components/rule/rule-container';
 
 export const AntdRule: FC<IRuleProps> = ({
   children,
@@ -33,7 +33,13 @@ export const AntdRule: FC<IRuleProps> = ({
       }}
     >
       {dragHandle}
-      <div style={{ minWidth: 0, padding: '0.85rem', paddingRight: hasControls ? 0 : '0.85rem' }}>
+      <div
+        style={{
+          minWidth: 0,
+          padding: '0.85rem',
+          paddingRight: hasControls ? 0 : '0.85rem',
+        }}
+      >
         {children}
       </div>
       {hasControls ? (

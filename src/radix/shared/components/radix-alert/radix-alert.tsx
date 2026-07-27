@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { IAlertProps } from '../../../../alert';
+import { IAlertProps } from '../../../../builder/components/alert';
 import styles from './radix-alert.module.css';
 
 export const RadixAlert: FC<IAlertProps> = ({

@@ -9,20 +9,20 @@ import {
   TextArea,
   TextField,
 } from '@radix-ui/themes';
-import { IButtonProps } from '../../button';
+import { IButtonProps } from '../../builder/components/button';
 import { IBuilderComponentsProps } from '../../builder';
 import { ITextModeInputProps } from '../../builder/text-mode/types/text-mode-input-props';
 import { BuilderContext } from '../../builder/context';
-import { ICloneButtonProps } from '../../clone-button';
-import { DropZone as CoreDropZone } from '../../drop-zone';
-import { EmptyGroupDropZone as CoreEmptyGroupDropZone } from '../../empty-group-drop-zone';
-import { IEmptyGroupDropZoneProps } from '../../empty-group-drop-zone';
-import { IDropZoneProps } from '../../drop-zone';
-import { IInputProps } from '../../form/input';
-import { ISwitchProps } from '../../form/switch';
-import { ILockToggleProps } from '../../lock-toggle';
-import { IPopoverItemProps } from '../../popover-item';
-import { IPopoverProps } from '../../popover';
+import { ICloneButtonProps } from '../../builder/components/clone-button';
+import { DropZone as CoreDropZone } from '../../builder/drag-and-drop/components/drop-zone';
+import { EmptyGroupDropZone as CoreEmptyGroupDropZone } from '../../builder/drag-and-drop/components/empty-group-drop-zone';
+import { IEmptyGroupDropZoneProps } from '../../builder/drag-and-drop/components/empty-group-drop-zone';
+import { IDropZoneProps } from '../../builder/drag-and-drop/components/drop-zone';
+import { IInputProps } from '../../builder/components/form-controls/input';
+import { ISwitchProps } from '../../builder/components/form-controls/switch';
+import { ILockToggleProps } from '../../builder/components/lock-toggle';
+import { IPopoverItemProps } from '../../builder/components/popover-item';
+import { IPopoverProps } from '../../builder/components/popover';
 import {
   BuilderLockState,
   getNextGroupLockState,

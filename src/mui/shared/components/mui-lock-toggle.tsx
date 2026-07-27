@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { IconButton } from '@mui/material';
-import { ILockToggleProps } from '../../../lock-toggle';
+import { ILockToggleProps } from '../../../builder/components/lock-toggle';
 import {
   getNextGroupLockState,
   getNextRuleLockState,

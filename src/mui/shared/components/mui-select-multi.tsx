@@ -11,8 +11,8 @@ import {
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { ISelectMultiProps } from '../../../form/select-multi';
-import { createSummary } from '../../../widgets/select-multi/utils/create-summary.util';
+import { ISelectMultiProps } from '../../../builder/components/form-controls/select-multi';
+import { createSummary } from '../../../builder/components/rule-controls/select-multi/utils/create-summary.util';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { getMuiSelectPlaceholder, useMuiBuilderStrings } from './copy';
 import { menuPaperSx } from './styles';

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { ITextModeToggleContentProps } from '../../../../builder';
-import { BuilderModeIcon } from '../../../../builder/components/builder-mode-icon';
-import { TextModeIcon } from '../../../../builder/components/text-mode-icon';
+import { BuilderModeIcon } from '../../../../builder/text-mode/components/builder-mode-icon/builder-mode-icon';
+import { TextModeIcon } from '../../../../builder/text-mode/components/text-mode-icon/text-mode-icon';
 import styles from './mantine-text-mode-toggle-content.module.css';
 
 export const MantineTextModeToggleContent: FC<ITextModeToggleContentProps> = ({

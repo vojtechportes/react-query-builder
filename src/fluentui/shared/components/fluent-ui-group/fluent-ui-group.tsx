@@ -1,7 +1,7 @@
 import { getTheme } from '@fluentui/react';
 import clsx from 'clsx';
 import React, { CSSProperties, FC } from 'react';
-import { IGroupProps } from '../../../../group/components/group-container';
+import { IGroupProps } from '../../../../builder/components/group/components/group-container';
 import styles from './fluent-ui-group.module.css';
 
 const theme = getTheme();
