@@ -5,6 +5,7 @@ import { act } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { V2App } from './app/v2-app';
+import { captureRuntimeWarnings } from '../shared/testing/utils/capture-runtime-warnings.util';
 import { renderPage } from './entry-server';
 
 vi.mock('../components/load-cookie-consent-banner', () => ({
@@ -19,6 +20,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   document.head.innerHTML = '';
   document.body.innerHTML = '';
 });
@@ -37,6 +39,7 @@ describe('v2 hydration', () => {
 
       const page = renderPage(path);
       const recoverableErrors: unknown[] = [];
+      const runtimeWarnings = captureRuntimeWarnings();
 
       document.head.innerHTML = page.styles;
       document.body.innerHTML = `<div id="root">${page.html}</div>`;
@@ -60,6 +63,7 @@ describe('v2 hydration', () => {
       ].map(({ textContent }) => textContent);
 
       expect(recoverableErrors).toEqual([]);
+      expect(runtimeWarnings).toEqual([]);
       expect(hydratedStyles).toContain(styleBeforeHydration);
 
       await act(async () => root.unmount());

@@ -573,8 +573,8 @@ describe('#components/Group', () => {
     const groupCss = getGroupContainerCss();
     const optionCss = getOptionCss();
 
-    expect(groupCss).toContain(
-      'box-shadow: var(\n      --query-builder-shadow-group'
+    expect(groupCss).toMatch(
+      /box-shadow: var\(\s+--query-builder-shadow-group/
     );
     expect(groupCss).toContain(
       'padding: var(--query-builder-group-padding, 0.7rem)'

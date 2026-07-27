@@ -186,7 +186,7 @@ describe('#builder/text-mode/TextModeEditor', () => {
     expect(css).toContain('::-moz-selection');
     expect(css).toContain('color: transparent !important');
     expect(css).toContain('-webkit-text-fill-color: transparent');
-    expect(css).toContain('.editorLayer,\n  .diagnosticOverlay');
+    expect(css).toMatch(/\.editorLayer,\s+\.diagnosticOverlay/);
     expect(css).toContain('width: 0');
     expect(css).toContain(
       'border-bottom: 2px solid var(--query-builder-color-secondary-dark)'

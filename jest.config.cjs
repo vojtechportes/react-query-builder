@@ -10,6 +10,7 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   moduleNameMapper: {
+    '^@vojtechportes/react-query-builder$': '<rootDir>/src/index.tsx',
     '\\.module\\.css$': '<rootDir>/src/__mocks__/css-module.mock.cjs',
     '\\.css$': '<rootDir>/src/__mocks__/style.mock.cjs',
   },
@@ -17,6 +18,6 @@ module.exports = {
   testEnvironment: 'jsdom',
   testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
   },
 };

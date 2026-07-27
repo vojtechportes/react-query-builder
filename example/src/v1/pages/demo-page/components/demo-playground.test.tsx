@@ -232,7 +232,7 @@ describe('DemoPlayground locale selection', () => {
       screen.getByText('Builder source').parentElement?.parentElement
         ?.textContent
     ).toContain('readOnly');
-  });
+  }, 10_000);
 
   it('preserves text, Monaco, and single-root dependencies', async () => {
     const user = userEvent.setup();

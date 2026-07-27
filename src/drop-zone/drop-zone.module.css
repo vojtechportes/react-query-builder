@@ -106,4 +106,12 @@
   .transitionDisabled {
     transition: none;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .anchor,
+    .dropZone,
+    .inner {
+      transition: none;
+    }
+  }
 }

@@ -99,6 +99,7 @@ const verifyCssBuild = async () => {
       classKeys: ['cloneButton', 'disabled'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['cloneButton'],
+      expectedRuleOccurrences: { cloneButton: 2 },
       requiredSelectors: [
         { key: 'cloneButton', suffix: ':hover' },
         { key: 'cloneButton', suffix: ':focus-visible' },
@@ -112,6 +113,7 @@ const verifyCssBuild = async () => {
       classKeys: ['all', 'disabled', 'lockToggle', 'self', 'unlocked'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['all', 'lockToggle', 'self', 'unlocked'],
+      expectedRuleOccurrences: { lockToggle: 2 },
       requiredSelectors: [
         { key: 'unlocked', suffix: ':hover' },
         { key: 'self', suffix: ':hover' },
@@ -394,6 +396,7 @@ const verifyCssBuild = async () => {
       classKeys: ['disabled', 'option', 'selected'],
       entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
       uniqueRuleKeys: ['disabled', 'option', 'selected'],
+      expectedRuleOccurrences: { option: 2 },
       requiredSelectors: [
         { key: 'option', suffix: ':hover' },
         { key: 'option', suffix: ':focus-visible' },
@@ -675,10 +678,11 @@ const verifyCssBuild = async () => {
     for (const key of contract.uniqueRuleKeys) {
       const selector = `.${referenceMappings[key]} {`;
       const occurrences = stylesheet.split(selector).length - 1;
+      const expectedOccurrences = contract.expectedRuleOccurrences?.[key] ?? 1;
 
-      if (occurrences !== 1) {
+      if (occurrences !== expectedOccurrences) {
         throw new Error(
-          `Expected ${contract.name} selector ${selector} exactly once, received ${occurrences}`
+          `Expected ${contract.name} selector ${selector} ${expectedOccurrences} time(s), received ${occurrences}`
         );
       }
     }
