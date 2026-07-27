@@ -10,8 +10,8 @@ export default defineConfig(
     ignores: [
       'coverage/**',
       'dist/**',
-      'example/dist/**',
-      'example/config/package-bindings/.smoke-dist/**',
+      'website/dist/**',
+      'website/config/package-bindings/.smoke-dist/**',
       'node_modules/**',
     ],
   },

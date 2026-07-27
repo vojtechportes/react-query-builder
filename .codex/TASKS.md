@@ -2004,7 +2004,7 @@ site/v1 usage.
 
 ### T062 - Rename the example workspace to website
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Goal:** Rename the internal example workspace to `website` without changing either version of the site.
 
