@@ -2002,4 +2002,235 @@ site/v1 usage.
 
 - Run the full publish-artifact workflow locally/CI and record final size/review reports.
 
+### T062 - Rename the example workspace to website
 
+**Status:** `[ ]` Not started
+
+**Goal:** Rename the internal example workspace to `website` without changing either version of the site.
+
+**Scope:**
+
+- Rename the `example` directory to `website`.
+- Update the root workspace configuration, package lock, npm scripts, ESLint ignores, CI workflows, deployment paths, and repository scripts that reference the old directory.
+- Rename root `example:*` scripts to `website:*` for consistency.
+- Keep website behavior, copy, routes, generated output, and v1/v2 isolation unchanged.
+- Move or rehome the current `src/example/format-builder-source.test.ts` bridge test according to website ownership so `src/example` does not remain as an obsolete source root.
+- Decide during implementation whether renaming the private workspace package is useful; it is not required for the directory move.
+
+**Acceptance criteria:**
+
+- Active tooling and configuration no longer reference the old `example` directory.
+- Both website versions build and behave as before.
+- Package-binding, release, packed-consumer, and CSS verification scripts resolve the renamed workspace.
+
+**Verification:**
+
+- Audit old directory references with `rg`, allowing only intentional historical prose.
+- Verify lockfile and workspace resolution.
+- Run both website-version test/build suites and package-binding verification.
+- Inspect the updated deployment workflow paths.
+
+### T063 - Establish shared query and domain contracts
+
+**Status:** `[ ]` Not started
+
+**Goal:** Establish domain-based shared ownership without creating generic shared dumping grounds.
+
+**Scope:**
+
+- Move the query model, normalization, transformations, and related behavior used across ownership boundaries into `src/shared/query`; leave builder-only read-only and validation behavior for T065.
+- Move shared localization contracts and the canonical default en-US strings needed by the builder into `src/shared/localization`; the public en-US locale entry will re-export them.
+- Extract builder-component contracts only when they are genuinely shared with adapters and the extraction creates a useful boundary.
+- Classify files by their actual consumers; leave builder-only code for T065 and T066.
+- Update imports without changing implementation behavior or public root exports.
+- Do not create empty or speculative slice folders.
+
+**Acceptance criteria:**
+
+- Shared code is organized into named domain slices.
+- `src/shared` does not import from `src/builder` or `src/subpackages`.
+- Query behavior, types, and root exports remain unchanged.
+- No root-level `shared/utils`, `shared/types`, `shared/hooks`, or `shared/constants` folders are introduced.
+
+**Verification:**
+
+- Run focused shared query model, utility, normalization, and transformation tests.
+- Run TypeScript compilation and the package build.
+- Audit shared imports for forbidden dependency directions.
+
+### T064 - Consolidate query formats and public parse/format entries
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T063
+
+**Goal:** Separate reusable query-format implementation from the public `parseQuery` and `formatQuery` entry surfaces.
+
+**Scope:**
+
+- Move language-specific parsing and formatting implementation into `src/shared/query-formats/<format>`.
+- Preserve organization by query format so parsers, formatters, tokens, and shared helpers remain colocated.
+- Move public entry wiring to `src/subpackages/parse-query` and `src/subpackages/format-query`.
+- Update explicit build entries so internal kebab-case paths still produce `parseQuery` and `formatQuery` artifacts.
+- Update path-sensitive tests and imports without changing supported formats or behavior.
+
+**Acceptance criteria:**
+
+- Public `parseQuery` and `formatQuery` imports, types, and built artifact names remain unchanged.
+- Shared query-format implementation is not owned by either public entry directory.
+- Parser and formatter entries remain CSS-free, optional-peer-free, and SSR-safe.
+
+**Verification:**
+
+- Run all parser, formatter, round-trip, and query-format tests.
+- Run the package build and packed-entry consumer verification.
+- Inspect declarations and package exports for unchanged public paths.
+
+### T065 - Consolidate builder core and state subsystems
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T063 and T064
+
+**Goal:** Make `src/builder` the clear owner of builder state, behavior, and non-visual subsystems.
+
+**Scope:**
+
+- Move the builder entry implementation, context, constants, hooks, types, and builder-only utilities under `src/builder`.
+- Move history and text-mode code into explicit builder-owned subsystem slices.
+- Move the current read-only and validation behavior, which has only builder consumers, into explicit `src/builder/read-only` and `src/builder/validation` slices.
+- Move current root history code and builder-specific root hooks without changing behavior.
+- Keep tests colocated and update imports only.
+- Leave component, theme, drag-and-drop, and stylesheet consolidation for T066.
+
+**Acceptance criteria:**
+
+- Builder state and behavioral ownership is explicit and matches `.codex/repository-structure.md`.
+- The builder does not import from `src/subpackages`.
+- History, text-mode behavior, types, and public root exports remain unchanged.
+- No component or styling redesign is mixed into the move.
+
+**Verification:**
+
+- Run focused builder, context, history, hook, utility, and text-mode tests.
+- Run TypeScript compilation, the full Jest suite, and the package build.
+- Audit builder imports for forbidden subpackage dependencies.
+
+### T066 - Consolidate builder components, theme, drag-and-drop, and styles
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T065
+
+**Goal:** Complete builder ownership for its UI, visual subsystems, and styles.
+
+**Scope:**
+
+- Move current `src/form` primitives into `src/builder/components/form-controls`.
+- Move current `src/widgets` builder-aware controls into `src/builder/components/rule-controls`.
+- Move remaining builder-owned root components into explicit component slices.
+- Consolidate theme, drag-and-drop, and builder styles into their intended subsystem directories.
+- Preserve primary-component ownership and nested `components` placement for slices such as rule and group.
+- Keep tests and CSS modules colocated and update path-sensitive CSS verification in the same change.
+
+**Acceptance criteria:**
+
+- Builder UI ownership matches `.codex/repository-structure.md`.
+- General root components and styles remain only when they demonstrably serve the root entry itself.
+- Root exports, component behavior, rendered DOM, generated classes, and CSS behavior remain unchanged.
+- Component and subsystem folder and file names follow kebab-case conventions.
+
+**Verification:**
+
+- Run focused component, theme, drag-and-drop, form-control, rule-control, and visual contract tests throughout the move.
+- Run the full Jest suite, lint, package build, and CSS infrastructure verification.
+- Inspect packed CSS and stable public stylesheet behavior.
+
+### T067 - Move versioned adapters into public subpackages
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T066
+
+**Goal:** Place every framework adapter under the public subpackage source boundary while preserving versioned imports and peer isolation.
+
+**Scope:**
+
+- Move ANTD, Bootstrap, Fluent UI, Mantine, MUI, and Radix into `src/subpackages/adapters`.
+- Retain each adapter family's `shared` implementation and version directories.
+- Rename the internal Fluent UI directory to `fluent-ui` while mapping it to the existing public `fluentui/v8` output.
+- Update imports, build entries, declarations, tests, and path-sensitive CSS verification.
+- Do not change adapter behavior, styling, component contracts, or peer dependencies.
+
+**Acceptance criteria:**
+
+- Every existing adapter import and built output path remains unchanged.
+- Optional peer dependencies remain isolated to their adapter entries.
+- Neither `src/shared` nor `src/builder` imports adapter implementation.
+- Adapter source folder and file names follow kebab-case conventions.
+
+**Verification:**
+
+- Run all adapter tests and the package build.
+- Run the packed per-entry consumer matrix and CSS verification.
+- Inspect declarations, public output paths, and optional peer isolation.
+
+### T068 - Move locales and Monaco into public subpackages
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T066 and T067
+
+**Goal:** Complete the public subpackage source boundary for locales and Monaco.
+
+**Scope:**
+
+- Move non-default locale implementations and all public locale entry wiring into `src/subpackages/locales` using lowercase kebab-case internal directory names.
+- Keep shared localization contracts and canonical default en-US strings in `src/shared/localization`; make the public en-US entry a thin re-export.
+- Move Monaco implementation and its public entry into `src/subpackages/monaco`.
+- Update imports, build entries, declarations, tests, and path-sensitive scripts.
+- Preserve mixed-case locale output paths and the existing `monaco` public path.
+
+**Acceptance criteria:**
+
+- Every locale import and `@vojtechportes/react-query-builder/monaco` remains unchanged.
+- Locale entries remain CSS-free, optional-peer-free, and SSR-safe.
+- Monaco's optional peer dependencies remain isolated.
+- Builder and shared code do not depend on public locale or Monaco entry points.
+
+**Verification:**
+
+- Run locale and Monaco component/utility tests.
+- Run SSR import, package build, packed-entry, and declaration verification.
+- Inspect emitted locale casing and Monaco output paths.
+
+### T069 - Finish kebab-case migration and enforce architecture boundaries
+
+**Status:** `[ ]` Not started
+
+**Depends on:** T062, T063, T064, T065, T066, T067, and T068
+
+**Goal:** Complete the structural migration and prevent the repository from returning to unclear ownership.
+
+**Scope:**
+
+- Audit remaining source folder and file names and complete the kebab-case migration.
+- Update remaining literal source paths in scripts, tests, configuration, and active documentation.
+- Add a lightweight automated check for the dependency rules in `.codex/repository-structure.md`.
+- Confirm obsolete source roots are removed and no compatibility shims accidentally become permanent.
+- Do not rename exported symbols or published artifact paths.
+- Run the final repository-wide compatibility gate and required code-review agent.
+
+**Acceptance criteria:**
+
+- Internal source naming follows repository conventions except for documented intentional exceptions.
+- Architecture dependency directions are checked automatically.
+- Old source roots are gone and new file placement matches actual ownership.
+- Runtime behavior, DOM, styling, declarations, public exports, and published paths have no intentional changes.
+
+**Verification:**
+
+- Audit naming, old paths, and forbidden imports with focused repository checks.
+- Run lint, Prettier check, the full Jest suite, package build, CSS infrastructure, packed entries, publish-artifact verification, and release verification.
+- Run package-binding verification and both website-version test/build suites.
+- Review the final diff against `.codex/repository-structure.md` and resolve code-review findings.

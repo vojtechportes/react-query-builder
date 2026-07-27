@@ -1,49 +1,10 @@
 Long-running tooling (tests, docker compose, migrations, etc.) must always be invoked with sensible timeouts or in non-interactive batch mode. Never leave a shell command waiting indefinitely—prefer explicit timeouts, scripted runs, or log polling after the command exits.
 
-<!--
 # Repository structure
 
-Over time, repository structure should turn into following. Follow this only when specifically instructed to do wider refactoring, otherwise stick to the structure that currently exists
-
-```
-src/
-  __mocks__/
-  constants/
-  hooks/
-  utils/
-  adapters/
-    antd/
-      shared/
-        ...
-    mui/
-    mantine/
-    radix/
-    fluentui/
-    bootstrap/
-  formatters/
-    query-formats/
-    parse-query/
-    format-query/
-  text-editor/
-    monaco/
-  builder/
-    utils/
-      history/ // moved from the root level
-    components/
-      field-control/ // originally root level widgets
-      rule/
-      group/
-      alert.tsx // root level components should be moved under a builder if that is where they logically belong
-      button.tsx
-      ...
-    utils/
-    hooks/
-    types/
-    text-mode/
-    constants/
-  index.ts
-```
--->
+The intended repository structure for wider structural refactors is recorded in
+`.codex/repository-structure.md`. Follow it only when specifically instructed to do
+repository-wide reorganization. Otherwise, preserve the structure that currently exists.
 
 ## Editing tools
 
@@ -59,7 +20,7 @@ src/
 - Enums should be suffixed with `*-enum.ts`
 - Types should have no suffix
 - Types, interfaces, enums, utility functions, components and so on should not be mixed together in one folder as a flat structure
-- File placement into top-level `utils/`, `types/`, `hooks/`, `constants/` is allowed if these are either shared or serve top level files themselves
+- File placement into top-level `utils/`, `types/`, `hooks/`, and `constants/` is allowed only when code directly serves a top-level entry. During the T062-T069 reorganization, reusable shared code belongs in a named domain slice under `src/shared`, not in technical-role dumping grounds.
 - Slice-local `types/`, `utils/`, `hooks`, `components` and `constants/` folders are allowed when they serve one concrete slice and contain actual code owned by that slice. Do not create empty or speculative local folders.
 - When a slice has a primary component file and nested owned components, place the nested components under the slice's `components/` folder. For example, `group/group.tsx` owns `group/components/option/` and `group/components/group-container/`; do not place nested component folders alongside the primary component.
 - Prefer granular and colocated files over catch-all files such as `types.ts`, `constants.ts`, or `helpers.ts`
