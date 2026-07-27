@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Switch } from '@mui/material';
-import { ISwitchProps } from '../../../form/switch';
+import { ISwitchProps } from '../../../builder/components/form-controls/switch';
 
 export const MuiSwitch: FC<ISwitchProps> = ({
   switched,

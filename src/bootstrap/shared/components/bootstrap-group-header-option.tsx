@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IOptionProps } from '../../../group/components/option';
+import { IOptionProps } from '../../../builder/components/group/components/option';
 import { joinClassNames } from './styles';
 
 export const BootstrapGroupHeaderOption: FC<IOptionProps> = ({

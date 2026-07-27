@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { ToggleButton } from '@mui/material';
-import { IOptionProps } from '../../../group/components/option';
+import { IOptionProps } from '../../../builder/components/group/components/option';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 
 export const MuiGroupHeaderOption: FC<IOptionProps> = ({

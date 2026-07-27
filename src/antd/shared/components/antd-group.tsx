@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { theme } from 'antd';
-import { IGroupProps } from '../../../group/components/group-container';
+import { IGroupProps } from '../../../builder/components/group/components/group-container';
 
 export const AntdGroup: FC<IGroupProps> = ({
   controlsLeft,
@@ -21,7 +21,9 @@ export const AntdGroup: FC<IGroupProps> = ({
       style={{
         display: 'grid',
         overflow: 'hidden',
-        gridTemplateColumns: dragHandle ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
+        gridTemplateColumns: dragHandle
+          ? 'auto minmax(0, 1fr)'
+          : 'minmax(0, 1fr)',
         marginTop: '0.5rem',
         backgroundColor: token.colorFillAlter,
         border: `1px solid ${token.colorBorderSecondary}`,

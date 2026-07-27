@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ISelectProps } from '../../../form/select';
+import { ISelectProps } from '../../../builder/components/form-controls/select';
 import { bootstrapControlStyles, joinClassNames } from './styles';
 
 export const BootstrapSelect: FC<ISelectProps> = ({
@@ -16,7 +16,7 @@ export const BootstrapSelect: FC<ISelectProps> = ({
     id={id}
     name={name}
     value={selectedValue ?? ''}
-    onChange={event => onChange(event.target.value)}
+    onChange={(event) => onChange(event.target.value)}
     className={joinClassNames('form-select form-select-sm', className)}
     style={bootstrapControlStyles}
     disabled={disabled}

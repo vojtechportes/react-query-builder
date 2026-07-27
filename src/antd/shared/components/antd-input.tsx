@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Input, InputNumber } from 'antd';
-import { IInputProps } from '../../../form/input';
+import { IInputProps } from '../../../builder/components/form-controls/input';
 import { antdControlStyle } from './styles';
 
 export const AntdInput: FC<IInputProps> = ({
@@ -18,7 +18,9 @@ export const AntdInput: FC<IInputProps> = ({
         id={id}
         name={name}
         value={value === '' ? null : Number(value)}
-        onChange={nextValue => onChange(nextValue == null ? '' : String(nextValue))}
+        onChange={(nextValue) =>
+          onChange(nextValue == null ? '' : String(nextValue))
+        }
         className={className}
         disabled={disabled}
         style={{ ...antdControlStyle, width: '100%' }}
@@ -33,7 +35,7 @@ export const AntdInput: FC<IInputProps> = ({
       name={name}
       type={type}
       value={value}
-      onChange={event => onChange(event.target.value)}
+      onChange={(event) => onChange(event.target.value)}
       className={className}
       disabled={disabled}
       style={antdControlStyle}

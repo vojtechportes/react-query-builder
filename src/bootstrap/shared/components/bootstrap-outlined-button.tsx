@@ -1,14 +1,17 @@
 import React, { FC } from 'react';
-import { IButtonProps } from '../../../button';
+import { IButtonProps } from '../../../builder/components/button';
 import { resolveButtonContent } from './button-utils';
 import { joinClassNames } from './styles';
 
-export const BootstrapOutlinedButton: FC<IButtonProps> = props => (
+export const BootstrapOutlinedButton: FC<IButtonProps> = (props) => (
   <button
     type="button"
     onClick={props.onClick}
     disabled={props.disabled}
-    className={joinClassNames('btn btn-outline-secondary btn-sm', props.className)}
+    className={joinClassNames(
+      'btn btn-outline-secondary btn-sm',
+      props.className
+    )}
     title={props.title}
     data-test={props['data-test']}
   >

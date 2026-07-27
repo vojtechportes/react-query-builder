@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Box } from '@mui/material';
 import { useDroppable } from '@dnd-kit/core';
-import { IEmptyGroupDropZoneProps } from '../../../empty-group-drop-zone';
+import { IEmptyGroupDropZoneProps } from '../../../builder/drag-and-drop/components/empty-group-drop-zone';
 
 export const MuiEmptyGroupDropZone: FC<IEmptyGroupDropZoneProps> = ({
   id,

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { IconButton } from '@mui/material';
-import { ICloneButtonProps } from '../../../clone-button';
+import { ICloneButtonProps } from '../../../builder/components/clone-button';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { CloneIcon } from '../icons';
 import { getMuiCloneTitle, useMuiBuilderStrings } from './copy';

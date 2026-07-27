@@ -1,15 +1,15 @@
 export { Builder } from './builder';
 export { defaultComponents } from './constants/default-components';
-export { HistoryButton } from './components/history-button';
-export { HistoryControls } from './components/history-controls';
-export { Alert } from '../alert';
-export { OutlinedButton } from '../outlined-button';
+export { HistoryButton } from './history/components/history-button/history-button';
+export { HistoryControls } from './history/components/history-controls';
+export { Alert } from './components/alert';
+export { OutlinedButton } from './components/outlined-button';
 export { TextModeToggleContent } from './text-mode/components/text-mode-toggle-content';
 export { TextModeEditor } from './text-mode/components/text-mode-editor';
 export { TextModeInput } from './text-mode/components/text-mode-input';
 export { useBuilderRef } from './hooks/use-builder-ref';
 export { useBuilderRuleDependencies } from './hooks/use-builder-rule-dependencies';
-export type { IHistoryButtonProps } from './components/history-button';
+export type { IHistoryButtonProps } from './history/components/history-button/history-button';
 export type {
   IBuilderRuleOptionsBindingConfig,
   IBuilderRuleOptionsErrorContext,

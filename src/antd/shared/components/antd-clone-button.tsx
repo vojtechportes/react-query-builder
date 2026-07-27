@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Button, Tooltip } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
-import { ICloneButtonProps } from '../../../clone-button';
+import { ICloneButtonProps } from '../../../builder/components/clone-button';
 import { getAntdCloneTitle, useAntdBuilderStrings } from './copy';
 import { antdIconButtonStyle } from './styles';
 

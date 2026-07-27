@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Switch } from 'antd';
-import { ISwitchProps } from '../../../form/switch';
+import { ISwitchProps } from '../../../builder/components/form-controls/switch';
 
 export const AntdSwitch: FC<ISwitchProps> = ({
   switched,
@@ -10,7 +10,7 @@ export const AntdSwitch: FC<ISwitchProps> = ({
 }) => (
   <Switch
     checked={switched}
-    onChange={checked => onChange?.(checked)}
+    onChange={(checked) => onChange?.(checked)}
     disabled={disabled}
     className={className}
     size="small"

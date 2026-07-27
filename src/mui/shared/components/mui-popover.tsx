@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Button, Menu } from '@mui/material';
-import { IPopoverProps } from '../../../popover';
+import { IPopoverProps } from '../../../builder/components/popover';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { menuPaperSx } from './styles';
 

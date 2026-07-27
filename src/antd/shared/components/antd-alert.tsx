@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Alert } from 'antd';
-import { IAlertProps } from '../../../alert';
+import { IAlertProps } from '../../../builder/components/alert';
 
 const severityMap = {
   info: 'info',

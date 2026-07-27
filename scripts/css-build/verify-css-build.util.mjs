@@ -55,7 +55,7 @@ const verifyCssBuild = async () => {
     {
       name: 'DropZone',
       modulePattern:
-        /#region src\/drop-zone\/drop-zone\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/drag-and-drop\/components\/drop-zone\/drop-zone\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: [
         'anchor',
         'active',
@@ -71,7 +71,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Button',
       modulePattern:
-        /#region src\/button\/button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/button\/button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['button'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['button'],
@@ -79,7 +79,7 @@ const verifyCssBuild = async () => {
     {
       name: 'SecondaryButton',
       modulePattern:
-        /#region src\/secondary-button\/secondary-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/secondary-button\/secondary-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['secondaryButton'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['secondaryButton'],
@@ -87,7 +87,7 @@ const verifyCssBuild = async () => {
     {
       name: 'OutlinedButton',
       modulePattern:
-        /#region src\/outlined-button\/outlined-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/outlined-button\/outlined-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['outlinedButton'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['outlinedButton'],
@@ -95,7 +95,7 @@ const verifyCssBuild = async () => {
     {
       name: 'CloneButton',
       modulePattern:
-        /#region src\/clone-button\/clone-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/clone-button\/clone-button\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['cloneButton', 'disabled'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['cloneButton'],
@@ -109,7 +109,7 @@ const verifyCssBuild = async () => {
     {
       name: 'LockToggle',
       modulePattern:
-        /#region src\/lock-toggle\/lock-toggle\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/lock-toggle\/lock-toggle\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['all', 'disabled', 'lockToggle', 'self', 'unlocked'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['all', 'lockToggle', 'self', 'unlocked'],
@@ -125,7 +125,7 @@ const verifyCssBuild = async () => {
     {
       name: 'GroupOption',
       modulePattern:
-        /#region src\/group\/components\/option\/option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/group\/components\/option\/option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['disabled', 'option', 'selected'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['disabled', 'option'],
@@ -149,7 +149,7 @@ const verifyCssBuild = async () => {
     {
       name: 'GroupContainer',
       modulePattern:
-        /#region src\/group\/components\/group-container\/group-container\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/group\/components\/group-container\/group-container\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: [
         'body',
         'group',
@@ -180,7 +180,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Alert',
       modulePattern:
-        /#region src\/alert\/alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/alert\/alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: [
         'alert',
         'content',
@@ -254,7 +254,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Text',
       modulePattern:
-        /#region src\/text\/text\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/builder\/components\/text\/text\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['text'],
       entryFiles: ['index.mjs', 'index.cjs'],
       uniqueRuleKeys: ['text'],

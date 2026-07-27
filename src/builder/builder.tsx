@@ -9,10 +9,10 @@ import React, {
 } from 'react';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { BuilderContextProvider } from './context';
-import { Alert as DefaultAlert } from '../alert';
-import { Button } from '../button';
+import { Alert as DefaultAlert } from './components/alert';
+import { Button } from './components/button';
 import { strings as defaultStrings } from '../shared/localization/locales/en-us';
-import { DragPreview } from '../drag-preview';
+import { DragPreview } from './drag-and-drop/components/drag-preview';
 import { createClonedSubtree } from './history/utils/create-cloned-subtree.util';
 import { createInsertSubtreeAction } from './history/utils/create-insert-subtree-action.util';
 import { createMoveNodeAction } from './history/utils/create-move-node-action.util';
@@ -21,10 +21,10 @@ import { createRemoveSubtreeAction } from './history/utils/create-remove-subtree
 import { createReplaceNodeAction } from './history/utils/create-replace-node-action.util';
 import { findNodeById } from './history/utils/find-node-by-id.util';
 import { getNodePosition } from './history/utils/get-node-position.util';
-import { Iterator } from '../iterator';
-import { Popover } from '../popover';
-import { PopoverItem } from '../popover-item';
-import { useThemeCssVariables } from '../theme-provider/hooks/use-theme-css-variables';
+import { Iterator } from './drag-and-drop/components/iterator/iterator';
+import { Popover } from './components/popover';
+import { PopoverItem } from './components/popover-item';
+import { useThemeCssVariables } from './theme/hooks/use-theme-css-variables';
 import { createGroupNode } from '../shared/query/transformations/utils/create-group-node.util';
 import { createId } from '../shared/query/model/utils/create-id.util';
 import { emitQuery } from '../shared/query/normalization/utils/emit-query.util';
@@ -37,10 +37,10 @@ import {
   NormalizedQuery,
 } from '../shared/query/model/types/query-tree';
 import { defaultComponents } from './constants/default-components';
-import { BuilderRootActions } from './components/builder-root-actions';
+import { BuilderRootActions } from './components/builder-root-actions/builder-root-actions';
 import { StyledBuilder } from './components/styled-builder';
-import { TextModeBlockedAlertContainer } from './components/text-mode-blocked-alert-container';
-import { useBuilderDragAndDrop } from './hooks/use-builder-drag-and-drop';
+import { TextModeBlockedAlertContainer } from './text-mode/components/text-mode-blocked-alert-container';
+import { useBuilderDragAndDrop } from './drag-and-drop/hooks/use-builder-drag-and-drop';
 import { useBuilderHistory } from './history/hooks/use-builder-history';
 import { useBuilderValidation } from './hooks/use-builder-validation';
 import { TextModeEditor as DefaultTextModeEditor } from './text-mode/components/text-mode-editor';

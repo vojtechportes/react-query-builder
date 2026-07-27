@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IGroupProps } from '../../../group/components/group-container';
+import { IGroupProps } from '../../../builder/components/group/components/group-container';
 import { bootstrapCardStyles, joinClassNames } from './styles';
 
 export const BootstrapGroup: FC<IGroupProps> = ({
@@ -16,12 +16,17 @@ export const BootstrapGroup: FC<IGroupProps> = ({
 
   return (
     <div
-      className={joinClassNames('border bg-body-tertiary shadow-sm mt-2', className)}
+      className={joinClassNames(
+        'border bg-body-tertiary shadow-sm mt-2',
+        className
+      )}
       style={{
         ...bootstrapCardStyles,
         display: 'grid',
         overflow: 'hidden',
-        gridTemplateColumns: dragHandle ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)',
+        gridTemplateColumns: dragHandle
+          ? 'auto minmax(0, 1fr)'
+          : 'minmax(0, 1fr)',
       }}
     >
       {dragHandle}

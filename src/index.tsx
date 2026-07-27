@@ -1,5 +1,5 @@
-import './styles/css-module-contract';
-import './styles/tokens.css';
+import './builder/theme/styles/css-module-contract';
+import './builder/theme/styles/tokens.css';
 
 export { Builder, defaultComponents } from './builder';
 export { useBuilderRef } from './builder/hooks/use-builder-ref';
@@ -87,12 +87,12 @@ export type {
   IBooleanFieldValidationRule,
   IBooleanValueValidationRule,
 } from './builder';
-export { ThemeProvider } from './theme-provider/theme-provider';
+export { ThemeProvider } from './builder/theme/components/theme-provider/theme-provider';
 export type {
   IThemeProps,
   IThemeProviderProps,
-} from './theme-provider/theme-provider';
-export type { ThemeColorOverrides } from './theme-provider/types/theme-color-overrides';
+} from './builder/theme/components/theme-provider/theme-provider';
+export type { ThemeColorOverrides } from './builder/theme/types/theme-color-overrides';
 
 export { BuilderContext } from './builder/context';
 export type {
@@ -100,55 +100,59 @@ export type {
   IBuilderContextProviderProps,
 } from './builder/context';
 
-export { Input } from './form/input';
-export type { IInputProps } from './form/input';
+export { Input } from './builder/components/form-controls/input';
+export type { IInputProps } from './builder/components/form-controls/input';
 
-export { Select } from './form/select';
-export type { ISelectProps } from './form/select';
+export { Select } from './builder/components/form-controls/select';
+export type { ISelectProps } from './builder/components/form-controls/select';
 
-export { Option } from './form/option';
-export { OptionContainer } from './form/option-container';
-export { SelectMulti } from './form/select-multi';
-export type { ISelectMultiProps } from './form/select-multi';
+export { Option } from './builder/components/form-controls/option';
+export { OptionContainer } from './builder/components/form-controls/option-container';
+export { SelectMulti } from './builder/components/form-controls/select-multi';
+export type { ISelectMultiProps } from './builder/components/form-controls/select-multi';
 
-export { Switch } from './form/switch';
-export type { ISwitchProps } from './form/switch';
+export { Switch } from './builder/components/form-controls/switch';
+export type { ISwitchProps } from './builder/components/form-controls/switch';
 
-export { Button } from './button';
-export type { IButtonProps } from './button';
-export { Alert } from './alert';
-export type { IAlertProps, AlertSeverity, AlertVariant } from './alert';
-export { CloneButton } from './clone-button';
-export type { ICloneButtonProps } from './clone-button';
-export { LockToggle } from './lock-toggle';
-export type { ILockToggleProps } from './lock-toggle';
+export { Button } from './builder/components/button';
+export type { IButtonProps } from './builder/components/button';
+export { Alert } from './builder/components/alert';
+export type {
+  IAlertProps,
+  AlertSeverity,
+  AlertVariant,
+} from './builder/components/alert';
+export { CloneButton } from './builder/components/clone-button';
+export type { ICloneButtonProps } from './builder/components/clone-button';
+export { LockToggle } from './builder/components/lock-toggle';
+export type { ILockToggleProps } from './builder/components/lock-toggle';
 
-export { SecondaryButton } from './secondary-button';
-export { OutlinedButton } from './outlined-button';
+export { SecondaryButton } from './builder/components/secondary-button';
+export { OutlinedButton } from './builder/components/outlined-button';
 export { TextModeEditor } from './builder/text-mode/components/text-mode-editor';
 export { TextModeInput } from './builder/text-mode/components/text-mode-input';
 export { TextModeToggleContent } from './builder/text-mode/components/text-mode-toggle-content';
-export { Popover } from './popover';
-export type { IPopoverProps } from './popover';
-export { PopoverItem } from './popover-item';
-export type { IPopoverItemProps } from './popover-item';
+export { Popover } from './builder/components/popover';
+export type { IPopoverProps } from './builder/components/popover';
+export { PopoverItem } from './builder/components/popover-item';
+export type { IPopoverItemProps } from './builder/components/popover-item';
 
-export { Rule } from './rule/rule-container';
-export type { IRuleProps } from './rule/rule-container';
+export { Rule } from './builder/components/rule/rule-container';
+export type { IRuleProps } from './builder/components/rule/rule-container';
 
-export { Group } from './group/components/group-container';
-export type { IGroupProps } from './group/components/group-container';
+export { Group } from './builder/components/group/components/group-container';
+export type { IGroupProps } from './builder/components/group/components/group-container';
 
-export { Option as GroupHeaderOption } from './group/components/option';
-export type { IOptionProps as IGroupHeaderOptionProps } from './group/components/option';
+export { Option as GroupHeaderOption } from './builder/components/group/components/option';
+export type { IOptionProps as IGroupHeaderOptionProps } from './builder/components/group/components/option';
 
-export { colors } from './constants/colors';
+export { colors } from './builder/theme/styles/colors';
 export type {
   IAlertColorVariant,
   IColors,
   IColorVariant,
   IGreyColorVariant,
-} from './constants/colors';
+} from './builder/theme/styles/colors';
 export { strings } from './locales/en-us';
 export type { IStrings } from './shared/localization/types/strings';
 export { queryOperators } from './shared/query/model/constants/query-operators';

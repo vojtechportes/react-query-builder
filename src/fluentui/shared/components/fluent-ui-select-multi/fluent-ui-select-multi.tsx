@@ -1,8 +1,8 @@
 import { Dropdown, getTheme, IDropdownOption, Stack } from '@fluentui/react';
 import React, { CSSProperties, FC, useContext, useMemo } from 'react';
 import { BuilderContext } from '../../../../builder/context';
-import { ISelectMultiProps } from '../../../../form/select-multi';
-import { createSummary } from '../../../../widgets/select-multi/utils/create-summary.util';
+import { ISelectMultiProps } from '../../../../builder/components/form-controls/select-multi';
+import { createSummary } from '../../../../builder/components/rule-controls/select-multi/utils/create-summary.util';
 import styles from './fluent-ui-select-multi.module.css';
 
 const theme = getTheme();

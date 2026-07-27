@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IPopoverItemProps } from '../../../popover-item';
+import { IPopoverItemProps } from '../../../builder/components/popover-item';
 import { joinClassNames } from './styles';
 
 export const BootstrapPopoverItem: FC<IPopoverItemProps> = ({

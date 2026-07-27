@@ -2,23 +2,23 @@ import React from 'react';
 import type { IBuilderStyle } from './builder-style';
 import type { IBuilderFieldProps } from '../../shared/builder-components/types';
 export type * from '../../shared/builder-components/types';
-import { IAlertProps } from '../../alert';
-import { IButtonProps } from '../../button';
-import { ICloneButtonProps } from '../../clone-button';
-import { IDropZoneProps } from '../../drop-zone';
-import { IEmptyGroupDropZoneProps } from '../../empty-group-drop-zone';
-import { IInputProps } from '../../form/input';
-import { ISelectProps } from '../../form/select';
-import { ISelectMultiProps } from '../../form/select-multi';
-import { ISwitchProps } from '../../form/switch';
-import { IGroupProps as IGroupContainerProps } from '../../group/components/group-container';
-import { IOptionProps as IGroupHeaderOptionProps } from '../../group/components/option';
+import { IAlertProps } from '../components/alert';
+import { IButtonProps } from '../components/button';
+import { ICloneButtonProps } from '../components/clone-button';
+import { IDropZoneProps } from '../drag-and-drop/components/drop-zone';
+import { IEmptyGroupDropZoneProps } from '../drag-and-drop/components/empty-group-drop-zone';
+import { IInputProps } from '../components/form-controls/input';
+import { ISelectProps } from '../components/form-controls/select';
+import { ISelectMultiProps } from '../components/form-controls/select-multi';
+import { ISwitchProps } from '../components/form-controls/switch';
+import { IGroupProps as IGroupContainerProps } from '../components/group/components/group-container';
+import { IOptionProps as IGroupHeaderOptionProps } from '../components/group/components/option';
 import { IBuilderHistoryConfig } from '../history/types';
-import { ILockToggleProps } from '../../lock-toggle';
-import { IPopoverItemProps } from '../../popover-item';
-import { IPopoverProps } from '../../popover';
-import { IRuleProps as IRuleContainerProps } from '../../rule/rule-container';
-import { Text } from '../../text';
+import { ILockToggleProps } from '../components/lock-toggle';
+import { IPopoverItemProps } from '../components/popover-item';
+import { IPopoverProps } from '../components/popover';
+import { IRuleProps as IRuleContainerProps } from '../components/rule/rule-container';
+import { Text } from '../components/text';
 import type { IStrings } from '../../shared/localization/types/strings';
 import { BuilderLockState } from '../read-only/utils/lock-state.util';
 import { BuilderDefaultMode } from './builder-default-mode';
@@ -52,7 +52,11 @@ export type {
   IBuilderRuleValueReconciliationConfig,
   INearestFieldMatch,
 } from './field-option';
-export type { IAlertProps, AlertSeverity, AlertVariant } from '../../alert';
+export type {
+  IAlertProps,
+  AlertSeverity,
+  AlertVariant,
+} from '../components/alert';
 export type { IBuilderTextModeConfig } from '../text-mode/types/builder-text-mode-config';
 export type { ITextModeEditorProps } from '../text-mode/types/text-mode-editor-props';
 export type { ITextModeInputProps } from '../text-mode/types/text-mode-input-props';

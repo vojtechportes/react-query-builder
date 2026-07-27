@@ -1,5 +1,9 @@
 import React, { FC } from 'react';
-import { AlertSeverity, AlertVariant, IAlertProps } from '../../../alert';
+import {
+  AlertSeverity,
+  AlertVariant,
+  IAlertProps,
+} from '../../../builder/components/alert';
 import { joinClassNames } from './styles';
 
 const severityClassMap: Record<AlertSeverity, string> = {
@@ -22,7 +26,11 @@ export const BootstrapAlert: FC<IAlertProps> = ({
   'data-test': dataTest,
 }) => (
   <div
-    className={joinClassNames('alert mb-0', getVariantClassName(severity, variant), className)}
+    className={joinClassNames(
+      'alert mb-0',
+      getVariantClassName(severity, variant),
+      className
+    )}
     role="alert"
     data-test={dataTest}
   >
