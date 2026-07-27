@@ -196,19 +196,6 @@ for (const fileName of fs
     if (
       ts.isPropertyAssignment(node) &&
       ts.isIdentifier(node.name) &&
-      node.name.text === 'installCode' &&
-      ts.isNoSubstitutionTemplateLiteral(node.initializer)
-    ) {
-      validateStylesheetImport(
-        node.initializer.text,
-        `pages/${fileName}#installCode`,
-        errors
-      );
-    }
-
-    if (
-      ts.isPropertyAssignment(node) &&
-      ts.isIdentifier(node.name) &&
       renderedCodeProperties.has(node.name.text)
     ) {
       const propertyName = node.name.text;

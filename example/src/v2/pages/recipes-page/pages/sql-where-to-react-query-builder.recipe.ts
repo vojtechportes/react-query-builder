@@ -23,11 +23,7 @@ export const sqlWhereToReactQueryBuilderRecipe: IRecipePage = {
     '/documentation/parsing-and-formatting',
     '/api/data',
   ],
-  installCode: `npm install @vojtechportes/react-query-builder
-
-import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder`,
   fieldsCode: `const sql = "WHERE status = 'PAID' AND total >= 100";
 const parsed = parseQuery(sql.replace(/^WHERE\\s+/i, ''), 'SQL');
 const fields: IBuilderFieldProps[] = parsed.fields;

@@ -29,11 +29,7 @@ export const persistFiltersInUrlRecipe: IRecipePage = {
       href: 'https://developer.mozilla.org/en-US/docs/Web/API/History_API/Working_with_the_History_API',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder
-
-import { Builder, type DenormalizedQuery } from '@vojtechportes/react-query-builder';
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'status', label: 'Status', type: 'LIST', value: statusOptions },
   { field: 'owner', label: 'Owner', type: 'TEXT' },

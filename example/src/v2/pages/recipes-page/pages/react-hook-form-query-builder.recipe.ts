@@ -29,9 +29,7 @@ export const reactHookFormQueryBuilderRecipe: IRecipePage = {
       href: 'https://react-hook-form.com/docs/usecontroller/controller',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder react-hook-form
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder react-hook-form`,
   fieldsCode: `type FilterForm = { name: string; query: DenormalizedQuery };
 
 const fields: IBuilderFieldProps[] = [
