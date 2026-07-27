@@ -5,7 +5,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from './builder';
-import { BuilderContext } from './builder-context';
+import { BuilderContext } from './builder/context';
 import { strings } from './shared/localization/locales/en-us';
 import { Iterator } from './iterator';
 import { NormalizedQuery } from './shared/query/model/types/query-tree';

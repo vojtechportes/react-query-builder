@@ -1,4 +1,4 @@
-import { resolveGroupReadOnly } from '../../../utils/resolve-group-read-only.util';
+import { resolveGroupReadOnly } from '../../read-only/utils/resolve-group-read-only.util';
 import {
   DenormalizedNode,
   DenormalizedQuery,

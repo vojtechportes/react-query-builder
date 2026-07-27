@@ -2,8 +2,8 @@ import './styles/css-module-contract';
 import './styles/tokens.css';
 
 export { Builder, defaultComponents } from './builder';
-export { useBuilderRef } from './hooks/use-builder-ref';
-export { useBuilderRuleDependencies } from './hooks/use-builder-rule-dependencies';
+export { useBuilderRef } from './builder/hooks/use-builder-ref';
+export { useBuilderRuleDependencies } from './builder/hooks/use-builder-rule-dependencies';
 export type {
   IBuilderRuleOptionsBindingConfig,
   IBuilderRuleOptionsErrorContext,
@@ -94,11 +94,11 @@ export type {
 } from './theme-provider/theme-provider';
 export type { ThemeColorOverrides } from './theme-provider/types/theme-color-overrides';
 
-export { BuilderContext } from './builder-context';
+export { BuilderContext } from './builder/context';
 export type {
   IBuilderContextProps,
   IBuilderContextProviderProps,
-} from './builder-context';
+} from './builder/context';
 
 export { Input } from './form/input';
 export type { IInputProps } from './form/input';

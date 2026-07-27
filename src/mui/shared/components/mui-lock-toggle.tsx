@@ -4,7 +4,7 @@ import { ILockToggleProps } from '../../../lock-toggle';
 import {
   getNextGroupLockState,
   getNextRuleLockState,
-} from '../../../utils/lock-state';
+} from '../../../builder/read-only/utils/lock-state.util';
 import { muiControlDensitySx } from '../constants/mui-control-density-sx.constant';
 import { LockStateIcon } from '../icons';
 import { getMuiLockTitle, useMuiBuilderStrings } from './copy';

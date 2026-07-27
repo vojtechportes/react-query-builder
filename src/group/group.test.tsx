@@ -9,7 +9,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { strings } from '../shared/localization/locales/en-us';
 import { Group } from './group';
 import { Group as GroupContainer } from './components/group-container';

@@ -1,13 +1,13 @@
 import React, { FC, useContext } from 'react';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { isBuilderFieldUsageExhausted } from '../builder/utils/resolve-builder-field-usage.util';
 import { Select as DefaultSelect } from '../form/select';
-import { createReplaceNodeAction } from '../history/create-replace-node-action';
-import { findNodeById } from '../history/find-node-by-id';
-import { applyDataUpdate } from '../utils/apply-data-update.util';
-import { createRuleStateForField } from '../utils/create-rule-state-for-field.util';
-import { emitBuilderFieldChange } from '../utils/emit-builder-field-change.util';
-import { getCompatibleValueFields } from '../utils/field-comparison-support';
+import { createReplaceNodeAction } from '../builder/history/utils/create-replace-node-action.util';
+import { findNodeById } from '../builder/history/utils/find-node-by-id.util';
+import { applyDataUpdate } from '../builder/utils/apply-data-update.util';
+import { createRuleStateForField } from '../builder/utils/create-rule-state-for-field.util';
+import { emitBuilderFieldChange } from '../builder/utils/emit-builder-field-change.util';
+import { getCompatibleValueFields } from '../builder/utils/field-comparison-support.util';
 import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
 import {
   QueryRuleValue,

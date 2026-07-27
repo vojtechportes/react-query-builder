@@ -5,11 +5,8 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
-import {
-  OperatorSelect,
-  IOperatorSelectValuesProps,
-} from './operator-select';
+import { BuilderContext } from '../builder/context';
+import { OperatorSelect, IOperatorSelectValuesProps } from './operator-select';
 
 const components: IBuilderComponentsProps = defaultComponents;
 const fields: IBuilderFieldProps[] = [
@@ -19,7 +16,12 @@ const fields: IBuilderFieldProps[] = [
 const data: any[] = [
   { field: 'MOCK_FIELD_1', id: 'test-1', value: 'Test' },
   { field: 'MOCK_FIELD_2', id: 'test-2', value: 'Test' },
-  { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
+  {
+    field: 'MOCK_FIELD_2',
+    id: 'test-3',
+    value: [1, 2],
+    operator: 'NOT_BETWEEN',
+  },
 ];
 
 const operatorSelectValues: IOperatorSelectValuesProps[][] = [
@@ -28,8 +30,14 @@ const operatorSelectValues: IOperatorSelectValuesProps[][] = [
     { value: 'ALL_IN', label: 'Test' },
     { value: 'ANY_IN', label: 'Test' },
   ],
-  [{ value: 'ALL_IN', label: 'Test' }, { value: 'ANY_IN', label: 'Test' }],
-  [{ value: 'IS_NULL', label: 'Test' }, { value: 'IS_NOT_NULL', label: 'Test' }],
+  [
+    { value: 'ALL_IN', label: 'Test' },
+    { value: 'ANY_IN', label: 'Test' },
+  ],
+  [
+    { value: 'IS_NULL', label: 'Test' },
+    { value: 'IS_NOT_NULL', label: 'Test' },
+  ],
   [{ value: 'NOT_EQUAL', label: 'Test' }],
 ];
 
@@ -45,7 +53,9 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -119,7 +129,12 @@ describe('#components/Widgets/OperatorSelect', () => {
         operator: 'BETWEEN',
         valueSource: 'value',
       },
-      { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: [1, 2],
+        operator: 'NOT_BETWEEN',
+      },
     ]);
   });
 
@@ -142,7 +157,12 @@ describe('#components/Widgets/OperatorSelect', () => {
         operator: 'ALL_IN',
         valueSource: 'value',
       },
-      { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: [1, 2],
+        operator: 'NOT_BETWEEN',
+      },
     ]);
   });
 
@@ -175,7 +195,9 @@ describe('#components/Widgets/OperatorSelect', () => {
       { components: {} as IBuilderComponentsProps }
     );
 
-    expect(container.querySelector('[data-test="SelectMultiTrigger"]')).toBeTruthy();
+    expect(
+      container.querySelector('[data-test="SelectMultiTrigger"]')
+    ).toBeTruthy();
   });
 
   it('clears the value when switching to IS_NULL', () => {
@@ -189,9 +211,19 @@ describe('#components/Widgets/OperatorSelect', () => {
     fireEvent.click(getByDataTest(container, 'SelectMultiOption[IS_NULL]'));
 
     expect(onChange).toHaveBeenCalledWith([
-      { field: 'MOCK_FIELD_1', id: 'test-1', operator: 'IS_NULL', valueSource: 'value' },
+      {
+        field: 'MOCK_FIELD_1',
+        id: 'test-1',
+        operator: 'IS_NULL',
+        valueSource: 'value',
+      },
       { field: 'MOCK_FIELD_2', id: 'test-2', value: 'Test' },
-      { field: 'MOCK_FIELD_2', id: 'test-3', value: [1, 2], operator: 'NOT_BETWEEN' },
+      {
+        field: 'MOCK_FIELD_2',
+        id: 'test-3',
+        value: [1, 2],
+        operator: 'NOT_BETWEEN',
+      },
     ]);
   });
 
@@ -295,7 +327,10 @@ describe('#components/Widgets/OperatorSelect unsupported field comparisons', () 
       },
     ];
     const { container } = renderWithContext(
-      <OperatorSelect id="test-1" values={[{ value: 'BETWEEN', label: 'Test' }]} />,
+      <OperatorSelect
+        id="test-1"
+        values={[{ value: 'BETWEEN', label: 'Test' }]}
+      />,
       {
         data: fieldComparisonData,
         fields: [

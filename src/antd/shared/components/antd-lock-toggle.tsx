@@ -9,7 +9,7 @@ import { ILockToggleProps } from '../../../lock-toggle';
 import {
   getNextGroupLockState,
   getNextRuleLockState,
-} from '../../../utils/lock-state';
+} from '../../../builder/read-only/utils/lock-state.util';
 import { getAntdLockTitle, useAntdBuilderStrings } from './copy';
 import { antdIconButtonStyle } from './styles';
 

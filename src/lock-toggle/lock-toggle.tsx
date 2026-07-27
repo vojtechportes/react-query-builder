@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import React, { FC, useCallback } from 'react';
-import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
+import { getLockToggleTitle } from '../builder/utils/get-lock-toggle-title.util';
 import {
   BuilderLockState,
   getNextGroupLockState,
   getNextRuleLockState,
-} from '../utils/lock-state';
+} from '../builder/read-only/utils/lock-state.util';
 import { LockIcon } from './lock-icon';
 import styles from './lock-toggle.module.css';
 

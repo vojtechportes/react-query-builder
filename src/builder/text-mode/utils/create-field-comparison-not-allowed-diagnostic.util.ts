@@ -1,5 +1,5 @@
 import type { IStrings } from '../../../shared/localization/types/strings';
-import { getValidationString } from '../../../utils/validation/get-validation-string.util';
+import { getValidationString } from '../../validation/utils/get-validation-string.util';
 import { ITextModeDiagnostic } from '../types/text-mode-diagnostic';
 
 export const createFieldComparisonNotAllowedDiagnostic = (

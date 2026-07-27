@@ -1,6 +1,6 @@
 import { Select } from '@radix-ui/themes';
 import React, { FC, useContext } from 'react';
-import { BuilderContext } from '../../../../builder-context';
+import { BuilderContext } from '../../../../builder/context';
 import { ISelectProps } from '../../../../form/select';
 import { getRadixSelectPlaceholder } from '../../utils/get-radix-select-placeholder.util';
 import styles from './radix-select.module.css';

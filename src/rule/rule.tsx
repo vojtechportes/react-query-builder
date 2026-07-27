@@ -1,13 +1,13 @@
 import React, { FC, useCallback, useContext } from 'react';
 import clsx from 'clsx';
 import { BuilderFieldOperator, BuilderLockState } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { CloneButton as DefaultCloneButton } from '../clone-button';
-import { createClonedSubtree } from '../history/create-cloned-subtree';
-import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
-import { createRemoveSubtreeAction } from '../history/create-remove-subtree-action';
-import { createReplaceNodeAction } from '../history/create-replace-node-action';
-import { getNodePosition } from '../history/get-node-position';
+import { createClonedSubtree } from '../builder/history/utils/create-cloned-subtree.util';
+import { createInsertSubtreeAction } from '../builder/history/utils/create-insert-subtree-action.util';
+import { createRemoveSubtreeAction } from '../builder/history/utils/create-remove-subtree-action.util';
+import { createReplaceNodeAction } from '../builder/history/utils/create-replace-node-action.util';
+import { getNodePosition } from '../builder/history/utils/get-node-position.util';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Rule as DefaultRuleContainer } from './components/rule-container';
 import { SecondaryButton } from '../secondary-button';
@@ -19,17 +19,17 @@ import { Select } from '../widgets/select';
 import { SelectMulti } from '../widgets/select-multi/select-multi';
 import { ValueFieldSelect } from '../widgets/value-field-select';
 import { ValueSourceSelect } from '../widgets/value-source-select';
-import { isBoolean } from '../utils/is-boolean.util';
+import { isBoolean } from '../builder/utils/is-boolean.util';
 import {
   getCompatibleValueFields,
   supportsFieldComparisonForOperator,
-} from '../utils/field-comparison-support';
-import { isNumber } from '../utils/is-number.util';
-import { isNumberArray } from '../utils/is-number-array.util';
-import { isOptionList } from '../utils/is-option-list.util';
-import { isString } from '../utils/is-string.util';
-import { isStringArray } from '../utils/is-string-array.util';
-import { isStringOrNumberArray } from '../utils/is-string-or-number-array.util';
+} from '../builder/utils/field-comparison-support.util';
+import { isNumber } from '../builder/utils/is-number.util';
+import { isNumberArray } from '../builder/utils/is-number-array.util';
+import { isOptionList } from '../builder/utils/is-option-list.util';
+import { isString } from '../builder/utils/is-string.util';
+import { isStringArray } from '../builder/utils/is-string-array.util';
+import { isStringOrNumberArray } from '../builder/utils/is-string-or-number-array.util';
 import { operatorRequiresValue } from '../shared/query/model/utils/operator-requires-value.util';
 import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
 import {
@@ -37,10 +37,10 @@ import {
   QueryRuleValueSource,
   RuleReadOnlyTarget,
 } from '../shared/query/model/types/query-tree';
-import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
-import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
-import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
-import { updateRuleLockState } from '../utils/read-only/update-rule-lock-state.util';
+import { getCloneButtonTitle } from '../builder/utils/get-clone-button-title.util';
+import { getLockToggleTitle } from '../builder/utils/get-lock-toggle-title.util';
+import { isNodeDeletionProtected } from '../builder/read-only/utils/is-node-deletion-protected.util';
+import { updateRuleLockState } from '../builder/read-only/utils/update-rule-lock-state.util';
 import { getRuleValueSource } from '../shared/query/model/utils/rule-value-source.util';
 import { useBuilderFieldOptionState } from '../builder/hooks/use-builder-field-option-state';
 import styles from './rule.module.css';

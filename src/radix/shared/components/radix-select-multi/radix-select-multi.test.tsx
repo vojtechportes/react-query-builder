@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import React from 'react';
-import { BuilderContext } from '../../../../builder-context';
+import { BuilderContext } from '../../../../builder/context';
 import { strings } from '../../../../shared/localization/locales/en-us';
 import { RadixSelectMulti } from './radix-select-multi';
 import styles from './radix-select-multi.module.css';

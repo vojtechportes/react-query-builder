@@ -10,7 +10,7 @@ import {
   getGroupReadOnlyTargets,
   isGroupFullyReadOnly,
   resolveGroupReadOnly,
-} from '../../../utils/resolve-group-read-only.util';
+} from '../../read-only/utils/resolve-group-read-only.util';
 import { isGroupNode } from '../../../shared/query-formats/sql/shared';
 import { IBuilderTextModeSqlState } from '../types/builder-text-mode-sql-state';
 import {

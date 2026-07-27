@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { BuilderContext } from '../../../builder-context';
-import { BuilderLockState } from '../../../utils/lock-state';
-import { getCloneButtonTitle } from '../../../utils/get-clone-button-title.util';
-import { getLockToggleTitle } from '../../../utils/get-lock-toggle-title.util';
+import { BuilderContext } from '../../../builder/context';
+import { BuilderLockState } from '../../../builder/read-only/utils/lock-state.util';
+import { getCloneButtonTitle } from '../../../builder/utils/get-clone-button-title.util';
+import { getLockToggleTitle } from '../../../builder/utils/get-lock-toggle-title.util';
 
 export const useMuiBuilderStrings = () => useContext(BuilderContext).strings;
 

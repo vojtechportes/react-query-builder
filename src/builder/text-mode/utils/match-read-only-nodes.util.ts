@@ -7,11 +7,11 @@ import {
   RuleReadOnlyTarget,
 } from '../../../shared/query/model/types/query-tree';
 import { QueryOperator } from '../../../shared/query/model/constants/query-operators';
-import { resolveGroupReadOnly } from '../../../utils/resolve-group-read-only.util';
+import { resolveGroupReadOnly } from '../../read-only/utils/resolve-group-read-only.util';
 import {
   getRuleReadOnlyTargets,
   isRuleFullyReadOnly,
-} from '../../../utils/resolve-rule-read-only.util';
+} from '../../read-only/utils/resolve-rule-read-only.util';
 
 export interface IReadOnlyNodeDescriptor {
   kind: 'rule' | 'group-all' | 'group-self';

@@ -1,32 +1,32 @@
 import React, { FC, useContext } from 'react';
 import { BuilderGroupValues, BuilderLockState } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { Button } from '../button';
 import { CloneButton as DefaultCloneButton } from '../clone-button';
-import { createClonedSubtree } from '../history/create-cloned-subtree';
-import { createInsertSubtreeAction } from '../history/create-insert-subtree-action';
-import { createRemoveSubtreeAction } from '../history/create-remove-subtree-action';
-import { createReplaceNodeAction } from '../history/create-replace-node-action';
-import { getNodePosition } from '../history/get-node-position';
+import { createClonedSubtree } from '../builder/history/utils/create-cloned-subtree.util';
+import { createInsertSubtreeAction } from '../builder/history/utils/create-insert-subtree-action.util';
+import { createRemoveSubtreeAction } from '../builder/history/utils/create-remove-subtree-action.util';
+import { createReplaceNodeAction } from '../builder/history/utils/create-replace-node-action.util';
+import { getNodePosition } from '../builder/history/utils/get-node-position.util';
 import { LockToggle as DefaultLockToggle } from '../lock-toggle';
 import { Popover as DefaultPopover } from '../popover';
 import { PopoverItem as DefaultPopoverItem } from '../popover-item';
 import { SecondaryButton } from '../secondary-button';
 import { createGroupNode } from '../shared/query/transformations/utils/create-group-node.util';
 import { createId } from '../shared/query/model/utils/create-id.util';
-import { getCloneButtonTitle } from '../utils/get-clone-button-title.util';
-import { getLockToggleTitle } from '../utils/get-lock-toggle-title.util';
+import { getCloneButtonTitle } from '../builder/utils/get-clone-button-title.util';
+import { getLockToggleTitle } from '../builder/utils/get-lock-toggle-title.util';
 import { isNormalizedGroupNode } from '../shared/query/model/utils/is-normalized-group-node.util';
 import {
   GroupReadOnlyTarget,
   INormalizedRuleNode,
   NormalizedNode,
 } from '../shared/query/model/types/query-tree';
-import { createDefaultNodeIndex } from '../hooks/use-builder-ref/utils/create-default-node-index.util';
+import { createDefaultNodeIndex } from '../builder/hooks/use-builder-ref/utils/create-default-node-index.util';
 import { Group as DefaultGroupContainer } from './components/group-container';
 import { Option as DefaultOption } from './components/option';
-import { isNodeDeletionProtected } from '../utils/is-node-deletion-protected.util';
-import { updateGroupLockState } from '../utils/read-only/update-group-lock-state.util';
+import { isNodeDeletionProtected } from '../builder/read-only/utils/is-node-deletion-protected.util';
+import { updateGroupLockState } from '../builder/read-only/utils/update-group-lock-state.util';
 import { canAddRuleForParent } from '../builder/utils/resolve-builder-field-usage.util';
 
 export interface IGroupProps {

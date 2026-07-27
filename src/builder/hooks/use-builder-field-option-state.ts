@@ -1,5 +1,5 @@
 import { useContext, useSyncExternalStore } from 'react';
-import { BuilderContext } from '../../builder-context';
+import { BuilderContext } from '../context';
 import { IBuilderFieldProps } from '../types';
 import { resolveBuilderFieldOptionState } from '../utils/resolve-builder-field-option-state.util';
 
@@ -38,5 +38,9 @@ export const useBuilderFieldOptionState = (
         : undefined
   );
 
-  return resolveBuilderFieldOptionState(field, fieldRuntimeState, ruleRuntimeState);
+  return resolveBuilderFieldOptionState(
+    field,
+    fieldRuntimeState,
+    ruleRuntimeState
+  );
 };

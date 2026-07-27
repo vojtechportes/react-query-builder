@@ -5,7 +5,7 @@ import {
   IBuilderFieldProps,
   defaultComponents,
 } from '../builder';
-import { BuilderContext } from '../builder-context';
+import { BuilderContext } from '../builder/context';
 import { ValueSourceSelect } from './value-source-select';
 
 const components: IBuilderComponentsProps = defaultComponents;
@@ -26,7 +26,9 @@ const getByDataTest = (container: HTMLElement, value: string): HTMLElement => {
 
 const renderWithContext = (
   element: ReactElement,
-  overrides?: Partial<React.ComponentProps<typeof BuilderContext.Provider>['value']>
+  overrides?: Partial<
+    React.ComponentProps<typeof BuilderContext.Provider>['value']
+  >
 ) =>
   render(
     <BuilderContext.Provider
@@ -153,7 +155,9 @@ describe('#components/Widgets/ValueSourceSelect', () => {
     fireEvent.click(getByDataTest(container, 'SelectMultiTrigger'));
 
     expect(
-      getByDataTest(container, 'SelectMultiOption[field]').hasAttribute('disabled')
+      getByDataTest(container, 'SelectMultiOption[field]').hasAttribute(
+        'disabled'
+      )
     ).toBe(true);
   });
 });

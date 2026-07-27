@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { BuilderLockState } from '../utils/lock-state';
+import { BuilderLockState } from '../builder/read-only/utils/lock-state.util';
 
 export const LockIcon: FC<{ state: BuilderLockState }> = ({ state }) => {
   if (state === 'unlocked') {

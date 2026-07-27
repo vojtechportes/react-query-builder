@@ -1,4 +1,4 @@
-import { isOptionList } from '../../utils/is-option-list.util';
+import { isOptionList } from './is-option-list.util';
 import { IBuilderFieldProps } from '../types';
 import { IBuilderFieldOptionState } from '../types/field-option';
 

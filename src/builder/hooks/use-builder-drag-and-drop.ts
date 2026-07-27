@@ -13,8 +13,8 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { createMoveNodeAction } from '../../history/create-move-node-action';
-import { BuilderHistoryAction } from '../../history/types';
+import { createMoveNodeAction } from '../history/utils/create-move-node-action.util';
+import { BuilderHistoryAction } from '../history/types';
 
 const DROP_ZONE_PROXIMITY = 24;
 
