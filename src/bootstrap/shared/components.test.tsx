@@ -2,7 +2,11 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Builder, IBuilderFieldProps } from '../../index';
-import { components as bootstrapComponents } from '../v5';
+import {
+  BootstrapInput,
+  BootstrapOutlinedButton,
+  components as bootstrapComponents,
+} from '../v5';
 
 const fields: IBuilderFieldProps[] = [
   {
@@ -65,9 +69,9 @@ describe('#bootstrap/components', () => {
 
     fireEvent.click(textModeToggle);
 
-    expect(screen.getByRole('button', { name: 'Switch to builder mode' })).toHaveClass(
-      'btn'
-    );
+    expect(
+      screen.getByRole('button', { name: 'Switch to builder mode' })
+    ).toHaveClass('btn');
   });
 
   it('renders the SQL text editor with Bootstrap text-mode input styling', () => {
@@ -91,13 +95,46 @@ describe('#bootstrap/components', () => {
     expect(AlertComponent).toBeDefined();
 
     const { container } = render(
-      <AlertComponent severity="warning" variant="outlined" data-test="TextModeBlockedAlert">
-        Locked rules or groups are not supported in the text editor under this configuration.
+      <AlertComponent
+        severity="warning"
+        variant="outlined"
+        data-test="TextModeBlockedAlert"
+      >
+        Locked rules or groups are not supported in the text editor under this
+        configuration.
       </AlertComponent>
     );
 
     expect(
       container.querySelector('[data-test="TextModeBlockedAlert"]')
     ).toHaveClass('alert');
+  });
+  it('preserves incoming classes on Bootstrap controls', () => {
+    render(
+      <>
+        <BootstrapInput
+          type="text"
+          value="active"
+          onChange={jest.fn()}
+          className="incoming-input"
+        />
+        <BootstrapOutlinedButton
+          className="incoming-button"
+          title="Apply"
+          onClick={jest.fn()}
+        >
+          Apply
+        </BootstrapOutlinedButton>
+      </>
+    );
+
+    expect(screen.getByDisplayValue('active')).toHaveClass(
+      'form-control',
+      'incoming-input'
+    );
+    expect(screen.getByRole('button', { name: 'Apply' })).toHaveClass(
+      'btn',
+      'incoming-button'
+    );
   });
 });

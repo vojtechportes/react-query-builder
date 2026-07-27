@@ -1827,7 +1827,7 @@ wrappers.
 
 ### T055 - Verify Bootstrap, every adapter entry, and CSS-free non-UI entries
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T051, T052, T053, and T054
 
@@ -1924,7 +1924,7 @@ for the example site and v1 library demos.
 
 ### T059 - Add packed-consumer, SSR, hydration, and visual-parity verification
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T055 and T058
 

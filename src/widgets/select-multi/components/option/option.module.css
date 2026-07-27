@@ -61,4 +61,10 @@
   .selectedIndicator {
     color: var(--query-builder-color-primary-default);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .option {
+      transition: none;
+    }
+  }
 }

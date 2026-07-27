@@ -59,4 +59,10 @@
   .disabled {
     cursor: not-allowed;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .option {
+      transition: none;
+    }
+  }
 }

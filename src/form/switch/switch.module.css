@@ -63,4 +63,11 @@
     background: var(--query-builder-color-grey-300);
     border-color: var(--query-builder-color-grey-400);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .switch,
+    .knob {
+      transition: none;
+    }
+  }
 }
