@@ -23,9 +23,7 @@ export const serverSideFilteringRecipe: IRecipePage = {
     '/api/builder',
   ],
   illustrative: true,
-  installCode: `npm install @vojtechportes/react-query-builder
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'status', label: 'Status', type: 'LIST', value: statuses },
   { field: 'amount', label: 'Amount', type: 'NUMBER' },

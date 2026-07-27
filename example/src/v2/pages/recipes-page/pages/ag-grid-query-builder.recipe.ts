@@ -28,9 +28,7 @@ export const agGridQueryBuilderRecipe: IRecipePage = {
       href: 'https://www.ag-grid.com/javascript-data-grid/filter-external/',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder ag-grid-react ag-grid-community
-
-import '@vojtechportes/react-query-builder/styles.css';`,
+  installCode: `npm install @vojtechportes/react-query-builder ag-grid-react ag-grid-community`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'athlete', label: 'Athlete', type: 'TEXT' },
   { field: 'age', label: 'Age', type: 'NUMBER' },
