@@ -3,13 +3,13 @@ import type { IPackageExport } from '../types/package-export';
 export const packageExports: readonly IPackageExport[] = [
   {
     subpath: '/parseQuery',
-    localSourcePath: 'parseQuery/index.ts',
+    localSourcePath: 'subpackages/parse-query/index.ts',
     publishedImportPath: 'dist/parseQuery.mjs',
     publishedTypePath: 'dist/parseQuery.d.ts',
   },
   {
     subpath: '/formatQuery',
-    localSourcePath: 'formatQuery/index.ts',
+    localSourcePath: 'subpackages/format-query/index.ts',
     publishedImportPath: 'dist/formatQuery.mjs',
     publishedTypePath: 'dist/formatQuery.d.ts',
   },

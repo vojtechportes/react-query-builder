@@ -1,4 +1,4 @@
-import { ParsedNode } from '../../../query-formats/sql/sql-token.types';
+import { ParsedNode } from '../../../shared/query-formats/sql/sql-token.types';
 
 export const findFirstGroupWithNegationToken = (
   nodes: ParsedNode[]

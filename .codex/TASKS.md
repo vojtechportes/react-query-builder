@@ -2060,7 +2060,7 @@ site/v1 usage.
 
 ### T064 - Consolidate query formats and public parse/format entries
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T063
 
