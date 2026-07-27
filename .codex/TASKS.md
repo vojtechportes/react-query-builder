@@ -1728,7 +1728,7 @@ unexpectedly.
 
 ### T051 - Complete ANTD, MUI, and Mantine wrapper migrations
 
-**Status:** `[ ]` Not started
+**Status:** `[x]` Done
 
 **Depends on:** T034 and T049
 

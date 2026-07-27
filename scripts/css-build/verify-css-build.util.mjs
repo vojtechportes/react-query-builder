@@ -270,6 +270,63 @@ const verifyCssBuild = async () => {
       ],
       uniqueRuleKeys: ['content', 'label'],
     },
+    {
+      name: 'MUI text-mode toggle',
+      modulePattern:
+        /#region src\/mui\/shared\/components\/mui-text-mode-toggle-content\/mui-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['content', 'label'],
+      entryFiles: [
+        'mui/v7/index.mjs',
+        'mui/v7/index.cjs',
+        'mui/v9/index.mjs',
+        'mui/v9/index.cjs',
+      ],
+      uniqueRuleKeys: ['content', 'label'],
+
+      requiredRuleFragments: [
+        {
+          key: 'content',
+          fragments: [
+            'display: inline-flex;',
+            'align-items: center;',
+            'gap: .4rem;',
+            'line-height: 1;',
+          ],
+        },
+      ],
+    },
+    {
+      name: 'Mantine text-mode toggle',
+      modulePattern:
+        /#region src\/mantine\/shared\/components\/mantine-text-mode-toggle-content\/mantine-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['content', 'label'],
+      entryFiles: [
+        'mantine/v8/index.mjs',
+        'mantine/v8/index.cjs',
+        'mantine/v9/index.mjs',
+        'mantine/v9/index.cjs',
+      ],
+      uniqueRuleKeys: ['content', 'label'],
+      requiredSelectors: [{ key: 'content', suffix: ' svg {' }],
+      requiredSelectorRuleFragments: [
+        {
+          key: 'content',
+          suffix: ' svg',
+          fragments: ['display: block;', 'flex-shrink: 0;'],
+        },
+      ],
+      requiredRuleFragments: [
+        {
+          key: 'content',
+          fragments: [
+            'display: inline-flex;',
+            'align-items: center;',
+            'gap: .4rem;',
+            'line-height: 1;',
+          ],
+        },
+      ],
+    },
   ];
   const cssModuleMappings = new Map();
 
@@ -369,6 +426,26 @@ const verifyCssBuild = async () => {
         throw new Error(
           `${contract.name} required selector ${selector} is missing`
         );
+      }
+    }
+
+    for (const {
+      key,
+      suffix,
+      fragments,
+    } of contract.requiredSelectorRuleFragments || []) {
+      const selector = `.${referenceMappings[key]}${suffix}`;
+      const ruleMatch = stylesheet.match(
+        new RegExp(`${selector}\\s*\\{([^}]*)\\}`)
+      );
+      const normalizedRule = ruleMatch?.[1].replace(/\s+/g, ' ').trim();
+
+      for (const fragment of fragments) {
+        if (!normalizedRule?.includes(fragment)) {
+          throw new Error(
+            `${contract.name} rule ${selector} is missing declaration: ${fragment}`
+          );
+        }
       }
     }
 
