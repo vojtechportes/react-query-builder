@@ -17,34 +17,34 @@
         "../src/subpackages/format-query/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/en-US": [
-        "../src/locales/en-us/index.ts"
+        "../src/subpackages/locales/en-us/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/fr-FR": [
-        "../src/locales/fr-fr/index.ts"
+        "../src/subpackages/locales/fr-fr/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/it-IT": [
-        "../src/locales/it-it/index.ts"
+        "../src/subpackages/locales/it-it/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/de-DE": [
-        "../src/locales/de-de/index.ts"
+        "../src/subpackages/locales/de-de/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/es-ES": [
-        "../src/locales/es-es/index.ts"
+        "../src/subpackages/locales/es-es/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/pt-PT": [
-        "../src/locales/pt-pt/index.ts"
+        "../src/subpackages/locales/pt-pt/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/cs-CZ": [
-        "../src/locales/cs-cz/index.ts"
+        "../src/subpackages/locales/cs-cz/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/sk-SK": [
-        "../src/locales/sk-sk/index.ts"
+        "../src/subpackages/locales/sk-sk/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/zh-CN": [
-        "../src/locales/zh-cn/index.ts"
+        "../src/subpackages/locales/zh-cn/index.ts"
       ],
       "@vojtechportes/react-query-builder/locale/zh-TW": [
-        "../src/locales/zh-tw/index.ts"
+        "../src/subpackages/locales/zh-tw/index.ts"
       ],
       "@vojtechportes/react-query-builder/bootstrap/v5": [
         "../src/subpackages/adapters/bootstrap/v5/index.ts"
@@ -73,7 +73,9 @@
       "@vojtechportes/react-query-builder/radix/v1": [
         "../src/subpackages/adapters/radix/v1/index.ts"
       ],
-      "@vojtechportes/react-query-builder/monaco": ["../src/monaco/index.ts"]
+      "@vojtechportes/react-query-builder/monaco": [
+        "../src/subpackages/monaco/index.ts"
+      ]
     }
   },
   "include": ["config/package-bindings/smoke/package-surface.smoke.ts"]
