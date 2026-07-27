@@ -12,6 +12,6 @@ dist
 .tmp
 
 /coverage
-example/dist
-example/config/package-bindings/.smoke-dist
-example/.versioned-dist
+website/dist
+website/config/package-bindings/.smoke-dist
+website/.versioned-dist

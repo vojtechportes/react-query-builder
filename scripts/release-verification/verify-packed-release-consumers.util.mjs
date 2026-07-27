@@ -17,10 +17,10 @@ const canonicalPackageName = '@vojtechportes/react-query-builder';
 const verifyPackedReleaseConsumers = async () => {
   const rootDirectory = path.resolve(import.meta.dirname, '..', '..');
   const rootRequire = createRequire(path.join(rootDirectory, 'package.json'));
-  const exampleRequire = createRequire(
-    path.join(rootDirectory, 'example', 'package.json')
+  const websiteRequire = createRequire(
+    path.join(rootDirectory, 'website', 'package.json')
   );
-  const viteEntry = exampleRequire.resolve('vite');
+  const viteEntry = websiteRequire.resolve('vite');
   const typescriptEntry = rootRequire.resolve('typescript/bin/tsc');
   const { build } = await import(pathToFileURL(viteEntry).href);
   const temporaryParent = path.join(rootDirectory, '.tmp');

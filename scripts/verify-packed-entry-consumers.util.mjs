@@ -369,11 +369,11 @@ const verifyPackedEntryConsumers = async () => {
       }
     }
 
-    const exampleRequire = createRequire(
-      path.join(rootDirectory, 'example', 'package.json')
+    const websiteRequire = createRequire(
+      path.join(rootDirectory, 'website', 'package.json')
     );
     const { build } = await import(
-      pathToFileURL(exampleRequire.resolve('vite')).href
+      pathToFileURL(websiteRequire.resolve('vite')).href
     );
 
     for (const configuration of configurations) {
