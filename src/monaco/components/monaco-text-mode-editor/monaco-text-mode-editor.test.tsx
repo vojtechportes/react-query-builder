@@ -1,6 +1,10 @@
 import React from 'react';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { renderToString } from 'react-dom/server';
 import '@testing-library/jest-dom';
 import { act, render, waitFor } from '@testing-library/react';
+import styles from './monaco-text-mode-editor.module.css';
 import { MonacoTextModeEditor } from './monaco-text-mode-editor';
 
 type IMonacoChange = {
@@ -20,186 +24,196 @@ type ISelectionPosition = {
   column: number;
 };
 
-jest.mock('monaco-editor', () => {
-  let currentValue = '';
-  let changeListener:
-    | ((event: { changes: IMonacoChange[] }) => void)
-    | null = null;
-  let lastDecorations: IMonacoDecoration[] = [];
-  let currentSelections = [
-    {
-      getStartPosition: () => ({ lineNumber: 1, column: 1 }),
-      getEndPosition: () => ({ lineNumber: 1, column: 1 }),
-    },
-  ];
+jest.mock(
+  'monaco-editor',
+  () => {
+    let currentValue = '';
+    let changeListener: ((event: { changes: IMonacoChange[] }) => void) | null =
+      null;
+    let lastDecorations: IMonacoDecoration[] = [];
+    let currentSelections = [
+      {
+        getStartPosition: () => ({ lineNumber: 1, column: 1 }),
+        getEndPosition: () => ({ lineNumber: 1, column: 1 }),
+      },
+    ];
 
-  const model = {
-    getPositionAt: (offset: number) => ({
-      lineNumber: 1,
-      column: offset + 1,
-    }),
-    getOffsetAt: (position: ISelectionPosition) => position.column - 1,
-    getValue: () => currentValue,
-  };
+    const model = {
+      getPositionAt: (offset: number) => ({
+        lineNumber: 1,
+        column: offset + 1,
+      }),
+      getOffsetAt: (position: ISelectionPosition) => position.column - 1,
+      getValue: () => currentValue,
+    };
 
-  const editorInstance = {
-    getValue: () => currentValue,
-    setValue: (nextValue: string) => {
-      currentValue = nextValue;
-    },
-    getModel: () => model,
-    getSelections: () => currentSelections,
-    setSelections: jest.fn((nextSelections: typeof currentSelections) => {
-      currentSelections = nextSelections;
-    }),
-    onDidChangeModelContent: (
-      listener: (event: { changes: IMonacoChange[] }) => void
-    ) => {
-      changeListener = listener;
-
-      return {
-        dispose: () => {
-          changeListener = null;
-        },
-      };
-    },
-    updateOptions: jest.fn(),
-    deltaDecorations: jest.fn(
-      (_previousDecorations: string[], nextDecorations: IMonacoDecoration[]) => {
-        lastDecorations = nextDecorations;
-        return nextDecorations.map((_, index) => `decoration-${index}`);
-      }
-    ),
-    dispose: jest.fn(),
-  };
-
-  const create = jest.fn((_container: HTMLElement, options: { value: string }) => {
-    currentValue = options.value;
-    return editorInstance;
-  });
-
-  return {
-    __esModule: true,
-    editor: {
-      create,
-    },
-    Selection: class {
-      startLineNumber: number;
-      startColumn: number;
-      endLineNumber: number;
-      endColumn: number;
-
-      constructor(
-        startLineNumber: number,
-        startColumn: number,
-        endLineNumber: number,
-        endColumn: number
-      ) {
-        this.startLineNumber = startLineNumber;
-        this.startColumn = startColumn;
-        this.endLineNumber = endLineNumber;
-        this.endColumn = endColumn;
-      }
-
-      getStartPosition() {
-        return {
-          lineNumber: this.startLineNumber,
-          column: this.startColumn,
-        };
-      }
-
-      getEndPosition() {
-        return {
-          lineNumber: this.endLineNumber,
-          column: this.endColumn,
-        };
-      }
-    },
-    Range: class {
-      startLineNumber: number;
-      startColumn: number;
-      endLineNumber: number;
-      endColumn: number;
-
-      constructor(
-        startLineNumber: number,
-        startColumn: number,
-        endLineNumber: number,
-        endColumn: number
-      ) {
-        this.startLineNumber = startLineNumber;
-        this.startColumn = startColumn;
-        this.endLineNumber = endLineNumber;
-        this.endColumn = endColumn;
-      }
-    },
-    __mock: {
-      getCurrentValue: () => currentValue,
-      getLastDecorations: () => lastDecorations,
-      getSelections: () => currentSelections,
-      emitChange: (nextValue: string, changes: IMonacoChange[]) => {
+    const editorInstance = {
+      getValue: () => currentValue,
+      setValue: (nextValue: string) => {
         currentValue = nextValue;
-        const lastChange = changes[changes.length - 1];
+      },
+      getModel: () => model,
+      getSelections: () => currentSelections,
+      setSelections: jest.fn((nextSelections: typeof currentSelections) => {
+        currentSelections = nextSelections;
+      }),
+      onDidChangeModelContent: (
+        listener: (event: { changes: IMonacoChange[] }) => void
+      ) => {
+        changeListener = listener;
 
-        if (lastChange) {
-          const nextColumn =
-            lastChange.rangeOffset + lastChange.text.length + 1;
+        return {
+          dispose: () => {
+            changeListener = null;
+          },
+        };
+      },
+      updateOptions: jest.fn(),
+      deltaDecorations: jest.fn(
+        (
+          _previousDecorations: string[],
+          nextDecorations: IMonacoDecoration[]
+        ) => {
+          lastDecorations = nextDecorations;
+          return nextDecorations.map((_, index) => `decoration-${index}`);
+        }
+      ),
+      dispose: jest.fn(),
+    };
 
-          currentSelections = [
-            {
-              getStartPosition: () => ({ lineNumber: 1, column: nextColumn }),
-              getEndPosition: () => ({ lineNumber: 1, column: nextColumn }),
-            },
-          ];
+    const create = jest.fn(
+      (_container: HTMLElement, options: { value: string }) => {
+        currentValue = options.value;
+        return editorInstance;
+      }
+    );
+
+    return {
+      __esModule: true,
+      editor: {
+        create,
+      },
+      Selection: class {
+        startLineNumber: number;
+        startColumn: number;
+        endLineNumber: number;
+        endColumn: number;
+
+        constructor(
+          startLineNumber: number,
+          startColumn: number,
+          endLineNumber: number,
+          endColumn: number
+        ) {
+          this.startLineNumber = startLineNumber;
+          this.startColumn = startColumn;
+          this.endLineNumber = endLineNumber;
+          this.endColumn = endColumn;
         }
 
-        changeListener?.({ changes });
+        getStartPosition() {
+          return {
+            lineNumber: this.startLineNumber,
+            column: this.startColumn,
+          };
+        }
+
+        getEndPosition() {
+          return {
+            lineNumber: this.endLineNumber,
+            column: this.endColumn,
+          };
+        }
       },
-      setSelections: (nextSelections: typeof currentSelections) => {
-        currentSelections = nextSelections;
+      Range: class {
+        startLineNumber: number;
+        startColumn: number;
+        endLineNumber: number;
+        endColumn: number;
+
+        constructor(
+          startLineNumber: number,
+          startColumn: number,
+          endLineNumber: number,
+          endColumn: number
+        ) {
+          this.startLineNumber = startLineNumber;
+          this.startColumn = startColumn;
+          this.endLineNumber = endLineNumber;
+          this.endColumn = endColumn;
+        }
       },
-      reset: () => {
-        currentValue = '';
-        changeListener = null;
-        lastDecorations = [];
-        currentSelections = [
-          {
-            getStartPosition: () => ({ lineNumber: 1, column: 1 }),
-            getEndPosition: () => ({ lineNumber: 1, column: 1 }),
-          },
-        ];
-        create.mockClear();
-        editorInstance.updateOptions.mockClear();
-        editorInstance.deltaDecorations.mockClear();
-        editorInstance.setSelections.mockClear();
-        editorInstance.dispose.mockClear();
+      __mock: {
+        getCurrentValue: () => currentValue,
+        getLastDecorations: () => lastDecorations,
+        getSelections: () => currentSelections,
+        emitChange: (nextValue: string, changes: IMonacoChange[]) => {
+          currentValue = nextValue;
+          const lastChange = changes[changes.length - 1];
+
+          if (lastChange) {
+            const nextColumn =
+              lastChange.rangeOffset + lastChange.text.length + 1;
+
+            currentSelections = [
+              {
+                getStartPosition: () => ({ lineNumber: 1, column: nextColumn }),
+                getEndPosition: () => ({ lineNumber: 1, column: nextColumn }),
+              },
+            ];
+          }
+
+          changeListener?.({ changes });
+        },
+        setSelections: (nextSelections: typeof currentSelections) => {
+          currentSelections = nextSelections;
+        },
+        reset: () => {
+          currentValue = '';
+          changeListener = null;
+          lastDecorations = [];
+          currentSelections = [
+            {
+              getStartPosition: () => ({ lineNumber: 1, column: 1 }),
+              getEndPosition: () => ({ lineNumber: 1, column: 1 }),
+            },
+          ];
+          create.mockClear();
+          editorInstance.updateOptions.mockClear();
+          editorInstance.deltaDecorations.mockClear();
+          editorInstance.setSelections.mockClear();
+          editorInstance.dispose.mockClear();
+        },
       },
-    },
-  };
-}, { virtual: true });
+    };
+  },
+  { virtual: true }
+);
 
 const getMonacoMock = () =>
-  (jest.requireMock('monaco-editor') as {
-    __mock: {
-      getCurrentValue: () => string;
-      getLastDecorations: () => IMonacoDecoration[];
-      getSelections: () => Array<{
-        getStartPosition: () => ISelectionPosition;
-        getEndPosition: () => ISelectionPosition;
-      }>;
-      emitChange: (nextValue: string, changes: IMonacoChange[]) => void;
-      setSelections: (
-        nextSelections: Array<{
+  (
+    jest.requireMock('monaco-editor') as {
+      __mock: {
+        getCurrentValue: () => string;
+        getLastDecorations: () => IMonacoDecoration[];
+        getSelections: () => Array<{
           getStartPosition: () => ISelectionPosition;
           getEndPosition: () => ISelectionPosition;
-        }>
-      ) => void;
-      reset: () => void;
-    };
-    editor: {
-      create: jest.Mock;
-    };
-  }).__mock;
+        }>;
+        emitChange: (nextValue: string, changes: IMonacoChange[]) => void;
+        setSelections: (
+          nextSelections: Array<{
+            getStartPosition: () => ISelectionPosition;
+            getEndPosition: () => ISelectionPosition;
+          }>
+        ) => void;
+        reset: () => void;
+      };
+      editor: {
+        create: jest.Mock;
+      };
+    }
+  ).__mock;
 
 describe('MonacoTextModeEditor', () => {
   beforeEach(() => {
@@ -525,11 +539,75 @@ describe('MonacoTextModeEditor diagnostics', () => {
         monacoMock
           .getLastDecorations()
           .filter(
-            decoration =>
+            (decoration) =>
               decoration.options?.inlineClassName ===
               'rqb-monaco-text-mode-diagnostic'
           )
       ).toHaveLength(1);
     });
+  });
+});
+
+describe('MonacoTextModeEditor presentation', () => {
+  const baseProps = {
+    value: 'FIELD = 1',
+    diagnostics: [],
+    errorMessage: null,
+    onChange: jest.fn(),
+  };
+
+  it('renders the CSS Module frame and stable Monaco surface class', async () => {
+    const { container } = render(
+      <MonacoTextModeEditor {...baseProps} errorMessage="Invalid SQL" />
+    );
+    const root = container.firstElementChild;
+    const frame = root?.firstElementChild;
+    const surface = frame?.firstElementChild;
+    const error = root?.lastElementChild;
+
+    expect(root).toHaveClass(styles.root);
+    expect(frame).toHaveClass(styles.frame);
+    expect(surface).toHaveClass(styles.surface, 'rqb-monaco-text-mode-editor');
+    expect(error).toHaveClass(styles.errorMessage);
+    expect(error).toHaveTextContent('Invalid SQL');
+
+    await waitFor(() => {
+      expect(getMonacoMock().getCurrentValue()).toBe(baseProps.value);
+    });
+  });
+
+  it('scopes Monaco-generated decoration selectors and preserves their visuals', () => {
+    const css = readFileSync(
+      join(__dirname, 'monaco-text-mode-editor.module.css'),
+      'utf8'
+    );
+
+    for (const generatedClass of [
+      'rqb-monaco-text-mode-editor',
+      'rqb-monaco-text-mode-diagnostic',
+      'rqb-monaco-text-mode-protected',
+      'rqb-monaco-text-mode-marker-anchor',
+    ]) {
+      expect(css).toContain(generatedClass);
+    }
+
+    expect(css).not.toMatch(/^ {2}:global\(/m);
+    expect(css).toContain('var(--query-builder-editor-min-height)');
+    expect(css).toContain('var(--query-builder-color-error-primary)');
+    expect(css).toContain('var(--query-builder-color-grey-600) !important');
+    expect(css).toContain("[class*='mtk']");
+    expect(css).toContain('filter: grayscale(1)');
+    expect(css).toContain('opacity: 1 !important');
+  });
+
+  it('renders on the server without theme or styled-components output', () => {
+    const markup = renderToString(<MonacoTextModeEditor {...baseProps} />);
+
+    expect(markup).toContain(`class="${styles.root}"`);
+    expect(markup).toContain(styles.frame);
+    expect(markup).toContain(styles.surface);
+    expect(markup).toContain('rqb-monaco-text-mode-editor');
+    expect(markup).not.toContain('$theme');
+    expect(markup).not.toContain('data-styled');
   });
 });

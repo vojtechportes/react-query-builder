@@ -553,6 +553,32 @@ const verifyCssBuild = async () => {
         },
       ],
     },
+    {
+      name: 'Monaco TextModeEditor',
+      modulePattern:
+        /#region src\/monaco\/components\/monaco-text-mode-editor\/monaco-text-mode-editor\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+      classKeys: ['errorMessage', 'frame', 'root', 'surface'],
+      entryFiles: ['monaco/index.mjs', 'monaco/index.cjs'],
+      uniqueRuleKeys: ['errorMessage', 'frame', 'root'],
+      forbiddenFragments: ['styled-components'],
+      requiredRuleFragments: [
+        {
+          key: 'frame',
+          fragments: [
+            'min-height: var(--query-builder-editor-min-height);',
+            'border: 1px solid var(--query-builder-color-grey-300);',
+            'background: var(--query-builder-color-white);',
+          ],
+        },
+        {
+          key: 'errorMessage',
+          fragments: [
+            'color: var(--query-builder-color-error-primary);',
+            'font-size: .8rem;',
+          ],
+        },
+      ],
+    },
   ];
   const cssModuleMappings = new Map();
 
@@ -809,6 +835,23 @@ const verifyCssBuild = async () => {
       );
     }
   }
+  const monacoMappings = cssModuleMappings.get('Monaco TextModeEditor');
+  const requiredMonacoSelectors = [
+    `.${monacoMappings.frame} .rqb-monaco-text-mode-diagnostic {`,
+    `.${monacoMappings.frame} .monaco-editor .view-lines .rqb-monaco-text-mode-protected,`,
+    `.${monacoMappings.frame} .monaco-editor .view-lines .rqb-monaco-text-mode-marker-anchor,`,
+    `.${monacoMappings.frame} .monaco-editor .view-lines .rqb-monaco-text-mode-protected.rqb-monaco-text-mode-marker-anchor,`,
+  ];
+
+  for (const selector of requiredMonacoSelectors) {
+    const occurrences = stylesheet.split(selector).length - 1;
+
+    if (occurrences !== 1) {
+      throw new Error(
+        `Expected scoped Monaco selector ${selector} exactly once, received ${occurrences}`
+      );
+    }
+  }
   const antdToggleMappings = cssModuleMappings.get('ANTD text-mode toggle');
   const antdIconSelector = `.${antdToggleMappings.content} .anticon {`;
   const antdIconRuleOccurrences = stylesheet.split(antdIconSelector).length - 1;
@@ -932,14 +975,22 @@ const verifyCssBuild = async () => {
   const esmModule = await import(
     pathToFileURL(path.join(distributionDirectory, 'parseQuery.mjs')).href
   );
+  const esmMonacoModule = await import(
+    pathToFileURL(path.join(distributionDirectory, 'monaco', 'index.mjs')).href
+  );
   const require = createRequire(import.meta.url);
   const cjsModule = require(path.join(distributionDirectory, 'index.cjs'));
+  const cjsMonacoModule = require(
+    path.join(distributionDirectory, 'monaco', 'index.cjs')
+  );
   const cjsAntdModules = ['v5', 'v6'].map((version) =>
     require(path.join(distributionDirectory, 'antd', version, 'index.cjs'))
   );
 
   if (
     typeof esmModule.parseQuery !== 'function' ||
+    typeof esmMonacoModule.MonacoTextModeEditor !== 'function' ||
+    typeof cjsMonacoModule.MonacoTextModeEditor !== 'function' ||
     !cjsModule.Builder ||
     cjsAntdModules.some(
       (antdModule) =>
@@ -947,7 +998,7 @@ const verifyCssBuild = async () => {
     )
   ) {
     throw new Error(
-      'ESM non-UI, CJS root, or CJS ANTD entry did not load in Node'
+      'ESM non-UI, CJS root, CJS ANTD, or Monaco entry did not load in Node'
     );
   }
 
@@ -968,6 +1019,8 @@ const verifyCssBuild = async () => {
         cloneButtonRulesExactlyOnce: true,
         lockToggleCssModuleClassesUnique: true,
         lockToggleRulesExactlyOnce: true,
+        monacoEntryNodeLoads: 'passed',
+        monacoRulesExactlyOnce: true,
         groupCssModuleClassesUnique: true,
         groupRulesExactlyOnce: true,
         groupResponsiveLayout: '900px',
