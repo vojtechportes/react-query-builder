@@ -101,11 +101,11 @@ T013 owns the URL mechanics and T030 owns deployment assembly and redirects.
 T012 should expose one command per independently runnable target:
 
 ```text
-npm run dev:v1 --workspace example
-npm run dev:v2 --workspace example
-npm run build:v1 --workspace example
-npm run build:v2 --workspace example
-npm run build:versions --workspace example
+npm run dev:v1 --workspace website
+npm run dev:v2 --workspace website
+npm run build:v1 --workspace website
+npm run build:v2 --workspace website
+npm run build:versions --workspace website
 ```
 
 `dev:v1` and `dev:v2` select one application root and one package binding. They may run

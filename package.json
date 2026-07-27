@@ -39,7 +39,7 @@
   },
   "packageManager": "npm@10.9.0",
   "workspaces": [
-    "example"
+    "website"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -210,16 +210,16 @@
     "test:packed-entries": "npm run build && node scripts/verify-packed-entry-consumers.util.mjs",
     "test:t059:parity": "jest --runInBand --collectCoverage=false src/styles/release-visual-parity-contract.test.ts",
     "verify:t059:packed": "node scripts/release-verification/verify-packed-release-consumers.util.mjs",
-    "verify:t059": "npm run test:packed-entries && npm run test:css-infrastructure && npm run verify:t059:packed && npm test && npm run package-bindings:verify --workspace example && npm run test:all --workspace example",
+    "verify:t059": "npm run test:packed-entries && npm run test:css-infrastructure && npm run verify:t059:packed && npm test && npm run package-bindings:verify --workspace website && npm run test:all --workspace website",
     "test:release-verification": "node --test scripts/release-verification/resolve-production-dependency-pairs.util.test.mjs",
     "verify:publish-artifact": "node scripts/release-verification/verify-publish-artifact.util.mjs",
     "verify:release-size": "node scripts/release-verification/verify-release-size-budget.util.mjs",
     "verify:publish": "npm run verify:t059 && npm run test:release-verification && npm run verify:publish-artifact && npm run verify:release-size",
     "lint": "eslint .",
     "prettier:check": "prettier --check .",
-    "example:dev": "npm run dev --workspace example",
-    "example:build": "npm run build --workspace example",
-    "check": "npm run lint && npm run test && npm run build && npm run example:build",
+    "website:dev": "npm run dev --workspace website",
+    "website:build": "npm run build --workspace website",
+    "check": "npm run lint && npm run test && npm run build && npm run website:build",
     "prepublishOnly": "npm run verify:publish"
   },
   "prettier": {

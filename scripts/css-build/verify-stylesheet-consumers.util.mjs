@@ -13,10 +13,10 @@ import { pathToFileURL } from 'node:url';
 
 const verifyStylesheetConsumers = async () => {
   const rootDirectory = path.resolve(import.meta.dirname, '..', '..');
-  const exampleRequire = createRequire(
-    path.join(rootDirectory, 'example', 'package.json')
+  const websiteRequire = createRequire(
+    path.join(rootDirectory, 'website', 'package.json')
   );
-  const viteEntry = exampleRequire.resolve('vite');
+  const viteEntry = websiteRequire.resolve('vite');
   const { build } = await import(pathToFileURL(viteEntry).href);
   const temporaryParent = path.join(rootDirectory, '.tmp');
 
