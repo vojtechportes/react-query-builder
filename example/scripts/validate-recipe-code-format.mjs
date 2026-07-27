@@ -31,6 +31,8 @@ const renderedCodeProperties = new Set([
 const prettierConfig =
   (await prettier.resolveConfig(path.join(exampleRoot, 'package.json'))) ?? {};
 const prettierChecks = [];
+const packageStylesheetImport =
+  "import '@vojtechportes/react-query-builder/styles.css';";
 
 const getLine = (sourceFile, position) =>
   sourceFile.getLineAndCharacterOfPosition(position).line;
@@ -129,6 +131,18 @@ const validateSource = (source, label, errors) => {
   visit(sourceFile);
 };
 
+const validateStylesheetImport = (source, label, errors) => {
+  if (target !== 'v2') return;
+
+  const importCount = source.split(packageStylesheetImport).length - 1;
+
+  if (importCount !== 1) {
+    errors.push(
+      `${label} must import @vojtechportes/react-query-builder/styles.css exactly once.`
+    );
+  }
+};
+
 const errors = [];
 const validatedSnippetFiles = new Set();
 
@@ -143,6 +157,7 @@ for (const fileName of fs
   const label = `snippets/${fileName}`;
 
   validateSource(snippetSource, label, errors);
+  validateStylesheetImport(snippetSource, label, errors);
   prettierChecks.push({ label, parser: 'typescript', source: snippetSource });
   validatedSnippetFiles.add(fileName);
 }
@@ -181,6 +196,19 @@ for (const fileName of fs
     if (
       ts.isPropertyAssignment(node) &&
       ts.isIdentifier(node.name) &&
+      node.name.text === 'installCode' &&
+      ts.isNoSubstitutionTemplateLiteral(node.initializer)
+    ) {
+      validateStylesheetImport(
+        node.initializer.text,
+        `pages/${fileName}#installCode`,
+        errors
+      );
+    }
+
+    if (
+      ts.isPropertyAssignment(node) &&
+      ts.isIdentifier(node.name) &&
       renderedCodeProperties.has(node.name.text)
     ) {
       const propertyName = node.name.text;
@@ -197,6 +225,10 @@ for (const fileName of fs
 
         if (parser === 'typescript') {
           validateSource(node.initializer.text, label, errors);
+
+          if (propertyName === 'builderCode') {
+            validateStylesheetImport(node.initializer.text, label, errors);
+          }
         }
         prettierChecks.push({ label, parser, source: rawSource });
       } else if (

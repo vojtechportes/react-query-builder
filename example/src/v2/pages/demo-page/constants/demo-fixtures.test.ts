@@ -1,4 +1,3 @@
-import { colors } from '@vojtechportes/react-query-builder';
 import { describe, expect, it } from 'vitest';
 import { defaultTheme } from './default-theme';
 import { demoFields } from './demo-fields';
@@ -40,7 +39,7 @@ describe('v2 Demo fixtures', () => {
     ]);
   });
 
-  it('preserves the initial query and default 1.33.1 colors', () => {
+  it('preserves the initial query and default CSS variables', () => {
     expect(initialQueryTree).toHaveLength(1);
     expect(initialQueryTree[0]).toMatchObject({
       type: 'GROUP',
@@ -50,6 +49,11 @@ describe('v2 Demo fixtures', () => {
     expect(
       'type' in initialQueryTree[0] && initialQueryTree[0].children
     ).toHaveLength(4);
-    expect(defaultTheme.colors).toBe(colors);
+    expect(defaultTheme).toMatchObject({
+      '--query-builder-color-primary-default': '#3f51b5',
+      '--query-builder-root-padding': '1rem',
+      '--query-builder-radius-sm': '4px',
+      '--query-builder-shadow-group': '0 0 5px -1px rgba(0, 0, 0, 0.15)',
+    });
   });
 });

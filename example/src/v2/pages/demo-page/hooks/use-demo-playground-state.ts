@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   type DenormalizedQuery,
-  type IColors,
+  type IBuilderStyle,
 } from '@vojtechportes/react-query-builder';
 import { defaultDemoPlaygroundSettings } from '../constants/default-demo-playground-settings';
 import { defaultTheme } from '../constants/default-theme';
@@ -18,9 +18,8 @@ export const useDemoPlaygroundState = (initialData: DenormalizedQuery) => {
   );
   const [customizationMode, setCustomizationMode] =
     React.useState<CustomizationMode>('default');
-  const [themeColors, setThemeColors] = React.useState<IColors>(
-    defaultTheme.colors
-  );
+  const [themeStyle, setThemeStyle] =
+    React.useState<IBuilderStyle>(defaultTheme);
   const [showSourceCode, setShowSourceCode] = React.useState(false);
 
   const updateSetting = React.useCallback(
@@ -48,12 +47,12 @@ export const useDemoPlaygroundState = (initialData: DenormalizedQuery) => {
     outputFormat,
     settings,
     showSourceCode,
-    themeColors,
+    themeStyle,
     setCustomizationMode,
     setData,
     setOutputFormat,
     setShowSourceCode,
-    setThemeColors,
+    setThemeStyle,
     updateSetting,
   };
 };

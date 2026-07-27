@@ -29,7 +29,9 @@ export const tanstackTableFilteringRecipe: IRecipePage = {
       href: 'https://tanstack.com/table/latest/docs/guide/column-filtering',
     },
   ],
-  installCode: `npm install @vojtechportes/react-query-builder @tanstack/react-table`,
+  installCode: `npm install @vojtechportes/react-query-builder @tanstack/react-table
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `const fields: IBuilderFieldProps[] = [
   { field: 'name', label: 'Name', type: 'TEXT' },
   { field: 'role', label: 'Role', type: 'LIST', value: roles },

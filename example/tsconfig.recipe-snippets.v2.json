@@ -1,4 +1,10 @@
 {
   "extends": "./tsconfig.package-binding-v2.json",
-  "include": ["src/v2/pages/recipes-page/snippets/*.snippet.tsx"]
+  "compilerOptions": {
+    "noUncheckedSideEffectImports": true
+  },
+  "include": [
+    "src/v2/pages/recipes-page/snippets/*.snippet.tsx",
+    "src/v2/pages/recipes-page/types/package-stylesheet.d.ts"
+  ]
 }

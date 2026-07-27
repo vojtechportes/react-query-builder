@@ -32,7 +32,9 @@ export const prismaFilterUiRecipe: IRecipePage = {
   installCode: `npm install @vojtechportes/react-query-builder
 
 import { Builder } from '@vojtechportes/react-query-builder';
-import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';`,
+import { formatQuery } from '@vojtechportes/react-query-builder/formatQuery';
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `import type {
   DenormalizedQuery,
   IBuilderFieldProps,

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import type { IColors } from '@vojtechportes/react-query-builder';
+import type { IBuilderStyle } from '@vojtechportes/react-query-builder';
 import styled from 'styled-components';
 import type { CustomizationMode } from '../types/customization-mode';
-import { ThemeEditor } from './theme-editor';
+import { ThemeEditor } from './theme-editor/theme-editor';
 
 const Panel = styled.section`
   display: grid;
@@ -15,22 +15,22 @@ const Panel = styled.section`
 `;
 
 const adapterMessages: Record<Exclude<CustomizationMode, 'default'>, string> = {
-  mui: 'ThemeProvider colors style the default builder components only. The MUI adapter uses Material UI styling instead.',
-  antd: 'ThemeProvider colors style the default builder components only. The ANTD adapter uses Ant Design styling instead.',
+  mui: 'Builder CSS variables style the default components only. The MUI adapter uses Material UI styling instead.',
+  antd: 'Builder CSS variables style the default components only. The ANTD adapter uses Ant Design styling instead.',
   mantine:
-    'ThemeProvider colors style the default builder components only. The Mantine adapter uses Mantine styling instead.',
+    'Builder CSS variables style the default components only. The Mantine adapter uses Mantine styling instead.',
   fluentui:
-    'ThemeProvider colors style the default builder components only. The Fluent UI adapter uses Fluent UI styling instead.',
+    'Builder CSS variables style the default components only. The Fluent UI adapter uses Fluent UI styling instead.',
   radix:
-    'ThemeProvider colors style the default builder components only. The Radix adapter uses Radix Themes styling instead.',
+    'Builder CSS variables style the default components only. The Radix adapter uses Radix Themes styling instead.',
   bootstrap:
-    'ThemeProvider colors style the default builder components only. The Bootstrap adapter uses Bootstrap styling instead.',
+    'Builder CSS variables style the default components only. The Bootstrap adapter uses Bootstrap styling instead.',
 };
 
 export interface IDemoPlaygroundThemeProps {
   customizationMode: CustomizationMode;
-  value: IColors;
-  onChange: (value: IColors) => void;
+  value: IBuilderStyle;
+  onChange: (value: IBuilderStyle) => void;
 }
 
 export const DemoPlaygroundTheme: React.FC<IDemoPlaygroundThemeProps> = ({

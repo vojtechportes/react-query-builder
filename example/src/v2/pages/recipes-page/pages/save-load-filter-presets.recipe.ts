@@ -23,7 +23,9 @@ export const saveLoadFilterPresetsRecipe: IRecipePage = {
     '/documentation/history',
     '/api/data',
   ],
-  installCode: `npm install @vojtechportes/react-query-builder`,
+  installCode: `npm install @vojtechportes/react-query-builder
+
+import '@vojtechportes/react-query-builder/styles.css';`,
   fieldsCode: `interface IFilterPreset {
   id: string;
   name: string;

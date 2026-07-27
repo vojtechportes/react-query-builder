@@ -1,3 +1,4 @@
+import '@vojtechportes/react-query-builder/styles.css';
 import React from 'react';
 import {
   createColumnHelper,

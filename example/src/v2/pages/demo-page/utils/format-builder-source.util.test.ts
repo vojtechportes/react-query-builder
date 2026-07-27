@@ -1,4 +1,4 @@
-import { colors } from '@vojtechportes/react-query-builder';
+import { defaultTheme } from '../constants/default-theme';
 import { describe, expect, it } from 'vitest';
 import { packageExports } from '../../../../../config/package-bindings/constants/package-exports';
 import type { IBuilderSourceOptions } from '../types/builder-source-options';
@@ -36,13 +36,16 @@ const defaultOptions: IBuilderSourceOptions = {
   singleRootGroup: true,
   showValidation: true,
   customizationMode: 'default',
-  themeColors: colors,
-  defaultThemeColors: colors,
+  themeStyle: defaultTheme,
+  defaultThemeStyle: defaultTheme,
 };
 
-const customizedThemeColors = {
-  ...colors,
-  primary: { ...colors.primary, default: '#123456' },
+const customizedThemeStyle = {
+  ...defaultTheme,
+  '--query-builder-color-primary-default': '#123456',
+  '--query-builder-root-padding': '1.5rem',
+  '--query-builder-radius-sm': '10px',
+  '--query-builder-shadow-root': '0 12px 30px rgb(15 23 42 / 20%)',
 };
 
 describe('v2 formatBuilderSource', () => {
@@ -86,11 +89,11 @@ describe('v2 formatBuilderSource', () => {
       defaultMode: 'text',
       useMonacoTextEditor: true,
       locale: 'fr-FR',
-      themeColors: customizedThemeColors,
+      themeStyle: customizedThemeStyle,
     });
 
     expect(source).toContain(
-      "import { Builder, colors, ThemeProvider, type DenormalizedQuery } from '@vojtechportes/react-query-builder';"
+      "import { Builder, type IBuilderStyle, type DenormalizedQuery } from '@vojtechportes/react-query-builder';"
     );
     expect(source).toContain(
       "import { strings } from '@vojtechportes/react-query-builder/locale/fr-FR';"
@@ -109,8 +112,15 @@ describe('v2 formatBuilderSource', () => {
     expect(source).toContain('history');
     expect(source).toContain('textMode');
     expect(source).toContain('defaultMode="text"');
-    expect(source).toContain('primary: {');
-    expect(source).toContain('default: "#123456"');
+    expect(source).toContain('const builderStyle: IBuilderStyle');
+    expect(source).toContain(
+      '"--query-builder-color-primary-default": "#123456"'
+    );
+    expect(source).toContain('"--query-builder-root-padding": "1.5rem"');
+    expect(source).toContain('"--query-builder-radius-sm": "10px"');
+    expect(source).toContain('"--query-builder-shadow-root"');
+    expect(source).toContain('style={builderStyle}');
+    expect(source).not.toContain('ThemeProvider');
   });
 
   it.each([
@@ -138,7 +148,7 @@ describe('v2 formatBuilderSource', () => {
         ...defaultOptions,
         locale: 'fr-FR',
         useMonacoTextEditor: true,
-        themeColors: customizedThemeColors,
+        themeStyle: customizedThemeStyle,
       }),
       ...adapterCases.map(([customizationMode]) =>
         formatBuilderSource({ ...defaultOptions, customizationMode })

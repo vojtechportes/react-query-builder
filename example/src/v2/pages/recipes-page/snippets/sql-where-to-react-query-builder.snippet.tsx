@@ -1,3 +1,4 @@
+import '@vojtechportes/react-query-builder/styles.css';
 import React from 'react';
 import { Builder } from '@vojtechportes/react-query-builder';
 import { parseQuery } from '@vojtechportes/react-query-builder/parseQuery';
