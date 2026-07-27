@@ -170,6 +170,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "files": [
+    "MIGRATION-2.0.md",
     "dist",
     "dist/styles.css",
     "!dist/**/*.map",
@@ -210,12 +211,16 @@
     "test:t059:parity": "jest --runInBand --collectCoverage=false src/styles/release-visual-parity-contract.test.ts",
     "verify:t059:packed": "node scripts/release-verification/verify-packed-release-consumers.util.mjs",
     "verify:t059": "npm run test:packed-entries && npm run test:css-infrastructure && npm run verify:t059:packed && npm test && npm run package-bindings:verify --workspace example && npm run test:all --workspace example",
+    "test:release-verification": "node --test scripts/release-verification/resolve-production-dependency-pairs.util.test.mjs",
+    "verify:publish-artifact": "node scripts/release-verification/verify-publish-artifact.util.mjs",
+    "verify:release-size": "node scripts/release-verification/verify-release-size-budget.util.mjs",
+    "verify:publish": "npm run verify:t059 && npm run test:release-verification && npm run verify:publish-artifact && npm run verify:release-size",
     "lint": "eslint .",
     "prettier:check": "prettier --check .",
     "example:dev": "npm run dev --workspace example",
     "example:build": "npm run build --workspace example",
     "check": "npm run lint && npm run test && npm run build && npm run example:build",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run verify:publish"
   },
   "prettier": {
     "printWidth": 80,

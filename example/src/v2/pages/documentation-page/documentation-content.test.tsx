@@ -29,6 +29,15 @@ describe('v2 Documentation content', () => {
     }
   });
 
+  it('links the documentation overview to the 2.0 migration guide', () => {
+    const content = renderToStaticMarkup(
+      <StaticRouter location="/documentation">
+        {findDocumentationPage('/documentation').content}
+      </StaticRouter>
+    );
+
+    expect(content).toContain('href="/documentation/migration-to-2-0"');
+  });
   it('normalizes trailing slashes and preserves the overview fallback', () => {
     expect(
       findDocumentationPage('/documentation/dynamic-field-options/').path
@@ -43,6 +52,12 @@ describe('v2 Documentation content', () => {
       '/documentation/installation',
       'npm install @vojtechportes/react-query-builder',
     ],
+    [
+      '/documentation/migration-to-2-0',
+      '@vojtechportes/react-query-builder/styles.css',
+    ],
+    ['/documentation/migration-to-2-0', 'ThemeProvider'],
+    ['/documentation/migration-to-2-0', 'OptionContainer'],
     ['/documentation/parsing-and-formatting/supported-formats', 'formatQuery'],
     ['/documentation/parsing-and-formatting/supported-formats', 'parseQuery'],
     ['/documentation/text-mode', '@vojtechportes/react-query-builder/monaco'],
