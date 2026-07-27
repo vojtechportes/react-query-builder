@@ -262,7 +262,7 @@ const verifyCssBuild = async () => {
     {
       name: 'ANTD text-mode toggle',
       modulePattern:
-        /#region src\/antd\/shared\/components\/antd-text-mode-toggle-content\/antd-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/antd\/shared\/components\/antd-text-mode-toggle-content\/antd-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['content', 'label'],
       entryFiles: [
         'antd/v5/index.mjs',
@@ -275,7 +275,7 @@ const verifyCssBuild = async () => {
     {
       name: 'MUI text-mode toggle',
       modulePattern:
-        /#region src\/mui\/shared\/components\/mui-text-mode-toggle-content\/mui-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/mui\/shared\/components\/mui-text-mode-toggle-content\/mui-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['content', 'label'],
       entryFiles: [
         'mui/v7/index.mjs',
@@ -300,7 +300,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Mantine text-mode toggle',
       modulePattern:
-        /#region src\/mantine\/shared\/components\/mantine-text-mode-toggle-content\/mantine-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/mantine\/shared\/components\/mantine-text-mode-toggle-content\/mantine-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['content', 'label'],
       entryFiles: [
         'mantine/v8/index.mjs',
@@ -333,7 +333,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Fluent UI text-mode toggle',
       modulePattern:
-        /#region src\/fluentui\/shared\/components\/fluent-ui-text-mode-toggle-content\/fluent-ui-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/fluent-ui\/shared\/components\/fluent-ui-text-mode-toggle-content\/fluent-ui-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['content', 'label'],
       entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
       uniqueRuleKeys: ['content', 'label'],
@@ -343,7 +343,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Fluent UI SelectMulti',
       modulePattern:
-        /#region src\/fluentui\/shared\/components\/fluent-ui-select-multi\/fluent-ui-select-multi\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/fluent-ui\/shared\/components\/fluent-ui-select-multi\/fluent-ui-select-multi\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['badge'],
       entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
       uniqueRuleKeys: ['badge'],
@@ -360,7 +360,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Fluent UI Rule',
       modulePattern:
-        /#region src\/fluentui\/shared\/components\/fluent-ui-rule\/fluent-ui-rule\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/fluent-ui\/shared\/components\/fluent-ui-rule\/fluent-ui-rule\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: [
         'body',
         'bodyWithoutControls',
@@ -375,7 +375,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Fluent UI Group',
       modulePattern:
-        /#region src\/fluentui\/shared\/components\/fluent-ui-group\/fluent-ui-group\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/fluent-ui\/shared\/components\/fluent-ui-group\/fluent-ui-group\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: [
         'body',
         'group',
@@ -392,7 +392,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Fluent UI GroupHeaderOption',
       modulePattern:
-        /#region src\/fluentui\/shared\/components\/fluent-ui-group-header-option\/fluent-ui-group-header-option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/fluent-ui\/shared\/components\/fluent-ui-group-header-option\/fluent-ui-group-header-option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['disabled', 'option', 'selected'],
       entryFiles: ['fluentui/v8/index.mjs', 'fluentui/v8/index.cjs'],
       uniqueRuleKeys: ['disabled', 'option', 'selected'],
@@ -408,7 +408,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix Alert',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-alert\/radix-alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-alert\/radix-alert\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['alert', 'error', 'info', 'success', 'warning'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['alert', 'error', 'info', 'success', 'warning'],
@@ -446,7 +446,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix Select',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-select\/radix-select\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-select\/radix-select\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['hiddenInput'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['hiddenInput'],
@@ -455,7 +455,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix SelectMulti',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-select-multi\/radix-select-multi\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-select-multi\/radix-select-multi\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['badge', 'hiddenInput', 'triggerText'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['badge', 'hiddenInput', 'triggerText'],
@@ -470,7 +470,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix text-mode toggle',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-text-mode-toggle-content\/radix-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-text-mode-toggle-content\/radix-text-mode-toggle-content\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['content', 'label'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['content', 'label'],
@@ -480,7 +480,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix HistoryControls',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-history-controls\/radix-history-controls\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-history-controls\/radix-history-controls\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['controls'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['controls'],
@@ -489,7 +489,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix Rule',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-rule\/radix-rule\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-rule\/radix-rule\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: [
         'body',
         'bodyWithoutControls',
@@ -515,7 +515,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix Group',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-group\/radix-group\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-group\/radix-group\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['body', 'group', 'header', 'left', 'right', 'withDragHandle'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['body', 'group'],
@@ -533,7 +533,7 @@ const verifyCssBuild = async () => {
     {
       name: 'Radix GroupHeaderOption',
       modulePattern:
-        /#region src\/radix\/shared\/components\/radix-group-header-option\/radix-group-header-option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
+        /#region src\/subpackages\/adapters\/radix\/shared\/components\/radix-group-header-option\/radix-group-header-option\.module\.css[\s\S]*?\{([\s\S]*?)\};/,
       classKeys: ['disabled', 'option', 'selected'],
       entryFiles: ['radix/v1/index.mjs', 'radix/v1/index.cjs'],
       uniqueRuleKeys: ['option'],
