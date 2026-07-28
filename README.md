@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@vojtechportes/react-query-builder" target="_blank"><img src="https://img.shields.io/npm/v/%40vojtechportes%2Freact-query-builder" alt="npm version" /></a>
+  <a href="https://codecov.io/gh/vojtechportes/react-query-builder" target="_blank"><img src="https://codecov.io/gh/vojtechportes/react-query-builder/branch/master/graph/badge.svg" alt="code coverage" /></a>
   <a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
 </p>
 
