@@ -144,6 +144,7 @@ jest.mock(
         }
       },
       __mock: {
+        getCreateCallCount: () => create.mock.calls.length,
         getCurrentValue: () => currentValue,
         getLastDecorations: () => lastDecorations,
         getSelections: () => currentSelections,
@@ -194,6 +195,7 @@ const getMonacoMock = () =>
   (
     jest.requireMock('monaco-editor') as {
       __mock: {
+        getCreateCallCount: () => number;
         getCurrentValue: () => string;
         getLastDecorations: () => IMonacoDecoration[];
         getSelections: () => Array<{
@@ -609,5 +611,55 @@ describe('MonacoTextModeEditor presentation', () => {
     expect(markup).toContain('rqb-monaco-text-mode-editor');
     expect(markup).not.toContain('$theme');
     expect(markup).not.toContain('data-styled');
+  });
+
+  it('uses the latest protected deletion setting without remounting', async () => {
+    const monacoMock = getMonacoMock();
+    const onChange = jest.fn();
+    const initialValue = 'FIELD';
+    const protectedRanges = [{ start: 0, end: initialValue.length }];
+    const { rerender } = render(
+      <MonacoTextModeEditor
+        value={initialValue}
+        diagnostics={[]}
+        errorMessage={null}
+        protectedRanges={protectedRanges}
+        allowProtectedRangeDeletion={false}
+        onChange={onChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(monacoMock.getCurrentValue()).toBe(initialValue);
+    });
+
+    const createCallCount = monacoMock.getCreateCallCount();
+
+    rerender(
+      <MonacoTextModeEditor
+        value={initialValue}
+        diagnostics={[]}
+        errorMessage={null}
+        protectedRanges={protectedRanges}
+        allowProtectedRangeDeletion
+        onChange={onChange}
+      />
+    );
+
+    act(() => {
+      monacoMock.emitChange('', [
+        {
+          rangeOffset: 0,
+          rangeLength: initialValue.length,
+          text: '',
+        },
+      ]);
+    });
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalledWith('');
+      expect(monacoMock.getCurrentValue()).toBe('');
+    });
+    expect(monacoMock.getCreateCallCount()).toBe(createCallCount);
   });
 });

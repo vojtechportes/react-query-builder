@@ -181,6 +181,12 @@ export const Rule: FC<IRuleProps> = ({
       />
     ) : null;
 
+  const fieldConfig =
+    typeof fieldRef === 'string' && fieldRef.trim() !== ''
+      ? fields?.find((item) => item.field === fieldRef)
+      : undefined;
+  const fieldOptionState = useBuilderFieldOptionState(fieldConfig, id);
+
   if (!fields || !strings.rule) {
     return null;
   }
@@ -195,12 +201,6 @@ export const Rule: FC<IRuleProps> = ({
         {lockControl}
       </>
     ) : null;
-
-  const fieldConfig =
-    typeof fieldRef === 'string' && fieldRef.trim() !== ''
-      ? fields.find((item) => item.field === fieldRef)
-      : undefined;
-  const fieldOptionState = useBuilderFieldOptionState(fieldConfig, id);
 
   if (typeof fieldRef !== 'string' || fieldRef.trim() === '') {
     return (

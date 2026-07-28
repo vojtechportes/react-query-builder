@@ -37,6 +37,9 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
   const changeSubscriptionRef = useRef<Monaco.IDisposable | null>(null);
   const onChangeRef = useRef(onChange);
+  const allowProtectedRangeDeletionRef = useRef(allowProtectedRangeDeletion);
+  const initialReadOnlyRef = useRef(readOnly);
+  const initialValueRef = useRef(value);
   const isSyncingValueRef = useRef(false);
   const isRevertingChangeRef = useRef(false);
   const pendingSelectionRestoreRef = useRef<Monaco.Selection[] | null>(null);
@@ -57,6 +60,10 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   }, [onChange]);
 
   useEffect(() => {
+    allowProtectedRangeDeletionRef.current = allowProtectedRangeDeletion;
+  }, [allowProtectedRangeDeletion]);
+
+  useEffect(() => {
     let isDisposed = false;
 
     const mountEditor = async () => {
@@ -72,10 +79,10 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
 
       monacoRef.current = monaco;
       const editor = monaco.editor.create(containerRef.current, {
-        value,
+        value: initialValueRef.current,
         language: 'sql',
         theme: 'vs',
-        readOnly,
+        readOnly: initialReadOnlyRef.current,
         automaticLayout: true,
         wordWrap: 'on',
         lineNumbers: 'off',
@@ -124,7 +131,8 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
               change,
               protectedRangesRef.current,
               {
-                allowPureDeletionOfProtectedRanges: allowProtectedRangeDeletion,
+                allowPureDeletionOfProtectedRanges:
+                  allowProtectedRangeDeletionRef.current,
                 text: change.text,
               }
             )

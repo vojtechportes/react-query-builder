@@ -12,8 +12,6 @@ interface IBuilderFieldUsageCountArgs extends IBuilderFieldUsageBucketKeyArgs {
   excludeRuleId?: string;
 }
 
-interface IBuilderFieldUsageAvailabilityArgs extends IBuilderFieldUsageCountArgs {}
-
 const ROOT_SCOPE_KEY = '__root__';
 
 export const resolveBuilderFieldUsageLimitScope = (
@@ -74,7 +72,7 @@ export const isBuilderFieldUsageExhausted = ({
   field,
   parentId,
   excludeRuleId,
-}: IBuilderFieldUsageAvailabilityArgs): boolean => {
+}: IBuilderFieldUsageCountArgs): boolean => {
   if (!field.usageLimit) {
     return false;
   }

@@ -81,10 +81,7 @@ export const PersistFiltersInUrlDemo: React.FC = () => {
     );
   };
 
-  const shareUrl = React.useMemo(() => {
-    if (typeof window === 'undefined') return '';
-    return window.location.href;
-  }, [searchParams]);
+  const shareUrl = typeof window === 'undefined' ? '' : window.location.href;
 
   const copy = async () => {
     try {

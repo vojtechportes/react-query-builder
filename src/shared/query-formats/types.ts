@@ -29,6 +29,8 @@ export interface IFormatSqlOptions extends IFormatQueryBaseOptions {
   wrapWhereClause?: boolean;
 }
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatMongoOptions extends IFormatQueryBaseOptions {}
 
 export interface IFormatAqlOptions extends IFormatQueryBaseOptions {
@@ -36,16 +38,24 @@ export interface IFormatAqlOptions extends IFormatQueryBaseOptions {
   variableName?: string;
 }
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatJsonataOptions extends IFormatQueryBaseOptions {}
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatJsonLogicOptions extends IFormatQueryBaseOptions {}
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatCelOptions extends IFormatQueryBaseOptions {}
 
 export interface IFormatElasticsearchOptions extends IFormatQueryBaseOptions {
   wrapQueryClause?: boolean;
 }
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatSpelOptions extends IFormatQueryBaseOptions {}
 
 export interface IFormatPrismaOptions extends IFormatQueryBaseOptions {
@@ -56,10 +66,16 @@ export interface IFormatODataOptions extends IFormatQueryBaseOptions {
   wrapFilterClause?: boolean;
 }
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatRsqlOptions extends IFormatQueryBaseOptions {}
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatDynamoOptions extends IFormatQueryBaseOptions {}
 
+// Kept as a named public extension point for declaration merging.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFormatDjangoOptions extends IFormatQueryBaseOptions {}
 
 export interface IParseQueryResult {
