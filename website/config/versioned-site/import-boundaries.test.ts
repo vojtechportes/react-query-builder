@@ -162,4 +162,13 @@ describe('versioned site import boundaries', () => {
       )
     ).toBeUndefined();
   });
+
+  it('allows shared modules to import dependencies resolved outside the website source tree', () => {
+    expect(
+      getImportBoundaryViolation(
+        '/home/runner/work/project/website/src/shared/client.tsx',
+        '/home/runner/work/project/node_modules/react'
+      )
+    ).toBeUndefined();
+  });
 });
