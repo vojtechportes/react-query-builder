@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-prisma-node formats a nested group node 1`] = `
+{
+  "NOT": {
+    "OR": [
+      {
+        "name": "Alice",
+      },
+      {
+        "city": "Prague",
+      },
+    ],
+  },
+}
+`;

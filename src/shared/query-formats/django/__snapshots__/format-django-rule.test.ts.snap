@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-django-rule formats a representative equality rule 1`] = `"Q(name='Alice')"`;

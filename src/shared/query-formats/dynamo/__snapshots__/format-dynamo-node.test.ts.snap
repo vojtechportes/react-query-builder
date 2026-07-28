@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-dynamo-node formats a nested group node 1`] = `"NOT ((name = 'Alice' OR city = 'Prague'))"`;

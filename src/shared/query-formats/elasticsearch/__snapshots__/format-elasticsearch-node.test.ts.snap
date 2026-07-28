@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-elasticsearch-node formats a nested group node 1`] = `
+{
+  "bool": {
+    "must_not": [
+      {
+        "bool": {
+          "minimum_should_match": 1,
+          "should": [
+            {
+              "term": {
+                "name": "Alice",
+              },
+            },
+            {
+              "term": {
+                "city": "Prague",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+}
+`;

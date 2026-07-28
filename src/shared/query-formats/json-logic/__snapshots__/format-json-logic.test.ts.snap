@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-json-logic formats a representative query 1`] = `
+"{
+  "==": [
+    {
+      "var": "name"
+    },
+    "Alice"
+  ]
+}"
+`;

@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-json-logic-node formats a nested group node 1`] = `
+{
+  "!": {
+    "or": [
+      {
+        "==": [
+          {
+            "var": "name",
+          },
+          "Alice",
+        ],
+      },
+      {
+        "==": [
+          {
+            "var": "city",
+          },
+          "Prague",
+        ],
+      },
+    ],
+  },
+}
+`;

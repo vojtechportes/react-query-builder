@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-rsql-node formats a nested group node 1`] = `"(name==Alice,city==Prague)"`;

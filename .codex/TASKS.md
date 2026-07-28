@@ -2329,3 +2329,35 @@ site/v1 usage.
 - Run `npm run build --workspace website`.
 - Run `npm run lint`, `npm test`, and `npm run build` from the repository root.
 - Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
+
+### T072 - Add query-format test coverage
+
+**Status:** `[x]` Done
+
+**Goal:** Add reasonable, non-repetitive adjacent test coverage for every TypeScript source file in `src/shared/query-formats`.
+
+**Scope:**
+
+- Add one same-basename colocated `*.test.ts` file for every non-test TypeScript source file.
+- Cover formatters, parsers, tokenizers, inference helpers, conversion helpers, shared helpers, registry entries, constants, and type contracts with focused tests appropriate to each file.
+- Keep each suite scoped to its adjacent production file and preserve existing query-format behavior and public APIs.
+- Retain the existing roundtrip suites as integration coverage without using them as a substitute for adjacent tests.
+- Do not refactor production code or combine coverage for multiple source files into large suites.
+
+**Acceptance criteria:**
+
+- Every non-test `.ts` file under `src/shared/query-formats` has one matching adjacent test file.
+- Formatter, parser, tokenizer, inference, conversion, and helper suites exercise representative behavior without repetitive case matrices.
+- Runtime constants and type-only contracts have focused adjacent coverage.
+- No unrelated production changes are included.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code file.
+- Run `npm test -- --runInBand src/shared/query-formats`.
+- Run `npm test`.
+- Run `npm run lint`.
+- Run `npm run build`.
+- Run `npm run verify:architecture`.
+- Run `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
