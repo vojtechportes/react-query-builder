@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-elasticsearch formats a representative query 1`] = `
+"{
+  "term": {
+    "name": "Alice"
+  }
+}"
+`;

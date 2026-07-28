@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format-mongo-node formats a nested group node 1`] = `
+{
+  "$nor": [
+    {
+      "$or": [
+        {
+          "name": "Alice",
+        },
+        {
+          "city": "Prague",
+        },
+      ],
+    },
+  ],
+}
+`;
