@@ -9,11 +9,31 @@ export default defineConfig(({ mode }) => {
   const target = resolveVersionTarget(mode);
   const binding = target === 'v1' ? v1PackageBinding : v2PackageBinding;
   const oppositeTarget = target === 'v1' ? 'v2' : 'v1';
+  const repositoryRoot = resolve(import.meta.dirname, '../../..');
+  const testRuntimeAliases = [
+    {
+      find: 'react-dom',
+      replacement: resolve(repositoryRoot, 'node_modules/react-dom'),
+    },
+    {
+      find: 'react',
+      replacement: resolve(repositoryRoot, 'node_modules/react'),
+    },
+    {
+      find: '@mantine/core',
+      replacement: resolve(repositoryRoot, 'node_modules/@mantine/core'),
+    },
+    {
+      find: '@mantine/hooks',
+      replacement: resolve(repositoryRoot, 'node_modules/@mantine/hooks'),
+    },
+  ];
 
   return {
     plugins: [createImportBoundaryPlugin(target)],
     resolve: {
       alias: [
+        ...testRuntimeAliases,
         {
           find: 'styled-components',
           replacement: resolve(
@@ -21,7 +41,13 @@ export default defineConfig(({ mode }) => {
             '../../../node_modules/styled-components/dist/styled-components.esm.js'
           ),
         },
-        ...binding.aliases,
+        ...binding.aliases.filter(
+          ({ find }) =>
+            find !== 'react-dom' &&
+            find !== 'react' &&
+            find !== '@mantine/core' &&
+            find !== '@mantine/hooks'
+        ),
       ],
       dedupe: ['react', 'react-dom'],
     },

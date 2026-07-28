@@ -20,8 +20,10 @@ export const createPackageBinding = (
 
   const runtimePackageRoot = isV1 ? packageRoot : repositoryRoot;
   const implementationRoot = resolve(runtimePackageRoot, isV1 ? '.' : 'dist');
-  const reactRoot = resolve(repositoryRoot, 'node_modules/react');
-  const reactDomRoot = resolve(repositoryRoot, 'node_modules/react-dom');
+  const reactRoot = resolve(websiteRoot, 'node_modules/react');
+  const reactDomRoot = resolve(websiteRoot, 'node_modules/react-dom');
+  const mantineCoreRoot = resolve(websiteRoot, 'node_modules/@mantine/core');
+  const mantineHooksRoot = resolve(websiteRoot, 'node_modules/@mantine/hooks');
   const stylesheetPath = isV1
     ? undefined
     : resolve(implementationRoot, 'styles.css');
@@ -33,9 +35,13 @@ export const createPackageBinding = (
     packageRoot,
     reactRoot,
     reactDomRoot,
+    mantineCoreRoot,
+    mantineHooksRoot,
     aliases: [
       { find: 'react-dom', replacement: reactDomRoot },
       { find: 'react', replacement: reactRoot },
+      { find: '@mantine/core', replacement: mantineCoreRoot },
+      { find: '@mantine/hooks', replacement: mantineHooksRoot },
       ...(stylesheetPath
         ? [
             {
