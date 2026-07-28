@@ -78,10 +78,16 @@ export const apiBaseline = [
       '67b8726ab4b6f3fa6285a61fdddf173411be956d22e1f2497a0bcc5d87f824fa',
   },
   {
+    path: '/api/css-variables',
+    title: 'CSS Variables',
+    contentHash:
+      '5d0072824f1c5f8c861000b7d49565e6e835faeb27bfa17da34a498feaef2c1b',
+  },
+  {
     path: '/api/theming',
     title: 'Theming',
     contentHash:
-      '3f1bf8c98969f3c44b07e946f12fbdb172944d46e14a937363e8dd990d8a818f',
+      '9556b871b7af7c011c67774d92ab2c66d988ba00706604a4ac153f14f9064d09',
   },
   {
     path: '/api/format-query',

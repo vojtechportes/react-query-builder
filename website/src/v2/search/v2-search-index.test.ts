@@ -12,7 +12,7 @@ describe('v2 search index', () => {
     const documentPaths = v2SearchDocuments.map((document) => document.path);
     const manifestPaths = v2RouteManifest.map((route) => route.path);
 
-    expect(documentPaths).toHaveLength(56);
+    expect(documentPaths).toHaveLength(57);
     expect(new Set(documentPaths).size).toBe(documentPaths.length);
     expect(new Set(documentPaths)).toEqual(new Set(manifestPaths));
   });
