@@ -2235,6 +2235,34 @@ site/v1 usage.
 - Run package-binding verification and both website-version test/build suites.
 - Review the final diff against `.codex/repository-structure.md` and resolve code-review findings.
 
+### T070 - Add validation utility test coverage
+
+**Status:** `[x]` Done
+
+**Goal:** Add reasonable, non-repetitive test coverage for every utility in `src/builder/validation/utils`.
+
+**Scope:**
+
+- Add one colocated `*.util.test.ts` file for each validation utility, matching the utility basename.
+- Cover representative synchronous and asynchronous validation behavior without duplicating equivalent cases across utility layers.
+- Keep production behavior and public APIs unchanged.
+
+**Acceptance criteria:**
+
+- Every utility file in `src/builder/validation/utils` has one matching colocated `*.util.test.ts` file and is exercised by that suite.
+- Tests cover representative valid, invalid, localized, merged, and asynchronous behavior.
+- No unrelated production refactors are included.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code file.
+- Run `npm test -- --runInBand src/builder/validation/utils`.
+- Run `npm test`.
+- Run `npm run lint`.
+- Run `npm run build`.
+- Run `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
+
 ### B001 - Upgrade website to React Router 8.3
 
 **Status:** `[x]` Done
