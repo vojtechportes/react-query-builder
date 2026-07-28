@@ -2263,6 +2263,37 @@ site/v1 usage.
 - Run `git diff --check`.
 - Run the repository-required code-review agent and resolve all findings.
 
+### T071 - Add adapter subpackage test coverage
+
+**Status:** `[x]` Done
+
+**Goal:** Add reasonable, non-repetitive adjacent test coverage for every TypeScript source file in `src/subpackages/adapters`.
+
+**Scope:**
+
+- Add one same-basename colocated `*.test.ts` or `*.test.tsx` file for every adapter source file.
+- Cover components, utilities, factories, constants, icons, entry files, and re-export files with focused tests appropriate to each file.
+- Keep each suite scoped to its adjacent production file and preserve existing adapter behavior and public APIs.
+- Do not refactor production code or combine coverage for multiple source files into large suites.
+
+**Acceptance criteria:**
+
+- Every non-test `.ts` and `.tsx` file under `src/subpackages/adapters` has one matching adjacent test file.
+- Component and utility suites exercise representative behavior without repetitive case matrices.
+- Barrel and version entry suites verify their intended export contracts.
+- No unrelated production changes are included.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code file.
+- Run `npm test -- --runInBand src/subpackages/adapters`.
+- Run `npm test`.
+- Run `npm run lint`.
+- Run `npm run build`.
+- Run `npm run verify:architecture`.
+- Run `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
+
 ### B001 - Upgrade website to React Router 8.3
 
 **Status:** `[x]` Done
