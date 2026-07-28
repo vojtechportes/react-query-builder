@@ -14,7 +14,7 @@ const verifyPublishArtifact = async () => {
   const temporaryParent = path.join(rootDirectory, '.tmp');
   await mkdir(temporaryParent, { recursive: true });
   const temporaryDirectory = await mkdtemp(
-    path.join(temporaryParent, 't061-publish-artifact-')
+    path.join(temporaryParent, 'publish-artifact-')
   );
   const packageDirectory = path.join(temporaryDirectory, 'package');
   const npmExecutable =

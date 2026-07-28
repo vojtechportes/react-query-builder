@@ -11,6 +11,7 @@ export default defineConfig(
       'coverage/**',
       'dist/**',
       'website/dist/**',
+      'website/.versioned-dist/**',
       'website/config/package-bindings/.smoke-dist/**',
       'node_modules/**',
     ],

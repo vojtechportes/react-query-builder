@@ -7,6 +7,7 @@ import { v1PackageBinding } from './v1-package-binding';
 import { v2PackageBinding } from './v2-package-binding';
 
 const bindings = [v1PackageBinding, v2PackageBinding];
+const websiteRoot = resolve(import.meta.dirname, '../..');
 
 describe('versioned package bindings', () => {
   it('pins v1 to the published 1.33.1 package', () => {
@@ -141,12 +142,40 @@ describe('versioned package bindings', () => {
       )
     ) as { version: string };
 
+    expect(v1PackageBinding.reactRoot).toBe(
+      resolve(websiteRoot, 'node_modules/react')
+    );
+    expect(v1PackageBinding.reactDomRoot).toBe(
+      resolve(websiteRoot, 'node_modules/react-dom')
+    );
     expect(v1PackageBinding.reactRoot).toBe(v2PackageBinding.reactRoot);
     expect(v1PackageBinding.reactDomRoot).toBe(v2PackageBinding.reactDomRoot);
-    expect(reactManifest.version).toBe('18.3.1');
-    expect(reactDomManifest.version).toBe('18.3.1');
+    expect(reactManifest.version).toBe('19.2.6');
+    expect(reactDomManifest.version).toBe('19.2.6');
   });
 
+  it.each(bindings)('uses one Mantine runtime for $target', (binding) => {
+    const coreManifest = JSON.parse(
+      readFileSync(resolve(binding.mantineCoreRoot, 'package.json'), 'utf8')
+    ) as { version: string };
+
+    const hooksManifest = JSON.parse(
+      readFileSync(resolve(binding.mantineHooksRoot, 'package.json'), 'utf8')
+    ) as { version: string };
+
+    expect(binding.mantineCoreRoot).toBe(
+      resolve(websiteRoot, 'node_modules/@mantine/core')
+    );
+    expect(binding.mantineHooksRoot).toBe(
+      resolve(websiteRoot, 'node_modules/@mantine/hooks')
+    );
+    expect(binding.aliases.slice(2, 4)).toEqual([
+      { find: '@mantine/core', replacement: binding.mantineCoreRoot },
+      { find: '@mantine/hooks', replacement: binding.mantineHooksRoot },
+    ]);
+    expect(coreManifest.version).toBe('9.2.2');
+    expect(hooksManifest.version).toBe('9.2.2');
+  });
   it.each(bindings)('uses one React runtime for $target', (binding) => {
     expect(binding.aliases.slice(0, 2)).toEqual([
       { find: 'react-dom', replacement: binding.reactDomRoot },
