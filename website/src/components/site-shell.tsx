@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router';
 import { colors } from '@vojtechportes/react-query-builder';
 import { GITHUB_URL, NPM_URL } from '../constants/site-constants';
 import { siteTheme } from '../constants/site-theme';

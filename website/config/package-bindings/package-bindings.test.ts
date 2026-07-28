@@ -150,8 +150,8 @@ describe('versioned package bindings', () => {
     );
     expect(v1PackageBinding.reactRoot).toBe(v2PackageBinding.reactRoot);
     expect(v1PackageBinding.reactDomRoot).toBe(v2PackageBinding.reactDomRoot);
-    expect(reactManifest.version).toBe('19.2.6');
-    expect(reactDomManifest.version).toBe('19.2.6');
+    expect(reactManifest.version).toBe('19.2.8');
+    expect(reactDomManifest.version).toBe('19.2.8');
   });
 
   it.each(bindings)('uses one Mantine runtime for $target', (binding) => {

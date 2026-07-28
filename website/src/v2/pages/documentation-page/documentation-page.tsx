@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { ClientOnly } from '../../../components/client-only';
 import { DocumentationLayout } from './components/documentation-layout';
 import { DocumentationSectionLabel } from './components/documentation-section-label';

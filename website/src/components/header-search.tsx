@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { CloseIcon, SearchIcon } from './icons';
 import type { SiteSearchHook } from './search/types/site-search-hook';
 

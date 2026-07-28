@@ -71,6 +71,34 @@ if (stylesheetMarkerCount !== expectedMarkerCount) {
 }
 
 const htmlFiles = stagedFiles.filter((file) => file.endsWith('.html'));
+const containsPrismMarkup = htmlFiles.some((htmlFile) => {
+  const html = fs.readFileSync(path.join(stageRoot, htmlFile), 'utf8');
+
+  return html.includes('prism-code') && html.includes('token keyword');
+});
+
+if (!containsPrismMarkup) {
+  throw new Error(
+    `${target} staging is missing server-rendered Prism syntax highlighting.`
+  );
+}
+
+const containsMuiScopedBaseline = stagedFiles
+  .filter(
+    (file) =>
+      file.startsWith('assets/mui-builder-surface-') && file.endsWith('.js')
+  )
+  .some((file) =>
+    fs
+      .readFileSync(path.join(stageRoot, file), 'utf8')
+      .includes('MuiScopedCssBaseline')
+  );
+
+if (!containsMuiScopedBaseline) {
+  throw new Error(
+    `${target} staging is missing the production Material UI scoped baseline.`
+  );
+}
 
 for (const htmlFile of htmlFiles) {
   const html = fs.readFileSync(path.join(stageRoot, htmlFile), 'utf8');

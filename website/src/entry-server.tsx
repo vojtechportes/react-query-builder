@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router';
 import { ServerStyleSheet } from 'styled-components';
 import { AppRoutes } from './app/app-routes';
 import { routerBasename } from './app/router-basename';

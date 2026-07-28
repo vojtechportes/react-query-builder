@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 import { siteTheme } from '../constants/site-theme';
 
 export interface INavigationPage {
@@ -80,10 +80,10 @@ export const DocumentationSidebar: React.FC<IDocumentationSidebarProps> = ({
     <LinkItem to={overviewPage.path} end $depth={overviewPage.depth}>
       {overviewPage.title}
     </LinkItem>
-    {groups.map(group => (
+    {groups.map((group) => (
       <Group key={group.key}>
         <GroupTitle>{group.title}</GroupTitle>
-        {group.pages.map(page => (
+        {group.pages.map((page) => (
           <LinkItem key={page.path} to={page.path} end $depth={page.depth}>
             {page.title}
           </LinkItem>
