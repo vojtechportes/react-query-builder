@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'node:path';
 import { getSourceOwner } from './get-source-owner.util';
+import { normalizeSourcePath } from './normalize-source-path.util';
 
 export const getImportBoundaryViolation = (
   importer: string,
@@ -43,6 +44,13 @@ export const getImportBoundaryViolation = (
 
   const importedPath = resolve(dirname(importer), source);
   const importedOwner = getSourceOwner(importedPath);
+  const normalizedImporter = normalizeSourcePath(importer);
+  const normalizedImportedPath = normalizeSourcePath(importedPath);
+  const sourceRoot = normalizedImporter.slice(
+    0,
+    normalizedImporter.indexOf('/src/') + '/src/'.length
+  );
+  const importsWebsiteSource = normalizedImportedPath.startsWith(sourceRoot);
 
   if (
     (importerOwner === 'v1' && importedOwner === 'v2') ||
@@ -51,7 +59,11 @@ export const getImportBoundaryViolation = (
     return `${importerOwner} modules cannot import ${importedOwner} modules`;
   }
 
-  if (importerOwner === 'shared' && importedOwner !== 'shared') {
+  if (
+    importerOwner === 'shared' &&
+    importsWebsiteSource &&
+    importedOwner !== 'shared'
+  ) {
     return 'shared modules cannot import version-owned or legacy application modules';
   }
 
