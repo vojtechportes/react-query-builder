@@ -47,7 +47,7 @@ describe('v2 route manifest', () => {
   it('owns the complete canonical v2 route set exactly once', () => {
     const manifestPaths = v2RouteManifest.map((route) => route.path);
 
-    expect(manifestPaths).toHaveLength(56);
+    expect(manifestPaths).toHaveLength(57);
     expect(new Set(manifestPaths).size).toBe(manifestPaths.length);
     expect(new Set(manifestPaths)).toEqual(new Set(expectedCanonicalPaths));
     expect(v2VersionSwitchRoutes).toEqual(manifestPaths);

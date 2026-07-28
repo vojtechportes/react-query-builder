@@ -38,6 +38,15 @@ describe('v2 Documentation content', () => {
 
     expect(content).toContain('href="/documentation/migration-to-2-0"');
   });
+  it('links the theming guide to the complete CSS variables reference', () => {
+    const content = renderToStaticMarkup(
+      <StaticRouter location="/documentation/theming">
+        {findDocumentationPage('/documentation/theming').content}
+      </StaticRouter>
+    );
+
+    expect(content).toContain('href="/api/css-variables"');
+  });
   it('normalizes trailing slashes and preserves the overview fallback', () => {
     expect(
       findDocumentationPage('/documentation/dynamic-field-options/').path

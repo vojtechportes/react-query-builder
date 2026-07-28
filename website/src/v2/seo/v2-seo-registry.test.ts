@@ -8,7 +8,7 @@ const seoPaths = v2SeoPages.map(({ path }) => path).sort();
 
 describe('v2 SEO registry', () => {
   it('owns exactly the canonical v2 route set', () => {
-    expect(v2SeoPages).toHaveLength(56);
+    expect(v2SeoPages).toHaveLength(57);
     expect(new Set(seoPaths).size).toBe(v2SeoPages.length);
     expect(seoPaths).toEqual(routePaths);
   });

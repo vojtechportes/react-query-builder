@@ -12,6 +12,7 @@ import { AdaptersFluentuiApiContent } from '../components/adapters-fluentui-api-
 import { AdaptersMantineApiContent } from '../components/adapters-mantine-api-content';
 import { AdaptersBootstrapApiContent } from '../components/adapters-bootstrap-api-content';
 import { AdaptersRadixApiContent } from '../components/adapters-radix-api-content';
+import { CssVariablesApiContent } from '../components/css-variables-api-content';
 import { ThemingApiContent } from '../components/theming-api-content';
 import { FormatQueryApiContent } from '../components/format-query-api-content';
 import { ParseQueryApiContent } from '../components/parse-query-api-content';
@@ -179,6 +180,18 @@ export const apiPages: IApiPage[] = [
     searchText:
       'Radix adapter API radix themes radix v1 createRadixComponents components',
     content: <AdaptersRadixApiContent />,
+  },
+  {
+    path: '/api/css-variables',
+    title: 'CSS Variables',
+    sectionKey: 'customization',
+    sectionTitle: 'Customization',
+    summary: '',
+    description:
+      'Complete API reference for every public query builder CSS variable and its default value.',
+    searchText:
+      'CSS variables custom properties tokens defaults IBuilderStyle colors spacing padding gaps radii shadows controls typography editor drop zone motion popover',
+    content: <CssVariablesApiContent />,
   },
   {
     path: '/api/theming',

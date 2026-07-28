@@ -79,7 +79,11 @@ export const ThemingDocumentationContent: React.FC = () => (
     <p>
       <InlineCode>IBuilderStyle</InlineCode> is the typed list of every public
       token accepted by <InlineCode>Builder.style</InlineCode>. The same
-      variable names can be declared in global or wrapper CSS.
+      variable names can be declared in global or wrapper CSS. See the{' '}
+      <TextLink to="/api/css-variables">
+        complete CSS variables reference
+      </TextLink>{' '}
+      for every variable and its default value.
     </p>
     <SectionTitle>Precedence</SectionTitle>
     <p>Values are resolved in this order, from lowest to highest:</p>
@@ -151,7 +155,8 @@ export const ThemingDocumentationContent: React.FC = () => (
       <TextLink to="/documentation/adapters">Adapters</TextLink>.
     </AlertBox>
     <AlertBox title="API reference" variant="info">
-      <TextLink to="/api/theming">Theming</TextLink> and{' '}
+      <TextLink to="/api/css-variables">CSS Variables</TextLink>,{' '}
+      <TextLink to="/api/theming">Theming</TextLink>, and{' '}
       <TextLink to="/api/adapters">Adapters</TextLink>.
     </AlertBox>
   </>

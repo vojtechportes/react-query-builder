@@ -91,6 +91,13 @@
       "section": "API"
     },
     {
+      "path": "/api/css-variables",
+      "title": "React Query Builder CSS Variables API",
+      "description": "Complete API reference for every public React Query Builder CSS variable, including color, layout, typography, motion, and overlay defaults.",
+      "keywords": "CSS, variables, custom, properties, tokens, defaults, IBuilderStyle, colors, spacing, padding, gaps, radii, shadows, controls, typography, editor, drop, zone, motion, popover, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "section": "API"
+    },
+    {
       "path": "/api/data",
       "title": "React Query Builder Data API",
       "description": "Query data API reference for denormalized rule and group shapes, literal versus field-reference values, and read-only semantics.",

@@ -37,6 +37,7 @@ export const v2VersionSwitchRoutes = [
   '/api/adapters/mantine',
   '/api/adapters/bootstrap',
   '/api/adapters/radix',
+  '/api/css-variables',
   '/api/theming',
   '/api/format-query',
   '/api/parse-query',

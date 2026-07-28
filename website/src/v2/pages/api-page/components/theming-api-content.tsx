@@ -100,7 +100,8 @@ export const ThemingApiContent: React.FC = () => (
       compatibility cycle.
     </AlertBox>
     <AlertBox title="Documentation" variant="info">
-      <TextLink to="/documentation/theming">Theming</TextLink> and{' '}
+      <TextLink to="/api/css-variables">CSS Variables</TextLink>,{' '}
+      <TextLink to="/documentation/theming">Theming</TextLink>, and{' '}
       <TextLink to="/documentation/adapters">Adapters</TextLink>.
     </AlertBox>
   </>
