@@ -40,7 +40,7 @@ const transitionModules = [
   'builder/components/rule-controls/select-multi/components/option/option.module.css',
 ];
 
-describe('T059 visual and accessibility parity contract', () => {
+describe('visual and accessibility contract', () => {
   it('keeps desktop and responsive root, group, rule, and control layouts', () => {
     const builder = readCss(
       'builder/components/styled-builder/styled-builder.module.css'

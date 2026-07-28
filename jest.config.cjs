@@ -6,7 +6,6 @@ module.exports = {
     '!src/**/*.test.{ts,tsx}',
     '!src/**/*.{d.ts}',
     '!**/node_modules/**',
-    '!src/types/**',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   moduleNameMapper: {
