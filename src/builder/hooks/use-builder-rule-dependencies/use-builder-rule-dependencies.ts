@@ -13,7 +13,7 @@ export const useBuilderRuleDependencies = (
   const [entries, setEntries] = React.useState<IBuilderRuleDependencyEntry[]>(
     []
   );
-  const dependencyFieldsKey = dependencyFields.join('|');
+  const dependencyFieldsKey = JSON.stringify(dependencyFields);
 
   React.useEffect(() => {
     const listener: BuilderRuleDependenciesListener = (nextEntries) => {
@@ -25,6 +25,8 @@ export const useBuilderRuleDependencies = (
       dependencyFields,
       listener
     );
+    // dependencyFieldsKey tracks array contents without resubscribing for identity-only changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [builderRef, dependencyFieldsKey, field]);
 
   return entries;

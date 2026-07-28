@@ -79,4 +79,25 @@ describe('Mongo roundtrip', () => {
       ])
     );
   });
+
+  it('escapes regex metacharacters and backslashes as literal values', () => {
+    const query: DenormalizedQuery = [
+      {
+        type: 'GROUP',
+        value: 'AND',
+        isNegated: false,
+        children: [
+          {
+            field: 'pattern',
+            operator: 'CONTAINS',
+            value: String.raw`a{b}[c]\d`,
+          },
+        ],
+      },
+    ];
+
+    expect(JSON.parse(formatMongo(query))).toEqual({
+      pattern: { $regex: String.raw`a\{b\}\[c\]\\d` },
+    });
+  });
 });

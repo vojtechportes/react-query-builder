@@ -153,6 +153,36 @@ const renderWithContext = (
   );
 
 describe('#components/Rule', () => {
+  it('preserves hook order when fields become available after an empty render', () => {
+    const contextValue = {
+      components,
+      fields: undefined,
+      data,
+      strings,
+      setData: jest.fn(),
+      onChange: jest.fn(),
+      dispatchAction: jest.fn(),
+      readOnly: false,
+    } as unknown as React.ComponentProps<
+      typeof BuilderContext.Provider
+    >['value'];
+    const { container, rerender } = render(
+      <BuilderContext.Provider value={contextValue}>
+        <Rule id="test-2" field="MOCK_FIELD_1" />
+      </BuilderContext.Provider>
+    );
+
+    expect(container.firstChild).toBeNull();
+
+    rerender(
+      <BuilderContext.Provider value={{ ...contextValue, fields }}>
+        <Rule id="test-2" field="MOCK_FIELD_1" />
+      </BuilderContext.Provider>
+    );
+
+    expect(container.firstChild).not.toBeNull();
+  });
+
   it('renders in editable and read-only modes', () => {
     const editable = renderWithContext(
       <Rule id="test-2" field="MOCK_FIELD_1" />

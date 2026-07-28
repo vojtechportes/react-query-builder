@@ -1,5 +1,3 @@
-/* global console */
-
 import { copyFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,8 +26,8 @@ const getPublicDeclarationFiles = async () => {
     }
   }
 
-  return [...declarationFiles].filter(fileName =>
-    fileName.startsWith(distDir) && fileName.endsWith('.d.ts')
+  return [...declarationFiles].filter(
+    (fileName) => fileName.startsWith(distDir) && fileName.endsWith('.d.ts')
   );
 };
 
@@ -37,14 +35,13 @@ try {
   const declarationFiles = await getPublicDeclarationFiles();
 
   await Promise.all(
-    declarationFiles.map(fileName =>
-      copyFile(
-        fileName.replace(/\.d\.ts$/, '.d.mts'),
-        fileName
-      )
+    declarationFiles.map((fileName) =>
+      copyFile(fileName.replace(/\.d\.ts$/, '.d.mts'), fileName)
     )
   );
 } catch (error) {
-  console.error('Unable to create public .d.ts files from .d.mts build artifacts');
+  console.error(
+    'Unable to create public .d.ts files from .d.mts build artifacts'
+  );
   throw error;
 }
