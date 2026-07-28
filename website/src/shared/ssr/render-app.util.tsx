@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router';
 import { ServerStyleSheet } from 'styled-components';
 import type { IRenderedPage } from './types/rendered-page';
 

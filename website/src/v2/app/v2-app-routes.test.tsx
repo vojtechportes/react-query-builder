@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderApp } from '../../shared/ssr/render-app.util';
 import { V2AppRoutes } from './v2-app-routes';

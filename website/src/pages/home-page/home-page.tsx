@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { siteTheme } from '../../constants/site-theme';
 import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
@@ -13,7 +13,11 @@ const Hero = styled.section`
   border: 1px solid #dbe4f0;
   border-radius: 16px;
   background:
-    radial-gradient(circle at top right, ${siteTheme.heroGlow}, transparent 32%),
+    radial-gradient(
+      circle at top right,
+      ${siteTheme.heroGlow},
+      transparent 32%
+    ),
     linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
   box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
 
@@ -118,13 +122,8 @@ const InstallCode = styled.pre`
 
 const Code = styled.code`
   font-family:
-    'Fira Code',
-    'Roboto Mono',
-    'SFMono-Regular',
-    Consolas,
-    'Liberation Mono',
-    Menlo,
-    monospace;
+    'Fira Code', 'Roboto Mono', 'SFMono-Regular', Consolas, 'Liberation Mono',
+    Menlo, monospace;
 `;
 
 const seoPage = findSeoPage('/');
@@ -149,7 +148,8 @@ export const HomePage: React.FC = () => {
       <InstallPanel>
         <InstallTitle>Install</InstallTitle>
         <InstallCopy>
-          Add the package and continue with the setup guide in the documentation.
+          Add the package and continue with the setup guide in the
+          documentation.
         </InstallCopy>
         <InstallCode>
           <Code>npm install @vojtechportes/react-query-builder</Code>

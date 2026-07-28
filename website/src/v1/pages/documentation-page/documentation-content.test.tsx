@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { documentationBaseline } from './constants/documentation-baseline';
 import { documentationPages } from './constants/documentation-pages';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { siteTheme } from '../../../constants/site-theme';
 import { useV2PageMetadata } from '../../seo/hooks/use-v2-page-metadata';
 import { createV2PageMetadataOptions } from '../../seo/utils/create-v2-page-metadata-options.util';

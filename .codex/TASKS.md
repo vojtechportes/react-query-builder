@@ -2234,3 +2234,39 @@ site/v1 usage.
 - Run lint, Prettier check, the full Jest suite, package build, CSS infrastructure, packed entries, publish-artifact verification, and release verification.
 - Run package-binding verification and both website-version test/build suites.
 - Review the final diff against `.codex/repository-structure.md` and resolve code-review findings.
+
+### B001 - Upgrade website to React Router 8.3
+
+**Status:** `[x]` Done
+
+**Goal:** Remove the vulnerable React Router 7 dependency from the website and restore automated security updates by migrating to React Router 8.3 without changing routes or behavior.
+
+**Scope:**
+
+- Replace the website's `react-router-dom` dependency with `react-router@^8.3.0` and migrate imports to the supported v8 entry points.
+- Import `RouterProvider` from `react-router/dom` and all other declarative/data router APIs from `react-router`.
+- Raise website React, React DOM, Vite, React Vite plugin, and Node tooling baselines to versions supported by React Router 8.
+- Regenerate the workspace lockfile through npm and preserve the root package's intentional React 18 compatibility.
+- Update versioned test/runtime aliases and dependency assertions so v1 and v2 retain isolated, valid React runtimes.
+- Keep route definitions, navigation behavior, SEO output, website content, and deployment behavior unchanged.
+
+**Acceptance criteria:**
+
+- `react-router-dom` is absent from the website manifest, lockfile, installed dependency graph, and website imports.
+- The website resolves React Router 8.3 or newer with valid React and React DOM peer dependencies.
+- CI website jobs use Node 22.22.0 or newer.
+- Existing v1/v2 routes, redirects, basenames, navigation, SSR, hydration, SEO, and static output remain compatible.
+- Root library React 18 compatibility and package bindings remain intact.
+- The Dependabot alert can resolve without an npm override or ignored advisory.
+
+**Verification:**
+
+- Run `npm ci` and inspect `npm ls react-router react-router-dom react react-dom vite @vitejs/plugin-react`.
+- Audit the repository for remaining `react-router-dom` references and incorrect `RouterProvider` imports.
+- Run Prettier on all modified non-Markdown code and configuration files.
+- Run `npm run package-bindings:verify --workspace website`.
+- Run `npm run test:all --workspace website`.
+- Run `npm run build:versions --workspace website`.
+- Run `npm run build --workspace website`.
+- Run `npm run lint`, `npm test`, and `npm run build` from the repository root.
+- Run `git diff --check` and the repository-required code-review agent, then resolve all findings.

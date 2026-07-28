@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router';
 import { SiteShell } from '../components/site-shell';
 import { canonicalSeoPages } from '../constants/seo-pages';
 import { TOP_LEVEL_NAV } from '../constants/site-constants';

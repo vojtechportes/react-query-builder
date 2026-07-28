@@ -61,7 +61,7 @@ export const createPackageBinding = (
       /^react$/,
       /^react\//,
       /^react-dom(?:\/.*)?$/,
-      /^react-router(?:-dom)?$/,
+      /^react-router(?:\/.*)?$/,
     ],
   };
 };

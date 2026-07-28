@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { V1AppRoutes } from './v1-app-routes';
 import { v1RouterBasename } from './v1-router-basename';
 

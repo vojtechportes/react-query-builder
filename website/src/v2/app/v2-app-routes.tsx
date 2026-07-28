@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { SiteShell } from '../../components/site-shell';
 import { RouteRedirect } from '../../shared/route-redirect';
 import { v2TopNavigation } from '../navigation/constants/v2-top-navigation';
