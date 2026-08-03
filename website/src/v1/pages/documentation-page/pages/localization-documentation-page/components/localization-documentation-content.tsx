@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,28 +14,28 @@ import { localizationSnippet } from '../constants/localization-snippet';
 
 export const LocalizationDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Localize field labels, option labels, and surrounding UI in the host
       application. Built-in action labels can be customized through{' '}
       <TextLink to="/api/builder">Builder</TextLink> via{' '}
       <InlineCode>strings</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={localizationSnippet}
       language="ts"
       label="Localized fields"
     />
     <SectionTitle>Built-in UI strings</SectionTitle>
-    <p>
+    <Typography color="muted">
       Locales can be imported from their subpaths and passed to the Builder
       through the <InlineCode>strings</InlineCode> prop.
-    </p>
+    </Typography>
     <CodeBlock
       code={firstPartyLocaleSnippet}
       language="tsx"
       label="Built-in French translations"
     />
-    <p>Supported locale subpaths:</p>
+    <Typography color="muted">Supported locale subpaths:</Typography>
     <List>
       <li>
         <InlineCode>@vojtechportes/react-query-builder/locale/en-US</InlineCode>{' '}
@@ -77,11 +78,11 @@ export const LocalizationDocumentationContent: React.FC = () => (
         — Traditional Chinese
       </li>
     </List>
-    <p>
+    <Typography color="muted">
       The package-root <InlineCode>strings</InlineCode> import remains the
       backward-compatible English (<InlineCode>en-US</InlineCode>) form. Use it
       as a base when you only need selective overrides.
-    </p>
+    </Typography>
     <CodeBlock code={stringsSnippet} language="tsx" label="Custom UI strings" />
     <List>
       <li>

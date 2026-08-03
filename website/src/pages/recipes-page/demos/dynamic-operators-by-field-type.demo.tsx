@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '../../../components/button';
 import {
   Builder,
   type DenormalizedQuery,
@@ -103,12 +104,17 @@ export const DynamicOperatorsByFieldTypeDemo: React.FC = () => {
       note="Switch fields to compare their operators, or refresh the Status options to see loading and error states."
       actions={
         <>
-          <button type="button" onClick={refresh}>
+          <Button
+            color="secondary"
+            size="small"
+            type="button"
+            onClick={refresh}
+          >
             Refresh options
-          </button>
-          <button type="button" onClick={fail}>
+          </Button>
+          <Button color="secondary" size="small" type="button" onClick={fail}>
             Simulate error
-          </button>
+          </Button>
         </>
       }
     >

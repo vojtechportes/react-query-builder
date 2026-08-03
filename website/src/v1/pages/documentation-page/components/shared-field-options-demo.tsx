@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '../../../../components/button';
 import styled from 'styled-components';
 import {
   Builder,
@@ -23,20 +24,6 @@ const Toolbar = styled.div`
   gap: 0.75rem;
   align-items: center;
   justify-content: space-between;
-`;
-
-const SmallButton = styled.button`
-  padding: 0.6rem 0.9rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 999px;
-  background: #fff;
-  color: #0f172a;
-  cursor: pointer;
-
-  &:hover {
-    border-color: #93c5fd;
-    background: #eff6ff;
-  }
 `;
 
 const StatusRow = styled.div`
@@ -134,18 +121,38 @@ export const SharedFieldOptionsDemo: React.FC = () => {
   return (
     <DemoCard>
       <Toolbar>
-        <SmallButton type="button" onClick={() => loadSharedOptions('czech')}>
+        <Button
+          color="secondary"
+          size="small"
+          type="button"
+          onClick={() => loadSharedOptions('czech')}
+        >
           Load Czech cities
-        </SmallButton>
-        <SmallButton type="button" onClick={() => loadSharedOptions('slovak')}>
+        </Button>
+        <Button
+          color="secondary"
+          size="small"
+          type="button"
+          onClick={() => loadSharedOptions('slovak')}
+        >
           Load Slovak cities
-        </SmallButton>
-        <SmallButton type="button" onClick={() => loadSharedOptions('german')}>
+        </Button>
+        <Button
+          color="secondary"
+          size="small"
+          type="button"
+          onClick={() => loadSharedOptions('german')}
+        >
           Load German cities
-        </SmallButton>
-        <SmallButton type="button" onClick={() => loadSharedOptions('default')}>
+        </Button>
+        <Button
+          color="secondary"
+          size="small"
+          type="button"
+          onClick={() => loadSharedOptions('default')}
+        >
           Reset to field.value
-        </SmallButton>
+        </Button>
       </Toolbar>
       <StatusRow>
         <span>Field state: {cityOptionState.status}</span>

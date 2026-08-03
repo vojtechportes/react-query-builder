@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '../../../components/button';
 import {
   Builder,
   type DenormalizedQuery,
@@ -132,18 +133,36 @@ export const SaveLoadFilterPresetsDemo: React.FC = () => {
       note="This demo validates presets before saving them in your browser. They are not uploaded or shared across devices."
       actions={
         <>
-          <button type="button" onClick={save}>
+          <Button color="secondary" size="small" type="button" onClick={save}>
             Save new
-          </button>
-          <button type="button" onClick={load} disabled={!selectedId}>
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
+            type="button"
+            onClick={load}
+            disabled={!selectedId}
+          >
             Load
-          </button>
-          <button type="button" onClick={rename} disabled={!selectedId}>
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
+            type="button"
+            onClick={rename}
+            disabled={!selectedId}
+          >
             Rename
-          </button>
-          <button type="button" onClick={remove} disabled={!selectedId}>
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
+            type="button"
+            onClick={remove}
+            disabled={!selectedId}
+          >
             Delete
-          </button>
+          </Button>
         </>
       }
     >

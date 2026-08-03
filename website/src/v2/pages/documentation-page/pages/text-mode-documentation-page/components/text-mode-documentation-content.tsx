@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -19,10 +20,10 @@ import { textModeStringsSnippet } from '../constants/text-mode-strings-snippet';
 
 export const TextModeDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Text mode lets the builder switch between the visual query UI and a SQL
       editor view of the same query.
-    </p>
+    </Typography>
     <CodeBlock
       code={textModeSnippet}
       language="tsx"
@@ -44,10 +45,10 @@ export const TextModeDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Opening mode</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use <InlineCode>defaultMode</InlineCode> to choose whether the builder
       opens in the visual builder or in text mode.
-    </p>
+    </Typography>
     <CodeBlock
       code={textModeDefaultModeSnippet}
       language="tsx"
@@ -167,12 +168,12 @@ export const TextModeDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Using Monaco text mode</SectionTitle>
-    <p>
+    <Typography color="muted">
       Monaco uses the same public{' '}
       <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
       import as the default builder. Import it once; the Monaco subpackage does
       not ship a second stylesheet.
-    </p>
+    </Typography>
     <CodeBlock
       code={monacoTextModeSnippet}
       language="tsx"
@@ -205,10 +206,10 @@ export const TextModeDocumentationContent: React.FC = () => (
       </li>
     </List>{' '}
     <SectionTitle>Text-mode strings</SectionTitle>
-    <p>
+    <Typography color="muted">
       Text-mode labels and messages are part of the regular{' '}
       <InlineCode>strings</InlineCode> override surface.
-    </p>
+    </Typography>
     <CodeBlock
       code={textModeStringsSnippet}
       language="tsx"

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getRobotsDirective } from '../../../shared/seo/utils/get-robots-directive.util';
 import { v1SeoConfig } from '../constants/v1-seo-config';
 import type { IV1PageMetadataOptions } from '../types/v1-page-metadata-options';
 import { createV1CanonicalUrl } from '../utils/create-v1-canonical-url.util';
@@ -21,7 +22,9 @@ export const useV1PageMetadata = (
     document.title = title;
     ensureV1MetaName('description').content = description;
     ensureV1MetaName('keywords').content = options.keywords;
-    ensureV1MetaName('robots').content = v1SeoConfig.robotsDirective;
+    ensureV1MetaName('robots').content = getRobotsDirective(
+      v1SeoConfig.robotsDirective
+    );
     ensureV1MetaProperty('og:type').content = 'website';
     ensureV1MetaProperty('og:site_name').content = `${v1SeoConfig.siteName} v1`;
     ensureV1MetaProperty('og:title').content = title;

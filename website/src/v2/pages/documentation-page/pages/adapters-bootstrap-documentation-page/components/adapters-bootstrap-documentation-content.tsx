@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,10 +14,10 @@ import { bootstrapCreateComponentsSnippet } from '../constants/bootstrap-create-
 
 export const AdaptersBootstrapDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the Bootstrap adapter when your application already ships Bootstrap 5
       styles and you want the builder controls mapped to Bootstrap-flavored UI.
-    </p>
+    </Typography>
     <SectionTitle>Available entrypoint</SectionTitle>
     <List>
       <li>
@@ -25,9 +26,9 @@ export const AdaptersBootstrapDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Installing Bootstrap</SectionTitle>
-    <p>
+    <Typography color="muted">
       Install Bootstrap and import its stylesheet before rendering the adapter.
-    </p>
+    </Typography>
     <CodeBlock
       code={bootstrapAdaptersInstallSnippet}
       language="bash"

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -11,10 +12,10 @@ import { componentsSnippet } from '../constants/components-snippet';
 
 export const ComponentsDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Replace built-in controls and containers through the{' '}
       <InlineCode>components</InlineCode> prop.
-    </p>
+    </Typography>
     <CodeBlock
       code={componentsSnippet}
       language="tsx"

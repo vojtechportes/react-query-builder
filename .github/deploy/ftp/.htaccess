@@ -3,41 +3,41 @@ DirectorySlash Off
 
 RewriteEngine On
 
-RewriteRule ^$ /v2 [R=308,L,NE]
+RewriteRule ^$ https://www.react-query-builder.com/v2 [R=308,L,NE]
 
-RewriteRule ^api/builder-props/?$ /v2/api/builder [R=308,L,NE]
-RewriteRule ^documentation/parsing-and-formatting/sql/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^documentation/parsing-and-formatting/mongo/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^documentation/parsing-and-formatting/other-formats/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^documentation/configuration/fields/?$ /v2/api/fields [R=308,L,NE]
-RewriteRule ^documentation/configuration/data/?$ /v2/api/data [R=308,L,NE]
-RewriteRule ^documentation/configuration/builder-props/?$ /v2/api/builder [R=308,L,NE]
-RewriteRule ^documentation/configuration/components/?$ /v2/documentation/components [R=308,L,NE]
+RewriteRule ^api/builder-props/?$ https://www.react-query-builder.com/v2/api/builder [R=308,L,NE]
+RewriteRule ^documentation/parsing-and-formatting/sql/?$ https://www.react-query-builder.com/v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^documentation/parsing-and-formatting/mongo/?$ https://www.react-query-builder.com/v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^documentation/parsing-and-formatting/other-formats/?$ https://www.react-query-builder.com/v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^documentation/configuration/fields/?$ https://www.react-query-builder.com/v2/api/fields [R=308,L,NE]
+RewriteRule ^documentation/configuration/data/?$ https://www.react-query-builder.com/v2/api/data [R=308,L,NE]
+RewriteRule ^documentation/configuration/builder-props/?$ https://www.react-query-builder.com/v2/api/builder [R=308,L,NE]
+RewriteRule ^documentation/configuration/components/?$ https://www.react-query-builder.com/v2/documentation/components [R=308,L,NE]
 
-RewriteRule ^v1/api/builder-props/?$ /v1/api/builder [R=308,L,NE]
-RewriteRule ^v1/documentation/parsing-and-formatting/sql/?$ /v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^v1/documentation/parsing-and-formatting/mongo/?$ /v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^v1/documentation/parsing-and-formatting/other-formats/?$ /v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^v1/documentation/configuration/fields/?$ /v1/api/fields [R=308,L,NE]
-RewriteRule ^v1/documentation/configuration/data/?$ /v1/api/data [R=308,L,NE]
-RewriteRule ^v1/documentation/configuration/builder-props/?$ /v1/api/builder [R=308,L,NE]
-RewriteRule ^v1/documentation/configuration/components/?$ /v1/documentation/components [R=308,L,NE]
-RewriteRule ^v2/api/builder-props/?$ /v2/api/builder [R=308,L,NE]
-RewriteRule ^v2/documentation/parsing-and-formatting/sql/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^v2/documentation/parsing-and-formatting/mongo/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^v2/documentation/parsing-and-formatting/other-formats/?$ /v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
-RewriteRule ^v2/documentation/configuration/fields/?$ /v2/api/fields [R=308,L,NE]
-RewriteRule ^v2/documentation/configuration/data/?$ /v2/api/data [R=308,L,NE]
-RewriteRule ^v2/documentation/configuration/builder-props/?$ /v2/api/builder [R=308,L,NE]
-RewriteRule ^v2/documentation/configuration/components/?$ /v2/documentation/components [R=308,L,NE]
+RewriteRule ^v1/api/builder-props/?$ https://www.react-query-builder.com/v1/api/builder [R=308,L,NE]
+RewriteRule ^v1/documentation/parsing-and-formatting/sql/?$ https://www.react-query-builder.com/v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v1/documentation/parsing-and-formatting/mongo/?$ https://www.react-query-builder.com/v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v1/documentation/parsing-and-formatting/other-formats/?$ https://www.react-query-builder.com/v1/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/fields/?$ https://www.react-query-builder.com/v1/api/fields [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/data/?$ https://www.react-query-builder.com/v1/api/data [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/builder-props/?$ https://www.react-query-builder.com/v1/api/builder [R=308,L,NE]
+RewriteRule ^v1/documentation/configuration/components/?$ https://www.react-query-builder.com/v1/documentation/components [R=308,L,NE]
+RewriteRule ^v2/api/builder-props/?$ https://www.react-query-builder.com/v2/api/builder [R=308,L,NE]
+RewriteRule ^v2/documentation/parsing-and-formatting/sql/?$ https://www.react-query-builder.com/v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v2/documentation/parsing-and-formatting/mongo/?$ https://www.react-query-builder.com/v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v2/documentation/parsing-and-formatting/other-formats/?$ https://www.react-query-builder.com/v2/documentation/parsing-and-formatting/supported-formats [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/fields/?$ https://www.react-query-builder.com/v2/api/fields [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/data/?$ https://www.react-query-builder.com/v2/api/data [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/builder-props/?$ https://www.react-query-builder.com/v2/api/builder [R=308,L,NE]
+RewriteRule ^v2/documentation/configuration/components/?$ https://www.react-query-builder.com/v2/documentation/components [R=308,L,NE]
 
 RewriteCond %{REQUEST_URI} !^/(v1|v2)(/|$)
 RewriteCond %{DOCUMENT_ROOT}/v2/$1/index.html -f
-RewriteRule ^(.+?)/?$ /v2/$1 [R=308,L,NE]
+RewriteRule ^(.+?)/?$ https://www.react-query-builder.com/v2/$1 [R=308,L,NE]
 
 RewriteCond %{REQUEST_URI} !^/$
 RewriteCond %{REQUEST_URI} /$
-RewriteRule ^(.+)/$ /$1 [R=308,L,NE]
+RewriteRule ^(.+)/$ https://www.react-query-builder.com/$1 [R=308,L,NE]
 
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteCond %{REQUEST_FILENAME}/index.html -f

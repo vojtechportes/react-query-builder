@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,10 +14,10 @@ import { radixCreateComponentsSnippet } from '../constants/radix-create-componen
 
 export const AdaptersRadixDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the Radix adapter when your application uses Radix Themes and you want
       the builder controls to align with that design system.
-    </p>
+    </Typography>
     <SectionTitle>Available entrypoint</SectionTitle>
     <List>
       <li>
@@ -26,10 +27,10 @@ export const AdaptersRadixDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Installing Radix Themes</SectionTitle>
-    <p>
+    <Typography color="muted">
       Install the Radix Themes peer dependency and the Radix icons package
       before using the adapter.
-    </p>
+    </Typography>
     <CodeBlock
       code={radixAdaptersInstallSnippet}
       language="bash"

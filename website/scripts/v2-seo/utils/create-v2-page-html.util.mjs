@@ -24,7 +24,10 @@ export const createV2PageHtml = ({
     siteUrl,
     seoConfig.versionPath
   );
-  const title = `${page.title} | ${seoConfig.siteName}`;
+  const title =
+    page.section === 'Home'
+      ? page.title
+      : `${page.title} | ${seoConfig.siteName}`;
   let html = baseHtml.replace(
     /<title>[\s\S]*?<\/title>/i,
     `<title>${escapeHtml(title)}</title>`

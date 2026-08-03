@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -15,37 +16,37 @@ import { wrapperThemeSnippet } from '../constants/wrapper-theme-snippet';
 
 export const ThemingDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Import{' '}
       <InlineCode>@vojtechportes/react-query-builder/styles.css</InlineCode>{' '}
       once, then customize the built-in components with inherited{' '}
       <InlineCode>--query-builder-*</InlineCode> CSS variables. The stylesheet
       supplies the default token values; components do not inject runtime
       styles.
-    </p>
+    </Typography>
     <SectionTitle>Global overrides</SectionTitle>
-    <p>
+    <Typography color="muted">
       Set variables on <InlineCode>:root</InlineCode> when every builder and
       standalone built-in control should share the same values.
-    </p>
+    </Typography>
     <CodeBlock code={globalThemeSnippet} language="css" label="Global tokens" />
     <SectionTitle>Wrapper overrides</SectionTitle>
-    <p>
+    <Typography color="muted">
       Set variables on an application-owned wrapper to scope a theme to one
       subtree. The values are inherited by the builder and its built-in
       controls.
-    </p>
+    </Typography>
     <CodeBlock
       code={wrapperThemeSnippet}
       language="css"
       label="Wrapper-scoped tokens"
     />
     <SectionTitle>Builder overrides</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use the typed <InlineCode>Builder.style</InlineCode> prop for values that
       belong to one builder instance. This is the most specific supported token
       override boundary.
-    </p>
+    </Typography>
     <CodeBlock
       code={builderStyleThemeSnippet}
       language="tsx"
@@ -76,7 +77,7 @@ export const ThemingDocumentationContent: React.FC = () => (
         layering tokens.
       </li>
     </List>
-    <p>
+    <Typography color="muted">
       <InlineCode>IBuilderStyle</InlineCode> is the typed list of every public
       token accepted by <InlineCode>Builder.style</InlineCode>. The same
       variable names can be declared in global or wrapper CSS. See the{' '}
@@ -84,9 +85,11 @@ export const ThemingDocumentationContent: React.FC = () => (
         complete CSS variables reference
       </TextLink>{' '}
       for every variable and its default value.
-    </p>
+    </Typography>
     <SectionTitle>Precedence</SectionTitle>
-    <p>Values are resolved in this order, from lowest to highest:</p>
+    <Typography color="muted">
+      Values are resolved in this order, from lowest to highest:
+    </Typography>
     <List>
       <li>
         <ItemTitle>Stylesheet defaults:</ItemTitle> Generated color defaults and
@@ -132,14 +135,14 @@ export const ThemingDocumentationContent: React.FC = () => (
       language="tsx"
       label="Legacy theme provider"
     />
-    <p>
+    <Typography color="muted">
       Replace each legacy color leaf with its matching CSS variable. For
       example, <InlineCode>colors.primary.default</InlineCode> becomes{' '}
       <InlineCode>--query-builder-color-primary-default</InlineCode>. Put shared
       values on a wrapper or pass one-off values through{' '}
       <InlineCode>Builder.style</InlineCode>, then remove the provider when it
       no longer serves other builders.
-    </p>
+    </Typography>
     <AlertBox title="Legacy API" variant="warning">
       Prefer CSS variables for new code. <InlineCode>ThemeProvider</InlineCode>,{' '}
       <InlineCode>colors</InlineCode>, and the public color types remain

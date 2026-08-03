@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -9,11 +10,11 @@ import { themeSnippet } from '../constants/theme-snippet';
 
 export const ThemingDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the theme provider to override builder color tokens. For control and
       container replacement, see{' '}
       <TextLink to="/documentation/components">Components</TextLink>.
-    </p>
+    </Typography>
     <CodeBlock code={themeSnippet} language="tsx" label="Theme provider" />
     <AlertBox title="Adapters and theming" variant="info">
       <InlineCode>ThemeProvider</InlineCode> customizes the built-in default

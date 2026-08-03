@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import { ClientOnly } from '../../../../../../components/client-only';
@@ -17,12 +18,12 @@ import { dynamicFieldOptionsReactQuerySnippet } from '../constants/dynamic-field
 
 export const DynamicFieldOptionsDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Keep the <InlineCode>fields</InlineCode> array stable and push runtime
       options through <InlineCode>builderRef</InlineCode>. The important choice
       is scope: field-level APIs are for shared options, while rule-level APIs
       are for dependency-aware options.
-    </p>
+    </Typography>
     <SectionTitle>Choose The Scope</SectionTitle>
     <List>
       <li>
@@ -77,11 +78,11 @@ export const DynamicFieldOptionsDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Field-Level API</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use the field-level imperative API when all rules of a field should share
       one runtime option set. This is a good fit for globally shared dynamic
       data such as statuses, assignees, or categories.
-    </p>
+    </Typography>
     <CodeBlock
       code={dynamicFieldOptionsSnippet}
       language="tsx"
@@ -92,68 +93,68 @@ export const DynamicFieldOptionsDocumentationContent: React.FC = () => (
       language="tsx"
       label="Field-level reload flow"
     />
-    <p>
+    <Typography color="muted">
       In this example both <InlineCode>CITY</InlineCode> rules update together
       because the runtime options are stored at field scope.
-    </p>
-    <p>
+    </Typography>
+    <Typography color="muted">
       The live example exposes that field-scoped state through{' '}
       <InlineCode>
         builderRef.subscribeToFieldOptionState('CITY', listener)
       </InlineCode>
       .
-    </p>
+    </Typography>
     <ClientOnly
       loader={loadSharedFieldOptionsDemo}
       label="Loading the shared field-options demo..."
       minHeight="18rem"
     />
     <SectionTitle>Rule-Level API</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use the rule-level imperative API when options depend on other rules or on
       surrounding app state. This is the right fit for repeated dependencies
       such as <InlineCode>COUNTRY -&gt; CITY</InlineCode> in multiple groups.
-    </p>
+    </Typography>
     <CodeBlock
       code={dynamicRuleOptionsSnippet}
       language="tsx"
       label="Dependency-aware rule options"
     />
-    <p>
+    <Typography color="muted">
       This example binds each <InlineCode>CITY</InlineCode> rule to the nearest{' '}
       <InlineCode>COUNTRY</InlineCode> rule. Initial hydration and later
       dependency changes are handled by{' '}
       <InlineCode>builderRef.bindRuleOptions(...)</InlineCode>.
-    </p>
-    <p>
+    </Typography>
+    <Typography color="muted">
       The extra{' '}
       <InlineCode>builderRef.reconcileRuleValueWithOptions(...)</InlineCode>{' '}
       call is optional and useful when you want strict select semantics, such as
       clearing a now-invalid city after the nearest country changes.
-    </p>
+    </Typography>
     <ClientOnly
       loader={loadImperativeFieldOptionsDemo}
       label="Loading the imperative field-options demo..."
       minHeight="18rem"
     />
     <SectionTitle>TanStack React Query Example</SectionTitle>
-    <p>
+    <Typography color="muted">
       If your app already uses TanStack React Query, keep caching there and use
       the builder only for rule lookup and option storage. For dependency-heavy
       cases, <InlineCode>useBuilderRuleDependencies(...)</InlineCode> fits
       naturally with <InlineCode>useQueries(...)</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={dynamicFieldOptionsReactQuerySnippet}
       language="tsx"
       label="Rule-level React Query integration"
     />
-    <p>
+    <Typography color="muted">
       The reconciliation call in the success branch is optional. Keep it when
       you want strict select semantics and remove it when the selected value may
       stay valid even if the currently loaded option slice does not include it
       yet.
-    </p>
+    </Typography>
     <AlertBox title="API reference" variant="info">
       <TextLink to="/api/builder-ref">Builder Ref</TextLink>,{' '}
       <TextLink to="/api/builder">Builder</TextLink>, and{' '}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { Typography } from '../../../components/typography/typography';
 import { ClientOnly } from '../../../components/client-only';
 import { useV1PageMetadata } from '../../seo/hooks/use-v1-page-metadata';
 import { createV1PageMetadataOptions } from '../../seo/utils/create-v1-page-metadata-options.util';
@@ -10,11 +11,6 @@ import { loadDemoPlayground } from './load-demo-playground';
 const Root = styled.section`
   display: grid;
   gap: 1rem;
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
 `;
 
 const seoPage = findV1SeoPage('/demo');
@@ -29,11 +25,9 @@ export const DemoPage: React.FC = () => {
 
   return (
     <Root>
-      <Title>Demo</Title>
-      <p>
-        Configure fields, adapters, validation, text editing, localization, and
-        query output in the interactive playground below.
-      </p>
+      <Typography variant="h1" fontSize="clamp(2rem, 4vw, 3rem)">
+        Demo
+      </Typography>
       <ClientOnly
         loader={loadDemoPlayground}
         label="Loading the interactive query builder playground..."

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import { List, TextLink } from '../../../../../../components/docs-primitives';
@@ -7,7 +8,9 @@ import { parseSnippet } from '../constants/parse-snippet';
 
 export const ParsingAndFormattingDocumentationContent: React.FC = () => (
   <>
-    <p>Query data can be converted to and from supported external formats.</p>
+    <Typography color="muted">
+      Query data can be converted to and from supported external formats.
+    </Typography>
     <List>
       <li>
         <TextLink to="/api/format-query">formatQuery</TextLink> converts builder

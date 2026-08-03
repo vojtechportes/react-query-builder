@@ -1,6 +1,6 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
-import { recipeDemoButtonStyles } from '../styles/recipe-demo-button.styles';
+import { Typography } from '../../../components/typography/typography';
 
 const Root = styled.section`
   display: grid;
@@ -23,15 +23,6 @@ const Header = styled.header`
     display: grid;
     gap: 0.75rem;
   }
-
-  p {
-    margin: 0;
-  }
-`;
-
-const Title = styled.h2`
-  margin: 0;
-  font-size: 1.3rem;
 `;
 
 const Badge = styled.span<{ $kind: 'live' | 'mock' | 'experimental' }>`
@@ -48,10 +39,6 @@ const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-
-  > button {
-    ${recipeDemoButtonStyles}
-  }
 `;
 
 const Surface = styled.div`
@@ -80,8 +67,10 @@ export const RecipeDemoFrame: React.FC<IRecipeDemoFrameProps> = ({
   <Root aria-label={`${title} interactive demo`}>
     <Header>
       <div>
-        <Title>{title}</Title>
-        <p>{note}</p>
+        <Typography variant="h2" as="h5">
+          {title}
+        </Typography>
+        <Typography color="muted">{note}</Typography>
       </div>
       <Badge $kind={kind}>
         {kind === 'live'

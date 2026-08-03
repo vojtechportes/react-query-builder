@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '../../../../components/button';
 import {
   Builder,
   useBuilderRef,
@@ -6,7 +7,6 @@ import {
   type IBuilderFieldOptionState,
   type IBuilderFieldProps,
 } from '@vojtechportes/react-query-builder';
-import { DocumentationDemoButton } from './documentation-demo-button';
 import { DocumentationDemoCard } from './documentation-demo-card';
 import { DocumentationDemoStatusRow } from './documentation-demo-status-row';
 import { DocumentationDemoToolbar } from './documentation-demo-toolbar';
@@ -98,30 +98,38 @@ export const SharedFieldOptionsDemo: React.FC = () => {
   return (
     <DocumentationDemoCard>
       <DocumentationDemoToolbar>
-        <DocumentationDemoButton
+        <Button
+          color="secondary"
+          size="small"
           type="button"
           onClick={() => loadSharedOptions('czech')}
         >
           Load Czech cities
-        </DocumentationDemoButton>
-        <DocumentationDemoButton
+        </Button>
+        <Button
+          color="secondary"
+          size="small"
           type="button"
           onClick={() => loadSharedOptions('slovak')}
         >
           Load Slovak cities
-        </DocumentationDemoButton>
-        <DocumentationDemoButton
+        </Button>
+        <Button
+          color="secondary"
+          size="small"
           type="button"
           onClick={() => loadSharedOptions('german')}
         >
           Load German cities
-        </DocumentationDemoButton>
-        <DocumentationDemoButton
+        </Button>
+        <Button
+          color="secondary"
+          size="small"
           type="button"
           onClick={() => loadSharedOptions('default')}
         >
           Reset to field.value
-        </DocumentationDemoButton>
+        </Button>
       </DocumentationDemoToolbar>
       <DocumentationDemoStatusRow>
         <span>Field state: {cityOptionState.status}</span>

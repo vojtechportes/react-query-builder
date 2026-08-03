@@ -1,6 +1,5 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
-import { recipeDemoButtonStyles } from '../styles/recipe-demo-button.styles';
 
 const Root = styled.div<{ $direction: 'column' | 'row' }>`
   display: flex;
@@ -49,10 +48,6 @@ const Root = styled.div<{ $direction: 'column' | 'row' }>`
     outline: 3px solid rgba(59, 130, 246, 0.25);
     outline-offset: 1px;
     border-color: #3b82f6;
-  }
-
-  > button {
-    ${recipeDemoButtonStyles}
   }
 `;
 

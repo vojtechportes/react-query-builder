@@ -11,6 +11,16 @@ const websiteRoot = path.resolve(scriptRoot, '../..');
 const stageRoot = path.join(websiteRoot, '.versioned-dist');
 const distRoot = path.join(websiteRoot, 'dist');
 const deploymentBase = normalizeDeploymentBase(process.env.VITE_BASE_PATH);
+const canonicalSiteUrl = new URL(
+  process.env.VITE_CANONICAL_SITE_URL ||
+    process.env.VITE_SITE_URL ||
+    'https://vojtechportes.github.io/react-query-builder/'
+)
+  .toString()
+  .replace(/\/$/, '');
+const robotsDirective =
+  process.env.VITE_ROBOTS_DIRECTIVE ||
+  'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const manifests = {};
 const errors = [];
 
@@ -67,6 +77,17 @@ for (const target of ['v1', 'v2']) {
 
     if (!html.includes('<h1') || !html.includes('rel="canonical"')) {
       errors.push(`${target}${pathname} is missing crawlable SEO markup.`);
+    }
+
+    const expectedCanonicalUrl = `${canonicalSiteUrl}/${target}${
+      pathname === '/' ? '' : pathname
+    }`;
+
+    if (!html.includes(`rel="canonical" href="${expectedCanonicalUrl}"`)) {
+      errors.push(`${target}${pathname} has an incorrect canonical URL.`);
+    }
+    if (!html.includes(`name="robots" content="${robotsDirective}"`)) {
+      errors.push(`${target}${pathname} has an incorrect robots policy.`);
     }
 
     const assetUrls = [
@@ -159,6 +180,15 @@ if (normalizeLineEndings(htaccess) !== normalizeLineEndings(trackedHtaccess)) {
 
 if (!htaccess.includes('[R=308,L,NE]')) {
   errors.push('FTP configuration does not contain permanent redirect rules.');
+}
+
+if (
+  htaccess
+    .split(/\r?\n/)
+    .filter((line) => line.includes('[R=308,L,NE]'))
+    .some((line) => !line.includes(`${canonicalSiteUrl}/`))
+) {
+  errors.push('FTP redirects must target absolute HTTPS production URLs.');
 }
 
 if (errors.length > 0) {

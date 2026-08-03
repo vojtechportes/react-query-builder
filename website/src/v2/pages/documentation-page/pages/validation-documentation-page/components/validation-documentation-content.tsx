@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -12,11 +13,11 @@ import { usageLimitSnippet } from '../constants/usage-limit-snippet';
 
 export const ValidationDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Built-in validation is defined in{' '}
       <TextLink to="/api/fields">field metadata</TextLink> and evaluated by{' '}
       <TextLink to="/api/builder">Builder</TextLink>.
-    </p>
+    </Typography>
     <List>
       <li>
         Use <InlineCode>validation.common</InlineCode> for operator-agnostic
@@ -62,12 +63,12 @@ export const ValidationDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Structural usage limits</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use <InlineCode>usageLimit</InlineCode> when a constraint depends on how
       many rules already use a field or a shared usage bucket. This is separate
       from value validation because it governs query structure rather than the
       validity of a single rule value.
-    </p>
+    </Typography>
     <CodeBlock
       code={usageLimitSnippet}
       language="tsx"

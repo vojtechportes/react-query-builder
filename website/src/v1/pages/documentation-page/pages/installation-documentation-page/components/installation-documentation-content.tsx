@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import { InlineCode } from '../../../../../../components/docs-primitives';
@@ -6,9 +7,9 @@ import { installationSnippet } from '../constants/installation-snippet';
 
 export const InstallationDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Install the package and use it with React <InlineCode>18+</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock code={installationSnippet} language="bash" label="npm" />
     <AlertBox title="Peer dependencies" variant="info">
       The package expects compatible <InlineCode>react</InlineCode> and{' '}

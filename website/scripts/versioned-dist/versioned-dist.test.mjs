@@ -39,16 +39,22 @@ assert.match(document, /window\.location\.search \+ window\.location\.hash/);
 assert.match(document, /&lt;value&gt;/);
 assert.match(document, /\\u003cvalue>/);
 
-const htaccess = createFtpHtaccess(manifests);
+const htaccess = createFtpHtaccess(
+  manifests,
+  'https://www.react-query-builder.com/'
+);
 
-assert.match(htaccess, /RewriteRule \^\$ \/v2 \[R=308,L,NE\]/);
 assert.match(
   htaccess,
-  /RewriteRule \^api\/builder-props\/\?\$ \/v2\/api\/builder/
+  /RewriteRule \^\$ https:\/\/www\.react-query-builder\.com\/v2 \[R=308,L,NE\]/
 );
 assert.match(
   htaccess,
-  /RewriteRule \^v1\/api\/builder-props\/\?\$ \/v1\/api\/builder/
+  /RewriteRule \^api\/builder-props\/\?\$ https:\/\/www\.react-query-builder\.com\/v2\/api\/builder/
+);
+assert.match(
+  htaccess,
+  /RewriteRule \^v1\/api\/builder-props\/\?\$ https:\/\/www\.react-query-builder\.com\/v1\/api\/builder/
 );
 assert.equal(
   getRedirectOutputPath('C:/artifact', '/v2/api/builder-props'),

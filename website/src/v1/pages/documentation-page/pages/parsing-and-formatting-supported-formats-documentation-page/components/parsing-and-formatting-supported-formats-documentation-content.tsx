@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -14,11 +15,13 @@ import { fieldComparisonParseSnippet } from '../constants/field-comparison-parse
 export const ParsingAndFormattingSupportedFormatsDocumentationContent: React.FC =
   () => (
     <>
-      <p>Supported formats and their primary use cases.</p>
+      <Typography color="muted">
+        Supported formats and their primary use cases.
+      </Typography>
       <SectionTitle>SQL</SectionTitle>
-      <p>
+      <Typography color="muted">
         Formatting and predicate parsing for builder-compatible SQL expressions.
-      </p>
+      </Typography>
       <CodeBlock code={sqlSnippet} language="ts" label="SQL formatter" />
       <AlertBox title="Parsing scope" variant="warning">
         SQL support is aimed at builder-compatible predicates. It is not meant
@@ -26,11 +29,11 @@ export const ParsingAndFormattingSupportedFormatsDocumentationContent: React.FC 
         or nested subqueries.
       </AlertBox>
       <SectionTitle>Mongo</SectionTitle>
-      <p>
+      <Typography color="muted">
         Formatting returns a serialized JSON filter document. Parsing expects a
         JSON object string and can infer{' '}
         <TextLink to="/api/fields">fields</TextLink> from the document shape.
-      </p>
+      </Typography>
       <CodeBlock
         code={`const mongo = formatQuery(data, 'Mongo');\n// { "$and": [ ... ] }`}
         language="ts"
@@ -73,7 +76,7 @@ export const ParsingAndFormattingSupportedFormatsDocumentationContent: React.FC 
         </li>
       </List>
       <SectionTitle>Advanced: Field-To-Field Comparisons</SectionTitle>
-      <p>
+      <Typography color="muted">
         Most formats on this page can be explored with ordinary literal-based
         rules. If you specifically need one field to compare against another,
         start with{' '}
@@ -82,7 +85,7 @@ export const ParsingAndFormattingSupportedFormatsDocumentationContent: React.FC 
         </TextLink>{' '}
         and then use the native field-reference support only in formats that
         have a direct right-hand-side field form.
-      </p>
+      </Typography>
       <List>
         <li>
           Supported native field-to-field formats in this feature are{' '}

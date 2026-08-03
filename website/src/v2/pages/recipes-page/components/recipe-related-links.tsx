@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Link, SectionTitle } from '../../../../components/docs-primitives';
+import {
+  Link,
+  List,
+  SectionTitle,
+} from '../../../../components/docs-primitives';
 import type { IV2RelatedLink } from '../../../app/types/v2-related-link';
 
 export interface IRecipeRelatedLinksProps {
@@ -11,7 +15,7 @@ export const RecipeRelatedLinks: React.FC<IRecipeRelatedLinksProps> = ({
 }) => (
   <section>
     <SectionTitle>Related guides</SectionTitle>
-    <ul>
+    <List>
       {links.map((link) => (
         <li key={link.path}>
           <Link to={link.path} external={link.external}>
@@ -19,6 +23,6 @@ export const RecipeRelatedLinks: React.FC<IRecipeRelatedLinksProps> = ({
           </Link>
         </li>
       ))}
-    </ul>
+    </List>
   </section>
 );

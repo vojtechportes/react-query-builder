@@ -1,4 +1,5 @@
-export const createFtpHtaccess = (manifests) => {
+export const createFtpHtaccess = (manifests, siteUrl) => {
+  const canonicalBaseUrl = new URL(siteUrl).toString().replace(/\/$/, '');
   const rules = [
     'Options -Indexes',
     'DirectorySlash Off',
@@ -7,12 +8,14 @@ export const createFtpHtaccess = (manifests) => {
     '',
   ];
 
-  rules.push('RewriteRule ^$ /v2 [R=308,L,NE]', '');
+  rules.push(`RewriteRule ^$ ${canonicalBaseUrl}/v2 [R=308,L,NE]`, '');
 
   for (const redirect of manifests.v2.redirects) {
     const source = redirect.from.replace(/^\//, '');
 
-    rules.push(`RewriteRule ^${source}/?$ /v2${redirect.to} [R=308,L,NE]`);
+    rules.push(
+      `RewriteRule ^${source}/?$ ${canonicalBaseUrl}/v2${redirect.to} [R=308,L,NE]`
+    );
   }
 
   rules.push('');
@@ -22,7 +25,7 @@ export const createFtpHtaccess = (manifests) => {
       const source = redirect.from.replace(/^\//, '');
 
       rules.push(
-        `RewriteRule ^${target}/${source}/?$ /${target}${redirect.to} [R=308,L,NE]`
+        `RewriteRule ^${target}/${source}/?$ ${canonicalBaseUrl}/${target}${redirect.to} [R=308,L,NE]`
       );
     }
   }
@@ -31,11 +34,11 @@ export const createFtpHtaccess = (manifests) => {
     '',
     'RewriteCond %{REQUEST_URI} !^/(v1|v2)(/|$)',
     'RewriteCond %{DOCUMENT_ROOT}/v2/$1/index.html -f',
-    'RewriteRule ^(.+?)/?$ /v2/$1 [R=308,L,NE]',
+    `RewriteRule ^(.+?)/?$ ${canonicalBaseUrl}/v2/$1 [R=308,L,NE]`,
     '',
     'RewriteCond %{REQUEST_URI} !^/$',
     'RewriteCond %{REQUEST_URI} /$',
-    'RewriteRule ^(.+)/$ /$1 [R=308,L,NE]',
+    `RewriteRule ^(.+)/$ ${canonicalBaseUrl}/$1 [R=308,L,NE]`,
     '',
     'RewriteCond %{REQUEST_FILENAME} -d',
     'RewriteCond %{REQUEST_FILENAME}/index.html -f',

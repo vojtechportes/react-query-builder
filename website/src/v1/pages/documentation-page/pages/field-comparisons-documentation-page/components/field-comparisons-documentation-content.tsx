@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -11,11 +12,11 @@ import { fieldComparisonSnippet } from '../constants/field-comparison-snippet';
 
 export const FieldComparisonsDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Enable <InlineCode>allowFieldComparisons</InlineCode> on{' '}
       <TextLink to="/api/builder">Builder</TextLink> when a rule should be able
       to compare against another field instead of a literal value.
-    </p>
+    </Typography>
     <CodeBlock
       code={fieldComparisonSnippet}
       language="tsx"

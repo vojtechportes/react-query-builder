@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -15,15 +16,15 @@ import { cloneButtonSnippet } from '../constants/clone-button-snippet';
 
 export const LockingAndReadOnlyDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Locking can be applied at the builder, rule, or group level. The key
       distinction is that rules lock only themselves, while groups can lock
       either just their own controls or their entire subtree. Object-based{' '}
       <InlineCode>readOnly</InlineCode> configs also support targeted read-only
       for specific controls.
-    </p>
+    </Typography>
     <SectionTitle>GUI Locking</SectionTitle>
-    <p>
+    <Typography color="muted">
       Set <InlineCode>lockable</InlineCode> on{' '}
       <TextLink to="/api/builder">Builder</TextLink> to render lock controls
       directly in the UI. The built-in controls update the same{' '}
@@ -32,7 +33,7 @@ export const LockingAndReadOnlyDocumentationContent: React.FC = () => (
       node already has <InlineCode>readOnly.targets</InlineCode>, the lock
       toggle preserves those targets and only changes whether the lock is
       enabled and, for groups, whether it inherits to descendants.
-    </p>
+    </Typography>
     <CodeBlock code={lockingGuiSnippet} language="tsx" label="GUI locking" />
     <List>
       <li>Rules cycle through two states: unlocked and locked.</li>
@@ -56,11 +57,11 @@ export const LockingAndReadOnlyDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Targeted read-only</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use object-based <InlineCode>readOnly</InlineCode> configs when you want
       to keep specific controls visible but non-editable instead of locking the
       entire rule or group.
-    </p>
+    </Typography>
     <CodeBlock
       code={targetedReadOnlySnippet}
       language="tsx"
@@ -117,20 +118,20 @@ export const LockingAndReadOnlyDocumentationContent: React.FC = () => (
     </List>
     <CodeBlock code={lockingSnippet} language="tsx" label="Locking examples" />
     <SectionTitle>Custom Lock Control</SectionTitle>
-    <p>
+    <Typography color="muted">
       The default lock button can be replaced through{' '}
       <InlineCode>components.LockToggle</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={lockToggleSnippet}
       language="tsx"
       label="LockToggle override"
     />
     <SectionTitle>Custom Clone Control</SectionTitle>
-    <p>
+    <Typography color="muted">
       The default clone button can be replaced through{' '}
       <InlineCode>components.CloneButton</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={cloneButtonSnippet}
       language="tsx"

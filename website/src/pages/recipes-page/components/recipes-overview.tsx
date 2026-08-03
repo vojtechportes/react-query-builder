@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { Typography } from '../../../components/typography/typography';
 import { SectionTitle, TextLink } from '../../../components/docs-primitives';
 import type { IRecipeGroup } from '../types/i-recipe-group';
 
@@ -14,17 +15,6 @@ const Card = styled.article`
   border: 1px solid #dbe4f0;
   border-radius: 14px;
   background: #f8fafc;
-
-  h3,
-  p {
-    margin: 0;
-  }
-
-  p {
-    margin-top: 0.5rem;
-    color: #475569;
-    line-height: 1.6;
-  }
 `;
 
 export interface IRecipesOverviewProps {
@@ -41,10 +31,12 @@ export const RecipesOverview: React.FC<IRecipesOverviewProps> = ({
         <Grid>
           {group.pages.map((page) => (
             <Card key={page.path}>
-              <h3>
+              <Typography variant="h3" as="h6" fontWeight={700}>
                 <TextLink to={page.path}>{page.title}</TextLink>
-              </h3>
-              <p>{page.summary}</p>
+              </Typography>
+              <Typography color="muted" mt={0.5}>
+                {page.summary}
+              </Typography>
             </Card>
           ))}
         </Grid>

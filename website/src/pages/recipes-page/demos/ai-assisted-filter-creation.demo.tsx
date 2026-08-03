@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '../../../components/button';
 import {
   Builder,
   type DenormalizedQuery,
@@ -98,13 +99,26 @@ export const AiAssistedFilterCreationDemo: React.FC = () => {
       note="This simulation makes no network call. It creates an editable draft that changes results only after you confirm it."
       actions={
         <>
-          <button type="button" onClick={generate}>
+          <Button
+            color="secondary"
+            size="small"
+            type="button"
+            onClick={generate}
+          >
             Generate draft
-          </button>
-          <button type="button" onClick={confirm} disabled={!draft}>
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
+            type="button"
+            onClick={confirm}
+            disabled={!draft}
+          >
             Confirm and apply
-          </button>
-          <button
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
             type="button"
             onClick={() => {
               setDraft(null);
@@ -115,7 +129,7 @@ export const AiAssistedFilterCreationDemo: React.FC = () => {
             disabled={!draft}
           >
             Cancel draft
-          </button>
+          </Button>
         </>
       }
     >

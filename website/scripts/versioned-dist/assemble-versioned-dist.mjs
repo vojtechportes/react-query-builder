@@ -16,6 +16,7 @@ const stageRoot = path.join(websiteRoot, '.versioned-dist');
 const distRoot = path.join(websiteRoot, 'dist');
 const deploymentBase = normalizeDeploymentBase(process.env.VITE_BASE_PATH);
 const configuredSiteUrl =
+  process.env.VITE_CANONICAL_SITE_URL ||
   process.env.VITE_SITE_URL ||
   'https://vojtechportes.github.io/react-query-builder/';
 const siteUrl = new URL(configuredSiteUrl).toString();
@@ -59,7 +60,7 @@ fs.copyFileSync(
 fs.writeFileSync(path.join(distRoot, '.nojekyll'), '');
 fs.writeFileSync(
   path.join(distRoot, '.htaccess'),
-  createFtpHtaccess(manifests)
+  createFtpHtaccess(manifests, siteUrl)
 );
 fs.writeFileSync(
   path.join(distRoot, 'robots.txt'),

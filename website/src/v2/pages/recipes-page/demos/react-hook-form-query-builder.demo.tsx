@@ -1,4 +1,5 @@
-﻿import * as React from 'react';
+import * as React from 'react';
+import { Button } from '../../../../components/button';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Builder,
@@ -103,12 +104,22 @@ export const ReactHookFormQueryBuilderDemo: React.FC = () => {
             </p>
           </RecipeDemoGroup>
           <RecipeDemoGroup direction="row">
-            <button type="submit" disabled={!isDirty}>
+            <Button
+              color="secondary"
+              size="small"
+              type="submit"
+              disabled={!isDirty}
+            >
               Submit filter
-            </button>
-            <button type="button" onClick={resetForm}>
+            </Button>
+            <Button
+              color="secondary"
+              size="small"
+              type="button"
+              onClick={resetForm}
+            >
               Reset
-            </button>
+            </Button>
           </RecipeDemoGroup>
         </form>
       </RecipeDemoGroup>

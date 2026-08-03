@@ -5,9 +5,9 @@ export const v2StaticSearchPages: IV2SearchPage[] = [
     path: '/',
     title: 'Home',
     summary:
-      'Highly configurable TypeScript library for visual and text-based query editing, validation, theming, and query conversion.',
+      'Build nested filters visually in React and TypeScript, use SQL text mode, validate rules, and convert queries to supported formats.',
     searchText:
-      'Home TypeScript library visual text query editing validation theming customization parsing formatting React Query Builder',
+      'React Query Builder visual filter builder nested AND OR filters TypeScript SQL text mode validation parsing formatting MongoDB Prisma UI adapters',
   },
   {
     path: '/demo',

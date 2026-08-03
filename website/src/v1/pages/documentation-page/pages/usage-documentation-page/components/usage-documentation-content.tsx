@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -9,14 +10,14 @@ import { basicUsageSnippet } from '../constants/basic-usage-snippet';
 
 export const UsageDocumentationContent: React.FC = () => (
   <>
-    <p>Basic controlled usage.</p>
+    <Typography color="muted">Basic controlled usage.</Typography>
     <CodeBlock code={basicUsageSnippet} language="tsx" label="Basic setup" />
-    <p>
+    <Typography color="muted">
       The example includes a single rule with{' '}
       <InlineCode>readOnly: true</InlineCode> to show that locking can live
       directly in the query data without changing the rest of the builder
       configuration.
-    </p>
+    </Typography>
     <AlertBox title="Related guide" variant="info">
       Need a rule to compare against another field instead of a literal value?
       Visit{' '}

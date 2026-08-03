@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,41 +14,43 @@ import { migrationTokenOverridesSnippet } from '../constants/migration-token-ove
 
 export const MigrationTo20DocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       React Query Builder 2.0 replaces the library&apos;s runtime{' '}
       <InlineCode>styled-components</InlineCode> implementation with an explicit
       package stylesheet and inherited CSS custom properties. Query data and
       component APIs remain compatible unless noted below.
-    </p>
+    </Typography>
     <SectionTitle>Import the stylesheet</SectionTitle>
-    <p>
+    <Typography color="muted">
       Import the stylesheet once in the client entry for every application that
       renders built-in components. Server-rendered applications should include
       the same import in the client and server build graph so the bundler emits
       one shared CSS asset.
-    </p>
-    <p>
+    </Typography>
+    <Typography color="muted">
       Adapter styles remain owned by their host packages. Load host-library
       styles before the React Query Builder stylesheet when the adapter
       documentation requires them.
-    </p>
+    </Typography>
     <CodeBlock
       code={migrationStylesheetImportSnippet}
       language="tsx"
       label="Application entry"
     />
     <SectionTitle>Customize CSS tokens</SectionTitle>
-    <p>
+    <Typography color="muted">
       Set inherited <InlineCode>--query-builder-*</InlineCode> variables on an
       application wrapper for a shared theme or pass them through one{' '}
       <InlineCode>Builder.style</InlineCode> prop for a local override.
-    </p>
+    </Typography>
     <CodeBlock
       code={migrationTokenOverridesSnippet}
       language="css"
       label="Wrapper tokens"
     />
-    <p>Token values are resolved from lowest to highest priority:</p>
+    <Typography color="muted">
+      Token values are resolved from lowest to highest priority:
+    </Typography>
     <List>
       <li>Defaults generated into the package stylesheet.</li>
       <li>Custom properties inherited from application CSS.</li>
@@ -62,7 +65,7 @@ export const MigrationTo20DocumentationContent: React.FC = () => (
       token reference.
     </AlertBox>
     <SectionTitle>ThemeProvider is legacy</SectionTitle>
-    <p>
+    <Typography color="muted">
       <InlineCode>ThemeProvider</InlineCode>, <InlineCode>colors</InlineCode>,
       and their public color types remain available for the 2.0 compatibility
       cycle. New integrations should use CSS custom properties. Existing
@@ -70,14 +73,14 @@ export const MigrationTo20DocumentationContent: React.FC = () => (
       change. Only supplied legacy color values become inline custom properties.
       Omitted values continue to inherit from application CSS or use the
       stylesheet defaults.
-    </p>
+    </Typography>
     <SectionTitle>OptionContainer remains polymorphic</SectionTitle>
-    <p>
+    <Typography color="muted">
       The public <InlineCode>OptionContainer</InlineCode> keeps its{' '}
       <InlineCode>as</InlineCode> prop. Intrinsic and custom React elements keep
       their compatible props and forwarded refs, so existing polymorphic uses
       require no migration.
-    </p>
+    </Typography>
     <SectionTitle>Versioned documentation</SectionTitle>
     <List>
       <li>
@@ -97,9 +100,9 @@ export const MigrationTo20DocumentationContent: React.FC = () => (
         .
       </li>
     </List>
-    <p>
+    <Typography color="muted">
       Use the v1 pages when maintaining a 1.33.1 application. New integrations
       and migrations should follow the v2 documentation.
-    </p>
+    </Typography>
   </>
 );

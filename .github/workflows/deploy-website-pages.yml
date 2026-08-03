@@ -41,6 +41,8 @@ jobs:
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
           VITE_SITE_URL: https://vojtechportes.github.io/${{ github.event.repository.name }}/
+          VITE_CANONICAL_SITE_URL: https://www.react-query-builder.com/
+          VITE_ROBOTS_DIRECTIVE: noindex,nofollow
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
