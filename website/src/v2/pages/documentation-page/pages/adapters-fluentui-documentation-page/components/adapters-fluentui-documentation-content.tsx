@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,10 +14,10 @@ import { fluentUiCreateComponentsSnippet } from '../constants/fluent-ui-create-c
 
 export const AdaptersFluentuiDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the Fluent UI adapter when your application is built on Fluent UI
       React 8 and you want builder controls mapped to that component set.
-    </p>
+    </Typography>
     <SectionTitle>Available entrypoint</SectionTitle>
     <List>
       <li>
@@ -26,9 +27,9 @@ export const AdaptersFluentuiDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Installing Fluent UI</SectionTitle>
-    <p>
+    <Typography color="muted">
       Install the matching Fluent UI peer dependency before using the adapter.
-    </p>
+    </Typography>
     <CodeBlock
       code={fluentUiAdaptersInstallSnippet}
       language="bash"

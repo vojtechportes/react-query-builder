@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,10 +14,10 @@ import { mantineCreateComponentsSnippet } from '../constants/mantine-create-comp
 
 export const AdaptersMantineDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the Mantine adapter when your application already uses Mantine and you
       want the builder controls to inherit that component language.
-    </p>
+    </Typography>
     <SectionTitle>Available entrypoints</SectionTitle>
     <List>
       <li>
@@ -30,10 +31,10 @@ export const AdaptersMantineDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Installing Mantine</SectionTitle>
-    <p>
+    <Typography color="muted">
       Install the Mantine peer dependencies that match the adapter version you
       want to use. For new setups, prefer <InlineCode>mantine/v9</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={mantineAdaptersInstallSnippet}
       language="bash"
@@ -56,10 +57,10 @@ export const AdaptersMantineDocumentationContent: React.FC = () => (
       label="Mantine v9 adapter"
     />
     <SectionTitle>Supporting Mantine v8</SectionTitle>
-    <p>
+    <Typography color="muted">
       If your application is still on Mantine 8, switch the import path to{' '}
       <InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode>.
-    </p>
+    </Typography>
     <SectionTitle>Extending the Mantine adapter</SectionTitle>
     <CodeBlock
       code={mantineCreateComponentsSnippet}

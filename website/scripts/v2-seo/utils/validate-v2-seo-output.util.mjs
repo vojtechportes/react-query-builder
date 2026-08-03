@@ -32,7 +32,10 @@ export const validateV2SeoOutput = ({
       siteUrl,
       seoConfig.versionPath
     );
-    const title = `${page.title} | ${seoConfig.siteName}`;
+    const title =
+      page.section === 'Home'
+        ? page.title
+        : `${page.title} | ${seoConfig.siteName}`;
     const h1Matches = html.match(/<h1(?:\s[^>]*)?>[\s\S]*?<\/h1>/gi) ?? [];
     const structuredDataMatch =
       /<script\s+id="structured-data-page"\s+type="application\/ld\+json">([\s\S]*?)<\/script>/i.exec(

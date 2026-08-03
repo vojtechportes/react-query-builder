@@ -8,9 +8,9 @@
   "pages": [
     {
       "path": "/",
-      "title": "React Query Builder for TypeScript Apps",
-      "description": "React Query Builder is a configurable TypeScript query builder component with visual editing, SQL text mode, validation, adapters, and query parsing and formatting.",
-      "keywords": "React, Query, Builder, query, builder, component, TypeScript, filter, rule, SQL, parser, formatter, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "title": "React Query Builder",
+      "description": "Build nested filters visually in React and TypeScript. Parse and format SQL, MongoDB, Prisma, and more with validation, SQL text mode, and UI adapters.",
+      "keywords": "React Query Builder, React query builder component, React filter builder, visual query builder, TypeScript query builder, nested filters, SQL query builder, SQL text mode, query parser, query formatter, MongoDB, Prisma",
       "section": "Home"
     },
     {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { Typography } from '../../../components/typography/typography';
 import { SectionTitle } from '../../../components/docs-primitives';
 import type { IRecipeFaq } from '../types/i-recipe-faq';
 
@@ -12,25 +13,16 @@ const FaqList = styled.div`
   gap: 1.25rem;
 `;
 
-const FaqQuestion = styled.h3`
-  margin: 0 0 0.4rem;
-  font-size: 1rem;
-  line-height: 1.4;
-`;
-
-const FaqAnswer = styled.p`
-  margin: 0;
-  line-height: 1.6;
-`;
-
 export const RecipeFaq: React.FC<IRecipeFaqProps> = ({ faqs }) => (
   <section>
     <SectionTitle>Frequently asked questions</SectionTitle>
     <FaqList>
       {faqs.map((faq) => (
         <div key={faq.question}>
-          <FaqQuestion>{faq.question}</FaqQuestion>
-          <FaqAnswer>{faq.answer}</FaqAnswer>
+          <Typography variant="h3" as="body2" fontWeight={700} mb={0.4}>
+            {faq.question}
+          </Typography>
+          <Typography color="muted">{faq.answer}</Typography>
         </div>
       ))}
     </FaqList>

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router';
+import { Button } from '../../../components/button';
+import { Typography } from '../../../components/typography/typography';
 import { siteTheme } from '../../../constants/site-theme';
+import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
 import { useV1PageMetadata } from '../../seo/hooks/use-v1-page-metadata';
 import { createV1PageMetadataOptions } from '../../seo/utils/create-v1-page-metadata-options.util';
 import { findV1SeoPage } from '../../seo/utils/find-v1-seo-page.util';
-import { findV1RouteRecord } from '../../app/utils/find-v1-route-record.util';
 
 const Hero = styled.section`
   display: grid;
@@ -41,20 +42,16 @@ const HeroContent = styled.div`
   gap: 1.5rem;
 `;
 
-const Heading = styled.h1`
+const HomepageTitle = styled(Typography)`
+  max-width: 12ch;
   margin: 0;
-  max-width: 10ch;
   font-size: clamp(2.6rem, 5vw, 4.6rem);
   line-height: 1;
   letter-spacing: -0.05em;
 `;
 
-const Lead = styled.p`
+const Lead = styled(Typography)`
   max-width: 62ch;
-  margin: 0;
-  color: #334155;
-  font-size: 1.08rem;
-  line-height: 1.8;
 `;
 
 const Actions = styled.div`
@@ -62,28 +59,6 @@ const Actions = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: 0.85rem;
-`;
-
-const ActionLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3.3rem;
-  padding: 0.95rem 1.2rem;
-  border-radius: 16px;
-  font-weight: 700;
-  line-height: 1;
-`;
-
-const PrimaryLink = styled(ActionLink)`
-  background: ${siteTheme.primary};
-  color: #fff;
-`;
-
-const SecondaryLink = styled(ActionLink)`
-  border: 1px solid #dbe4f0;
-  background: #fff;
-  color: #0f172a;
 `;
 
 const InstallPanel = styled.aside`
@@ -94,19 +69,6 @@ const InstallPanel = styled.aside`
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.88);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-`;
-
-const InstallTitle = styled.h2`
-  margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  color: #0f172a;
-`;
-
-const InstallCopy = styled.p`
-  margin: 0 0 1rem;
-  color: #475569;
-  font-size: 0.95rem;
-  line-height: 1.6;
 `;
 
 const InstallCode = styled.pre`
@@ -141,23 +103,29 @@ export const HomePage: React.FC = () => {
   return (
     <Hero>
       <HeroContent>
-        <Heading>React Query Builder</Heading>
-        <Lead>
+        <HomepageTitle variant="h1">React Query Builder</HomepageTitle>
+        <Lead variant="body1" color="muted">
           Highly configurable TypeScript library for visual and text-based query
           editing, built-in validation, theming, full UI customization, and
           parsing and formatting across supported query syntaxes.
         </Lead>
         <Actions>
-          <PrimaryLink to="/documentation">Documentation</PrimaryLink>
-          <SecondaryLink to="/demo">Demo</SecondaryLink>
+          <Button component="a" to="/documentation">
+            Documentation
+          </Button>
+          <Button component="a" to="/demo" variant="outlined">
+            Demo
+          </Button>
         </Actions>
       </HeroContent>
       <InstallPanel>
-        <InstallTitle>Install</InstallTitle>
-        <InstallCopy>
+        <Typography variant="h2" as="body2" fontWeight={700} mb={0.75}>
+          Install
+        </Typography>
+        <Typography color="muted" mb={1}>
           Add the package and continue with the setup guide in the
           documentation.
-        </InstallCopy>
+        </Typography>
         <InstallCode>
           <Code>npm install @vojtechportes/react-query-builder</Code>
         </InstallCode>

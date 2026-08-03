@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -14,10 +15,10 @@ import { muiCreateComponentsSnippet } from '../constants/mui-create-components-s
 
 export const AdaptersMuiDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the MUI adapter when your application already uses Material UI and you
       want the builder to inherit that component language.
-    </p>
+    </Typography>
     <SectionTitle>Available entrypoints</SectionTitle>
     <List>
       <li>
@@ -31,10 +32,10 @@ export const AdaptersMuiDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Installing MUI</SectionTitle>
-    <p>
+    <Typography color="muted">
       Install the MUI peer dependencies that match the adapter version you want
       to use. For new setups, prefer <InlineCode>mui/v9</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={adaptersInstallSnippet}
       language="bash"
@@ -43,10 +44,10 @@ export const AdaptersMuiDocumentationContent: React.FC = () => (
     <SectionTitle>Using MUI v9</SectionTitle>
     <CodeBlock code={muiSnippet} language="tsx" label="MUI v9 adapter" />
     <SectionTitle>Supporting MUI v7</SectionTitle>
-    <p>
+    <Typography color="muted">
       If your application is still on Material UI 7, switch the import path to{' '}
       <InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={muiOverrideSnippet}
       language="tsx"

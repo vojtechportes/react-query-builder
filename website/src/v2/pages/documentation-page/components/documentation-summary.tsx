@@ -1,6 +1,8 @@
-﻿import styled from 'styled-components';
+import styled from 'styled-components';
+import { Typography } from '../../../../components/typography/typography';
 
-export const DocumentationSummary = styled.p`
-  font-size: 1.05rem;
-  margin-top: 0.55rem;
-`;
+export const DocumentationSummary = styled(Typography).attrs({
+  variant: 'body1',
+  color: 'muted',
+  mt: 0.55,
+})``;

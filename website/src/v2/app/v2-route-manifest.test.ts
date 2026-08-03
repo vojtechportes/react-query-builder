@@ -84,6 +84,22 @@ describe('v2 route manifest', () => {
     }
   });
 
+  it('uses readable labels for recipe-related API links', () => {
+    const route = findV2RouteRecord('/recipes/mui-datagrid-advanced-filtering');
+
+    expect(route.relatedLinks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: 'MUI API',
+          path: '/api/adapters/mui',
+        }),
+        expect.objectContaining({
+          label: 'Components API',
+          path: '/api/components',
+        }),
+      ])
+    );
+  });
   it('creates the expected top navigation and complete section sidebars', () => {
     expect(v2TopNavigation).toEqual([
       { label: 'Home', path: '/', publicPath: '/v2' },

@@ -2361,3 +2361,191 @@ site/v1 usage.
 - Run `npm run verify:architecture`.
 - Run `git diff --check`.
 - Run the repository-required code-review agent and resolve all findings.
+### T072 - Improve homepage SEO and consolidate website indexing
+
+**Status:** `[x]` Done
+
+**Goal:** Improve the current v2 homepage relevance for React Query Builder searches and consolidate indexing signals on the production domain.
+
+**Scope:**
+
+- Expand the v2 homepage with concise, server-rendered product copy, a demo-first call to action, a complete quick-start example, key capabilities, supported integrations, and high-intent recipe links.
+- Keep the v2 HomePage slim and place its owned sections under the home-page `components` folder with one component per file.
+- Update the v2 homepage title, description, keywords, search record, and focused metadata/content tests without changing v1 content.
+- Keep the approved root-to-v2 version architecture while making FTP redirects target absolute HTTPS production URLs in one hop.
+- Make GitHub Pages a non-indexable mirror whose canonical URLs point to equivalent production-domain v1 and v2 pages while preserving its deployment base and runtime behavior.
+- Preserve library public APIs, package behavior, and unrelated website routes and content.
+
+**Acceptance criteria:**
+
+- The v2 homepage contains one H1 and substantial crawlable copy covering visual nested filters, query parsing and formatting, SQL text mode, validation, adapters, installation, and practical integrations.
+- The homepage metadata is concise, unique, and does not repeat the React Query Builder site name.
+- Production pages remain indexable and self-canonical on `https://www.react-query-builder.com`.
+- The production root and legacy redirects point directly to absolute HTTPS production URLs without an HTTP downgrade.
+- GitHub Pages v1 and v2 documents are `noindex` and canonicalize to their equivalent production URLs instead of competing as self-canonical duplicates.
+- V1 content, public library APIs, and unrelated runtime behavior remain unchanged.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code and configuration file.
+- Run `npm run test:v2 --workspace website`.
+- Run `npm run typecheck:v2 --workspace website`.
+- Run `npm run build:v2 --workspace website` with the production canonical URL and inspect the generated homepage metadata, canonical, headings, and crawlable sections.
+- Run `npm run deployment:test --workspace website`.
+- Build, assemble, and verify the production FTP artifact; inspect root and representative redirect targets plus v1/v2 canonical and robots metadata.
+- Build, assemble, and verify the GitHub Pages artifact; inspect representative v1/v2 pages for production canonicals, `noindex`, correct asset bases, and internal navigation.
+- Run `npm run lint` and `npm run build` from the repository root.
+- Run `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
+- After deployment, confirm with a redirect-disabled request that the production root redirects once to HTTPS `/v2`; Search Console reindexing remains a manual follow-up.
+
+### T073 - Unify website action buttons
+
+**Status:** `[x]` Done
+
+**Goal:** Provide one shared website Button component and use it for action buttons and button-like links across the active unversioned, v1, and v2 website experiences.
+
+**Scope:**
+
+- Add `website/src/components/button.tsx` with primary, secondary, and white colors; small and large sizes; filled and outlined variants; native button and React Router link rendering; disabled and click behavior; and a behavior-preserving native button type.
+- Use exact primary `#3f51b5`, secondary `#eef1ff`, white `#fff`, primary outlined border `#3f51b5`, and white outlined border `#dbe4f0` values.
+- Keep outlined variants transparent and set all Button line heights to `1`.
+- Replace action-style buttons and button links on unversioned, v1, and v2 homepages, runtime recipe demos, and generic documentation demos.
+- Preserve form submission, disabled behavior, internal navigation, public library APIs, and recipe/documentation code snippets.
+- Leave specialized tabs, search controls, navigation toggles, overlays, and icon controls unchanged.
+
+**Acceptance criteria:**
+
+- The shared Button defaults to a primary, large, filled native button with `type="button"`.
+- `component="a"` renders an internal React Router link using `to`; disabled links cannot navigate or invoke click handlers and expose disabled semantics.
+- Native submit buttons retain `type="submit"`, and native disabled buttons retain browser-disabled behavior.
+- All migrated actions use the shared Button and preserve their routes, labels, click behavior, and visual hierarchy.
+- Homepage primary actions remain filled, homepage secondary actions remain outlined, dark-surface actions use the white outlined variant, and recipe/documentation controls use the secondary small variant.
+- Recipe snippets and other displayed host-application examples remain unchanged.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code and configuration file.
+- Run focused Button, homepage, recipe demo, and documentation demo tests.
+- Run `npm run typecheck:v1 --workspace website` and `npm run typecheck:v2 --workspace website`.
+- Run `npm run test:v1 --workspace website` and `npm run test:v2 --workspace website`.
+- Run `npm run build --workspace website`, `npm run build:v1 --workspace website`, and `npm run build:v2 --workspace website`.
+- Run `npm run lint` from the repository root.
+- Run desktop/mobile browser checks for homepage actions plus recipe/documentation controls, including focus and disabled states.
+- Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
+### T074 - Unify website typography
+
+**Status:** `[x]` Done
+
+**Goal:** Provide one shared Typography component and use it for website page headings and prose across the active unversioned, v1, and v2 experiences.
+
+**Scope:**
+
+- Add `website/src/components/typography/typography.tsx` with semantic variants, independent visual scales, rendered-element overrides, named colors, font-size and font-weight overrides, margin props, and forwarded HTML attributes.
+- Add an adjacent spacing utility that resolves numeric values to rem units and lets `mt` and `mb` override `my`.
+- Use heading line-height `1.1`, body line-height `1.6`, dark `#0f172a`, muted `#475569`, light `#fff`, success `#166534`, info `#002984`, error `#b91c1c`, and warning `#9a3412`.
+- Migrate page-content headings and prose across unversioned, v1, and v2 home, documentation, API, demo, and recipe experiences.
+- Preserve the homepage title's responsive size, line-height `1`, letter-spacing `-0.05em`, and `12ch` maximum width through a local styled Typography component.
+- Preserve semantics, accessibility attributes, page copy, public APIs, runtime behavior, and unrelated worktree changes.
+- Exclude side panels, navigation, header/footer, buttons, code and snippets, tables, lists, form controls and labels, and specialized interactive/status components.
+
+**Acceptance criteria:**
+
+- Typography defaults to a dark body2 paragraph.
+- `variant` selects semantic/default rendering, `as` changes only the visual scale, and `component` takes final precedence over the rendered element.
+- Heading and body scales, colors, weights, custom font sizes, margins, and ordinary HTML attributes render correctly.
+- Numeric margins resolve to rem values; strings pass through; `mt` and `mb` override `my`.
+- Migrated page headings retain correct heading levels and each page retains one H1.
+- Page prose uses the closest body scale and muted color where appropriate.
+- Homepage typography remains responsive on desktop and mobile.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code and configuration file.
+- Run focused Typography and representative page/route tests.
+- Audit active runtime trees for remaining raw or styled page-content headings and paragraphs, allowing only documented exclusions.
+- Run `npm run typecheck:v1 --workspace website` and `npm run typecheck:v2 --workspace website`.
+- Run `npm run test:v1 --workspace website` and `npm run test:v2 --workspace website`.
+- Run `npm run build --workspace website`, `npm run build:v1 --workspace website`, and `npm run build:v2 --workspace website`.
+- Run `npm run lint` from the repository root.
+- Run desktop and mobile browser checks for representative homepage, documentation, API, demo, and recipe pages.
+- Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
+
+### T075 - Showcase query building modes on the v2 homepage
+
+**Status:** `[x]` Done
+
+**Goal:** Replace the flat v2 homepage capability grid with a clearer progression from integration and conversion to interactive text-mode and UI-adapter showcases.
+
+**Scope:**
+
+- Keep the change limited to the v2 homepage.
+- Replace filter terminology in the capability section with concise query-focused copy.
+- Present two compact cards for adding the Builder to an application and converting queries for a data stack.
+- Add alternating, crawlable showcase sections for text mode and the MUI adapter.
+- Lazy-load interactive Builder previews below the fold while keeping their headings, descriptions, and CTAs server-rendered.
+- Reuse the shared Button and Typography components and preserve public library APIs.
+
+**Acceptance criteria:**
+
+- The section heading is `Build and convert complex queries` and no capability copy refers to filters.
+- The two cards cover application usage and query conversion.
+- Text mode and MUI adapter showcases render real, usable Builder previews with concise query data.
+- The showcase layout alternates on desktop, stacks cleanly on mobile, and does not introduce horizontal overflow.
+- Homepage SSR remains crawlable and interactive previews hydrate without errors.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code file.
+- Run focused homepage and new showcase tests.
+- Run v2 typecheck and tests relevant to homepage SSR.
+- Run the v2 website build and root lint.
+- Run desktop and mobile browser checks.
+- Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
+
+### T076 - Improve v2 recipe related guides
+
+**Status:** `[x]` Done
+
+**Goal:** Give recipe API links readable labels and make the Related guides list visually consistent with the other recipe lists.
+
+**Scope:**
+
+- Resolve recipe-related API paths through v2 API page metadata instead of displaying raw paths.
+- Render Related guides with the shared recipe documentation List style.
+- Preserve destinations, ordering, external-link behavior, and public APIs.
+
+**Acceptance criteria:**
+
+- `/api/adapters/mui` is displayed as `MUI API`.
+- `/api/components` is displayed as `Components API`.
+- Related guides bullets and vertical spacing match the lists above them.
+
+**Verification:**
+
+- Run Prettier on modified code files.
+- Run focused route-manifest and recipe rendering tests.
+- Run v2 typecheck, lint, browser QA, and `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
+
+### T077 - Tighten documentation list line spacing
+
+**Status:** `[x]` Done
+
+**Goal:** Reduce the shared website documentation list line-height while preserving consistent list styling.
+
+**Scope:**
+
+- Change the shared documentation `List` line-height from `1.7` to `1.2`.
+- Preserve list item spacing, markers, margins, public APIs, and runtime behavior.
+
+**Acceptance criteria:**
+
+- Shared documentation and recipe lists render with a `1.2` line-height.
+- All lists that use the shared primitive remain visually consistent.
+
+**Verification:**
+
+- Run Prettier on the modified code file.
+- Run focused typecheck, lint, browser QA, and `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.

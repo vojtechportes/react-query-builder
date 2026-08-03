@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -11,11 +12,11 @@ import { muiCreateComponentsSnippet } from '../constants/mui-create-components-s
 
 export const AdaptersDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Adapters provide pre-mapped <InlineCode>components</InlineCode> objects
       for UI libraries so you do not need to implement every override in{' '}
       <TextLink to="/documentation/components">Components</TextLink> yourself.
-    </p>
+    </Typography>
     <SectionTitle>Adapter guides</SectionTitle>
     <List>
       <li>

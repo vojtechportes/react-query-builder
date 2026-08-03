@@ -71,6 +71,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     () => getBuilderComponents(customizationMode, settings.useMonacoTextEditor),
     [customizationMode, settings.useMonacoTextEditor]
   );
+
   const themeOverrides = React.useMemo(
     () =>
       customizationMode === 'default'
@@ -78,6 +79,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         : undefined,
     [customizationMode, themeStyle]
   );
+
   const builderProps = {
     data,
     fields: demoFields,
@@ -100,10 +102,12 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     style: themeOverrides,
     ...(builderComponents ? { components: builderComponents } : {}),
   };
+
   const hasFieldComparisons = React.useMemo(
     () => containsFieldComparisons(data),
     [data]
   );
+
   const isOutputFormatDisabled = React.useCallback(
     (format: OutputFormat) =>
       hasFieldComparisons && unsupportedFieldComparisonFormats.includes(format),
@@ -123,6 +127,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         : formatQueryText(data, outputFormat, demoFields),
     [data, outputFormat]
   );
+
   const builderSource = React.useMemo(
     () =>
       formatBuilderSource({
@@ -159,23 +164,25 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           onChange={setThemeStyle}
         />
       </Sidebar>
-      <Main>
-        <DemoPlaygroundSource
-          source={builderSource}
-          visible={showSourceCode}
-          onVisibleChange={setShowSourceCode}
-        />
-        <DemoPlaygroundBuilder
-          builderProps={builderProps}
-          customizationMode={customizationMode}
-        />
-        <DemoPlaygroundOutput
-          format={outputFormat}
-          output={outputText}
-          isFormatDisabled={isOutputFormatDisabled}
-          onFormatChange={setOutputFormat}
-        />
-      </Main>
+      <div>
+        <Main>
+          <DemoPlaygroundSource
+            source={builderSource}
+            visible={showSourceCode}
+            onVisibleChange={setShowSourceCode}
+          />
+          <DemoPlaygroundBuilder
+            builderProps={builderProps}
+            customizationMode={customizationMode}
+          />
+          <DemoPlaygroundOutput
+            format={outputFormat}
+            output={outputText}
+            isFormatDisabled={isOutputFormatDisabled}
+            onFormatChange={setOutputFormat}
+          />
+        </Main>
+      </div>
     </Layout>
   );
 };

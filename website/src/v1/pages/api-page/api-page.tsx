@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useLocation } from 'react-router';
 import styled from 'styled-components';
+import { Typography } from '../../../components/typography/typography';
 import { ContentArticle } from '../../../components/content-article';
 import { DocumentationSidebar } from '../../../components/documentation-sidebar';
 import { RelatedRecipes } from '../../../components/related-recipes';
@@ -21,22 +22,11 @@ const Layout = styled.div`
   }
 `;
 
-const SectionLabel = styled.span`
+const SectionLabel = styled(Typography)`
   font-size: 0.8rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #64748b;
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  margin-bottom: 1rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-`;
-
-const Summary = styled.p`
-  font-size: 1.05rem;
-  margin-top: 0.55rem;
 `;
 
 export const ApiPage: React.FC = () => {
@@ -55,9 +45,17 @@ export const ApiPage: React.FC = () => {
     <Layout>
       <DocumentationSidebar {...v1ApiSidebar} />
       <ContentArticle>
-        <SectionLabel>{page.sectionTitle}</SectionLabel>
-        <Title>{page.title}</Title>
-        {page.summary ? <Summary>{page.summary}</Summary> : null}
+        <SectionLabel component="span" color="muted">
+          {page.sectionTitle}
+        </SectionLabel>
+        <Typography variant="h1" fontSize="clamp(2rem, 4vw, 3rem)" mb={1}>
+          {page.title}
+        </Typography>
+        {page.summary ? (
+          <Typography variant="body1" color="muted" mt={0.55}>
+            {page.summary}
+          </Typography>
+        ) : null}
         {page.content}
         <RelatedRecipes links={route.relatedLinks} />
       </ContentArticle>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { Typography } from '../../components/typography/typography';
 import { ClientOnly } from '../../components/client-only';
 import { findSeoPage } from '../../constants/seo-pages';
 import { usePageMetadata } from '../../hooks/use-page-metadata';
@@ -10,11 +11,6 @@ const Root = styled.section`
   gap: 1rem;
 `;
 
-const Title = styled.h1`
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
-`;
-
 const seoPage = findSeoPage('/demo');
 
 export const DemoPage: React.FC = () => {
@@ -22,11 +18,13 @@ export const DemoPage: React.FC = () => {
 
   return (
     <Root>
-      <Title>Demo</Title>
-      <p>
+      <Typography variant="h1" fontSize="clamp(2rem, 4vw, 3rem)">
+        Demo
+      </Typography>
+      <Typography color="muted">
         Configure fields, adapters, validation, text editing, localization, and
         query output in the interactive playground below.
-      </p>
+      </Typography>
       <ClientOnly
         loader={loadDemoPlayground}
         label="Loading the interactive query builder playground..."

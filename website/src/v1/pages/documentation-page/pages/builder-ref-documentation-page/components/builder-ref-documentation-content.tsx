@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -15,12 +16,12 @@ import { builderRefReadSnippet } from '../constants/builder-ref-read-snippet';
 
 export const BuilderRefDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use <InlineCode>useBuilderRef()</InlineCode> with the{' '}
       <TextLink to="/api/builder">Builder</TextLink> ref to access internal node
       actions and history from custom toolbars, menus, keyboard shortcuts, or
       surrounding workflow logic.
-    </p>
+    </Typography>
     <CodeBlock
       code={builderRefBasicSnippet}
       language="tsx"

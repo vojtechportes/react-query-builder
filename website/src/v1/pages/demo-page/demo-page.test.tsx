@@ -30,9 +30,9 @@ describe('v1 DemoPage', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Demo' })
     ).toBeInTheDocument();
-    expect(screen.getByText(/Configure fields, adapters/)).toHaveTextContent(
-      'query output in the interactive playground below.'
-    );
+    expect(
+      screen.queryByText(/Configure fields, adapters/)
+    ).not.toBeInTheDocument();
     expect(screen.getByTestId('client-only')).toHaveTextContent(
       'Loading the interactive query builder playground...'
     );

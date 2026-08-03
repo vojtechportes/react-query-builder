@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AlertBox } from '../../../components/alert-box';
 import { CodeBlock } from '../../../components/code-block';
 import { ClientOnly } from '../../../components/client-only';
+import { Typography } from '../../../components/typography/typography';
 import { loadImperativeFieldOptionsDemo } from '../../../components/load-imperative-field-options-demo';
 import { loadSharedFieldOptionsDemo } from '../../../components/load-shared-field-options-demo';
 import {
@@ -1631,10 +1632,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Installation npm install React Query Builder react 18 peer dependencies package import library',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Install the package and use it with React <InlineCode>18+</InlineCode>
           .
-        </p>
+        </Typography>
         <CodeBlock code={installationSnippet} language="bash" label="npm" />
         <AlertBox title="Peer dependencies" variant="info">
           The package expects compatible <InlineCode>react</InlineCode> and{' '}
@@ -1657,18 +1658,18 @@ export const documentationPages: IDocumentationPage[] = [
       'Usage Builder controlled component fields data onChange React useState denormalized query query builder example',
     content: (
       <>
-        <p>Basic controlled usage.</p>
+        <Typography color="muted">Basic controlled usage.</Typography>
         <CodeBlock
           code={basicUsageSnippet}
           language="tsx"
           label="Basic setup"
         />
-        <p>
+        <Typography color="muted">
           The example includes a single rule with{' '}
           <InlineCode>readOnly: true</InlineCode> to show that locking can live
           directly in the query data without changing the rest of the builder
           configuration.
-        </p>
+        </Typography>
         <AlertBox title="Related guide" variant="info">
           Need a rule to compare against another field instead of a literal
           value? Visit{' '}
@@ -1715,11 +1716,11 @@ export const documentationPages: IDocumentationPage[] = [
       'builder behavior cloneable clone controls draggable drag and drop allowGroupNegation group negation not groups readOnlyProtectsDelete newNodePlacement append prepend singleRootGroup groupTypes with modifiers without modifiers both root group',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           A few builder props shape the overall editing model more than the
           field or query data itself. These are worth deciding early because
           they affect how users add, move, and organize rules.
-        </p>
+        </Typography>
         <CodeBlock
           code={builderBehaviorSnippet}
           language="tsx"
@@ -1878,12 +1879,12 @@ export const documentationPages: IDocumentationPage[] = [
       'builderRef useBuilderRef forwardRef imperative api clone lock unlock delete update replace insert add move getNodeById getNodes getData getHistory setHistory undo redo',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use <InlineCode>useBuilderRef()</InlineCode> with the{' '}
           <TextLink to="/api/builder">Builder</TextLink> ref to access internal
           node actions and history from custom toolbars, menus, keyboard
           shortcuts, or surrounding workflow logic.
-        </p>
+        </Typography>
         <CodeBlock
           code={builderRefBasicSnippet}
           language="tsx"
@@ -2042,11 +2043,11 @@ export const documentationPages: IDocumentationPage[] = [
       'field comparisons field-to-field allowFieldComparisons valueSource valueField comparableFields fieldComparison formatQuery parseQuery',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Enable <InlineCode>allowFieldComparisons</InlineCode> on{' '}
           <TextLink to="/api/builder">Builder</TextLink> when a rule should be
           able to compare against another field instead of a literal value.
-        </p>
+        </Typography>
         <CodeBlock
           code={fieldComparisonSnippet}
           language="tsx"
@@ -2101,12 +2102,12 @@ export const documentationPages: IDocumentationPage[] = [
       'dynamic field options builderRef subscribe subscribeToRuleDependencies useBuilderRuleDependencies setFieldOptions setRuleOptions getNearestField invalidateFieldOptions invalidateRuleOptions clearFieldOptions clearRuleOptions getFieldOptionState getRuleOptionState onFieldChange onRuleOptionsReload tanstack react-query async select options live demo',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Keep the <InlineCode>fields</InlineCode> array stable and push runtime
           options through <InlineCode>builderRef</InlineCode>. The important
           choice is scope: field-level APIs are for shared options, while
           rule-level APIs are for dependency-aware options.
-        </p>
+        </Typography>
         <SectionTitle>Choose The Scope</SectionTitle>
         <List>
           <li>
@@ -2165,11 +2166,11 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Field-Level API</SectionTitle>
-        <p>
+        <Typography color="muted">
           Use the field-level imperative API when all rules of a field should
           share one runtime option set. This is a good fit for globally shared
           dynamic data such as statuses, assignees, or categories.
-        </p>
+        </Typography>
         <CodeBlock
           code={dynamicFieldOptionsSnippet}
           language="tsx"
@@ -2180,70 +2181,70 @@ export const documentationPages: IDocumentationPage[] = [
           language="tsx"
           label="Field-level reload flow"
         />
-        <p>
+        <Typography color="muted">
           In this example both <InlineCode>CITY</InlineCode> rules update
           together because the runtime options are stored at field scope.
-        </p>
-        <p>
+        </Typography>
+        <Typography color="muted">
           The live example exposes that field-scoped state through{' '}
           <InlineCode>
             builderRef.subscribeToFieldOptionState('CITY', listener)
           </InlineCode>
           .
-        </p>
+        </Typography>
         <ClientOnly
           loader={loadSharedFieldOptionsDemo}
           label="Loading the shared field-options demo..."
           minHeight="18rem"
         />
         <SectionTitle>Rule-Level API</SectionTitle>
-        <p>
+        <Typography color="muted">
           Use the rule-level imperative API when options depend on other rules
           or on surrounding app state. This is the right fit for repeated
           dependencies such as <InlineCode>COUNTRY -&gt; CITY</InlineCode> in
           multiple groups.
-        </p>
+        </Typography>
         <CodeBlock
           code={dynamicRuleOptionsSnippet}
           language="tsx"
           label="Dependency-aware rule options"
         />
-        <p>
+        <Typography color="muted">
           This example binds each <InlineCode>CITY</InlineCode> rule to the
           nearest <InlineCode>COUNTRY</InlineCode> rule. Initial hydration and
           later dependency changes are handled by{' '}
           <InlineCode>builderRef.bindRuleOptions(...)</InlineCode>.
-        </p>
-        <p>
+        </Typography>
+        <Typography color="muted">
           The extra{' '}
           <InlineCode>builderRef.reconcileRuleValueWithOptions(...)</InlineCode>{' '}
           call is optional and useful when you want strict select semantics,
           such as clearing a now-invalid city after the nearest country changes.
-        </p>
+        </Typography>
         <ClientOnly
           loader={loadImperativeFieldOptionsDemo}
           label="Loading the imperative field-options demo..."
           minHeight="18rem"
         />
         <SectionTitle>TanStack React Query Example</SectionTitle>
-        <p>
+        <Typography color="muted">
           If your app already uses TanStack React Query, keep caching there and
           use the builder only for rule lookup and option storage. For
           dependency-heavy cases,{' '}
           <InlineCode>useBuilderRuleDependencies(...)</InlineCode> fits
           naturally with <InlineCode>useQueries(...)</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={dynamicFieldOptionsReactQuerySnippet}
           language="tsx"
           label="Rule-level React Query integration"
         />
-        <p>
+        <Typography color="muted">
           The reconciliation call in the success branch is optional. Keep it
           when you want strict select semantics and remove it when the selected
           value may stay valid even if the currently loaded option slice does
           not include it yet.
-        </p>
+        </Typography>
         <AlertBox title="API reference" variant="info">
           <TextLink to="/api/builder-ref">Builder Ref</TextLink>,{' '}
           <TextLink to="/api/builder">Builder</TextLink>, and{' '}
@@ -2264,11 +2265,11 @@ export const documentationPages: IDocumentationPage[] = [
       'Validation built-in validation validator usageLimit showValidation onStateChange required minLength maxLength minItems maxItems range validation rules fields builder',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Built-in validation is defined in{' '}
           <TextLink to="/api/fields">field metadata</TextLink> and evaluated by{' '}
           <TextLink to="/api/builder">Builder</TextLink>.
-        </p>
+        </Typography>
         <List>
           <li>
             Use <InlineCode>validation.common</InlineCode> for operator-agnostic
@@ -2316,12 +2317,12 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Structural usage limits</SectionTitle>
-        <p>
+        <Typography color="muted">
           Use <InlineCode>usageLimit</InlineCode> when a constraint depends on
           how many rules already use a field or a shared usage bucket. This is
           separate from value validation because it governs query structure
           rather than the validity of a single rule value.
-        </p>
+        </Typography>
         <CodeBlock
           code={usageLimitSnippet}
           language="tsx"
@@ -2379,14 +2380,14 @@ export const documentationPages: IDocumentationPage[] = [
       'undo redo history inverse history maxEntries controls canUndo canRedo onStateChange drag and drop clone delete edit builder',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Set <InlineCode>history</InlineCode> on{' '}
           <TextLink to="/api/builder">Builder</TextLink> to enable built-in undo
           and redo support for structural edits and value changes. The builder
           records inverse actions internally, so history stays smaller than
           full-query snapshots and still works with drag-and-drop, cloning,
           deletes, and inline edits.
-        </p>
+        </Typography>
         <CodeBlock
           code={historySnippet}
           language="tsx"
@@ -2439,11 +2440,11 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Custom HistoryControls</SectionTitle>
-        <p>
+        <Typography color="muted">
           Use <InlineCode>components.HistoryControls</InlineCode> when you want
           to change the placement or surrounding layout of the built-in history
           controls without reimplementing undo and redo behavior yourself.
-        </p>
+        </Typography>
         <CodeBlock
           code={historyControlsSnippet}
           language="tsx"
@@ -2489,15 +2490,15 @@ export const documentationPages: IDocumentationPage[] = [
       'readOnly locking locked rule group targets field operator value combinator negation inheritToChildren inheritance read only builder rule group drag delete add controls',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Locking can be applied at the builder, rule, or group level. The key
           distinction is that rules lock only themselves, while groups can lock
           either just their own controls or their entire subtree. Object-based{' '}
           <InlineCode>readOnly</InlineCode> configs also support targeted
           read-only for specific controls.
-        </p>
+        </Typography>
         <SectionTitle>GUI Locking</SectionTitle>
-        <p>
+        <Typography color="muted">
           Set <InlineCode>lockable</InlineCode> on{' '}
           <TextLink to="/api/builder">Builder</TextLink> to render lock controls
           directly in the UI. The built-in controls update the same{' '}
@@ -2506,7 +2507,7 @@ export const documentationPages: IDocumentationPage[] = [
           If a node already has <InlineCode>readOnly.targets</InlineCode>, the
           lock toggle preserves those targets and only changes whether the lock
           is enabled and, for groups, whether it inherits to descendants.
-        </p>
+        </Typography>
         <CodeBlock
           code={lockingGuiSnippet}
           language="tsx"
@@ -2535,11 +2536,11 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Targeted read-only</SectionTitle>
-        <p>
+        <Typography color="muted">
           Use object-based <InlineCode>readOnly</InlineCode> configs when you
           want to keep specific controls visible but non-editable instead of
           locking the entire rule or group.
-        </p>
+        </Typography>
         <CodeBlock
           code={targetedReadOnlySnippet}
           language="tsx"
@@ -2602,20 +2603,20 @@ export const documentationPages: IDocumentationPage[] = [
           label="Locking examples"
         />
         <SectionTitle>Custom Lock Control</SectionTitle>
-        <p>
+        <Typography color="muted">
           The default lock button can be replaced through{' '}
           <InlineCode>components.LockToggle</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={lockToggleSnippet}
           language="tsx"
           label="LockToggle override"
         />
         <SectionTitle>Custom Clone Control</SectionTitle>
-        <p>
+        <Typography color="muted">
           The default clone button can be replaced through{' '}
           <InlineCode>components.CloneButton</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={cloneButtonSnippet}
           language="tsx"
@@ -2702,9 +2703,9 @@ export const documentationPages: IDocumentationPage[] = [
       'Parsing formatting SQL Mongo AQL JSONata JsonLogic CEL Elasticsearch SpEL Prisma OData RSQL Dynamo Django parseQuery formatQuery interoperability sandbox',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Query data can be converted to and from supported external formats.
-        </p>
+        </Typography>
         <List>
           <li>
             <TextLink to="/api/format-query">formatQuery</TextLink> converts
@@ -2745,12 +2746,14 @@ export const documentationPages: IDocumentationPage[] = [
       'SQL Mongo AQL JSONata JsonLogic CEL Elasticsearch SpEL Prisma OData RSQL Dynamo Django supported formats parser formatter query builder',
     content: (
       <>
-        <p>Supported formats and their primary use cases.</p>
+        <Typography color="muted">
+          Supported formats and their primary use cases.
+        </Typography>
         <SectionTitle>SQL</SectionTitle>
-        <p>
+        <Typography color="muted">
           Formatting and predicate parsing for builder-compatible SQL
           expressions.
-        </p>
+        </Typography>
         <CodeBlock code={sqlSnippet} language="ts" label="SQL formatter" />
         <AlertBox title="Parsing scope" variant="warning">
           SQL support is aimed at builder-compatible predicates. It is not meant
@@ -2758,11 +2761,11 @@ export const documentationPages: IDocumentationPage[] = [
           or nested subqueries.
         </AlertBox>
         <SectionTitle>Mongo</SectionTitle>
-        <p>
+        <Typography color="muted">
           Formatting returns a serialized JSON filter document. Parsing expects
           a JSON object string and can infer{' '}
           <TextLink to="/api/fields">fields</TextLink> from the document shape.
-        </p>
+        </Typography>
         <CodeBlock
           code={`const mongo = formatQuery(data, 'Mongo');\n// { "$and": [ ... ] }`}
           language="ts"
@@ -2805,7 +2808,7 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Advanced: Field-To-Field Comparisons</SectionTitle>
-        <p>
+        <Typography color="muted">
           Most formats on this page can be explored with ordinary literal-based
           rules. If you specifically need one field to compare against another,
           start with{' '}
@@ -2814,7 +2817,7 @@ export const documentationPages: IDocumentationPage[] = [
           </TextLink>{' '}
           and then use the native field-reference support only in formats that
           have a direct right-hand-side field form.
-        </p>
+        </Typography>
         <List>
           <li>
             Supported native field-to-field formats in this feature are{' '}
@@ -2870,10 +2873,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Text mode SQL text editor monaco createMonacoComponents syntax highlighting syntax validation semantic validation locked rules locked groups defaultMode singleRootGroup',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Text mode lets the builder switch between the visual query UI and a
           SQL editor view of the same query.
-        </p>
+        </Typography>
         <CodeBlock
           code={textModeSnippet}
           language="tsx"
@@ -2895,10 +2898,10 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Opening mode</SectionTitle>
-        <p>
+        <Typography color="muted">
           Use <InlineCode>defaultMode</InlineCode> to choose whether the builder
           opens in the visual builder or in text mode.
-        </p>
+        </Typography>
         <CodeBlock
           code={textModeDefaultModeSnippet}
           language="tsx"
@@ -3037,10 +3040,10 @@ export const documentationPages: IDocumentationPage[] = [
           label="Compose Monaco with ANTD"
         />
         <SectionTitle>Text-mode strings</SectionTitle>
-        <p>
+        <Typography color="muted">
           Text-mode labels and messages are part of the regular{' '}
           <InlineCode>strings</InlineCode> override surface.
-        </p>
+        </Typography>
         <CodeBlock
           code={textModeStringsSnippet}
           language="tsx"
@@ -3104,10 +3107,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Components component overrides custom controls custom renderers builder customization add remove select input group rule responsive responsiveness compact layout multiselect summary',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Replace built-in controls and containers through the{' '}
           <InlineCode>components</InlineCode> prop.
-        </p>
+        </Typography>
         <CodeBlock
           code={componentsSnippet}
           language="tsx"
@@ -3207,13 +3210,13 @@ export const documentationPages: IDocumentationPage[] = [
       'Adapters customization mui material ui antd ant design bootstrap mantine fluent ui versioned adapter entrypoints adapter overview create components pages ready made overrides',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Adapters provide pre-mapped <InlineCode>components</InlineCode>{' '}
           objects for UI libraries so you do not need to implement every
           override in{' '}
           <TextLink to="/documentation/components">Components</TextLink>{' '}
           yourself.
-        </p>
+        </Typography>
         <SectionTitle>Adapter guides</SectionTitle>
         <List>
           <li>
@@ -3315,10 +3318,10 @@ export const documentationPages: IDocumentationPage[] = [
       'MUI adapter material ui mui v9 mui v7 adapter install createMuiComponents components',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the MUI adapter when your application already uses Material UI and
           you want the builder to inherit that component language.
-        </p>
+        </Typography>
         <SectionTitle>Available entrypoints</SectionTitle>
         <List>
           <li>
@@ -3332,10 +3335,10 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Installing MUI</SectionTitle>
-        <p>
+        <Typography color="muted">
           Install the MUI peer dependencies that match the adapter version you
           want to use. For new setups, prefer <InlineCode>mui/v9</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={adaptersInstallSnippet}
           language="bash"
@@ -3344,10 +3347,10 @@ export const documentationPages: IDocumentationPage[] = [
         <SectionTitle>Using MUI v9</SectionTitle>
         <CodeBlock code={muiSnippet} language="tsx" label="MUI v9 adapter" />
         <SectionTitle>Supporting MUI v7</SectionTitle>
-        <p>
+        <Typography color="muted">
           If your application is still on Material UI 7, switch the import path
           to <InlineCode>@vojtechportes/react-query-builder/mui/v7</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={muiOverrideSnippet}
           language="tsx"
@@ -3380,10 +3383,10 @@ export const documentationPages: IDocumentationPage[] = [
       'ANTD adapter ant design antd v6 antd v5 adapter install createAntdComponents components',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the ANTD adapter when your application uses Ant Design and you
           want the builder controls to match the surrounding system components.
-        </p>
+        </Typography>
         <SectionTitle>Available entrypoints</SectionTitle>
         <List>
           <li>
@@ -3397,11 +3400,11 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Installing ANTD</SectionTitle>
-        <p>
+        <Typography color="muted">
           Install the Ant Design peer dependencies that match the adapter
           version you want to use. For new setups, prefer{' '}
           <InlineCode>antd/v6</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={antdAdaptersInstallSnippet}
           language="bash"
@@ -3410,11 +3413,11 @@ export const documentationPages: IDocumentationPage[] = [
         <SectionTitle>Using ANTD v6</SectionTitle>
         <CodeBlock code={antdSnippet} language="tsx" label="ANTD v6 adapter" />
         <SectionTitle>Supporting ANTD v5</SectionTitle>
-        <p>
+        <Typography color="muted">
           If your application is still on Ant Design 5, switch the import path
           to <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>
           .
-        </p>
+        </Typography>
         <SectionTitle>Extending the ANTD adapter</SectionTitle>
         <CodeBlock
           code={antdCreateComponentsSnippet}
@@ -3442,10 +3445,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Fluent UI adapter fluentui v8 adapter install createFluentUiComponents components',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the Fluent UI adapter when your application is built on Fluent UI
           React 8 and you want builder controls mapped to that component set.
-        </p>
+        </Typography>
         <SectionTitle>Available entrypoint</SectionTitle>
         <List>
           <li>
@@ -3457,10 +3460,10 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Installing Fluent UI</SectionTitle>
-        <p>
+        <Typography color="muted">
           Install the matching Fluent UI peer dependency before using the
           adapter.
-        </p>
+        </Typography>
         <CodeBlock
           code={fluentUiAdaptersInstallSnippet}
           language="bash"
@@ -3500,10 +3503,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Mantine adapter mantine v9 mantine v8 adapter install MantineProvider createMantineComponents components',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the Mantine adapter when your application already uses Mantine and
           you want the builder controls to inherit that component language.
-        </p>
+        </Typography>
         <SectionTitle>Available entrypoints</SectionTitle>
         <List>
           <li>
@@ -3521,11 +3524,11 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Installing Mantine</SectionTitle>
-        <p>
+        <Typography color="muted">
           Install the Mantine peer dependencies that match the adapter version
           you want to use. For new setups, prefer{' '}
           <InlineCode>mantine/v9</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={mantineAdaptersInstallSnippet}
           language="bash"
@@ -3549,11 +3552,11 @@ export const documentationPages: IDocumentationPage[] = [
           label="Mantine v9 adapter"
         />
         <SectionTitle>Supporting Mantine v8</SectionTitle>
-        <p>
+        <Typography color="muted">
           If your application is still on Mantine 8, switch the import path to{' '}
           <InlineCode>@vojtechportes/react-query-builder/mantine/v8</InlineCode>
           .
-        </p>
+        </Typography>
         <SectionTitle>Extending the Mantine adapter</SectionTitle>
         <CodeBlock
           code={mantineCreateComponentsSnippet}
@@ -3581,11 +3584,11 @@ export const documentationPages: IDocumentationPage[] = [
       'Bootstrap adapter bootstrap v5 adapter install stylesheet createBootstrapComponents components',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the Bootstrap adapter when your application already ships
           Bootstrap 5 styles and you want the builder controls mapped to
           Bootstrap-flavored UI.
-        </p>
+        </Typography>
         <SectionTitle>Available entrypoint</SectionTitle>
         <List>
           <li>
@@ -3596,10 +3599,10 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Installing Bootstrap</SectionTitle>
-        <p>
+        <Typography color="muted">
           Install Bootstrap and import its stylesheet before rendering the
           adapter.
-        </p>
+        </Typography>
         <CodeBlock
           code={bootstrapAdaptersInstallSnippet}
           language="bash"
@@ -3650,10 +3653,10 @@ export const documentationPages: IDocumentationPage[] = [
       'Radix adapter radix themes radix v1 adapter install Theme createRadixComponents components',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the Radix adapter when your application uses Radix Themes and you
           want the builder controls to align with that design system.
-        </p>
+        </Typography>
         <SectionTitle>Available entrypoint</SectionTitle>
         <List>
           <li>
@@ -3663,10 +3666,10 @@ export const documentationPages: IDocumentationPage[] = [
           </li>
         </List>
         <SectionTitle>Installing Radix Themes</SectionTitle>
-        <p>
+        <Typography color="muted">
           Install the Radix Themes peer dependency and the Radix icons package
           before using the adapter.
-        </p>
+        </Typography>
         <CodeBlock
           code={radixAdaptersInstallSnippet}
           language="bash"
@@ -3719,11 +3722,11 @@ export const documentationPages: IDocumentationPage[] = [
       'Theming theme provider colors primary secondary grey tokens design system',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Use the theme provider to override builder color tokens. For control
           and container replacement, see{' '}
           <TextLink to="/documentation/components">Components</TextLink>.
-        </p>
+        </Typography>
         <CodeBlock code={themeSnippet} language="tsx" label="Theme provider" />
         <AlertBox title="Adapters and theming" variant="info">
           <InlineCode>ThemeProvider</InlineCode> customizes the built-in default
@@ -3757,28 +3760,28 @@ export const documentationPages: IDocumentationPage[] = [
       'Localization localized labels fields translated copy internationalization i18n query builder',
     content: (
       <>
-        <p>
+        <Typography color="muted">
           Localize field labels, option labels, and surrounding UI in the host
           application. Built-in action labels can be customized through{' '}
           <TextLink to="/api/builder">Builder</TextLink> via{' '}
           <InlineCode>strings</InlineCode>.
-        </p>
+        </Typography>
         <CodeBlock
           code={localizationSnippet}
           language="ts"
           label="Localized fields"
         />
         <SectionTitle>Built-in UI strings</SectionTitle>
-        <p>
+        <Typography color="muted">
           Locales can be imported from their subpaths and passed to the Builder
           through the <InlineCode>strings</InlineCode> prop.
-        </p>
+        </Typography>
         <CodeBlock
           code={firstPartyLocaleSnippet}
           language="tsx"
           label="Built-in French translations"
         />
-        <p>Supported locale subpaths:</p>
+        <Typography color="muted">Supported locale subpaths:</Typography>
         <List>
           <li>
             <InlineCode>
@@ -3841,11 +3844,11 @@ export const documentationPages: IDocumentationPage[] = [
             — Traditional Chinese
           </li>
         </List>
-        <p>
+        <Typography color="muted">
           The package-root <InlineCode>strings</InlineCode> import remains the
           backward-compatible English (<InlineCode>en-US</InlineCode>) form. Use
           it as a base when you only need selective overrides.
-        </p>
+        </Typography>
         <CodeBlock
           code={stringsSnippet}
           language="tsx"

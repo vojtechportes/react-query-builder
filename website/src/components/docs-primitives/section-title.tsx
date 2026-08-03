@@ -1,6 +1,8 @@
 import styled from 'styled-components';
+import { Typography } from '../typography/typography';
 
-export const SectionTitle = styled.h2`
-  margin: 0 0 0.75rem;
-  font-size: 1.15rem;
-`;
+export const SectionTitle = styled(Typography).attrs({
+  variant: 'h2',
+  fontSize: '1.1rem',
+  mb: 0.75,
+})``;

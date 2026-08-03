@@ -11,7 +11,11 @@ describe('v2 version-owned SSR', () => {
 
     expect(page.html).toContain('<h1');
     expect(page.html).toContain('React Query Builder');
-    expect(page.html).toContain('Highly configurable TypeScript library');
+    expect(page.html).toContain('An open source React component');
+    expect(page.html).toContain('Build and convert complex queries');
+    expect(page.html).toContain('Edit queries visually or as text');
+    expect(page.html).toContain('Match your design system');
+    expect(page.html).toContain('Use it in real applications');
     expect(page.html).toContain(
       'npm install @vojtechportes/react-query-builder'
     );
@@ -22,7 +26,7 @@ describe('v2 version-owned SSR', () => {
     const page = renderPage('/demo');
 
     expect(page.html).toContain('>Demo</h1>');
-    expect(page.html).toContain(
+    expect(page.html).not.toContain(
       'Configure fields, adapters, validation, text editing, localization, and query output'
     );
     expect(page.html).toContain('data-client-only-placeholder="true"');

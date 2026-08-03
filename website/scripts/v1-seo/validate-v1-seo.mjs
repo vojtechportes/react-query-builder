@@ -20,14 +20,20 @@ const seoConfig = JSON.parse(
     'utf8'
   )
 );
-const configuredSiteUrl = process.env.VITE_SITE_URL || seoConfig.siteUrl;
+const configuredSiteUrl =
+  process.env.VITE_CANONICAL_SITE_URL ||
+  process.env.VITE_SITE_URL ||
+  seoConfig.siteUrl;
+
+seoConfig.robotsDirective =
+  process.env.VITE_ROBOTS_DIRECTIVE || seoConfig.robotsDirective;
 let siteUrl;
 
 try {
   siteUrl = new URL(configuredSiteUrl).toString();
 } catch {
   throw new Error(
-    `VITE_SITE_URL must be an absolute URL, received: ${configuredSiteUrl}`
+    `VITE_CANONICAL_SITE_URL must be an absolute URL, received: ${configuredSiteUrl}`
   );
 }
 

@@ -1,3 +1,4 @@
+import { apiPages } from '../../pages/api-page/constants/api-pages';
 import { relatedRecipesByPath as apiRelatedRecipesByPath } from '../../pages/api-page/constants/related-recipes-by-path';
 import { documentationPages } from '../../pages/documentation-page/constants/documentation-pages';
 import { relatedRecipesByPath as documentationRelatedRecipesByPath } from '../../pages/documentation-page/constants/related-recipes-by-path';
@@ -40,6 +41,9 @@ export const createV2RelatedLinks = (
     ...recipe.relatedDocPaths.map((relatedPath) => ({
       label:
         documentationPages.find((page) => page.path === relatedPath)?.title ??
+        apiPages
+          .find((page) => page.path === relatedPath)
+          ?.title.concat(' API') ??
         relatedPath,
       path: relatedPath,
       publicPath: createV2PublicPath(relatedPath),

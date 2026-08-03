@@ -94,6 +94,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     () => getBuilderComponents(customizationMode, useMonacoTextEditor),
     [customizationMode, useMonacoTextEditor]
   );
+
   const builderProps = {
     data,
     fields: demoFields,
@@ -115,10 +116,12 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     showValidation,
     ...(builderComponents ? { components: builderComponents } : {}),
   };
+
   const hasFieldComparisons = React.useMemo(
     () => containsFieldComparisons(data),
     [data]
   );
+
   const isOutputFormatDisabled = React.useCallback(
     (format: OutputFormat) =>
       hasFieldComparisons && unsupportedFieldComparisonFormats.includes(format),
@@ -138,6 +141,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
         : formatQueryText(data, outputFormat, demoFields),
     [data, outputFormat]
   );
+
   const builderSource = React.useMemo(
     () =>
       formatBuilderSource({
@@ -226,24 +230,26 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           onChange={setThemeColors}
         />
       </Sidebar>
-      <Main>
-        <DemoPlaygroundSource
-          source={builderSource}
-          visible={showSourceCode}
-          onVisibleChange={setShowSourceCode}
-        />
-        <DemoPlaygroundBuilder
-          builderProps={builderProps}
-          customizationMode={customizationMode}
-          themeColors={themeColors}
-        />
-        <DemoPlaygroundOutput
-          format={outputFormat}
-          output={outputText}
-          isFormatDisabled={isOutputFormatDisabled}
-          onFormatChange={setOutputFormat}
-        />
-      </Main>
+      <div>
+        <Main>
+          <DemoPlaygroundSource
+            source={builderSource}
+            visible={showSourceCode}
+            onVisibleChange={setShowSourceCode}
+          />
+          <DemoPlaygroundBuilder
+            builderProps={builderProps}
+            customizationMode={customizationMode}
+            themeColors={themeColors}
+          />
+          <DemoPlaygroundOutput
+            format={outputFormat}
+            output={outputText}
+            isFormatDisabled={isOutputFormatDisabled}
+            onFormatChange={setOutputFormat}
+          />
+        </Main>
+      </div>
     </Layout>
   );
 };

@@ -39,6 +39,7 @@ jobs:
         run: npm run build:deploy --workspace website
         env:
           VITE_SITE_URL: https://www.react-query-builder.com/
+          VITE_CANONICAL_SITE_URL: https://www.react-query-builder.com/
 
       - name: Upload website to staging directory
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0

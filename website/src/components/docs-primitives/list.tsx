@@ -4,7 +4,7 @@ import { siteTheme } from '../../constants/site-theme';
 export const List = styled.ul`
   margin: 0 0 1rem;
   padding-left: 1.2rem;
-  line-height: 1.7;
+  line-height: 1.2;
 
   li::marker {
     color: ${siteTheme.marker};

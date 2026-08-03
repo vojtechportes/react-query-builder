@@ -15,10 +15,4 @@ export const ContentArticle = styled.article`
   > * + * {
     margin-top: 1rem;
   }
-
-  > p {
-    margin: 0;
-    color: #334155;
-    line-height: 1.8;
-  }
 `;

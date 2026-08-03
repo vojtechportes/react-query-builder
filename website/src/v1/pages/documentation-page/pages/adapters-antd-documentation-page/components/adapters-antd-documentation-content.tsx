@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -13,10 +14,10 @@ import { antdCreateComponentsSnippet } from '../constants/antd-create-components
 
 export const AdaptersAntdDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Use the ANTD adapter when your application uses Ant Design and you want
       the builder controls to match the surrounding system components.
-    </p>
+    </Typography>
     <SectionTitle>Available entrypoints</SectionTitle>
     <List>
       <li>
@@ -30,10 +31,10 @@ export const AdaptersAntdDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Installing ANTD</SectionTitle>
-    <p>
+    <Typography color="muted">
       Install the Ant Design peer dependencies that match the adapter version
       you want to use. For new setups, prefer <InlineCode>antd/v6</InlineCode>.
-    </p>
+    </Typography>
     <CodeBlock
       code={antdAdaptersInstallSnippet}
       language="bash"
@@ -42,10 +43,10 @@ export const AdaptersAntdDocumentationContent: React.FC = () => (
     <SectionTitle>Using ANTD v6</SectionTitle>
     <CodeBlock code={antdSnippet} language="tsx" label="ANTD v6 adapter" />
     <SectionTitle>Supporting ANTD v5</SectionTitle>
-    <p>
+    <Typography color="muted">
       If your application is still on Ant Design 5, switch the import path to{' '}
       <InlineCode>@vojtechportes/react-query-builder/antd/v5</InlineCode>.
-    </p>
+    </Typography>
     <SectionTitle>Extending the ANTD adapter</SectionTitle>
     <CodeBlock
       code={antdCreateComponentsSnippet}

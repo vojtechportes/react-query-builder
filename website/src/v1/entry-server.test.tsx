@@ -22,7 +22,7 @@ describe('v1 version-owned SSR', () => {
     const page = renderPage('/demo');
 
     expect(page.html).toContain('>Demo</h1>');
-    expect(page.html).toContain(
+    expect(page.html).not.toContain(
       'Configure fields, adapters, validation, text editing, localization, and query output'
     );
     expect(page.html).toContain('data-client-only-placeholder="true"');

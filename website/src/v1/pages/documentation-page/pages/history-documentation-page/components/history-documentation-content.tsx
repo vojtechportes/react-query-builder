@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -12,14 +13,14 @@ import { historyControlsSnippet } from '../constants/history-controls-snippet';
 
 export const HistoryDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       Set <InlineCode>history</InlineCode> on{' '}
       <TextLink to="/api/builder">Builder</TextLink> to enable built-in undo and
       redo support for structural edits and value changes. The builder records
       inverse actions internally, so history stays smaller than full-query
       snapshots and still works with drag-and-drop, cloning, deletes, and inline
       edits.
-    </p>
+    </Typography>
     <CodeBlock code={historySnippet} language="tsx" label="History support" />
     <SectionTitle>How to enable it</SectionTitle>
     <List>
@@ -67,11 +68,11 @@ export const HistoryDocumentationContent: React.FC = () => (
       </li>
     </List>
     <SectionTitle>Custom HistoryControls</SectionTitle>
-    <p>
+    <Typography color="muted">
       Use <InlineCode>components.HistoryControls</InlineCode> when you want to
       change the placement or surrounding layout of the built-in history
       controls without reimplementing undo and redo behavior yourself.
-    </p>
+    </Typography>
     <CodeBlock
       code={historyControlsSnippet}
       language="tsx"

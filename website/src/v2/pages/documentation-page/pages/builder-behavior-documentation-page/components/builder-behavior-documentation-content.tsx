@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Typography } from '../../../../../../components/typography/typography';
 import { AlertBox } from '../../../../../../components/alert-box';
 import { CodeBlock } from '../../../../../../components/code-block';
 import {
@@ -11,11 +12,11 @@ import { builderBehaviorSnippet } from '../constants/builder-behavior-snippet';
 
 export const BuilderBehaviorDocumentationContent: React.FC = () => (
   <>
-    <p>
+    <Typography color="muted">
       A few builder props shape the overall editing model more than the field or
       query data itself. These are worth deciding early because they affect how
       users add, move, and organize rules.
-    </p>
+    </Typography>
     <CodeBlock
       code={builderBehaviorSnippet}
       language="tsx"

@@ -4,6 +4,8 @@ import * as React from 'react';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { findV2RouteRecord } from '../app/utils/find-v2-route-record.util';
+import { getRobotsDirective } from '../../shared/seo/utils/get-robots-directive.util';
+import { v2SeoConfig } from './constants/v2-seo-config';
 import { useV2PageMetadata } from './hooks/use-v2-page-metadata';
 import type { IV2SeoPage } from './types/v2-seo-page';
 import { createV2PageMetadataOptions } from './utils/create-v2-page-metadata-options.util';
@@ -41,7 +43,7 @@ describe('v2 page metadata', () => {
     expect(
       document.head.querySelector<HTMLMetaElement>('meta[name="robots"]')
         ?.content
-    ).toContain('index,follow');
+    ).toBe(getRobotsDirective(v2SeoConfig.robotsDirective));
 
     const structuredData = JSON.parse(
       document.head.querySelector<HTMLScriptElement>(

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button } from '../../../../components/button';
 import { useSearchParams } from 'react-router';
 import {
   Builder,
@@ -98,9 +99,9 @@ export const PersistFiltersInUrlDemo: React.FC = () => {
       note="Changing the filter updates only its URL parameter and preserves all other parameters."
       actions={
         <>
-          <button type="button" onClick={copy}>
+          <Button color="secondary" size="small" type="button" onClick={copy}>
             Copy share URL
-          </button>
+          </Button>
         </>
       }
     >

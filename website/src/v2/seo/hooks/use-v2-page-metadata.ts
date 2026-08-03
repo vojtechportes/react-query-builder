@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getRobotsDirective } from '../../../shared/seo/utils/get-robots-directive.util';
 import { v2SeoConfig } from '../constants/v2-seo-config';
 import type { IV2PageMetadataOptions } from '../types/v2-page-metadata-options';
 import { createV2CanonicalUrl } from '../utils/create-v2-canonical-url.util';
@@ -14,14 +15,19 @@ export const useV2PageMetadata = (
   options: IV2PageMetadataOptions
 ): void => {
   React.useEffect(() => {
-    const title = `${pageTitle} | ${v2SeoConfig.siteName}`;
+    const title =
+      options.section === 'Home'
+        ? pageTitle
+        : `${pageTitle} | ${v2SeoConfig.siteName}`;
     const canonicalUrl = createV2CanonicalUrl(options.path);
     const imageUrl = createV2CanonicalUrl('/favicon.png');
 
     document.title = title;
     ensureV2MetaName('description').content = description;
     ensureV2MetaName('keywords').content = options.keywords;
-    ensureV2MetaName('robots').content = v2SeoConfig.robotsDirective;
+    ensureV2MetaName('robots').content = getRobotsDirective(
+      v2SeoConfig.robotsDirective
+    );
     ensureV2MetaProperty('og:type').content = 'website';
     ensureV2MetaProperty('og:site_name').content = `${v2SeoConfig.siteName} v2`;
     ensureV2MetaProperty('og:title').content = title;
