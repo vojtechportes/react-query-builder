@@ -22,6 +22,22 @@ export const BuilderBehaviorDocumentationContent: React.FC = () => (
       language="tsx"
       label="Builder behavior"
     />
+    <SectionTitle>showOuterContainer</SectionTitle>
+    <List>
+      <li>
+        Defaults to <InlineCode>true</InlineCode> and renders the outer surface
+        with the Builder root padding, background, border, radius, and shadow.
+      </li>
+      <li>
+        Set <InlineCode>{'showOuterContainer={false}'}</InlineCode> when an
+        application wrapper already provides that surface.
+      </li>
+      <li>
+        Without the container, <InlineCode>className</InlineCode> and{' '}
+        <InlineCode>style</InlineCode> have no Builder element to target. Apply
+        those values to your application wrapper instead.
+      </li>
+    </List>
     <SectionTitle>cloneable</SectionTitle>
     <List>
       <li>

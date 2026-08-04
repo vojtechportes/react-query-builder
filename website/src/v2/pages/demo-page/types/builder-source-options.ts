@@ -17,6 +17,7 @@ export interface IBuilderSourceOptions {
   defaultMode: 'builder' | 'text';
   useMonacoTextEditor: boolean;
   singleRootGroup: boolean;
+  showOuterContainer: boolean;
   showValidation: boolean;
   customizationMode: CustomizationMode;
   themeStyle: IBuilderStyle;

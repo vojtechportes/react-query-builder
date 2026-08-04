@@ -12,7 +12,6 @@ import { BuilderSurface } from './builder-surface';
 import { MuiBuilderSurface } from './mui-builder-surface';
 
 const BuilderCard = styled.section`
-  overflow-y: hidden;
   padding: 1.5rem;
   border: 1px solid #dbe4f0;
   border-radius: 16px;

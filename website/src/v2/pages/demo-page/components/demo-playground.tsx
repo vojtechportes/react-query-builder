@@ -98,6 +98,7 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     defaultMode: settings.defaultMode,
     groupTypes: 'both' as const,
     singleRootGroup: settings.singleRootGroup,
+    showOuterContainer: settings.showOuterContainer,
     showValidation: settings.showValidation,
     style: themeOverrides,
     ...(builderComponents ? { components: builderComponents } : {}),

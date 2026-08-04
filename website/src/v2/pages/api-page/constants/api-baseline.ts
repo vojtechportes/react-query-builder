@@ -9,7 +9,7 @@ export const apiBaseline = [
     path: '/api/builder',
     title: 'Builder',
     contentHash:
-      'ddea112faa099eed32044f490e1e52cac2997fa3805b0eb9a12cf6db77244003',
+      'c634fddcfd9aee60ce90dc4185de78d518019126cd697fccde297f470b8bb595',
   },
   {
     path: '/api/builder-ref',

@@ -12,6 +12,7 @@ export const defaultDemoPlaygroundSettings: IDemoPlaygroundSettings = {
   newNodePlacement: 'append',
   readOnly: false,
   readOnlyProtectsDelete: true,
+  showOuterContainer: true,
   showValidation: true,
   singleRootGroup: true,
   textMode: false,

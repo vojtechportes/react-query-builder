@@ -5,6 +5,16 @@ export const BuilderBehaviorPropsApiItems: React.FC = () => (
   <>
     <li>
       <ItemTitle>
+        <InlineCode>showOuterContainer</InlineCode>:
+      </ItemTitle>{' '}
+      Defaults to <InlineCode>true</InlineCode>. Set it to{' '}
+      <InlineCode>false</InlineCode> to omit the outer styled container. The
+      Builder then renders its controls and query content directly, so{' '}
+      <InlineCode>className</InlineCode> and <InlineCode>style</InlineCode> have
+      no container to target.
+    </li>
+    <li>
+      <ItemTitle>
         <InlineCode>allowGroupNegation</InlineCode>:
       </ItemTitle>{' '}
       Defaults to <InlineCode>true</InlineCode>. When set to{' '}

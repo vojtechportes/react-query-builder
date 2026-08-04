@@ -27,7 +27,7 @@ export const documentationBaseline = [
     path: '/documentation/builder-behavior',
     title: 'Builder Behavior',
     contentHash:
-      'c8437b2414d82677efb3ab9909e59b42b14cd7990dbcbb50ec81c8d9793c1e79',
+      '466202830a5998f3f973ad97c1ae9b357c6bffa6dc45189c2bb261bcfb0c3817',
   },
   {
     path: '/documentation/builder-ref',
