@@ -15,6 +15,7 @@ test('enforces the source ownership and dependency matrix', () => {
     'builder/builder.ts': "export { sharedValue } from '../shared/shared';\n",
     'builder/value.ts': 'export const builderValue = true;\n',
     'shared/shared.ts': 'export const sharedValue = true;\n',
+    'shared/__snapshots__/shared.test.ts.snap': 'snapshot',
     'subpackages/adapters/antd/shared/index.ts':
       "export { builderValue } from '../../../../builder/value';\n",
     'subpackages/adapters/antd/v5/index.ts':

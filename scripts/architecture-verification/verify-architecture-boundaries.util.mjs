@@ -17,6 +17,7 @@ const allowedSourceRoots = new Set([
   'shared',
   'subpackages',
 ]);
+const excludedDirectoryNamePattern = /^__(?:mocks|snapshots)__$/;
 const kebabCasePathSegmentPattern =
   /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\.[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
 
@@ -44,7 +45,7 @@ export const verifyArchitectureBoundaries = (
         }
 
         if (
-          entry.name !== '__mocks__' &&
+          !excludedDirectoryNamePattern.test(entry.name) &&
           !kebabCasePathSegmentPattern.test(entry.name)
         ) {
           violations.push(
