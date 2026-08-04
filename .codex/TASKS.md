@@ -2549,3 +2549,28 @@ site/v1 usage.
 - Run Prettier on the modified code file.
 - Run focused typecheck, lint, browser QA, and `git diff --check`.
 - Run the repository-required code-review agent and resolve all findings.
+
+### T078 - Fix versioned MUI baseline verification
+
+**Status:** `[x]` Done
+
+**Goal:** Make the production stage verifier recognize the Material UI scoped baseline after Vite extracts it into a shared chunk.
+
+**Scope:**
+
+- Search all staged JavaScript assets for the production `MuiScopedCssBaseline` marker.
+- Remove the verifier dependency on the unstable `mui-builder-surface-*` chunk name.
+- Preserve runtime code, build configuration, dependencies, public APIs, and page behavior.
+
+**Acceptance criteria:**
+
+- The v2 verifier accepts a scoped baseline emitted in a shared JavaScript chunk.
+- The v1 and v2 versioned builds both pass their staging verification.
+
+**Verification:**
+
+- Run Prettier on the modified script.
+- Run `npm run build:v2 --workspace website`.
+- Run `npm run build:versions --workspace website`.
+- Run root lint and `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
