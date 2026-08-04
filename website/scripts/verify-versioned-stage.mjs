@@ -82,10 +82,7 @@ if (!containsPrismMarkup) {
 }
 
 const containsMuiScopedBaseline = stagedFiles
-  .filter(
-    (file) =>
-      file.startsWith('assets/mui-builder-surface-') && file.endsWith('.js')
-  )
+  .filter((file) => file.startsWith('assets/') && file.endsWith('.js'))
   .some((file) =>
     fs
       .readFileSync(path.join(stageRoot, file), 'utf8')
