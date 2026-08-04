@@ -100,6 +100,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
       fields,
       className,
       style,
+      showOuterContainer = true,
       components = defaultComponents,
       strings = defaultStrings,
       readOnly = false,
@@ -937,6 +938,16 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           })()
         : builderContent;
 
+    const BuilderOuterComponent = showOuterContainer
+      ? StyledBuilder
+      : React.Fragment;
+    const builderOuterProps = showOuterContainer
+      ? {
+          className,
+          'data-query-builder': 'root',
+          style: rootStyle,
+        }
+      : {};
     return (
       <BuilderContextProvider
         fields={fields}
@@ -968,11 +979,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           redo,
         }}
       >
-        <StyledBuilder
-          className={className}
-          data-query-builder="root"
-          style={rootStyle}
-        >
+        <BuilderOuterComponent {...builderOuterProps}>
           {textModeBlockedByLocks && strings.textMode?.locksUnsupported ? (
             <TextModeBlockedAlertContainer>
               <AlertComponent
@@ -1022,7 +1029,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           ) : (
             content
           )}
-        </StyledBuilder>
+        </BuilderOuterComponent>
       </BuilderContextProvider>
     );
   }

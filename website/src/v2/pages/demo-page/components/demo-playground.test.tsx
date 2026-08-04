@@ -32,6 +32,7 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
       textMode,
       defaultMode,
       singleRootGroup,
+      showOuterContainer,
       showValidation,
       components,
       style,
@@ -49,6 +50,7 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
       textMode?: boolean;
       defaultMode?: string;
       singleRootGroup?: boolean;
+      showOuterContainer?: boolean;
       showValidation?: boolean;
       components?: unknown;
       style?: React.CSSProperties;
@@ -71,6 +73,7 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
             textMode,
             defaultMode,
             singleRootGroup,
+            showOuterContainer,
             showValidation,
             hasComponents: Boolean(components),
           })}
@@ -200,6 +203,13 @@ describe('DemoPlayground locale selection', () => {
     );
     expect(screen.getByText('Builder source')).toBeInTheDocument();
 
+    expect(
+      screen.getByRole('checkbox', { name: 'Show outer container' })
+    ).toBeChecked();
+    expect(
+      JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
+    ).toMatchObject({ showOuterContainer: true });
+
     for (const checkboxName of [
       'Read-only mode',
       'Lock controls',
@@ -208,6 +218,7 @@ describe('DemoPlayground locale selection', () => {
       'Allow group negation',
       'Allow field comparisons',
       'Undo / redo history',
+      'Show outer container',
       'Show validation errors',
     ]) {
       await user.click(screen.getByRole('checkbox', { name: checkboxName }));
@@ -230,12 +241,17 @@ describe('DemoPlayground locale selection', () => {
       newNodePlacement: 'prepend',
       history: true,
       singleRootGroup: true,
+      showOuterContainer: false,
       showValidation: false,
     });
     expect(
       screen.getByText('Builder source').parentElement?.parentElement
         ?.textContent
     ).toContain('readOnly');
+    expect(
+      screen.getByText('Builder source').parentElement?.parentElement
+        ?.textContent
+    ).toContain('showOuterContainer={false}');
   });
 
   it('preserves text, Monaco, and single-root dependencies', async () => {

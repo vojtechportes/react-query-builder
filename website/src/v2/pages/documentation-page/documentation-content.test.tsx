@@ -47,6 +47,16 @@ describe('v2 Documentation content', () => {
 
     expect(content).toContain('href="/api/css-variables"');
   });
+  it('documents how to omit the Builder outer container', () => {
+    const content = renderToStaticMarkup(
+      <StaticRouter location="/documentation/builder-behavior">
+        {findDocumentationPage('/documentation/builder-behavior').content}
+      </StaticRouter>
+    );
+
+    expect(content).toMatch(/<code[^>]*>showOuterContainer=\{false\}<\/code>/);
+    expect(content).toContain('application wrapper');
+  });
   it('normalizes trailing slashes and preserves the overview fallback', () => {
     expect(
       findDocumentationPage('/documentation/dynamic-field-options/').path

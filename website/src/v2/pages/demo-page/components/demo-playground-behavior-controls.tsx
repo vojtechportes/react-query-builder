@@ -56,6 +56,11 @@ export const DemoPlaygroundBehaviorControls: React.FC<
       onChange={(value) => onSettingChange('history', value)}
     />
     <ControlToggle
+      checked={settings.showOuterContainer}
+      label="Show outer container"
+      onChange={(value) => onSettingChange('showOuterContainer', value)}
+    />
+    <ControlToggle
       checked={settings.showValidation}
       label="Show validation errors"
       onChange={(value) => onSettingChange('showValidation', value)}

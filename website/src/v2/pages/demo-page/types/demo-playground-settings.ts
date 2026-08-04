@@ -10,6 +10,7 @@ export interface IDemoPlaygroundSettings {
   newNodePlacement: 'append' | 'prepend';
   readOnly: boolean;
   readOnlyProtectsDelete: boolean;
+  showOuterContainer: boolean;
   showValidation: boolean;
   singleRootGroup: boolean;
   textMode: boolean;

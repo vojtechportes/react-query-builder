@@ -34,6 +34,7 @@ const defaultOptions: IBuilderSourceOptions = {
   defaultMode: 'builder',
   useMonacoTextEditor: false,
   singleRootGroup: true,
+  showOuterContainer: true,
   showValidation: true,
   customizationMode: 'default',
   themeStyle: defaultTheme,
@@ -61,6 +62,7 @@ describe('v2 formatBuilderSource', () => {
     expect(source.split(packageStylesheetImport)).toHaveLength(2);
     expect(source).toContain('singleRootGroup');
     expect(source).toContain('showValidation');
+    expect(source).not.toContain('showOuterContainer');
     expect(source).not.toContain('ThemeProvider');
   });
 
@@ -84,6 +86,7 @@ describe('v2 formatBuilderSource', () => {
       lockable: true,
       cloneable: true,
       draggable: true,
+      showOuterContainer: false,
       history: true,
       textMode: true,
       defaultMode: 'text',
@@ -109,6 +112,7 @@ describe('v2 formatBuilderSource', () => {
     expect(source).toContain('lockable');
     expect(source).toContain('cloneable');
     expect(source).toContain('draggable');
+    expect(source).toContain('showOuterContainer={false}');
     expect(source).toContain('history');
     expect(source).toContain('textMode');
     expect(source).toContain('defaultMode="text"');

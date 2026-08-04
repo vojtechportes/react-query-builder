@@ -165,6 +165,32 @@ describe('#components/Builder', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
+  it('Renders the outer container by default and can omit it', () => {
+    const onChange = jest.fn();
+    const props: IBuilderProps = {
+      fields,
+      data: [],
+      singleRootGroup: false,
+      onChange,
+    };
+    const { container, rerender } = render(<Builder {...props} />);
+
+    expect(
+      container.querySelector('[data-query-builder="root"]')
+    ).toBeInTheDocument();
+
+    rerender(<Builder {...props} showOuterContainer={false} />);
+
+    expect(container.querySelector('[data-query-builder="root"]')).toBeNull();
+    expect(getByDataTest(container, 'AddRootRule')).toBeInTheDocument();
+
+    fireEvent.click(getByDataTest(container, 'AddRootRule'));
+
+    expect(onChange).toHaveBeenLastCalledWith([
+      expect.objectContaining({ type: 'GROUP' }),
+      expect.objectContaining({ field: '' }),
+    ]);
+  });
   it('Updates rendered criteria when data prop changes', () => {
     const { container, rerender } = render(
       <Builder fields={fields} data={[]} onChange={jest.fn()} />

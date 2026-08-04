@@ -2574,3 +2574,34 @@ site/v1 usage.
 - Run `npm run build:versions --workspace website`.
 - Run root lint and `git diff --check`.
 - Run the repository-required code-review agent and resolve all findings.
+
+### T079 - Allow hiding the Builder outer container
+
+**Status:** `[x]` Done
+
+**Goal:** Let consumers render Builder content without the default outer styled container while preserving the existing default layout.
+
+**Scope:**
+
+- Add `showOuterContainer?: boolean` to `IBuilderProps`, defaulting to `true`.
+- When disabled, omit the outer `StyledBuilder` element while preserving Builder content and behavior.
+- Document the option in the v2 Documentation and API sections only.
+- Add a v2 Demo Behavior checkbox that previews the option and updates generated source.
+- Preserve existing behavior, public APIs, adapters, and unrelated worktree changes.
+
+**Acceptance criteria:**
+
+- Builder renders its current outer styled container by default.
+- `showOuterContainer={false}` removes the element marked with `data-query-builder="root"` while keeping controls and query content functional.
+- The v2 Documentation and API pages describe the option and its default.
+- The v2 Demo defaults the Show outer container checkbox to enabled and updates the preview and generated source when toggled.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code file.
+- Run focused Builder, v2 documentation/API, and v2 Demo tests.
+- Run `npm run typecheck:v2 --workspace website` and `npm run test:v2 --workspace website`.
+- Run the root test suite, build, and lint.
+- Run `npm run build:v2 --workspace website`.
+- Run browser checks for the default and container-free Builder layouts.
+- Run `git diff --check` and the repository-required code-review agent, then resolve all findings.

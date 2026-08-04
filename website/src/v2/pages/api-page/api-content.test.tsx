@@ -58,6 +58,16 @@ describe('v2 API content', () => {
     }
   });
 
+  it('documents the outer container option', () => {
+    const content = renderToStaticMarkup(
+      <StaticRouter location="/api/builder">
+        {findApiPage('/api/builder').content}
+      </StaticRouter>
+    );
+
+    expect(content).toContain('showOuterContainer');
+    expect(content).toContain('Defaults to');
+  });
   it('normalizes trailing slashes and preserves the overview fallback', () => {
     expect(findApiPage('/api/adapters/mui///').path).toBe('/api/adapters/mui');
     expect(findApiPage('/api/unknown').path).toBe('/api');

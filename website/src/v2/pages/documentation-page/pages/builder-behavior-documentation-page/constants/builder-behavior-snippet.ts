@@ -2,6 +2,7 @@ export const builderBehaviorSnippet = `import '@vojtechportes/react-query-builde
 <Builder
   fields={fields}
   data={data}
+  showOuterContainer={false}
   lockable
   readOnlyProtectsDelete
   cloneable
@@ -13,6 +14,10 @@ export const builderBehaviorSnippet = `import '@vojtechportes/react-query-builde
   onChange={setData}
 />;
 
+// showOuterContainer={false}:
+// Omits the outer styled container so a surrounding application layout can
+// provide the builder surface. The default is true.
+//
 // lockable:
 // Renders built-in lock controls for rules and groups and writes the resulting
 // lock state back into the emitted query via rule/group readOnly values.
