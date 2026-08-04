@@ -5,6 +5,7 @@ export const textModeEditorSignature = `export interface ITextModeEditorProps {
   protectedRangesMessage?: string | null;
   protectedRangeHoverMessage?: string | null;
   errorMessage: string | null;
+  colorScheme?: 'light' | 'dark';
   readOnly?: boolean;
   onChange: (value: string) => void;
 }

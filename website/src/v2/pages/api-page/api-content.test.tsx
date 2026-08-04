@@ -65,8 +65,26 @@ describe('v2 API content', () => {
       </StaticRouter>
     );
 
-    expect(content).toContain('showOuterContainer');
+    expect(content).toContain('useDefaultContainerStyles');
     expect(content).toContain('Defaults to');
+    expect(content).toContain('colorScheme');
+  });
+  it('documents dark mode exports, precedence, and the background token', () => {
+    const themingContent = renderToStaticMarkup(
+      <StaticRouter location="/api/theming">
+        {findApiPage('/api/theming').content}
+      </StaticRouter>
+    );
+    const variableContent = renderToStaticMarkup(
+      <StaticRouter location="/api/css-variables">
+        {findApiPage('/api/css-variables').content}
+      </StaticRouter>
+    );
+
+    expect(themingContent).toContain('dark-mode.variables.css');
+    expect(themingContent).toContain('colorScheme');
+    expect(themingContent).toContain('explicit light/dark scheme variables');
+    expect(variableContent).toContain('--query-builder-color-background');
   });
   it('normalizes trailing slashes and preserves the overview fallback', () => {
     expect(findApiPage('/api/adapters/mui///').path).toBe('/api/adapters/mui');

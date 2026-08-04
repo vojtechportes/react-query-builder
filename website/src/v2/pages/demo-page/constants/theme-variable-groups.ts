@@ -129,7 +129,11 @@ export const themeVariableGroups: IThemeVariableGroup[] = [
         name: '--query-builder-color-error-light',
         type: 'color',
       },
-      { label: 'White', name: '--query-builder-color-white', type: 'color' },
+      {
+        label: 'Background',
+        name: '--query-builder-color-background',
+        type: 'color',
+      },
     ],
   },
   {

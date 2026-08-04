@@ -55,7 +55,9 @@ describe('versioned package bindings', () => {
         ...packageExports.map(({ subpath }) =>
           subpath === '' ? '.' : `.${subpath}`
         ),
-        ...(binding.target === 'v2' ? ['./styles.css'] : []),
+        ...(binding.target === 'v2'
+          ? ['./styles.css', './dark-mode.variables.css']
+          : []),
       ];
 
       expect(Object.keys(manifest.exports).sort()).toEqual(
@@ -72,6 +74,9 @@ describe('versioned package bindings', () => {
 
     expect(packageAliases.map(({ find }) => find)).toEqual([
       ...(binding.stylesheetPath ? [`${canonicalPackageName}/styles.css`] : []),
+      ...(binding.darkModeStylesheetPath
+        ? [`${canonicalPackageName}/dark-mode.variables.css`]
+        : []),
       ...packageExports.map(
         ({ subpath }) => `${canonicalPackageName}${subpath}`
       ),
@@ -98,7 +103,8 @@ describe('versioned package bindings', () => {
         packageReplacements.every(
           (path) =>
             path.startsWith(binding.implementationRoot) ||
-            path === binding.stylesheetPath
+            path === binding.stylesheetPath ||
+            path === binding.darkModeStylesheetPath
         )
       ).toBe(true);
       expect(
@@ -109,12 +115,17 @@ describe('versioned package bindings', () => {
     }
   );
 
-  it('resolves the public stylesheet only for v2', () => {
+  it('resolves the public stylesheets only for v2', () => {
     expect(v1PackageBinding.stylesheetPath).toBeUndefined();
+    expect(v1PackageBinding.darkModeStylesheetPath).toBeUndefined();
     expect(v2PackageBinding.stylesheetPath).toBe(
       resolve(v2PackageBinding.implementationRoot, 'styles.css')
     );
+    expect(v2PackageBinding.darkModeStylesheetPath).toBe(
+      resolve(v2PackageBinding.implementationRoot, 'dark-mode.variables.css')
+    );
     expect(existsSync(v2PackageBinding.stylesheetPath!)).toBe(true);
+    expect(existsSync(v2PackageBinding.darkModeStylesheetPath!)).toBe(true);
   });
 
   it('keeps package runtimes mutually exclusive', () => {

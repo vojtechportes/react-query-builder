@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import type { CustomizationMode } from '../types/customization-mode';
+import { ControlToggle } from './controls/control-toggle';
 
 const Panel = styled.section`
   display: grid;
@@ -55,26 +56,38 @@ const customizationOptions: Array<{
 ];
 
 export interface IDemoPlaygroundCustomizationProps {
+  darkMode: boolean;
   mode: CustomizationMode;
   onChange: (mode: CustomizationMode) => void;
+  onDarkModeChange: (darkMode: boolean) => void;
 }
 
 export const DemoPlaygroundCustomization: React.FC<
   IDemoPlaygroundCustomizationProps
-> = ({ mode, onChange }) => (
+> = ({ darkMode, mode, onChange, onDarkModeChange }) => (
   <Panel>
     <PanelTitle>Customization</PanelTitle>
     <ChoiceGroup>
       {customizationOptions.map((option) => (
-        <Choice key={option.value}>
-          <Radio
-            type="radio"
-            name="customization-mode"
-            checked={mode === option.value}
-            onChange={() => onChange(option.value)}
-          />
-          <span>{option.label}</span>
-        </Choice>
+        <React.Fragment key={option.value}>
+          <Choice>
+            <Radio
+              type="radio"
+              name="customization-mode"
+              checked={mode === option.value}
+              onChange={() => onChange(option.value)}
+            />
+            <span>{option.label}</span>
+          </Choice>
+          {option.value === 'default' && (
+            <ControlToggle
+              checked={darkMode}
+              disabled={mode !== 'default'}
+              label="Dark mode"
+              onChange={onDarkModeChange}
+            />
+          )}
+        </React.Fragment>
       ))}
     </ChoiceGroup>
   </Panel>

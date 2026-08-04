@@ -42,6 +42,7 @@ export const HomeMuiAdapterDemo: React.FC = () => {
         fields={fields}
         onChange={setData}
         singleRootGroup
+        useDefaultContainerStyles={false}
       />
     </ScopedCssBaseline>
   );

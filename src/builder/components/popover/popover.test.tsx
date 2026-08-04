@@ -170,7 +170,7 @@ describe('#components/Popover', () => {
     );
 
     expect(markup).toContain('data-test="PopoverTrigger"');
-    expect(markup).not.toContain('--query-builder-color-white');
+    expect(markup).not.toContain('--query-builder-color-background');
     expect(markup).not.toContain('With Modifiers');
   });
 

@@ -1,0 +1,31 @@
+@layer react-query-builder {
+  :where([data-query-builder-color-scheme='dark']) {
+    color-scheme: dark;
+    --query-builder-color-primary-default: #8c9eff;
+    --query-builder-color-primary-light: #5365a8;
+    --query-builder-color-primary-dark: #b3c0ff;
+    --query-builder-color-primary-contrast-text: #111827;
+    --query-builder-color-secondary-default: #ff6b6b;
+    --query-builder-color-secondary-light: #ff8a80;
+    --query-builder-color-secondary-dark: #ffb4ab;
+    --query-builder-color-secondary-contrast-text: #111827;
+    --query-builder-color-grey-100: #1f2937;
+    --query-builder-color-grey-200: #273449;
+    --query-builder-color-grey-300: #374151;
+    --query-builder-color-grey-400: #4b5563;
+    --query-builder-color-grey-500: #9ca3af;
+    --query-builder-color-grey-600: #c0c7d1;
+    --query-builder-color-grey-700: #d1d5db;
+    --query-builder-color-grey-800: #e5e7eb;
+    --query-builder-color-grey-900: #f9fafb;
+    --query-builder-color-info-primary: #8fb2ff;
+    --query-builder-color-info-light: #456194;
+    --query-builder-color-success-primary: #8fd3a3;
+    --query-builder-color-success-light: #3f6f4d;
+    --query-builder-color-warning-primary: #f7b578;
+    --query-builder-color-warning-light: #835421;
+    --query-builder-color-error-primary: #f2a0a0;
+    --query-builder-color-error-light: #7f3d3d;
+    --query-builder-color-background: #111827;
+  }
+}

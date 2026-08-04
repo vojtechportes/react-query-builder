@@ -39,6 +39,17 @@ export const MonacoSubpackageApiSection: React.FC = () => (
         private.
       </li>
       <li>
+        <ItemTitle>Color scheme:</ItemTitle> An explicit Builder{' '}
+        <InlineCode>colorScheme</InlineCode> reactively selects the packaged
+        light or dark Monaco theme. Both themes use the same query-builder
+        palette roles as the built-in SQL editor for keywords, operators,
+        delimiters, strings, numbers, predefined values, and identifiers. An
+        undefined scheme uses the packaged light theme. Monaco's standalone
+        theme service is global, so the latest mounted packaged editor, or the
+        editor whose scheme changes most recently, wins across all mounted
+        Monaco editors.
+      </li>
+      <li>
         <ItemTitle>Peer dependency:</ItemTitle>{' '}
         <InlineCode>monaco-editor</InlineCode> is optional and only required
         when you use that subpackage.

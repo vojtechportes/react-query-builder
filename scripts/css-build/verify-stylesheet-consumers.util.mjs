@@ -80,8 +80,25 @@ const verifyStylesheetConsumers = async () => {
       { stdio: 'pipe' }
     );
 
-    for (const includeStyles of [true, false]) {
-      const consumerName = includeStyles ? 'with-css' : 'without-css';
+    const consumerScenarios = [
+      {
+        consumerName: 'with-css',
+        stylesheetImport:
+          "import '@vojtechportes/react-query-builder/styles.css';\n",
+      },
+      {
+        consumerName: 'with-dark-css',
+        stylesheetImport:
+          "import '@vojtechportes/react-query-builder/styles.css';\nimport '@vojtechportes/react-query-builder/dark-mode.variables.css';\n",
+      },
+      {
+        consumerName: 'without-css',
+        stylesheetImport: '',
+      },
+    ];
+
+    for (const { consumerName, stylesheetImport } of consumerScenarios) {
+      const includeStyles = stylesheetImport.length > 0;
       const clientOutputDirectory = path.join(
         consumerDirectory,
         `dist-client-${consumerName}`
@@ -90,9 +107,6 @@ const verifyStylesheetConsumers = async () => {
         consumerDirectory,
         `dist-ssr-${consumerName}`
       );
-      const stylesheetImport = includeStyles
-        ? "import '@vojtechportes/react-query-builder/styles.css';\n"
-        : '';
 
       await mkdir(consumerDirectory, { recursive: true });
       await writeFile(

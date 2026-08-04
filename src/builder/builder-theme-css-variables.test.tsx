@@ -138,7 +138,9 @@ describe('#components/Builder theme CSS variables', () => {
       '[data-query-builder="root"]'
     ) as HTMLElement;
 
-    expect(builderRoot).toHaveClass(builderStyles.builder, 'consumer-builder');
+    expect(builderRoot.className.split(' ')).toEqual(
+      expect.arrayContaining([builderStyles.builder, 'consumer-builder'])
+    );
     expect(builderRoot.style.color).toBe('rgb(1, 2, 3)');
     expect(
       builderRoot.style.getPropertyValue('--query-builder-color-grey-300')

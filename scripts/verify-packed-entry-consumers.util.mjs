@@ -287,6 +287,7 @@ const verifyPackedEntryConsumers = async () => {
     for (const exportSubpath of [
       '.',
       './styles.css',
+      './dark-mode.variables.css',
       ...entries
         .map(({ subpath }) => `.${subpath}`)
         .filter((value) => value !== '.'),
@@ -696,7 +697,7 @@ console.log(markup);
 
     await writeFile(
       styledEntry,
-      `import '${packageName}/styles.css';\n${uiImports}\n`
+      `import '${packageName}/styles.css';\nimport '${packageName}/dark-mode.variables.css';\n${uiImports}\n`
     );
     await build({
       root: currentConsumerDirectory,
@@ -725,13 +726,16 @@ console.log(markup);
       const source = await readFile(path.join(styledOutput, cssAsset), 'utf8');
 
       if (source.includes('@layer react-query-builder')) {
-        const tokenOccurrences =
+        const lightTokenOccurrences =
           source.match(/--query-builder-color-primary-default:\s*#3f51b5/g)
             ?.length || 0;
+        const darkTokenOccurrences =
+          source.match(/--query-builder-color-primary-default:\s*#8c9eff/g)
+            ?.length || 0;
 
-        if (tokenOccurrences !== 1) {
+        if (lightTokenOccurrences !== 2 || darkTokenOccurrences !== 1) {
           throw new Error(
-            `Expected package stylesheet content once, received ${tokenOccurrences}`
+            `Expected default, explicit light, and dark tokens once each; received ${lightTokenOccurrences} light and ${darkTokenOccurrences} dark occurrences`
           );
         }
 

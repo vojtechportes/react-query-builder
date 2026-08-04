@@ -17,6 +17,20 @@ export const CssVariablesApiContent: React.FC = () => (
       application-owned wrapper, or one builder through its typed{' '}
       <InlineCode>style</InlineCode> prop.
     </Typography>
+    <SectionTitle>Color schemes</SectionTitle>
+    <Typography color="muted">
+      The base stylesheet defines root defaults and an explicit light palette.
+      The optional{' '}
+      <InlineCode>
+        @vojtechportes/react-query-builder/dark-mode.variables.css
+      </InlineCode>{' '}
+      export defines the scoped dark palette. Select either palette with the
+      typed <InlineCode>Builder.colorScheme</InlineCode> prop.
+    </Typography>
+    <Typography color="muted">
+      <InlineCode>--query-builder-color-background</InlineCode> replaces the
+      former <InlineCode>--query-builder-color-white</InlineCode> surface token.
+    </Typography>{' '}
     <SectionTitle>Variables and defaults</SectionTitle>
     <CodeBlock
       code={cssVariablesReference}

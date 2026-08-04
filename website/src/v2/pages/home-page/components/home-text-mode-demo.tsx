@@ -74,7 +74,9 @@ export const HomeTextModeDemo: React.FC = () => {
       fields={fields}
       onChange={setData}
       singleRootGroup
+      useDefaultContainerStyles={false}
       textMode
+      colorScheme="dark"
     />
   );
 };

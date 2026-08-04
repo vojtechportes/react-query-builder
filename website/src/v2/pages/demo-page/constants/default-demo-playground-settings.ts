@@ -1,6 +1,7 @@
 import type { IDemoPlaygroundSettings } from '../types/demo-playground-settings';
 
 export const defaultDemoPlaygroundSettings: IDemoPlaygroundSettings = {
+  darkMode: false,
   allowFieldComparisons: true,
   allowGroupNegation: true,
   cloneable: false,
@@ -12,7 +13,7 @@ export const defaultDemoPlaygroundSettings: IDemoPlaygroundSettings = {
   newNodePlacement: 'append',
   readOnly: false,
   readOnlyProtectsDelete: true,
-  showOuterContainer: true,
+  useDefaultContainerStyles: true,
   showValidation: true,
   singleRootGroup: true,
   textMode: false,

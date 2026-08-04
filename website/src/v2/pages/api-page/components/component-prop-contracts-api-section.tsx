@@ -50,7 +50,8 @@ export const ComponentPropContractsApiSection: React.FC = () => (
           <InlineCode>TextModeEditor</InlineCode>:
         </ItemTitle>{' '}
         Receives the current SQL text, diagnostics, optional protected ranges,
-        an optional hover message for protected ranges, and{' '}
+        an optional hover message, the Builder's optional{' '}
+        <InlineCode>colorScheme</InlineCode>, and{' '}
         <InlineCode>onChange(value)</InlineCode>.
       </li>
       <li>

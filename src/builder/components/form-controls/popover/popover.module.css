@@ -11,7 +11,7 @@
     overflow-y: auto;
     border: 1px solid var(--query-builder-color-grey-300);
     border-radius: 6px;
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
   }
 }

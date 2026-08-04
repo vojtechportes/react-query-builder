@@ -3,7 +3,7 @@
     display: grid;
     grid-template-columns: 1fr;
     margin-top: 0.5rem;
-    background-color: var(--query-builder-color-white);
+    background-color: var(--query-builder-color-background);
     border: 1px solid var(--query-builder-color-grey-300);
     border-radius: var(--query-builder-radius-sm, 4px);
   }

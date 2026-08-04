@@ -144,7 +144,13 @@ export const TextModeDocumentationContent: React.FC = () => (
       <li>
         <ItemTitle>Monaco protected behavior:</ItemTitle> Protected SQL
         fragments are dimmed, protected from edits, and expose their lock
-        explanation on hover.
+        explanation on hover. The packaged Monaco light and dark themes use the
+        same query-builder palette roles as the built-in editor for SQL tokens.
+        An explicit Builder <InlineCode>colorScheme</InlineCode> switches
+        between them without remounting the editor. Because Monaco's standalone
+        theme service is global, the latest mounted packaged editor, or the
+        editor whose scheme changes most recently, wins across all mounted
+        Monaco editors.
       </li>
       <li>
         <ItemTitle>Localized read-only protection:</ItemTitle> Rule field,

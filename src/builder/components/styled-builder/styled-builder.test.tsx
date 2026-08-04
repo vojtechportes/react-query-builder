@@ -24,7 +24,11 @@ describe('#components/StyledBuilder', () => {
     );
     const root = getByTestId('builder-root');
 
-    expect(root).toHaveClass(styles.builder, 'consumer-builder');
+    expect(root).toHaveClass(
+      styles.builder,
+      styles.container,
+      'consumer-builder'
+    );
     expect(root).toHaveAttribute('data-query-builder', 'root');
     expect(root).toHaveAttribute('aria-label', 'Query builder');
     expect(root).toHaveStyle({ color: 'rgb(1, 2, 3)' });
@@ -32,12 +36,27 @@ describe('#components/StyledBuilder', () => {
     expect(ref.current).toBe(root);
   });
 
+  it('keeps baseline styles and omits only the container class when default styles are disabled', () => {
+    const { getByTestId } = render(
+      <StyledBuilder
+        className="consumer-builder"
+        data-testid="builder-root"
+        useDefaultStyles={false}
+      />
+    );
+
+    expect(getByTestId('builder-root')).toHaveClass(
+      styles.builder,
+      'consumer-builder'
+    );
+    expect(getByTestId('builder-root')).not.toHaveClass(styles.container);
+  });
   it('renders on the server without styled-components attributes', () => {
     const markup = renderToString(
       <StyledBuilder data-query-builder="root">Content</StyledBuilder>
     );
 
-    expect(markup).toContain(`class="${styles.builder}"`);
+    expect(markup).toContain(`class="${styles.builder} ${styles.container}"`);
     expect(markup).toContain('data-query-builder="root"');
     expect(markup).not.toContain('data-styled');
     expect(markup).not.toContain('$theme');
@@ -45,6 +64,7 @@ describe('#components/StyledBuilder', () => {
 
   it('exposes its CSS Module class', () => {
     expect(styles.builder).toBe('builder');
+    expect(styles.container).toBe('container');
   });
 
   it('defines the root token fallbacks and shell presentation', () => {
@@ -53,16 +73,41 @@ describe('#components/StyledBuilder', () => {
       'utf8'
     );
 
-    expect(css).toContain('padding: var(--query-builder-root-padding, 1rem)');
-    expect(css).toContain('color: var(--query-builder-color-grey-800)');
-    expect(css).toContain(
+    const builderRule = css.match(/\.builder\s*\{(?<declarations>[^}]*)\}/)
+      ?.groups?.declarations;
+    const containerRule = css.match(/\.container\s*\{(?<declarations>[^}]*)\}/)
+      ?.groups?.declarations;
+
+    expect(builderRule).toContain('color: var(--query-builder-color-grey-800)');
+    expect(builderRule).toContain(
       'font-family: var(--query-builder-font-family, Arial, sans-serif)'
     );
-    expect(css).toContain('background: var(--query-builder-color-white)');
-    expect(css).toContain(
+    expect(builderRule).toContain(
+      'font-size: var(--query-builder-font-size, 16px)'
+    );
+    expect(builderRule).toContain(
+      'line-height: var(--query-builder-line-height, normal)'
+    );
+    expect(builderRule).not.toContain('padding:');
+    expect(builderRule).not.toContain('background:');
+    expect(builderRule).not.toContain('border:');
+    expect(builderRule).not.toContain('border-radius:');
+    expect(builderRule).not.toContain('box-shadow:');
+
+    expect(containerRule).toContain(
+      'padding: var(--query-builder-root-padding, 1rem)'
+    );
+    expect(containerRule).toContain(
+      'background: var(--query-builder-color-background)'
+    );
+    expect(containerRule).toContain(
       'border: 1px solid var(--query-builder-color-grey-100)'
     );
-    expect(css).toContain('border-radius: var(--query-builder-root-radius, 0)');
-    expect(css).toContain('box-shadow: var(--query-builder-shadow-root, none)');
+    expect(containerRule).toContain(
+      'border-radius: var(--query-builder-root-radius, 0)'
+    );
+    expect(containerRule).toContain(
+      'box-shadow: var(--query-builder-shadow-root, none)'
+    );
   });
 });

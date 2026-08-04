@@ -100,7 +100,8 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
       fields,
       className,
       style,
-      showOuterContainer = true,
+      useDefaultContainerStyles = true,
+      colorScheme,
       components = defaultComponents,
       strings = defaultStrings,
       readOnly = false,
@@ -930,6 +931,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
                   strings.textMode?.lockedRangesHover || null
                 }
                 errorMessage={textErrorMessage}
+                colorScheme={colorScheme}
                 readOnly={readOnly}
                 allowProtectedRangeDeletion={!readOnlyProtectsDelete}
                 onChange={handleTextChange}
@@ -938,16 +940,13 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           })()
         : builderContent;
 
-    const BuilderOuterComponent = showOuterContainer
-      ? StyledBuilder
-      : React.Fragment;
-    const builderOuterProps = showOuterContainer
-      ? {
-          className,
-          'data-query-builder': 'root',
-          style: rootStyle,
-        }
-      : {};
+    const builderOuterProps = {
+      className,
+      'data-query-builder': 'root',
+      'data-query-builder-color-scheme': colorScheme,
+      style: rootStyle,
+      useDefaultStyles: useDefaultContainerStyles,
+    };
     return (
       <BuilderContextProvider
         fields={fields}
@@ -979,7 +978,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           redo,
         }}
       >
-        <BuilderOuterComponent {...builderOuterProps}>
+        <StyledBuilder {...builderOuterProps}>
           {textModeBlockedByLocks && strings.textMode?.locksUnsupported ? (
             <TextModeBlockedAlertContainer>
               <AlertComponent
@@ -1029,7 +1028,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
           ) : (
             content
           )}
-        </BuilderOuterComponent>
+        </StyledBuilder>
       </BuilderContextProvider>
     );
   }

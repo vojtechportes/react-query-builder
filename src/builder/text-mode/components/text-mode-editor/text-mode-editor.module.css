@@ -40,12 +40,20 @@
   .frame :global(.builder-text-mode-input-field)::selection {
     color: transparent;
     -webkit-text-fill-color: transparent;
-    background: rgba(37, 99, 235, 0.22);
+    background: color-mix(
+      in srgb,
+      var(--query-builder-color-info-primary) 22%,
+      transparent
+    );
   }
 
   .frame :global(.builder-text-mode-input-field)::-moz-selection {
     color: transparent;
-    background: rgba(37, 99, 235, 0.22);
+    background: color-mix(
+      in srgb,
+      var(--query-builder-color-info-primary) 22%,
+      transparent
+    );
   }
 
   .editorLayer,
@@ -74,13 +82,13 @@
 
   .editorLayer :global(.token.keyword),
   .editorLayer :global(.token.boolean) {
-    color: #1d4ed8;
+    color: var(--query-builder-color-info-primary);
     font-weight: 700;
   }
 
   .editorLayer :global(.token.operator),
   .editorLayer :global(.token.punctuation) {
-    color: #374151;
+    color: var(--query-builder-color-grey-700);
   }
 
   .editorLayer :global(.token.operator) {
@@ -88,15 +96,15 @@
   }
 
   .editorLayer :global(.token.string) {
-    color: #047857;
+    color: var(--query-builder-color-success-primary);
   }
 
   .editorLayer :global(.token.number) {
-    color: #c2410c;
+    color: var(--query-builder-color-warning-primary);
   }
 
   .editorLayer :global(.token.function) {
-    color: #7c3aed;
+    color: var(--query-builder-color-primary-default);
     font-weight: 600;
   }
 
@@ -113,7 +121,11 @@
   }
 
   .diagnosticText {
-    background: rgba(244, 67, 54, 0.12);
+    background: color-mix(
+      in srgb,
+      var(--query-builder-color-error-primary) 12%,
+      transparent
+    );
     border-radius: 2px;
     box-shadow: inset 0 -2px 0 var(--query-builder-color-secondary-dark);
   }

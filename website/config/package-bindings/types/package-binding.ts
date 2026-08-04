@@ -11,6 +11,7 @@ export interface IPackageBinding {
   reactDomRoot: string;
   reactRoot: string;
   ssrNoExternal: (string | RegExp)[];
+  darkModeStylesheetPath?: string;
   stylesheetPath?: string;
   target: PackageBindingTarget;
   typeScriptPaths: Record<string, string[]>;

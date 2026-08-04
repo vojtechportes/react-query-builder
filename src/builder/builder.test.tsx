@@ -133,15 +133,17 @@ const getAllByDataTest = (
 const CustomTextModeEditor = ({
   value,
   errorMessage,
+  colorScheme,
   protectedRanges = [],
   onChange,
 }: {
   value: string;
   errorMessage: string | null;
+  colorScheme?: 'light' | 'dark';
   protectedRanges?: Array<{ start: number; end: number }>;
   onChange: (value: string) => void;
 }) => (
-  <div data-test="CustomTextModeEditor">
+  <div data-test="CustomTextModeEditor" data-color-scheme={colorScheme}>
     <textarea
       data-test="CustomTextModeEditorInput"
       value={value}
@@ -165,7 +167,7 @@ describe('#components/Builder', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('Renders the outer container by default and can omit it', () => {
+  it('always renders the root and can omit only its default container styles', () => {
     const onChange = jest.fn();
     const props: IBuilderProps = {
       fields,
@@ -174,14 +176,35 @@ describe('#components/Builder', () => {
       onChange,
     };
     const { container, rerender } = render(<Builder {...props} />);
+    const defaultRoot = container.querySelector('[data-query-builder="root"]');
 
-    expect(
-      container.querySelector('[data-query-builder="root"]')
-    ).toBeInTheDocument();
+    expect(defaultRoot).toBeInTheDocument();
+    expect(defaultRoot).toHaveClass('builder', 'container');
 
-    rerender(<Builder {...props} showOuterContainer={false} />);
+    rerender(
+      <Builder
+        {...props}
+        className="consumer-root"
+        colorScheme="dark"
+        style={{ '--query-builder-color-background': '#123456' }}
+        useDefaultContainerStyles={false}
+      />
+    );
 
-    expect(container.querySelector('[data-query-builder="root"]')).toBeNull();
+    const containerFreeRoot = container.querySelector(
+      '[data-query-builder="root"]'
+    );
+
+    expect(containerFreeRoot).toBeInTheDocument();
+    expect(containerFreeRoot).toHaveClass('builder', 'consumer-root');
+    expect(containerFreeRoot).not.toHaveClass('container');
+    expect(containerFreeRoot).toHaveAttribute(
+      'data-query-builder-color-scheme',
+      'dark'
+    );
+    expect(containerFreeRoot).toHaveStyle({
+      '--query-builder-color-background': '#123456',
+    });
     expect(getByDataTest(container, 'AddRootRule')).toBeInTheDocument();
 
     fireEvent.click(getByDataTest(container, 'AddRootRule'));
@@ -547,6 +570,39 @@ describe('#components/Builder', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('forwards colorScheme to a custom TextModeEditor without remounting it', () => {
+    const props: IBuilderProps = {
+      fields,
+      data: [
+        {
+          type: 'GROUP',
+          value: 'AND',
+          isNegated: false,
+          children: [
+            { field: 'MOCK_FIELD', value: 'alpha', operator: 'EQUAL' },
+          ],
+        },
+      ],
+      textMode: true,
+      defaultMode: 'text',
+      components: {
+        ...defaultComponents,
+        TextModeEditor: CustomTextModeEditor,
+      },
+      onChange: jest.fn(),
+    };
+    const { container, rerender } = render(
+      <Builder {...props} colorScheme="dark" />
+    );
+    const editor = getByDataTest(container, 'CustomTextModeEditor');
+
+    expect(editor).toHaveAttribute('data-color-scheme', 'dark');
+
+    rerender(<Builder {...props} colorScheme="light" />);
+
+    expect(getByDataTest(container, 'CustomTextModeEditor')).toBe(editor);
+    expect(editor).toHaveAttribute('data-color-scheme', 'light');
+  });
   it('Protects the full text editor range when the Builder is read-only', () => {
     const { container } = render(
       <Builder

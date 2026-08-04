@@ -19,13 +19,13 @@ export const cssVariablesReference = `:root {
   --query-builder-color-grey-900: #212121;
   --query-builder-color-info-primary: #2563eb;
   --query-builder-color-info-light: #8fb2ff;
-  --query-builder-color-success-primary: #2f8f4e;
+  --query-builder-color-success-primary: #237a40;
   --query-builder-color-success-light: #8fd3a3;
-  --query-builder-color-warning-primary: #dc7a1e;
+  --query-builder-color-warning-primary: #b45309;
   --query-builder-color-warning-light: #f7b578;
   --query-builder-color-error-primary: #d14343;
   --query-builder-color-error-light: #f2a0a0;
-  --query-builder-color-white: #ffffff;
+  --query-builder-color-background: #ffffff;
 
   /* Spacing and layout */
   --query-builder-spacing-xs: 0.25rem;

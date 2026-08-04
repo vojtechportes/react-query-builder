@@ -2,7 +2,7 @@ export const builderBehaviorSnippet = `import '@vojtechportes/react-query-builde
 <Builder
   fields={fields}
   data={data}
-  showOuterContainer={false}
+  useDefaultContainerStyles={false}
   lockable
   readOnlyProtectsDelete
   cloneable
@@ -14,9 +14,10 @@ export const builderBehaviorSnippet = `import '@vojtechportes/react-query-builde
   onChange={setData}
 />;
 
-// showOuterContainer={false}:
-// Omits the outer styled container so a surrounding application layout can
-// provide the builder surface. The default is true.
+// useDefaultContainerStyles={false}:
+// Keeps the Builder root div and baseline typography, but omits its padding,
+// background, border, radius, and shadow so an application wrapper can provide
+// the container presentation.
 //
 // lockable:
 // Renders built-in lock controls for rules and groups and writes the resulting

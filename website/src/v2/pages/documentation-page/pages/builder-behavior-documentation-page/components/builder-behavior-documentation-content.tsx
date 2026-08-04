@@ -22,21 +22,24 @@ export const BuilderBehaviorDocumentationContent: React.FC = () => (
       language="tsx"
       label="Builder behavior"
     />
-    <SectionTitle>showOuterContainer</SectionTitle>
+    <SectionTitle>useDefaultContainerStyles</SectionTitle>
     <List>
       <li>
         Defaults to <InlineCode>true</InlineCode> and renders the outer surface
         with the Builder root padding, background, border, radius, and shadow.
       </li>
       <li>
-        Set <InlineCode>{'showOuterContainer={false}'}</InlineCode> when an
-        application wrapper already provides that surface.
+        Set <InlineCode>{'useDefaultContainerStyles={false}'}</InlineCode> when
+        an application wrapper already provides that surface. The Builder's
+        baseline color, font, size, and line height remain active so built-in
+        controls keep their normal dimensions.
       </li>
       <li>
-        Without the container, <InlineCode>className</InlineCode> and{' '}
-        <InlineCode>style</InlineCode> have no Builder element to target. Apply
-        those values to your application wrapper instead.
-      </li>
+        The root <InlineCode>div</InlineCode> remains in the DOM when default
+        styles are disabled, so <InlineCode>className</InlineCode>,{' '}
+        <InlineCode>style</InlineCode>, CSS variables, and{' '}
+        <InlineCode>colorScheme</InlineCode> still have a stable target.
+      </li>{' '}
     </List>
     <SectionTitle>cloneable</SectionTitle>
     <List>

@@ -32,20 +32,38 @@ const verifyCssBuild = async () => {
   const cssFiles = distributionFiles.filter((fileName) =>
     fileName.endsWith('.css')
   );
-  const expectedStylesheet = path.join(distributionDirectory, 'styles.css');
+  const expectedStylesheets = [
+    path.join(distributionDirectory, 'dark-mode.variables.css'),
+    path.join(distributionDirectory, 'styles.css'),
+  ];
 
-  if (cssFiles.length !== 1 || cssFiles[0] !== expectedStylesheet) {
+  if (
+    cssFiles.length !== expectedStylesheets.length ||
+    cssFiles.some((fileName, index) => fileName !== expectedStylesheets[index])
+  ) {
     throw new Error(
-      `Expected exactly dist/styles.css, received: ${cssFiles
+      `Expected public stylesheets, received: ${cssFiles
         .map((fileName) => path.relative(rootDirectory, fileName))
         .join(', ')}`
     );
   }
 
+  const expectedStylesheet = path.join(distributionDirectory, 'styles.css');
+  const darkModeStylesheet = await readFile(
+    path.join(distributionDirectory, 'dark-mode.variables.css'),
+    'utf8'
+  );
   const stylesheet = await readFile(expectedStylesheet, 'utf8');
-
   if (!stylesheet.includes('@layer react-query-builder')) {
     throw new Error('dist/styles.css is missing the stable layer declaration');
+  }
+  if (
+    !darkModeStylesheet.includes(
+      ":where([data-query-builder-color-scheme='dark'])"
+    ) ||
+    !darkModeStylesheet.includes('--query-builder-color-background:')
+  ) {
+    throw new Error('dist/dark-mode.variables.css is missing dark tokens');
   }
 
   const javascriptFiles = distributionFiles.filter((fileName) =>
@@ -133,14 +151,18 @@ const verifyCssBuild = async () => {
         {
           key: 'option',
           fragments: [
-            'color: var(--query-builder-color-primary-contrast-text);',
-            'background: var(--query-builder-color-grey-500);',
-            'border: 1px solid var(--query-builder-color-grey-800);',
+            'color: light-dark(',
+            '--query-builder-color-grey-900',
+            'background: light-dark(',
+            '--query-builder-color-grey-400',
+            'border: 1px solid light-dark(',
+            '--query-builder-color-grey-500',
           ],
         },
         {
           key: 'selected',
           fragments: [
+            'color: var(--query-builder-color-primary-contrast-text);',
             'background: var(--query-builder-color-primary-default);',
           ],
         },
@@ -166,7 +188,7 @@ const verifyCssBuild = async () => {
         {
           key: 'group',
           fragments: [
-            'background: #f4f4f4;',
+            'background: var(--query-builder-color-grey-100);',
             'border: 1px solid var(--query-builder-color-grey-200);',
             'border-radius: var(--query-builder-radius-sm, 4px);',
           ],
@@ -237,14 +259,14 @@ const verifyCssBuild = async () => {
           key: 'outlined',
           fragments: [
             'color: var(--alert-primary);',
-            'background: color-mix(in srgb, var(--alert-primary) 5%, var(--query-builder-color-white) 95%);',
+            'background: color-mix(in srgb, var(--alert-primary) 5%, var(--query-builder-color-background) 95%);',
             'border-color: var(--alert-light);',
           ],
         },
         {
           key: 'filled',
           fragments: [
-            'color: var(--query-builder-color-white);',
+            'color: var(--query-builder-color-background);',
             'background: var(--alert-primary);',
             'border-color: var(--alert-primary);',
           ],
@@ -570,7 +592,7 @@ const verifyCssBuild = async () => {
           fragments: [
             'min-height: var(--query-builder-editor-min-height);',
             'border: 1px solid var(--query-builder-color-grey-300);',
-            'background: var(--query-builder-color-white);',
+            'background: var(--query-builder-color-background);',
           ],
         },
         {
@@ -740,8 +762,10 @@ const verifyCssBuild = async () => {
   const groupContainerMappings = cssModuleMappings.get('GroupContainer');
   const requiredGroupSelectors = [
     `.${groupOptionMappings.disabled}.${groupOptionMappings.selected}`,
+    `.${groupContainerMappings.left} > div:not(:last-child)`,
     `.${groupContainerMappings.left} > div:first-child`,
     `.${groupContainerMappings.left} > div + div`,
+    `.${groupContainerMappings.left} > div[data-selected="true"]`,
     `.${groupContainerMappings.left} > div:last-child`,
     `.${groupContainerMappings.header}.${groupContainerMappings.withLeftControls}:not(.${groupContainerMappings.withRightControls})`,
   ];
@@ -753,6 +777,19 @@ const verifyCssBuild = async () => {
   }
 
   const normalizedStylesheet = stylesheet.replace(/\s+/g, ' ');
+  const requiredGroupSeamBlocks = [
+    `.${groupContainerMappings.left} > div + div { border-left: 0; margin-left: -1px; }`,
+    `.${groupContainerMappings.left} > div[data-selected="true"] { z-index: 1; position: relative; }`,
+  ];
+
+  for (const block of requiredGroupSeamBlocks) {
+    if (!normalizedStylesheet.includes(block)) {
+      throw new Error(
+        `Group extracted stylesheet is missing seam declaration block: ${block}`
+      );
+    }
+  }
+
   const compactGroupBlock =
     `@media (width <= 900px) { ` +
     `.${groupContainerMappings.header} { ` +
@@ -872,7 +909,7 @@ const verifyCssBuild = async () => {
     '--query-builder-color-primary-light: #757de8;',
     '--query-builder-color-secondary-light: #ff7961;',
     '--query-builder-color-secondary-default: #f44336;',
-    '--query-builder-color-white: #fff;',
+    '--query-builder-color-background: #fff;',
     '--query-builder-color-grey-100: #f5f5f5;',
     '--query-builder-color-grey-200: #eee;',
     '--query-builder-color-grey-300: #e0e0e0;',
@@ -1009,7 +1046,7 @@ const verifyCssBuild = async () => {
   console.log(
     JSON.stringify(
       {
-        cssFiles: ['dist/styles.css'],
+        cssFiles: ['dist/dark-mode.variables.css', 'dist/styles.css'],
         alertColorMatrixContract: true,
         alertCssModuleClassesUnique: true,
         alertRulesExactlyOnce: true,

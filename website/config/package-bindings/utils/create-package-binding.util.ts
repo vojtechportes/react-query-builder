@@ -27,6 +27,9 @@ export const createPackageBinding = (
   const stylesheetPath = isV1
     ? undefined
     : resolve(implementationRoot, 'styles.css');
+  const darkModeStylesheetPath = isV1
+    ? undefined
+    : resolve(implementationRoot, 'dark-mode.variables.css');
 
   return {
     target,
@@ -37,6 +40,7 @@ export const createPackageBinding = (
     reactDomRoot,
     mantineCoreRoot,
     mantineHooksRoot,
+    darkModeStylesheetPath,
     aliases: [
       { find: 'react-dom', replacement: reactDomRoot },
       { find: 'react', replacement: reactRoot },
@@ -47,6 +51,14 @@ export const createPackageBinding = (
             {
               find: `${canonicalPackageName}/styles.css`,
               replacement: stylesheetPath,
+            },
+          ]
+        : []),
+      ...(darkModeStylesheetPath
+        ? [
+            {
+              find: `${canonicalPackageName}/dark-mode.variables.css`,
+              replacement: darkModeStylesheetPath,
             },
           ]
         : []),

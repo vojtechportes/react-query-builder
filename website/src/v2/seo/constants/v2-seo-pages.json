@@ -93,8 +93,8 @@
     {
       "path": "/api/css-variables",
       "title": "React Query Builder CSS Variables API",
-      "description": "Complete API reference for every public React Query Builder CSS variable, including color, layout, typography, motion, and overlay defaults.",
-      "keywords": "CSS, variables, custom, properties, tokens, defaults, IBuilderStyle, colors, spacing, padding, gaps, radii, shadows, controls, typography, editor, drop, zone, motion, popover, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "description": "Complete API reference for light and dark React Query Builder CSS variables, color schemes, layout, typography, and other defaults.",
+      "keywords": "CSS, variables, dark, mode, colorScheme, background, custom, properties, tokens, defaults, IBuilderStyle, colors, spacing, layout, typography, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
       "section": "API"
     },
     {
@@ -128,8 +128,8 @@
     {
       "path": "/api/theming",
       "title": "React Query Builder Theming API",
-      "description": "Theming API reference for ThemeProvider, IThemeProviderProps, IColors, and exported color tokens.",
-      "keywords": "ThemeProvider, IThemeProviderProps, IThemeProps, IColors, colors, primary, secondary, grey, white, theme, customization, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "description": "Theming API reference for typed light and dark schemes, variable precedence, ThemeProvider compatibility, and exported color tokens.",
+      "keywords": "colorScheme, dark, mode, dark-mode, variables, background, ThemeProvider, IThemeProviderProps, IColors, colors, theme, customization, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
       "section": "API"
     },
     {
@@ -289,8 +289,8 @@
     {
       "path": "/documentation/theming",
       "title": "React Query Builder Theming Guide",
-      "description": "Documentation for customizing builder colors with ThemeProvider and shared theme tokens.",
-      "keywords": "Theming, theme, provider, colors, primary, secondary, grey, tokens, design, system, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
+      "description": "Documentation for typed light and dark Builder color schemes, reactive switching, CSS variables, custom themes, and ThemeProvider compatibility.",
+      "keywords": "Theming, dark, mode, colorScheme, dark-mode, variables, background, theme, provider, colors, tokens, design, system, React Query Builder, React query builder component, React filter builder, React rule builder, TypeScript query builder",
       "section": "Documentation"
     },
     {

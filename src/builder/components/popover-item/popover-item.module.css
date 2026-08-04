@@ -4,7 +4,7 @@
     padding: 0.65rem 0.85rem;
     color: var(--query-builder-color-grey-700);
     text-align: left;
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
     border: 0;
     border-bottom: 1px solid var(--query-builder-color-grey-100);
     cursor: pointer;

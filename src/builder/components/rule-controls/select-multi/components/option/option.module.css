@@ -7,7 +7,7 @@
     width: 100%;
     padding: 0.55rem 0.75rem;
     border: 0;
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
     color: var(--query-builder-color-grey-900);
     text-align: left;
     cursor: pointer;
@@ -33,7 +33,7 @@
 
   .disabled:hover,
   .disabled:focus-visible {
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
   }
 
   .selected {

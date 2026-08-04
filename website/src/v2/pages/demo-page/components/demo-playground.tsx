@@ -98,7 +98,13 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
     defaultMode: settings.defaultMode,
     groupTypes: 'both' as const,
     singleRootGroup: settings.singleRootGroup,
-    showOuterContainer: settings.showOuterContainer,
+    useDefaultContainerStyles: settings.useDefaultContainerStyles,
+    colorScheme:
+      customizationMode === 'default'
+        ? settings.darkMode
+          ? ('dark' as const)
+          : ('light' as const)
+        : undefined,
     showValidation: settings.showValidation,
     style: themeOverrides,
     ...(builderComponents ? { components: builderComponents } : {}),
@@ -156,8 +162,10 @@ export const DemoPlayground: React.FC<IDemoPlaygroundProps> = ({
           onSettingChange={updateSetting}
         />
         <DemoPlaygroundCustomization
+          darkMode={settings.darkMode}
           mode={customizationMode}
           onChange={setCustomizationMode}
+          onDarkModeChange={(darkMode) => updateSetting('darkMode', darkMode)}
         />
         <DemoPlaygroundTheme
           customizationMode={customizationMode}

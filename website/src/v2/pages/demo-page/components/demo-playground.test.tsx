@@ -32,7 +32,8 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
       textMode,
       defaultMode,
       singleRootGroup,
-      showOuterContainer,
+      useDefaultContainerStyles,
+      colorScheme,
       showValidation,
       components,
       style,
@@ -50,7 +51,8 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
       textMode?: boolean;
       defaultMode?: string;
       singleRootGroup?: boolean;
-      showOuterContainer?: boolean;
+      useDefaultContainerStyles?: boolean;
+      colorScheme?: 'light' | 'dark';
       showValidation?: boolean;
       components?: unknown;
       style?: React.CSSProperties;
@@ -73,7 +75,8 @@ vi.mock('@vojtechportes/react-query-builder', async (importOriginal) => {
             textMode,
             defaultMode,
             singleRootGroup,
-            showOuterContainer,
+            useDefaultContainerStyles,
+            colorScheme,
             showValidation,
             hasComponents: Boolean(components),
           })}
@@ -204,11 +207,11 @@ describe('DemoPlayground locale selection', () => {
     expect(screen.getByText('Builder source')).toBeInTheDocument();
 
     expect(
-      screen.getByRole('checkbox', { name: 'Show outer container' })
+      screen.getByRole('checkbox', { name: 'Use default container styles' })
     ).toBeChecked();
     expect(
       JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
-    ).toMatchObject({ showOuterContainer: true });
+    ).toMatchObject({ useDefaultContainerStyles: true });
 
     for (const checkboxName of [
       'Read-only mode',
@@ -218,7 +221,7 @@ describe('DemoPlayground locale selection', () => {
       'Allow group negation',
       'Allow field comparisons',
       'Undo / redo history',
-      'Show outer container',
+      'Use default container styles',
       'Show validation errors',
     ]) {
       await user.click(screen.getByRole('checkbox', { name: checkboxName }));
@@ -241,7 +244,7 @@ describe('DemoPlayground locale selection', () => {
       newNodePlacement: 'prepend',
       history: true,
       singleRootGroup: true,
-      showOuterContainer: false,
+      useDefaultContainerStyles: false,
       showValidation: false,
     });
     expect(
@@ -251,9 +254,62 @@ describe('DemoPlayground locale selection', () => {
     expect(
       screen.getByText('Builder source').parentElement?.parentElement
         ?.textContent
-    ).toContain('showOuterContainer={false}');
+    ).toContain('useDefaultContainerStyles={false}');
   });
 
+  it('switches dark mode only for default components and restores it', async () => {
+    const user = userEvent.setup();
+    render(<DemoPlayground />);
+
+    const darkMode = screen.getByRole('checkbox', { name: 'Dark mode' });
+    const defaultComponents = screen.getByRole('radio', {
+      name: 'Default components',
+    });
+
+    expect(defaultComponents.closest('label')?.nextElementSibling).toBe(
+      darkMode.closest('label')
+    );
+    expect(darkMode).toBeEnabled();
+    expect(darkMode).not.toBeChecked();
+    expect(
+      JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
+    ).toMatchObject({ colorScheme: 'light' });
+
+    await user.click(darkMode);
+
+    expect(
+      JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
+    ).toMatchObject({ colorScheme: 'dark' });
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show Builder source' })
+    );
+
+    const darkSource =
+      screen.getByText('Builder source').parentElement?.parentElement
+        ?.textContent;
+
+    expect(darkSource).toContain(
+      "import '@vojtechportes/react-query-builder/dark-mode.variables.css';"
+    );
+    expect(darkSource).toContain('colorScheme="dark"');
+
+    await user.click(screen.getByRole('radio', { name: 'MUI adapter' }));
+
+    expect(darkMode).toBeDisabled();
+    expect(darkMode).toBeChecked();
+    expect(
+      JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
+    ).not.toHaveProperty('colorScheme');
+
+    await user.click(screen.getByRole('radio', { name: 'Default components' }));
+
+    expect(darkMode).toBeEnabled();
+    expect(darkMode).toBeChecked();
+    expect(
+      JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
+    ).toMatchObject({ colorScheme: 'dark' });
+  });
   it('preserves text, Monaco, and single-root dependencies', async () => {
     const user = userEvent.setup();
     render(<DemoPlayground />);
@@ -285,7 +341,29 @@ describe('DemoPlayground locale selection', () => {
       textMode: true,
       defaultMode: 'text',
       hasComponents: true,
+      colorScheme: 'light',
     });
+
+    await user.click(screen.getByRole('checkbox', { name: 'Dark mode' }));
+
+    expect(
+      JSON.parse(screen.getByTestId('builder-props').textContent ?? '')
+    ).toMatchObject({
+      hasComponents: true,
+      colorScheme: 'dark',
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show Builder source' })
+    );
+
+    const monacoDarkSource =
+      screen.getByText('Builder source').parentElement?.parentElement
+        ?.textContent;
+
+    expect(monacoDarkSource).toContain('createMonacoComponents({})');
+    expect(monacoDarkSource).toContain('dark-mode.variables.css');
+    expect(monacoDarkSource).toContain('colorScheme="dark"');
 
     await user.click(
       screen.getByRole('checkbox', { name: 'Single root group' })
