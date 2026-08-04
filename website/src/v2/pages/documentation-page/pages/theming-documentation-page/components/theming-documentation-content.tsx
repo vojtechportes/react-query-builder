@@ -10,6 +10,7 @@ import {
   TextLink,
 } from '../../../../../../components/docs-primitives';
 import { builderStyleThemeSnippet } from '../constants/builder-style-theme-snippet';
+import { darkModeSnippet } from '../constants/dark-mode-snippet';
 import { globalThemeSnippet } from '../constants/global-theme-snippet';
 import { themeSnippet } from '../constants/theme-snippet';
 import { wrapperThemeSnippet } from '../constants/wrapper-theme-snippet';
@@ -24,7 +25,50 @@ export const ThemingDocumentationContent: React.FC = () => (
       supplies the default token values; components do not inject runtime
       styles.
     </Typography>
-    <SectionTitle>Global overrides</SectionTitle>
+    <SectionTitle>Dark mode</SectionTitle>
+    <Typography color="muted">
+      Import the optional{' '}
+      <InlineCode>
+        @vojtechportes/react-query-builder/dark-mode.variables.css
+      </InlineCode>{' '}
+      after <InlineCode>styles.css</InlineCode>, then set the{' '}
+      <InlineCode>colorScheme</InlineCode> prop. Changing the prop updates
+      colors without remounting the Builder.
+    </Typography>
+    <CodeBlock
+      code={darkModeSnippet}
+      language="tsx"
+      label="Reactive dark mode"
+    />
+    <List>
+      <li>
+        Use <InlineCode>colorScheme=&quot;light&quot;</InlineCode> or{' '}
+        <InlineCode>colorScheme=&quot;dark&quot;</InlineCode> to create an
+        explicit palette boundary for one Builder.
+      </li>
+      <li>
+        Leave <InlineCode>colorScheme</InlineCode> undefined to preserve colors
+        inherited from your application or a surrounding wrapper.
+      </li>
+      <li>
+        Explicit light and dark Builders can be siblings or nested. The nearest
+        Builder scheme applies to its built-in components.
+      </li>
+      <li>
+        Built-in SQL highlighting uses the same info, success, warning, primary,
+        grey, and error variables as the rest of the Builder.
+      </li>
+    </List>
+    <AlertBox title="Monaco editor" variant="info">
+      The packaged Monaco light and dark themes use the same query-builder
+      palette roles as the built-in SQL editor and update without remounting
+      when <InlineCode>colorScheme</InlineCode> changes. Monaco's standalone
+      theme service is global, so the latest mounted packaged editor, or the
+      editor whose scheme changes most recently, wins across all mounted
+      editors. Synchronizing consumer CSS variable overrides or custom
+      per-editor themes requires application-level configuration.
+    </AlertBox>
+    <SectionTitle>Global overrides</SectionTitle>{' '}
     <Typography color="muted">
       Set variables on <InlineCode>:root</InlineCode> when every builder and
       standalone built-in control should share the same values.
@@ -58,7 +102,7 @@ export const ThemingDocumentationContent: React.FC = () => (
         <ItemTitle>Colors:</ItemTitle>{' '}
         <InlineCode>--query-builder-color-primary-*</InlineCode>,{' '}
         <InlineCode>--query-builder-color-secondary-*</InlineCode>, grey scale,
-        status colors, and white.
+        status colors, and the background surface.
       </li>
       <li>
         <ItemTitle>Spacing and layout:</ItemTitle>{' '}
@@ -92,25 +136,31 @@ export const ThemingDocumentationContent: React.FC = () => (
     </Typography>
     <List>
       <li>
-        <ItemTitle>Stylesheet defaults:</ItemTitle> Generated color defaults and
-        the public layout, sizing, typography, motion, and layering defaults in{' '}
+        <ItemTitle>Stylesheet defaults:</ItemTitle> Light defaults from{' '}
         <InlineCode>styles.css</InlineCode>.
       </li>
       <li>
-        <ItemTitle>Inherited CSS:</ItemTitle> Variables declared by your app on{' '}
-        <InlineCode>:root</InlineCode> or a wrapper around the builder.
+        <ItemTitle>Inherited CSS:</ItemTitle> Application variables when{' '}
+        <InlineCode>colorScheme</InlineCode> is undefined.
       </li>
       <li>
-        <ItemTitle>ThemeProvider:</ItemTitle> Only color values explicitly
-        supplied to the nearest legacy provider become compatibility variables.
+        <ItemTitle>Explicit scheme:</ItemTitle> The complete light or dark
+        palette selected through <InlineCode>colorScheme</InlineCode>.
       </li>
       <li>
-        <ItemTitle>Builder style:</ItemTitle> Variables passed through the{' '}
-        <InlineCode>Builder.style</InlineCode> prop are the final override on
-        the builder root.
+        <ItemTitle>Builder class:</ItemTitle> Consumer CSS targeting the root
+        through <InlineCode>className</InlineCode>.
+      </li>
+      <li>
+        <ItemTitle>ThemeProvider:</ItemTitle> Explicit legacy provider colors
+        mapped to root variables.
+      </li>
+      <li>
+        <ItemTitle>Builder style:</ItemTitle> Variables passed through{' '}
+        <InlineCode>Builder.style</InlineCode> as the final override.
       </li>
     </List>
-    <SectionTitle>Stable styling hooks</SectionTitle>
+    <SectionTitle>Stable styling hooks</SectionTitle>{' '}
     <List>
       <li>
         Pass an application-owned <InlineCode>className</InlineCode> to{' '}
@@ -118,6 +168,13 @@ export const ThemingDocumentationContent: React.FC = () => (
         <InlineCode>[data-query-builder=&quot;root&quot;]</InlineCode>{' '}
         attribute.
       </li>
+      <li>
+        The root remains available when{' '}
+        <InlineCode>
+          useDefaultContainerStyles={'{'}false{'}'}
+        </InlineCode>
+        removes its built-in surface class.
+      </li>{' '}
       <li>
         Prefer public CSS variables for built-in presentation and the component
         override API when you need different markup.

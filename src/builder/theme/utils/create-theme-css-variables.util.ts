@@ -33,7 +33,7 @@ export const createThemeCssVariables = ({
     '--query-builder-color-warning-light': colors?.warning?.light,
     '--query-builder-color-error-primary': colors?.error?.primary,
     '--query-builder-color-error-light': colors?.error?.light,
-    '--query-builder-color-white': colors?.white,
+    '--query-builder-color-background': colors?.white,
   };
 
   return Object.fromEntries(

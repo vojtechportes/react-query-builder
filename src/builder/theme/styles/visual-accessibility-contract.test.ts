@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { colors } from './colors';
+import { darkColors } from './dark-colors';
 
 const readCss = (relativePath: string): string =>
   readFileSync(join(__dirname, '..', '..', '..', relativePath), 'utf8');
@@ -150,9 +151,76 @@ describe('visual and accessibility contract', () => {
     }
   );
 
+  it('scopes complete light and dark color palettes to Builder roots', () => {
+    const lightTokens = readFileSync(join(__dirname, 'tokens.css'), 'utf8');
+    const darkTokens = readFileSync(
+      join(__dirname, 'dark-mode.variables.css'),
+      'utf8'
+    );
+
+    expect(lightTokens).toContain(
+      ":where([data-query-builder-color-scheme='light'])"
+    );
+    expect(darkTokens).toContain(
+      ":where([data-query-builder-color-scheme='dark'])"
+    );
+    expect(darkTokens).not.toContain(':where(:root)');
+    expect(lightTokens).toContain('--query-builder-color-background: #ffffff');
+    expect(darkTokens).toContain('--query-builder-color-background: #111827');
+  });
+
+  it('keeps dark text, actions, statuses, and syntax colors at AA contrast', () => {
+    for (const foreground of [
+      darkColors.grey[700],
+      darkColors.grey[800],
+      darkColors.grey[900],
+      darkColors.info.primary,
+      darkColors.success.primary,
+      darkColors.warning.primary,
+      darkColors.error.primary,
+    ]) {
+      expect(
+        getContrastRatio(foreground, darkColors.white)
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+
+    expect(
+      getContrastRatio(
+        darkColors.primary.contrastText,
+        darkColors.primary.default
+      )
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      getContrastRatio(
+        darkColors.secondary.contrastText,
+        darkColors.secondary.light
+      )
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      getContrastRatio(darkColors.grey[700], darkColors.grey[300])
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+  it('keeps light syntax colors at WCAG AA contrast', () => {
+    for (const foreground of [
+      colors.info.primary,
+      colors.success.primary,
+      colors.warning.primary,
+      colors.primary.default,
+      colors.grey[700],
+      colors.grey[900],
+    ]) {
+      expect(getContrastRatio(foreground, colors.white)).toBeGreaterThanOrEqual(
+        4.5
+      );
+    }
+  });
+
   it('keeps core text and validation contrast at WCAG AA ratios', () => {
     expect(
       getContrastRatio(colors.primary.default, colors.white)
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      getContrastRatio(colors.grey[700], colors.grey[100])
     ).toBeGreaterThanOrEqual(4.5);
     expect(
       getContrastRatio(colors.grey[700], colors.white)

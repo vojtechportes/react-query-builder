@@ -26,7 +26,7 @@ export interface IBuilderStyle extends CSSProperties {
   '--query-builder-color-warning-light'?: string;
   '--query-builder-color-error-primary'?: string;
   '--query-builder-color-error-light'?: string;
-  '--query-builder-color-white'?: string;
+  '--query-builder-color-background'?: string;
   '--query-builder-spacing-xs'?: string;
   '--query-builder-spacing-sm'?: string;
   '--query-builder-spacing-md'?: string;

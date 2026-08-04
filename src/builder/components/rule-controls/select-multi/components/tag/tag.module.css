@@ -8,7 +8,7 @@
     padding: 0.2rem 0.55rem;
     border: 1px solid var(--query-builder-color-grey-400);
     border-radius: 999px;
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
     color: var(--query-builder-color-grey-900);
     font-size: 0.8rem;
   }

@@ -55,6 +55,7 @@
       "require": "./dist/index.cjs"
     },
     "./styles.css": "./dist/styles.css",
+    "./dark-mode.variables.css": "./dist/dark-mode.variables.css",
     "./parseQuery": {
       "types": "./dist/parseQuery.d.ts",
       "import": "./dist/parseQuery.mjs",
@@ -173,6 +174,7 @@
     "MIGRATION-2.0.md",
     "dist",
     "dist/styles.css",
+    "dist/dark-mode.variables.css",
     "!dist/**/*.map",
     "!dist/**/*.d.ts",
     "dist/index.d.ts",
@@ -201,7 +203,7 @@
   ],
   "scripts": {
     "styles:tokens": "node scripts/generate-style-tokens.mjs",
-    "build": "npm run styles:tokens && tsdown && node scripts/css-build/restore-css-module-class-names.util.mjs && node scripts/copy-dts.mjs",
+    "build": "npm run styles:tokens && tsdown && node scripts/css-build/restore-css-module-class-names.util.mjs && node scripts/generate-style-tokens.mjs --distribution-only && node scripts/copy-dts.mjs",
     "dev": "tsdown --watch",
     "test": "jest --runInBand",
     "test:update": "jest --updateSnapshot --runInBand",

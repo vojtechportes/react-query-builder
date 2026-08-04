@@ -44,7 +44,7 @@
     box-sizing: border-box;
     width: 1.2rem;
     height: 1.2rem;
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
     border: 1px solid var(--query-builder-color-grey-500);
     border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);

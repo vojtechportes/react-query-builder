@@ -36,13 +36,13 @@
     background: color-mix(
       in srgb,
       var(--alert-primary) 5%,
-      var(--query-builder-color-white) 95%
+      var(--query-builder-color-background) 95%
     );
     border-color: var(--alert-light);
   }
 
   .filled {
-    color: var(--query-builder-color-white);
+    color: var(--query-builder-color-background);
     background: var(--alert-primary);
     border-color: var(--alert-primary);
   }

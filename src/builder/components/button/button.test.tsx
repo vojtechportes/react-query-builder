@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import React from 'react';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -70,6 +72,15 @@ describe('#components/Button', () => {
     expect(button.getAttributeNames()).not.toEqual(
       expect.arrayContaining(['$theme', '$disabled'])
     );
+  });
+
+  it('keeps the default action label on an integer-sized line box', () => {
+    const css = readFileSync(join(__dirname, 'button.module.css'), 'utf8');
+
+    expect(css).toContain('font-size: 0.6875rem');
+    expect(css).toContain('line-height: 1rem');
+    expect(css).toContain('height: 2rem');
+    expect(css).toContain('min-height: 2rem');
   });
 
   it('exposes the CSS Module class contract', () => {

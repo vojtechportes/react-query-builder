@@ -180,6 +180,11 @@ describe('#builder/text-mode/TextModeEditor', () => {
       expect(css).toContain(`.editorLayer :global(.token.${token})`);
     }
 
+    expect(css).toContain('color: var(--query-builder-color-info-primary)');
+    expect(css).toContain('color: var(--query-builder-color-success-primary)');
+    expect(css).toContain('color: var(--query-builder-color-warning-primary)');
+    expect(css).toContain('color: var(--query-builder-color-primary-default)');
+    expect(css).not.toMatch(/#[0-9a-f]{6}/i);
     expect(css).not.toMatch(/^\s*:global\(\.token/m);
     expect(css).toContain('caret-color: var(--query-builder-color-grey-800)');
     expect(css).toContain('::selection');

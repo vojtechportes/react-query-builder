@@ -5,14 +5,25 @@ export const BuilderBehaviorPropsApiItems: React.FC = () => (
   <>
     <li>
       <ItemTitle>
-        <InlineCode>showOuterContainer</InlineCode>:
+        <InlineCode>useDefaultContainerStyles</InlineCode>:
       </ItemTitle>{' '}
       Defaults to <InlineCode>true</InlineCode>. Set it to{' '}
-      <InlineCode>false</InlineCode> to omit the outer styled container. The
-      Builder then renders its controls and query content directly, so{' '}
-      <InlineCode>className</InlineCode> and <InlineCode>style</InlineCode> have
-      no container to target.
+      <InlineCode>false</InlineCode> to omit the built-in root surface styles
+      while retaining the baseline typography and color styles. The root{' '}
+      <InlineCode>div</InlineCode>, <InlineCode>className</InlineCode>,{' '}
+      <InlineCode>style</InlineCode>, and data attributes remain available.{' '}
     </li>
+    <li>
+      <ItemTitle>
+        <InlineCode>colorScheme</InlineCode>:
+      </ItemTitle>{' '}
+      Optional <InlineCode>'light' | 'dark'</InlineCode> built-in component
+      scheme. Dark mode requires importing{' '}
+      <InlineCode>
+        @vojtechportes/react-query-builder/dark-mode.variables.css
+      </InlineCode>
+      . Leave this undefined to preserve inherited application variables.
+    </li>{' '}
     <li>
       <ItemTitle>
         <InlineCode>allowGroupNegation</InlineCode>:

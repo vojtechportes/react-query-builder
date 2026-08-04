@@ -579,13 +579,25 @@ describe('#components/Group', () => {
     expect(groupCss).toContain(
       'padding: var(--query-builder-group-padding, 0.7rem)'
     );
+    expect(groupCss).toContain('.left > div:not(:last-child)');
+    expect(groupCss).toContain('border-right: 0');
     expect(groupCss).toContain('.left > div:first-child');
     expect(groupCss).toContain('.left > div + div');
+    expect(groupCss).toContain('margin-left: -1px');
+    expect(groupCss).toContain(".left > div[data-selected='true']");
+    expect(groupCss).toContain('z-index: 1');
     expect(groupCss).toContain('.left > div:last-child');
     expect(groupCss).toContain('@media (max-width: 900px)');
     expect(groupCss).toContain(
       'grid-template-columns: repeat(3, minmax(0, max-content))'
     );
+
+    expect(optionCss).toContain('color: light-dark(');
+    expect(optionCss).toContain('var(--query-builder-color-grey-900)');
+    expect(optionCss).toContain('background: light-dark(');
+    expect(optionCss).toContain('var(--query-builder-color-grey-400)');
+    expect(optionCss).toContain('border: 1px solid');
+    expect(optionCss).toContain('var(--query-builder-color-grey-500)');
     expect(optionCss).toContain(
       'color: var(--query-builder-color-primary-contrast-text)'
     );

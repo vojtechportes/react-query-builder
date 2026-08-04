@@ -188,9 +188,9 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Customization',
     summary: '',
     description:
-      'Complete API reference for every public query builder CSS variable and its default value.',
+      'Complete API reference for light and dark query builder CSS variables, color schemes, and default values.',
     searchText:
-      'CSS variables custom properties tokens defaults IBuilderStyle colors spacing padding gaps radii shadows controls typography editor drop zone motion popover',
+      'CSS variables dark mode colorScheme background custom properties tokens defaults IBuilderStyle colors spacing padding gaps radii shadows controls typography editor drop zone motion popover',
     content: <CssVariablesApiContent />,
   },
   {
@@ -200,9 +200,9 @@ export const apiPages: IApiPage[] = [
     sectionTitle: 'Customization',
     summary: '',
     description:
-      'Theming API reference for ThemeProvider, IThemeProviderProps, IColors, and exported color tokens.',
+      'Theming API reference for colorScheme, dark-mode variables, precedence, ThemeProvider, and exported color tokens.',
     searchText:
-      'ThemeProvider IThemeProviderProps IThemeProps IColors colors primary secondary grey white theme customization',
+      'colorScheme dark mode dark-mode variables background ThemeProvider IThemeProviderProps IThemeProps IColors colors theme customization',
     content: <ThemingApiContent />,
   },
   {

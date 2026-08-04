@@ -6,16 +6,22 @@ const verifyPublicStylesheet = async () => {
   const rootDirectory = path.resolve(import.meta.dirname, '..', '..');
   const packageJsonPath = path.join(rootDirectory, 'package.json');
   const stylesheetPath = path.join(rootDirectory, 'dist', 'styles.css');
+  const darkModeStylesheetPath = path.join(
+    rootDirectory,
+    'dist',
+    'dark-mode.variables.css'
+  );
   const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
   const stylesheet = await readFile(stylesheetPath, 'utf8');
+  const darkModeStylesheet = await readFile(darkModeStylesheetPath, 'utf8');
 
   if (
     packageJson.style !== './dist/styles.css' ||
-    packageJson.exports?.['./styles.css'] !== './dist/styles.css'
+    packageJson.exports?.['./styles.css'] !== './dist/styles.css' ||
+    packageJson.exports?.['./dark-mode.variables.css'] !==
+      './dist/dark-mode.variables.css'
   ) {
-    throw new Error(
-      'The public stylesheet metadata does not resolve dist/styles.css'
-    );
+    throw new Error('The public stylesheet metadata is invalid');
   }
 
   if (
@@ -27,7 +33,7 @@ const verifyPublicStylesheet = async () => {
   const requiredTokens = [
     '--query-builder-color-primary-default',
     '--query-builder-color-grey-300',
-    '--query-builder-color-white',
+    '--query-builder-color-background',
     '--query-builder-spacing-sm',
     '--query-builder-root-padding',
     '--query-builder-group-padding',
@@ -57,10 +63,32 @@ const verifyPublicStylesheet = async () => {
     throw new Error(`Missing public tokens: ${missingTokens.join(', ')}`);
   }
 
-  if (!stylesheet.includes(':where(:root)')) {
-    throw new Error(
-      'Public token defaults must remain inherited and low-specificity'
-    );
+  if (
+    !stylesheet.includes(':where(:root)') ||
+    !/:where\(\[data-query-builder-color-scheme=["']light["']\]\)/.test(
+      stylesheet
+    )
+  ) {
+    throw new Error('Light defaults and explicit light tokens are invalid');
+  }
+
+  if (
+    darkModeStylesheet.includes(':where(:root)') ||
+    !/:where\(\[data-query-builder-color-scheme=["']dark["']\]\)/.test(
+      darkModeStylesheet
+    ) ||
+    !requiredTokens
+      .filter((token) => token.startsWith('--query-builder-color-'))
+      .every((token) => darkModeStylesheet.includes(`${token}:`))
+  ) {
+    throw new Error('Dark mode tokens are invalid or not scoped');
+  }
+
+  if (
+    stylesheet.includes('--query-builder-color-white') ||
+    darkModeStylesheet.includes('--query-builder-color-white')
+  ) {
+    throw new Error('The removed white token is still published');
   }
 
   const npmExecutable =
@@ -83,28 +111,32 @@ const verifyPublicStylesheet = async () => {
     }
   );
   const packResult = JSON.parse(packOutput)[0];
-  const packedStylesheets = packResult.files.filter(({ path: filePath }) =>
-    filePath.endsWith('.css')
-  );
+  const packedStylesheets = packResult.files
+    .filter(({ path: filePath }) => filePath.endsWith('.css'))
+    .map(({ path: filePath }) => filePath)
+    .sort();
+  const expectedPackedStylesheets = [
+    'dist/dark-mode.variables.css',
+    'dist/styles.css',
+  ];
 
   if (
-    packedStylesheets.length !== 1 ||
-    packedStylesheets[0].path !== 'dist/styles.css'
+    JSON.stringify(packedStylesheets) !==
+    JSON.stringify(expectedPackedStylesheets)
   ) {
     throw new Error(
-      `Expected one packed stylesheet, received: ${packedStylesheets
-        .map(({ path: filePath }) => filePath)
-        .join(', ')}`
+      `Expected public stylesheets, received: ${packedStylesheets.join(', ')}`
     );
   }
 
   console.log(
     JSON.stringify(
       {
-        publicStylesheetExport: packageJson.exports['./styles.css'],
-        packedStylesheets: packedStylesheets.map(
-          ({ path: filePath }) => filePath
-        ),
+        publicStylesheetExports: {
+          darkMode: packageJson.exports['./dark-mode.variables.css'],
+          styles: packageJson.exports['./styles.css'],
+        },
+        packedStylesheets,
         publicTokenCount: requiredTokens.length,
         cssSideEffects: packageJson.sideEffects,
       },

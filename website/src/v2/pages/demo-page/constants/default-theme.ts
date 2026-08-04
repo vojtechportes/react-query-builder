@@ -27,7 +27,7 @@ export const defaultTheme: IBuilderStyle = {
   '--query-builder-color-warning-light': colors.warning.light,
   '--query-builder-color-error-primary': colors.error.primary,
   '--query-builder-color-error-light': colors.error.light,
-  '--query-builder-color-white': colors.white,
+  '--query-builder-color-background': colors.white,
   '--query-builder-root-padding': '1rem',
   '--query-builder-group-padding': '0.7rem',
   '--query-builder-rule-padding': '0.7rem',

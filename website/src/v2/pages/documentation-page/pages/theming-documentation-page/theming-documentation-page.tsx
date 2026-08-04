@@ -9,8 +9,8 @@ export const themingDocumentationPage: IDocumentationPage = {
   sectionTitle: 'Customization',
   summary: '',
   description:
-    'Documentation for customizing builder colors with ThemeProvider and shared theme tokens.',
+    'Documentation for typed light and dark color schemes, CSS variables, custom themes, and ThemeProvider compatibility.',
   searchText:
-    'Theming theme provider colors primary secondary grey tokens design system',
+    'Theming light dark mode colorScheme dark-mode variables background ThemeProvider colors tokens design system',
   content: <ThemingDocumentationContent />,
 };

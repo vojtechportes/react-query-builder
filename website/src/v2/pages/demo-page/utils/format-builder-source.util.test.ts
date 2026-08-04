@@ -20,6 +20,7 @@ const adapterCases = [
 ] as const;
 
 const defaultOptions: IBuilderSourceOptions = {
+  darkMode: false,
   readOnly: false,
   readOnlyProtectsDelete: true,
   lockable: false,
@@ -34,7 +35,7 @@ const defaultOptions: IBuilderSourceOptions = {
   defaultMode: 'builder',
   useMonacoTextEditor: false,
   singleRootGroup: true,
-  showOuterContainer: true,
+  useDefaultContainerStyles: true,
   showValidation: true,
   customizationMode: 'default',
   themeStyle: defaultTheme,
@@ -62,10 +63,44 @@ describe('v2 formatBuilderSource', () => {
     expect(source.split(packageStylesheetImport)).toHaveLength(2);
     expect(source).toContain('singleRootGroup');
     expect(source).toContain('showValidation');
-    expect(source).not.toContain('showOuterContainer');
+    expect(source).toContain('colorScheme="light"');
+    expect(source).not.toContain('useDefaultContainerStyles');
     expect(source).not.toContain('ThemeProvider');
   });
 
+  it('adds the scoped dark stylesheet and typed color scheme for dark mode', () => {
+    const source = formatBuilderSource({
+      ...defaultOptions,
+      darkMode: true,
+    });
+
+    expect(source).toContain(
+      "import '@vojtechportes/react-query-builder/dark-mode.variables.css';"
+    );
+    expect(source).toContain('colorScheme="dark"');
+
+    const monacoSource = formatBuilderSource({
+      ...defaultOptions,
+      darkMode: true,
+      textMode: true,
+      useMonacoTextEditor: true,
+    });
+
+    expect(monacoSource).toContain(
+      'const components = createMonacoComponents({});'
+    );
+    expect(monacoSource).toContain('colorScheme="dark"');
+    expect(monacoSource).toContain('dark-mode.variables.css');
+
+    const adapterSource = formatBuilderSource({
+      ...defaultOptions,
+      customizationMode: 'mui',
+      darkMode: true,
+    });
+
+    expect(adapterSource).not.toContain('dark-mode.variables.css');
+    expect(adapterSource).not.toContain('colorScheme');
+  });
   it.each(adapterCases)(
     'renders the %s adapter import',
     (customizationMode: CustomizationMode, packagePath) => {
@@ -86,7 +121,7 @@ describe('v2 formatBuilderSource', () => {
       lockable: true,
       cloneable: true,
       draggable: true,
-      showOuterContainer: false,
+      useDefaultContainerStyles: false,
       history: true,
       textMode: true,
       defaultMode: 'text',
@@ -112,7 +147,7 @@ describe('v2 formatBuilderSource', () => {
     expect(source).toContain('lockable');
     expect(source).toContain('cloneable');
     expect(source).toContain('draggable');
-    expect(source).toContain('showOuterContainer={false}');
+    expect(source).toContain('useDefaultContainerStyles={false}');
     expect(source).toContain('history');
     expect(source).toContain('textMode');
     expect(source).toContain('defaultMode="text"');

@@ -47,15 +47,32 @@ describe('v2 Documentation content', () => {
 
     expect(content).toContain('href="/api/css-variables"');
   });
-  it('documents how to omit the Builder outer container', () => {
+  it('documents how to disable the default Builder container styles', () => {
     const content = renderToStaticMarkup(
       <StaticRouter location="/documentation/builder-behavior">
         {findDocumentationPage('/documentation/builder-behavior').content}
       </StaticRouter>
     );
 
-    expect(content).toMatch(/<code[^>]*>showOuterContainer=\{false\}<\/code>/);
-    expect(content).toContain('application wrapper');
+    expect(content).toMatch(
+      /<code[^>]*>useDefaultContainerStyles=\{false\}<\/code>/
+    );
+    expect(content).toContain('root');
+    expect(content).toContain('className');
+  });
+  it('documents typed reactive dark mode and its stylesheet', () => {
+    const content = renderToStaticMarkup(
+      <StaticRouter location="/documentation/theming">
+        {findDocumentationPage('/documentation/theming').content}
+      </StaticRouter>
+    );
+
+    expect(content).toContain(
+      '@vojtechportes/react-query-builder/dark-mode.variables.css'
+    );
+    expect(content).toContain('colorScheme');
+    expect(content).toContain('Built-in SQL highlighting');
+    expect(content).toContain('Monaco');
   });
   it('normalizes trailing slashes and preserves the overview fallback', () => {
     expect(

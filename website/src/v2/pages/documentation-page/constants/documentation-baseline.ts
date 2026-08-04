@@ -27,7 +27,7 @@ export const documentationBaseline = [
     path: '/documentation/builder-behavior',
     title: 'Builder Behavior',
     contentHash:
-      '466202830a5998f3f973ad97c1ae9b357c6bffa6dc45189c2bb261bcfb0c3817',
+      '333e0280674d9cb807fe7f9ec570ab9b67ced34e27e41d087972507da12fa8cb',
   },
   {
     path: '/documentation/builder-ref',
@@ -81,7 +81,7 @@ export const documentationBaseline = [
     path: '/documentation/text-mode',
     title: 'Text Mode',
     contentHash:
-      'a3e41b12ad7170847c9b0a54e4649c6b6429e93202b9b91f0071aca8730d5299',
+      'ce08d806ac003bf74042534050340918305b81f5fe4168315ec697d9e32d8087',
   },
   {
     path: '/documentation/components',
@@ -135,7 +135,7 @@ export const documentationBaseline = [
     path: '/documentation/theming',
     title: 'Theming',
     contentHash:
-      '293646637625cd031febfa54367ab9edc540be57743e2dcd768d3a5f7ced1459',
+      'c9f5e9b82445e3ddfe7a04506a0c84c571021de240b7cfa4995c0446ebeb211b',
   },
   {
     path: '/documentation/localization',

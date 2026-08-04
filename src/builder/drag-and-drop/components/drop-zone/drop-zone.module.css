@@ -94,7 +94,11 @@
 
   .inner.active {
     border-color: var(--query-builder-color-grey-300);
-    background: rgba(204, 204, 204, 0.08);
+    background: color-mix(
+      in srgb,
+      var(--query-builder-color-grey-300) 8%,
+      transparent
+    );
   }
 
   .inner.active,

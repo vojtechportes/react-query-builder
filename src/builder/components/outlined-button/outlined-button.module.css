@@ -4,7 +4,7 @@
     color: var(--query-builder-color-grey-700);
     font-size: 0.75rem;
     text-transform: none;
-    background-color: var(--query-builder-color-white);
+    background-color: var(--query-builder-color-background);
     border: 1px solid var(--query-builder-color-grey-300);
   }
 

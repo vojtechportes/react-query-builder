@@ -25,6 +25,17 @@ export const ThemingApiContent: React.FC = () => (
       </li>
       <li>
         <ItemTitle>
+          <InlineCode>
+            @vojtechportes/react-query-builder/dark-mode.variables.css
+          </InlineCode>
+          :
+        </ItemTitle>{' '}
+        Optional dark palette for built-in components. Import it after{' '}
+        <InlineCode>styles.css</InlineCode> before using{' '}
+        <InlineCode>colorScheme=&quot;dark&quot;</InlineCode>.
+      </li>{' '}
+      <li>
+        <ItemTitle>
           <InlineCode>--query-builder-*</InlineCode>:
         </ItemTitle>{' '}
         Public inherited variables for colors, spacing, padding, gaps, radii,
@@ -64,6 +75,13 @@ export const ThemingApiContent: React.FC = () => (
     <List>
       <li>
         <ItemTitle>
+          <InlineCode>colorScheme</InlineCode>:
+        </ItemTitle>{' '}
+        Optional <InlineCode>'light' | 'dark'</InlineCode> palette boundary for
+        one Builder. Leave it undefined to preserve inherited variables.
+      </li>{' '}
+      <li>
+        <ItemTitle>
           <InlineCode>colors</InlineCode>:
         </ItemTitle>{' '}
         Optional deep partial color overrides. Only provided leaves become CSS
@@ -81,10 +99,21 @@ export const ThemingApiContent: React.FC = () => (
         <InlineCode>colors</InlineCode> defaults instead of the outer provider.
       </li>
       <li>
-        <ItemTitle>Precedence:</ItemTitle> Stylesheet defaults, inherited global
-        or wrapper CSS, explicit provider colors, then explicit{' '}
-        <InlineCode>Builder.style</InlineCode> values.
+        <ItemTitle>Precedence:</ItemTitle> Base defaults, inherited variables,
+        explicit light/dark scheme variables, consumer root classes, legacy
+        provider colors, then <InlineCode>Builder.style</InlineCode>{' '}
+        values.{' '}
       </li>
+      <li>
+        <ItemTitle>Monaco note:</ItemTitle> The packaged Monaco light and dark
+        themes map SQL tokens to the same query-builder palette roles as the
+        built-in editor. An undefined <InlineCode>colorScheme</InlineCode> uses
+        the packaged light theme. Monaco's standalone theme service is global,
+        so the latest mounted packaged editor, or the editor whose scheme
+        changes most recently, wins across all mounted editors. Synchronizing
+        consumer CSS variable overrides or custom per-editor themes remains
+        application-managed.
+      </li>{' '}
       <li>
         <ItemTitle>Adapter note:</ItemTitle>{' '}
         <InlineCode>ThemeProvider</InlineCode> affects the built-in default

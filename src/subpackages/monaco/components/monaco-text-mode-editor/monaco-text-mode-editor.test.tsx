@@ -87,11 +87,13 @@ jest.mock(
         return editorInstance;
       }
     );
+    const defineTheme = jest.fn();
 
     return {
       __esModule: true,
       editor: {
         create,
+        defineTheme,
       },
       Selection: class {
         startLineNumber: number;
@@ -145,6 +147,15 @@ jest.mock(
       },
       __mock: {
         getCreateCallCount: () => create.mock.calls.length,
+        getCreateOptions: () =>
+          create.mock.calls[create.mock.calls.length - 1]?.[1],
+        getDefinedThemes: () =>
+          defineTheme.mock.calls.map(([name, data]) => ({ name, data })),
+        getThemeDefinitionCallOrder: () =>
+          defineTheme.mock.invocationCallOrder[0],
+        getCreateCallOrder: () => create.mock.invocationCallOrder[0],
+        getUpdateOptions: () =>
+          editorInstance.updateOptions.mock.calls.map(([options]) => options),
         getCurrentValue: () => currentValue,
         getLastDecorations: () => lastDecorations,
         getSelections: () => currentSelections,
@@ -180,6 +191,7 @@ jest.mock(
             },
           ];
           create.mockClear();
+          defineTheme.mockClear();
           editorInstance.updateOptions.mockClear();
           editorInstance.deltaDecorations.mockClear();
           editorInstance.setSelections.mockClear();
@@ -196,6 +208,14 @@ const getMonacoMock = () =>
     jest.requireMock('monaco-editor') as {
       __mock: {
         getCreateCallCount: () => number;
+        getCreateOptions: () => { theme?: string } | undefined;
+        getDefinedThemes: () => Array<{
+          name: string;
+          data: { base?: string; colors?: Record<string, string> };
+        }>;
+        getThemeDefinitionCallOrder: () => number | undefined;
+        getCreateCallOrder: () => number | undefined;
+        getUpdateOptions: () => Array<{ readOnly?: boolean; theme?: string }>;
         getCurrentValue: () => string;
         getLastDecorations: () => IMonacoDecoration[];
         getSelections: () => Array<{
@@ -575,9 +595,71 @@ describe('MonacoTextModeEditor presentation', () => {
 
     await waitFor(() => {
       expect(getMonacoMock().getCurrentValue()).toBe(baseProps.value);
+      expect(getMonacoMock().getCreateOptions()).toMatchObject({
+        theme: 'rqb-query-builder-light',
+      });
     });
   });
 
+  it('follows colorScheme reactively without recreating the editor', async () => {
+    const monacoMock = getMonacoMock();
+    const { rerender } = render(
+      <MonacoTextModeEditor {...baseProps} colorScheme="dark" />
+    );
+
+    await waitFor(() => {
+      expect(monacoMock.getCreateOptions()).toMatchObject({
+        theme: 'rqb-query-builder-dark',
+      });
+    });
+    expect(monacoMock.getDefinedThemes()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'rqb-query-builder-light',
+          data: expect.objectContaining({ base: 'vs' }),
+        }),
+        expect.objectContaining({
+          name: 'rqb-query-builder-dark',
+          data: expect.objectContaining({ base: 'vs-dark' }),
+        }),
+      ])
+    );
+    expect(monacoMock.getThemeDefinitionCallOrder()).toBeLessThan(
+      monacoMock.getCreateCallOrder() as number
+    );
+
+    const createCallCount = monacoMock.getCreateCallCount();
+
+    rerender(<MonacoTextModeEditor {...baseProps} colorScheme="light" />);
+
+    await waitFor(() => {
+      expect(monacoMock.getUpdateOptions()).toContainEqual(
+        expect.objectContaining({ theme: 'rqb-query-builder-light' })
+      );
+    });
+    expect(monacoMock.getCreateCallCount()).toBe(createCallCount);
+
+    const themeUpdateCount = monacoMock
+      .getUpdateOptions()
+      .filter((options) => options.theme !== undefined).length;
+
+    rerender(
+      <MonacoTextModeEditor
+        {...baseProps}
+        colorScheme="light"
+        readOnly={true}
+      />
+    );
+
+    await waitFor(() => {
+      expect(monacoMock.getUpdateOptions()).toContainEqual({ readOnly: true });
+    });
+    expect(
+      monacoMock
+        .getUpdateOptions()
+        .filter((options) => options.theme !== undefined)
+    ).toHaveLength(themeUpdateCount);
+  });
   it('scopes Monaco-generated decoration selectors and preserves their visuals', () => {
     const css = readFileSync(
       join(__dirname, 'monaco-text-mode-editor.module.css'),
@@ -596,9 +678,17 @@ describe('MonacoTextModeEditor presentation', () => {
     expect(css).not.toMatch(/^ {2}:global\(/m);
     expect(css).toContain('var(--query-builder-editor-min-height)');
     expect(css).toContain('var(--query-builder-color-error-primary)');
-    expect(css).toContain('var(--query-builder-color-grey-600) !important');
+    expect(css).toContain('color: light-dark(');
+    expect(css).toContain('background: light-dark(');
+    expect(css).toContain('color-mix(');
+    expect(css).toContain('var(--query-builder-color-grey-700)');
+    expect(css).toContain('var(--query-builder-color-grey-300) 78%');
+    expect(css).toContain('var(--query-builder-color-grey-500)');
+    expect(css).not.toContain('rgba(245, 245, 245, 0.92)');
+    expect(css).not.toContain('opacity: 0.62');
     expect(css).toContain("[class*='mtk']");
     expect(css).toContain('filter: grayscale(1)');
+    expect(css).toContain('opacity: 1');
     expect(css).toContain('opacity: 1 !important');
   });
 

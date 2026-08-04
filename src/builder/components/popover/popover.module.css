@@ -10,7 +10,7 @@
     left: 0;
     z-index: var(--query-builder-popover-z-index, 5);
     min-width: 180px;
-    background: var(--query-builder-color-white);
+    background: var(--query-builder-color-background);
     border: 1px solid var(--query-builder-color-grey-500);
     box-shadow: var(
       --query-builder-shadow-popover,

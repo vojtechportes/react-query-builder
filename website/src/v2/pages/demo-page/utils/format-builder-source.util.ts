@@ -5,6 +5,7 @@ import { formatThemeOverrides } from './format-theme-overrides.util';
 import { indentBlock } from './indent-block.util';
 
 export const formatBuilderSource = ({
+  darkMode,
   readOnly,
   readOnlyProtectsDelete,
   lockable,
@@ -19,7 +20,7 @@ export const formatBuilderSource = ({
   defaultMode,
   useMonacoTextEditor,
   singleRootGroup,
-  showOuterContainer,
+  useDefaultContainerStyles,
   showValidation,
   customizationMode,
   themeStyle,
@@ -31,6 +32,7 @@ export const formatBuilderSource = ({
   const usesFluentUiAdapter = customizationMode === 'fluentui';
   const usesRadixAdapter = customizationMode === 'radix';
   const usesBootstrapAdapter = customizationMode === 'bootstrap';
+  const usesDarkMode = customizationMode === 'default' && darkMode;
   const themeOverrides =
     customizationMode === 'default'
       ? createThemeOverrides(themeStyle, defaultThemeStyle)
@@ -79,6 +81,9 @@ import { Theme } from '@radix-ui/themes';
 import { components as radixComponents } from '@vojtechportes/react-query-builder/radix/v1';`
       : null,
     `import '@vojtechportes/react-query-builder/styles.css';`,
+    usesDarkMode
+      ? `import '@vojtechportes/react-query-builder/dark-mode.variables.css';`
+      : null,
     `import { demoFields, initialQueryTree } from '../constants/demo-data';`,
   ]
     .filter(Boolean)
@@ -102,7 +107,10 @@ import { components as radixComponents } from '@vojtechportes/react-query-builde
     textMode && defaultMode === 'text' ? 'defaultMode="text"' : null,
     'groupTypes="both"',
     singleRootGroup ? 'singleRootGroup' : 'singleRootGroup={false}',
-    showOuterContainer ? null : 'showOuterContainer={false}',
+    useDefaultContainerStyles ? null : 'useDefaultContainerStyles={false}',
+    customizationMode === 'default'
+      ? `colorScheme="${darkMode ? 'dark' : 'light'}"`
+      : null,
     showValidation ? 'showValidation' : null,
     usesMuiAdapter ? 'components={muiComponents}' : null,
     usesAntdAdapter ? 'components={antdComponents}' : null,

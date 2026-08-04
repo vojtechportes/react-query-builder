@@ -1,4 +1,5 @@
 export interface IDemoPlaygroundSettings {
+  darkMode: boolean;
   allowFieldComparisons: boolean;
   allowGroupNegation: boolean;
   cloneable: boolean;
@@ -10,7 +11,7 @@ export interface IDemoPlaygroundSettings {
   newNodePlacement: 'append' | 'prepend';
   readOnly: boolean;
   readOnlyProtectsDelete: boolean;
-  showOuterContainer: boolean;
+  useDefaultContainerStyles: boolean;
   showValidation: boolean;
   singleRootGroup: boolean;
   textMode: boolean;

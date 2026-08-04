@@ -3,6 +3,7 @@ import type * as Monaco from 'monaco-editor';
 import { ITextModeEditorProps } from '../../../../builder/text-mode/types/text-mode-editor-props';
 import { ITextModeProtectedRange } from '../../../../builder/text-mode/types/text-mode-protected-range';
 import { createMonacoRangeFromOffsets } from '../../utils/create-monaco-range-from-offsets';
+import { createMonacoQueryBuilderTheme } from '../../utils/create-monaco-query-builder-theme.util';
 import { createMonacoDiagnosticDecoration } from '../../utils/create-monaco-diagnostic-decoration';
 import { doesChangeIntersectProtectedRanges } from '../../utils/does-change-intersect-protected-ranges';
 import { restoreSelectionsBeforeChange } from '../../utils/restore-selection-before-change';
@@ -11,6 +12,8 @@ import { updateProtectedRangesAfterChange } from '../../utils/update-protected-r
 import styles from './monaco-text-mode-editor.module.css';
 
 const EMPTY_PROTECTED_RANGES: ITextModeProtectedRange[] = [];
+const LIGHT_MONACO_THEME = createMonacoQueryBuilderTheme('light');
+const DARK_MONACO_THEME = createMonacoQueryBuilderTheme('dark');
 
 const areProtectedRangesEqual = (
   left: ITextModeProtectedRange[],
@@ -28,6 +31,7 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   protectedRanges = EMPTY_PROTECTED_RANGES,
   protectedRangeHoverMessage = null,
   errorMessage,
+  colorScheme,
   readOnly = false,
   allowProtectedRangeDeletion = false,
   onChange,
@@ -38,7 +42,10 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   const changeSubscriptionRef = useRef<Monaco.IDisposable | null>(null);
   const onChangeRef = useRef(onChange);
   const allowProtectedRangeDeletionRef = useRef(allowProtectedRangeDeletion);
+  const monacoTheme =
+    colorScheme === 'dark' ? DARK_MONACO_THEME.name : LIGHT_MONACO_THEME.name;
   const initialReadOnlyRef = useRef(readOnly);
+  const initialThemeRef = useRef(monacoTheme);
   const initialValueRef = useRef(value);
   const isSyncingValueRef = useRef(false);
   const isRevertingChangeRef = useRef(false);
@@ -78,10 +85,15 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
       }
 
       monacoRef.current = monaco;
+      monaco.editor.defineTheme(
+        LIGHT_MONACO_THEME.name,
+        LIGHT_MONACO_THEME.data
+      );
+      monaco.editor.defineTheme(DARK_MONACO_THEME.name, DARK_MONACO_THEME.data);
       const editor = monaco.editor.create(containerRef.current, {
         value: initialValueRef.current,
         language: 'sql',
-        theme: 'vs',
+        theme: initialThemeRef.current,
         readOnly: initialReadOnlyRef.current,
         automaticLayout: true,
         wordWrap: 'on',
@@ -215,12 +227,20 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   }, [protectedRanges]);
 
   useEffect(() => {
-    if (!editorRef.current) {
+    if (!editorReady || !editorRef.current) {
       return;
     }
 
     editorRef.current.updateOptions({ readOnly });
-  }, [readOnly]);
+  }, [editorReady, readOnly]);
+
+  useEffect(() => {
+    if (!editorReady || !editorRef.current) {
+      return;
+    }
+
+    editorRef.current.updateOptions({ theme: monacoTheme });
+  }, [editorReady, monacoTheme]);
 
   useEffect(() => {
     if (!editorRef.current) {

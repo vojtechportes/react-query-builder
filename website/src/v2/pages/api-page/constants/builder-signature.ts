@@ -1,7 +1,10 @@
 export const builderSignature = `export interface IBuilderProps {
   fields: IBuilderFieldProps[];
   data: DenormalizedQuery;
-  showOuterContainer?: boolean;
+  className?: string;
+  style?: IBuilderStyle;
+  useDefaultContainerStyles?: boolean;
+  colorScheme?: 'light' | 'dark';
   components?: IBuilderComponentsProps;
   strings?: IStrings;
   textMode?: boolean | IBuilderTextModeConfig;

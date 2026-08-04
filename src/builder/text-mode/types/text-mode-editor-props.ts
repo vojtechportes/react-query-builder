@@ -8,6 +8,7 @@ export interface ITextModeEditorProps {
   protectedRangesMessage?: string | null;
   protectedRangeHoverMessage?: string | null;
   errorMessage: string | null;
+  colorScheme?: 'light' | 'dark';
   readOnly?: boolean;
   allowProtectedRangeDeletion?: boolean;
   onChange: (value: string) => void;

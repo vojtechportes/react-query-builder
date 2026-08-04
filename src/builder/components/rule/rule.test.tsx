@@ -569,7 +569,7 @@ describe('#components/Rule CSS Module presentation', () => {
     );
 
     expect(containerCss).toContain(
-      'background-color: var(--query-builder-color-white)'
+      'background-color: var(--query-builder-color-background)'
     );
     expect(containerCss).toContain(
       'border: 1px solid var(--query-builder-color-grey-300)'

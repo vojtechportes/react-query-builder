@@ -25,7 +25,7 @@ const Root = styled.article<{
   gap: 2rem;
   align-items: start;
   padding: 2rem;
-  overflow: hidden;
+  // overflow: hidden;
   border: 1px solid ${({ $tone }) => ($tone === 'dark' ? '#0f172a' : '#dbe4f0')};
   border-radius: 16px;
   background: ${({ $tone }) => ($tone === 'dark' ? '#0f172a' : '#fff')};

@@ -2605,3 +2605,62 @@ site/v1 usage.
 - Run `npm run build:v2 --workspace website`.
 - Run browser checks for the default and container-free Builder layouts.
 - Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
+
+### T080 - Add reactive dark mode for default components
+
+**Status:** `[x]` Done
+
+**Goal:** Provide a typed, opt-in dark color-variable theme for built-in components that switches at runtime without remounting the Builder, while retaining a stable customizable Builder root and readable built-in SQL highlighting.
+
+**Scope:**
+
+- Rename `showOuterContainer` to `useDefaultContainerStyles`, defaulting to `true`.
+- Always render the Builder root `div` with `data-query-builder="root"`, forwarded `className`, merged `style`, and the optional color-scheme attribute. When `useDefaultContainerStyles` is `false`, retain the built-in typography/color baseline and omit only the visual container styles.
+- Add `colorScheme?: 'light' | 'dark'` to `IBuilderProps`. Leave it undefined by default to preserve existing inherited-variable behavior.
+- Add a separately importable `@vojtechportes/react-query-builder/dark-mode.variables.css` package export containing dark color-variable overrides for built-in components.
+- Generate explicit light and dark low-specificity selectors so sibling and nested Builders can use independent color schemes, including a light Builder inside a dark ancestor.
+- Keep `styles.css` as the required base stylesheet and keep dark mode opt-in.
+- Rename the canonical `--query-builder-color-white` surface token to `--query-builder-color-background` across built-in components, typed style overrides, generated variables, tests, and v2 documentation/API references.
+- Preserve the legacy TypeScript color theme API and map its `colors.white` value to the new background variable.
+- Replace hard-coded built-in SQL syntax-highlighting colors with existing query-builder palette variables and ensure light and dark palettes remain readable.
+- Remove visible seams between adjacent built-in group operator controls in dark mode.
+- Normalize the default action-button label to an 11px-equivalent rem size so root and nested group buttons rasterize consistently without changing their 32px control height.
+- Keep host-library adapter theme switching outside the package dark-mode stylesheet; adapters continue to use their own theme providers or theme APIs.
+- Forward the typed Builder color scheme to custom text editors and map it reactively to package-owned Monaco themes based on `vs` / `vs-dark`. Map Monaco SQL tokens to the same canonical palette roles as the built-in text editor and add scheme-aware protected-range colors. Keep consumer-defined Monaco themes, CSS-variable synchronization, and per-instance orchestration outside this task.
+- Update package build, export, package binding, packed-artifact, stylesheet-consumer, and release verification for the additional public CSS file.
+- Document importing, typed switching, precedence, root-container behavior, token migration, text mode, Monaco, and adapter boundaries in the v2 Documentation and API sections only.
+- Replace the v2 Demo `showOuterContainer` control with `useDefaultContainerStyles` and add a Dark mode checkbox directly below the Default components option in Customization. Enable and apply dark mode only for default components, update generated source, and preserve the selected preference when switching temporarily to an adapter.
+- Preserve v1 website content and behavior, existing query behavior, and unrelated worktree changes.
+
+**Acceptance criteria:**
+
+- The Builder always renders one root `div`; `className`, `style`, `data-query-builder="root"`, and `colorScheme` continue to work when default container styles are disabled.
+- `useDefaultContainerStyles` defaults to `true`; setting it to `false` retains the built-in typography/color baseline and removes only root padding, background, border, radius, and shadow.
+- Consumers can import `styles.css` and `dark-mode.variables.css`, then switch `colorScheme` between light and dark without remounting the Builder or resetting its state.
+- Explicit light and dark Builders can coexist as siblings or nested descendants without leaking their palettes into one another.
+- Omitting `colorScheme` preserves inherited application variables and existing theming behavior.
+- Consumer root classes, legacy ThemeProvider variables, and explicit `Builder.style` variables retain their documented precedence over scheme defaults.
+- Built-in controls, surfaces, overlays, focus states, validation states, drag-and-drop affordances, and built-in text mode have readable light and dark colors.
+- Root and nested default action buttons share the same 11px label metrics and 32px control height.
+- Built-in SQL highlighting uses query-builder palette variables instead of standalone color literals.
+- The packaged Monaco editor follows the Builder color scheme without remounting and maps SQL keywords, operators, delimiters, strings, numbers, functions, identifiers, foreground, and background to the same canonical light/dark palette roles as the built-in editor. An undefined scheme uses the package light theme. Monaco's global standalone theme means the latest mounted packaged editor, or the editor whose scheme changes most recently, wins across simultaneously mounted Monaco editors; consumer-defined and independent per-editor themes remain application-managed.
+- `--query-builder-color-background` is the canonical built-in surface token and is available through `IBuilderStyle`.
+- The package publishes and exports both public stylesheets with CSS side effects preserved.
+- The v2 Documentation and API sections describe the typed color scheme, required import, precedence, renamed container prop, token migration, text-mode colors, Monaco boundary, and adapter boundary.
+- The v2 Demo controls update the preview immediately and produce matching copy-ready source; the dark-mode checkbox is enabled only for default components.
+- V1 content and host-library adapter theming remain unchanged.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code and configuration file.
+- Run focused Builder root, generated-token, CSS contract, ThemeProvider mapping, built-in component, text-mode, package-export, packed-consumer, v2 Documentation/API, and v2 Demo tests.
+- Run `npm run test:css-infrastructure`.
+- Run `npm run test:packed-entries`.
+- Run `npm run verify:publish-artifact`.
+- Run `npm run package-bindings:verify --workspace website`.
+- Run `npm run typecheck:v2 --workspace website` and `npm run test:v2 --workspace website`.
+- Run `npm test`, `npm run lint`, `npm run build`, `npm run verify:architecture`, and `npm run build:v2 --workspace website`.
+- Run desktop and mobile browser checks for light/dark switching, scoped sibling and nested Builders, disabled default container styles, built-in text mode, validation/read-only states, and adapter checkbox behavior.
+- Check representative foreground/background combinations for accessible contrast in both modes.
+- Run `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.

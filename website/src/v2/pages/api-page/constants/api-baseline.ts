@@ -9,7 +9,7 @@ export const apiBaseline = [
     path: '/api/builder',
     title: 'Builder',
     contentHash:
-      'c634fddcfd9aee60ce90dc4185de78d518019126cd697fccde297f470b8bb595',
+      'dbc248a5d10958da9d7de66967820c8d1410f132cf920f682aa6e5dcf9a1d01e',
   },
   {
     path: '/api/builder-ref',
@@ -33,7 +33,7 @@ export const apiBaseline = [
     path: '/api/components',
     title: 'Components',
     contentHash:
-      'f111af4d0d78fe777ecadcb45946c166fbae5ad18c146d563e70fb8e3869e7ea',
+      '59909b0cdd803e403ca11840ef89154aab918bfc60b411b18d0993e2070919da',
   },
   {
     path: '/api/adapters',
@@ -81,13 +81,13 @@ export const apiBaseline = [
     path: '/api/css-variables',
     title: 'CSS Variables',
     contentHash:
-      '5d0072824f1c5f8c861000b7d49565e6e835faeb27bfa17da34a498feaef2c1b',
+      '1658a6f94b46071bdbbe8421573c537b828df8402153c1181e597493e0261ed4',
   },
   {
     path: '/api/theming',
     title: 'Theming',
     contentHash:
-      '9556b871b7af7c011c67774d92ab2c66d988ba00706604a4ac153f14f9064d09',
+      '5a33af4417729fb25fd582f7edfaf35696414581b57c2eaeb2ab97ae0b2b3a1d',
   },
   {
     path: '/api/format-query',

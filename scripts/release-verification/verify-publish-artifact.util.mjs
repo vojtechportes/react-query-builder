@@ -72,6 +72,8 @@ const verifyPublishArtifact = async () => {
     }
     if (
       manifest.exports?.['./styles.css'] !== './dist/styles.css' ||
+      manifest.exports?.['./dark-mode.variables.css'] !==
+        './dist/dark-mode.variables.css' ||
       manifest.style !== './dist/styles.css'
     ) {
       throw new Error('Packed stylesheet exports are missing or invalid');

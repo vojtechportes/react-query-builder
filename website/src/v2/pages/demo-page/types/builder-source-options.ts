@@ -3,6 +3,7 @@ import type { LocaleId } from './locale-id';
 import type { CustomizationMode } from './customization-mode';
 
 export interface IBuilderSourceOptions {
+  darkMode: boolean;
   readOnly: boolean;
   readOnlyProtectsDelete: boolean;
   lockable: boolean;
@@ -17,7 +18,7 @@ export interface IBuilderSourceOptions {
   defaultMode: 'builder' | 'text';
   useMonacoTextEditor: boolean;
   singleRootGroup: boolean;
-  showOuterContainer: boolean;
+  useDefaultContainerStyles: boolean;
   showValidation: boolean;
   customizationMode: CustomizationMode;
   themeStyle: IBuilderStyle;

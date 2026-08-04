@@ -3,7 +3,7 @@
     display: grid;
     grid-template-columns: 1fr;
     margin-top: 0.5rem;
-    background: #f4f4f4;
+    background: var(--query-builder-color-grey-100);
     border: 1px solid var(--query-builder-color-grey-200);
     border-radius: var(--query-builder-radius-sm, 4px);
     box-shadow: var(
@@ -46,14 +46,23 @@
     border-radius: 0;
   }
 
-  .left > div:first-child {
+  .left > div:not(:last-child) {
     border-right: 0;
+  }
+
+  .left > div:first-child {
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
   }
 
   .left > div + div {
+    margin-left: -1px;
     border-left: 0;
+  }
+
+  .left > div[data-selected='true'] {
+    position: relative;
+    z-index: 1;
   }
 
   .left > div:last-child {

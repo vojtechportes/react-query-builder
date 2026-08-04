@@ -55,19 +55,25 @@ const stagedFiles = fs
   .readdirSync(stageRoot, { recursive: true })
   .map((file) => file.replaceAll('\\', '/'));
 const stylesheetFiles = stagedFiles.filter((file) => file.endsWith('.css'));
-const stylesheetMarkerCount = stylesheetFiles.reduce((count, file) => {
+const packageStylesheetFiles = stylesheetFiles.filter((file) =>
+  fs.readFileSync(path.join(stageRoot, file), 'utf8').includes(stylesheetMarker)
+);
+const stylesheetMarkerCount = packageStylesheetFiles.reduce((count, file) => {
   const stylesheet = fs.readFileSync(path.join(stageRoot, file), 'utf8');
 
   return count + stylesheet.split(stylesheetMarker).length - 1;
 }, 0);
-const expectedMarkerCount = target === 'v2' ? 1 : 0;
+const expectedStylesheetCount = target === 'v2' ? 1 : 0;
+const expectedMarkerCount = target === 'v2' ? 3 : 0;
 
-if (stylesheetMarkerCount !== expectedMarkerCount) {
+if (
+  packageStylesheetFiles.length !== expectedStylesheetCount ||
+  stylesheetMarkerCount !== expectedMarkerCount
+) {
   throw new Error(
-    `${target} staging contains ${stylesheetMarkerCount} React Query Builder stylesheet copies; expected ${expectedMarkerCount}.`
+    `${target} staging contains ${packageStylesheetFiles.length} React Query Builder stylesheet assets with ${stylesheetMarkerCount} scheme declarations; expected ${expectedStylesheetCount} asset with ${expectedMarkerCount} declarations.`
   );
 }
-
 const htmlFiles = stagedFiles.filter((file) => file.endsWith('.html'));
 const containsPrismMarkup = htmlFiles.some((htmlFile) => {
   const html = fs.readFileSync(path.join(stageRoot, htmlFile), 'utf8');

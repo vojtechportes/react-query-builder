@@ -177,7 +177,8 @@ export interface IBuilderProps {
   data: DenormalizedQuery;
   className?: string;
   style?: IBuilderStyle;
-  showOuterContainer?: boolean;
+  useDefaultContainerStyles?: boolean;
+  colorScheme?: 'light' | 'dark';
   components?: IBuilderComponentsProps;
   strings?: IStrings;
   textMode?: boolean | IBuilderTextModeConfig;

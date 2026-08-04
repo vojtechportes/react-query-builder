@@ -62,11 +62,11 @@ export const colors: IColors = {
     light: '#8fb2ff',
   },
   success: {
-    primary: '#2f8f4e',
+    primary: '#237a40',
     light: '#8fd3a3',
   },
   warning: {
-    primary: '#dc7a1e',
+    primary: '#b45309',
     light: '#f7b578',
   },
   error: {

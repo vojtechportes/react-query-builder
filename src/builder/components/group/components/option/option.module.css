@@ -2,16 +2,27 @@
   .option {
     min-height: 2rem;
     padding: 0.5rem 0.6rem;
-    color: var(--query-builder-color-primary-contrast-text);
+    color: light-dark(
+      var(--query-builder-color-primary-contrast-text),
+      var(--query-builder-color-grey-900)
+    );
     font-size: 0.7rem;
     font-weight: bold;
     text-transform: uppercase;
-    background: var(--query-builder-color-grey-500);
-    border: 1px solid var(--query-builder-color-grey-800);
+    background: light-dark(
+      var(--query-builder-color-grey-500),
+      var(--query-builder-color-grey-400)
+    );
+    border: 1px solid
+      light-dark(
+        var(--query-builder-color-grey-800),
+        var(--query-builder-color-grey-500)
+      );
     cursor: pointer;
   }
 
   .selected {
+    color: var(--query-builder-color-primary-contrast-text);
     background: var(--query-builder-color-primary-default);
   }
 

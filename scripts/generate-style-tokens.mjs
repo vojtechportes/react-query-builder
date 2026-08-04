@@ -1,35 +1,18 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { cwd } from 'node:process';
 import ts from 'typescript';
 
 const rootDir = cwd();
-const colorsPath = join(
-  rootDir,
-  'src',
-  'builder',
-  'theme',
-  'styles',
-  'colors.ts'
-);
-const tokensPath = join(
-  rootDir,
-  'src',
-  'builder',
-  'theme',
-  'styles',
-  'tokens.css'
-);
-const sourceText = readFileSync(colorsPath, 'utf8');
-const sourceFile = ts.createSourceFile(
-  colorsPath,
-  sourceText,
-  ts.ScriptTarget.Latest,
-  true,
-  ts.ScriptKind.TS
-);
+const stylesDirectory = join(rootDir, 'src', 'builder', 'theme', 'styles');
+const colorsPath = join(stylesDirectory, 'colors.ts');
+const darkColorsPath = join(stylesDirectory, 'dark-colors.ts');
+const tokensPath = join(stylesDirectory, 'tokens.css');
+const darkTokensPath = join(stylesDirectory, 'dark-mode.variables.css');
+const distributionPath = join(rootDir, 'dist', 'dark-mode.variables.css');
+const distributionOnly = process.argv.includes('--distribution-only');
 
-const readObjectLiteral = (objectLiteral) => {
+const readObjectLiteral = (objectLiteral, sourceFile) => {
   const result = {};
 
   for (const property of objectLiteral.properties) {
@@ -41,7 +24,7 @@ const readObjectLiteral = (objectLiteral) => {
     const initializer = property.initializer;
 
     if (ts.isObjectLiteralExpression(initializer)) {
-      result[key] = readObjectLiteral(initializer);
+      result[key] = readObjectLiteral(initializer, sourceFile);
       continue;
     }
 
@@ -53,7 +36,16 @@ const readObjectLiteral = (objectLiteral) => {
   return result;
 };
 
-const findColorsObject = () => {
+const readExportedColors = (filePath, exportName) => {
+  const sourceText = readFileSync(filePath, 'utf8');
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS
+  );
+
   for (const statement of sourceFile.statements) {
     if (!ts.isVariableStatement(statement)) {
       continue;
@@ -62,20 +54,19 @@ const findColorsObject = () => {
     for (const declaration of statement.declarationList.declarations) {
       if (
         ts.isIdentifier(declaration.name) &&
-        declaration.name.text === 'colors' &&
+        declaration.name.text === exportName &&
         declaration.initializer &&
         ts.isObjectLiteralExpression(declaration.initializer)
       ) {
-        return readObjectLiteral(declaration.initializer);
+        return readObjectLiteral(declaration.initializer, sourceFile);
       }
     }
   }
 
-  throw new Error('Unable to find exported colors object.');
+  throw new Error(`Unable to find exported ${exportName} object.`);
 };
 
-const colors = findColorsObject();
-const colorVariables = [
+const createColorVariables = (colors) => [
   ['--query-builder-color-primary-default', colors.primary.default],
   ['--query-builder-color-primary-light', colors.primary.light],
   ['--query-builder-color-primary-dark', colors.primary.dark],
@@ -104,7 +95,7 @@ const colorVariables = [
   ['--query-builder-color-warning-light', colors.warning.light],
   ['--query-builder-color-error-primary', colors.error.primary],
   ['--query-builder-color-error-light', colors.error.light],
-  ['--query-builder-color-white', colors.white],
+  ['--query-builder-color-background', colors.white],
 ];
 
 const staticVariables = [
@@ -144,12 +135,38 @@ const staticVariables = [
   ['--query-builder-popover-z-index', '5'],
 ];
 
-const formatVariable = ([name, value]) => `    ${name}: ${value};`;
-const content = `@layer react-query-builder {
+const formatVariables = (variables) =>
+  variables.map(([name, value]) => `    ${name}: ${value};`).join('\n');
+
+const lightColorVariables = createColorVariables(
+  readExportedColors(colorsPath, 'colors')
+);
+const darkColorVariables = createColorVariables(
+  readExportedColors(darkColorsPath, 'darkColors')
+);
+const lightContent = `@layer react-query-builder {
   :where(:root) {
-${[...colorVariables, ...staticVariables].map(formatVariable).join('\n')}
+${formatVariables([...lightColorVariables, ...staticVariables])}
+  }
+
+  :where([data-query-builder-color-scheme='light']) {
+    color-scheme: light;
+${formatVariables(lightColorVariables)}
+  }
+}
+`;
+const darkContent = `@layer react-query-builder {
+  :where([data-query-builder-color-scheme='dark']) {
+    color-scheme: dark;
+${formatVariables(darkColorVariables)}
   }
 }
 `;
 
-writeFileSync(tokensPath, content);
+if (!distributionOnly) {
+  writeFileSync(tokensPath, lightContent);
+  writeFileSync(darkTokensPath, darkContent);
+} else {
+  mkdirSync(join(rootDir, 'dist'), { recursive: true });
+  writeFileSync(distributionPath, darkContent);
+}
