@@ -87,7 +87,7 @@ export const documentationBaseline = [
     path: '/documentation/components',
     title: 'Components',
     contentHash:
-      '4be720a20a3d26302b6e76f6d142f18267604194b19f8f81ee04f530b1d65f88',
+      '2d158056043f93efdfb76ec15294934dd4d99ab4f642de4358bc74b46242ac55',
   },
   {
     path: '/documentation/adapters',
