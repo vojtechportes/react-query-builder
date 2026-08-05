@@ -490,7 +490,7 @@ as `Elasticsearch` and `RSQL`.
 
 ## Responsive Behavior
 
-The default builder components include a compact responsive layout for medium-width screens.
+The default builder components include a compact responsive layout.
 
 - Rule rows reflow to preserve field, operator, action, and value legibility when horizontal space gets tighter.
 - Multi-select values use a summarized closed state to avoid chip overflow.

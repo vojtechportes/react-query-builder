@@ -72,7 +72,7 @@ export const ComponentsDocumentationContent: React.FC = () => (
       <li>
         The built-in <InlineCode>Rule</InlineCode> and{' '}
         <InlineCode>Group</InlineCode> components include a compact responsive
-        layout for medium-width screens.
+        layout for.
       </li>
       <li>
         Multi-select controls use a summarized closed state so selected values
