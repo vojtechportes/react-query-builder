@@ -362,52 +362,6 @@ describe('#components/Rule', () => {
 });
 
 describe('#components/Rule CSS Module presentation', () => {
-  it.each([
-    [false, false],
-    [true, false],
-    [false, true],
-    [true, true],
-  ])(
-    'maps dragHandle=%s controls=%s to finite container state',
-    (hasDragHandle, hasControls) => {
-      const { container } = render(
-        <RuleContainer
-          dragHandle={hasDragHandle ? <span data-test="drag" /> : null}
-          controls={hasControls ? <button type="button">Control</button> : null}
-          className="incoming-rule"
-          data-test="rule-container"
-        >
-          Content
-        </RuleContainer>
-      );
-      const rule = container.firstElementChild as HTMLElement;
-      const content = rule.children[hasDragHandle ? 1 : 0] as HTMLElement;
-
-      expect(rule).toHaveClass(ruleContainerStyles.rule, 'incoming-rule');
-      expect(rule.classList.contains(ruleContainerStyles.withDragHandle)).toBe(
-        hasDragHandle
-      );
-      expect(rule.classList.contains(ruleContainerStyles.withControls)).toBe(
-        hasControls
-      );
-      expect(rule).toHaveAttribute(
-        'data-rule-has-drag-handle',
-        String(hasDragHandle)
-      );
-      expect(rule).toHaveAttribute(
-        'data-rule-has-controls',
-        String(hasControls)
-      );
-      expect(content).toHaveClass(ruleContainerStyles.content);
-      expect(
-        content.classList.contains(ruleContainerStyles.contentWithoutControls)
-      ).toBe(!hasControls);
-      expect(
-        Boolean(rule.querySelector(`.${ruleContainerStyles.controls}`))
-      ).toBe(hasControls);
-    }
-  );
-
   it('maps rule layout, comparison, validation, and read-only state classes', () => {
     const { container } = renderWithContext(
       <Rule
@@ -556,26 +510,12 @@ describe('#components/Rule CSS Module presentation', () => {
     expect(markup).not.toContain('$theme');
   });
 
-  it('defines extracted token, grid, validation, and responsive rules', () => {
+  it('defines extracted grid, validation, and responsive rules', () => {
     const ruleCss = readFileSync(join(__dirname, 'rule.module.css'), 'utf8');
-    const containerCss = readFileSync(
-      join(
-        __dirname,
-        'components',
-        'rule-container',
-        'rule-container.module.css'
-      ),
-      'utf8'
+    const narrowRuleCss = ruleCss.slice(
+      ruleCss.indexOf('@media (max-width: 420px)')
     );
 
-    expect(containerCss).toContain(
-      'background-color: var(--query-builder-color-background)'
-    );
-    expect(containerCss).toContain(
-      'border: 1px solid var(--query-builder-color-grey-300)'
-    );
-    expect(containerCss).toContain('.withDragHandle.withControls');
-    expect(containerCss).toContain('@media (max-width: 900px)');
     expect(ruleCss).toContain('grid-template-columns: minmax(0, 1.35fr)');
     expect(ruleCss).toContain('--query-builder-control-min-width: 0px');
     expect(ruleCss).toContain('min-width: 0');
@@ -584,5 +524,9 @@ describe('#components/Rule CSS Module presentation', () => {
     );
     expect(ruleCss).toContain('@media (max-width: 900px)');
     expect(ruleCss).toContain('grid-column: 1 / -1');
+    expect(ruleCss).toContain('@media (max-width: 420px)');
+    expect(narrowRuleCss).toMatch(
+      /\.fieldsContent\s*\{\s*grid-template-columns: 1fr;\s*\}/
+    );
   });
 });

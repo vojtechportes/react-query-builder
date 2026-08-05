@@ -2664,3 +2664,33 @@ site/v1 usage.
 - Check representative foreground/background combinations for accessible contrast in both modes.
 - Run `git diff --check`.
 - Run the repository-required code-review agent and resolve all findings.
+
+### T081 - Improve responsive rule layout
+
+**Status:** `[x]` Done
+
+**Goal:** Keep rule controls and inputs usable on narrow screens by stacking actions below inputs and placing each input on its own row at phone widths.
+
+**Scope:**
+
+- Move the built-in rule action controls below the rule inputs at viewport widths of 640px and lower.
+- Stack field, operator, and value inputs into one column at viewport widths of 420px and lower.
+- Preserve drag-handle layouts, existing rule behavior, adapter behavior, and unrelated worktree changes.
+- Add focused coverage for the responsive CSS contracts.
+
+**Acceptance criteria:**
+
+- At widths above 640px, built-in rule controls retain their current side-by-side layout.
+- At widths of 640px and lower, built-in rule controls render below the input area.
+- At widths of 640px and lower, rule actions align with the inputs' left edge.
+- At widths of 420px and lower, field, operator, and value controls each use a separate row.
+- Rules with drag handles and multiple action controls remain aligned and usable.
+
+**Verification:**
+
+- Run Prettier on every modified non-Markdown code file.
+- Run the focused Rule test suite.
+- Run the root test suite, build, and lint.
+- Run responsive browser checks around the 640px and 420px breakpoints.
+- Run `git diff --check`.
+- Run the repository-required code-review agent and resolve all findings.
