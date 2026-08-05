@@ -45,4 +45,29 @@
       padding-left: 0.5rem;
     }
   }
+
+  @media (max-width: 640px) {
+    .withControls {
+      grid-template-columns: 1fr;
+    }
+
+    .withDragHandle.withControls {
+      grid-template-columns: auto 1fr;
+    }
+
+    .withControls .content {
+      padding-right: 0.7rem;
+    }
+
+    .withControls .controls {
+      grid-column: 1 / -1;
+      justify-self: start;
+      padding-top: 0;
+      padding-left: 0.7rem;
+    }
+
+    .withDragHandle.withControls .controls {
+      grid-column: 2;
+    }
+  }
 }
