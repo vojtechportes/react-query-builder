@@ -218,6 +218,7 @@
     "prettier:check": "prettier --check .",
     "website:dev": "npm run dev --workspace website",
     "website:build": "npm run build --workspace website",
+    "documentation:hashes:update": "npm run documentation:hashes:update --workspace website",
     "check": "npm run lint && npm run test && npm run build && npm run website:build",
     "prepublishOnly": "npm run verify:publish"
   },
