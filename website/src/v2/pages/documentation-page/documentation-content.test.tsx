@@ -17,16 +17,21 @@ describe('v2 Documentation content', () => {
   });
 
   it('preserves the normalized raw content for every route', async () => {
-    for (const { path, contentHash } of documentationBaseline) {
-      const page = findDocumentationPage(path);
-      const content = renderToStaticMarkup(
-        <StaticRouter location={path}>{page.content}</StaticRouter>
-      ).replace(/ class="[^"]*"/g, '');
+    const contentHashes = await Promise.all(
+      documentationBaseline.map(async ({ path }) => {
+        const page = findDocumentationPage(path);
+        const content = renderToStaticMarkup(
+          <StaticRouter location={path}>{page.content}</StaticRouter>
+        ).replace(/ class="[^"]*"/g, '');
 
-      await expect(hashDocumentationContent(content)).resolves.toBe(
-        contentHash
-      );
-    }
+        return {
+          path,
+          contentHash: await hashDocumentationContent(content),
+        };
+      })
+    );
+
+    expect(contentHashes).toMatchSnapshot();
   });
 
   it('links the documentation overview to the 2.0 migration guide', () => {
