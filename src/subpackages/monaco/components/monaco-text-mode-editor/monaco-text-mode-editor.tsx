@@ -8,6 +8,7 @@ import { createMonacoDiagnosticDecoration } from '../../utils/create-monaco-diag
 import { doesChangeIntersectProtectedRanges } from '../../utils/does-change-intersect-protected-ranges';
 import { restoreSelectionsBeforeChange } from '../../utils/restore-selection-before-change';
 import { updateProtectedRangesAfterChange } from '../../utils/update-protected-ranges-after-change';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 import styles from './monaco-text-mode-editor.module.css';
 
@@ -357,6 +358,11 @@ export const MonacoTextModeEditor: FC<ITextModeEditorProps> = ({
   return (
     <div className={styles.root}>
       <div className={styles.frame}>
+        {!editorReady ? (
+          <div className={styles.loading}>
+            <Skeleton variant="text" />
+          </div>
+        ) : null}
         <div
           ref={containerRef}
           className={`${styles.surface} rqb-monaco-text-mode-editor`}

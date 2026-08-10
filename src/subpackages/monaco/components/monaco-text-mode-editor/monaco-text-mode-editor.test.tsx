@@ -584,7 +584,7 @@ describe('MonacoTextModeEditor presentation', () => {
     );
     const root = container.firstElementChild;
     const frame = root?.firstElementChild;
-    const surface = frame?.firstElementChild;
+    const surface = frame?.querySelector('[data-test="MonacoTextModeEditor"]');
     const error = root?.lastElementChild;
 
     expect(root).toHaveClass(styles.root);
@@ -598,6 +598,21 @@ describe('MonacoTextModeEditor presentation', () => {
       expect(getMonacoMock().getCreateOptions()).toMatchObject({
         theme: 'rqb-query-builder-light',
       });
+    });
+  });
+
+  it('shows a default text skeleton until Monaco is ready', async () => {
+    const { container } = render(<MonacoTextModeEditor {...baseProps} />);
+    const loading = container.querySelector(`.${styles.loading}`);
+
+    expect(loading).toBeInTheDocument();
+    expect(loading?.firstElementChild).toHaveClass('skeleton', 'text');
+    expect(loading?.firstElementChild?.children).toHaveLength(3);
+
+    await waitFor(() => {
+      expect(
+        container.querySelector(`.${styles.loading}`)
+      ).not.toBeInTheDocument();
     });
   });
 

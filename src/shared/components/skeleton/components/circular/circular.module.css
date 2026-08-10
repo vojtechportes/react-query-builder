@@ -1,0 +1,26 @@
+@layer react-query-builder {
+  .circular {
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background-color: color-mix(
+      in srgb,
+      var(--query-builder-color-grey-500) 40%,
+      transparent
+    );
+    animation: skeleton-pulse 1.5s ease-in-out 0.5s infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+}

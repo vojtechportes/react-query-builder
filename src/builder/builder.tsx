@@ -947,6 +947,7 @@ export const Builder = forwardRef<IBuilderRef, IBuilderProps>(
       style: rootStyle,
       useDefaultStyles: useDefaultContainerStyles,
     };
+
     return (
       <BuilderContextProvider
         fields={fields}

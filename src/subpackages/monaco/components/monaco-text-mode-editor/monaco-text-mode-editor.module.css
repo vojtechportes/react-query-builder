@@ -6,10 +6,16 @@
 
   .frame {
     min-height: var(--query-builder-editor-min-height);
+    position: relative;
     overflow: hidden;
     border: 1px solid var(--query-builder-color-grey-300);
     border-radius: var(--query-builder-radius-sm);
     background: var(--query-builder-color-background);
+  }
+
+  .loading {
+    position: absolute;
+    inset: var(--query-builder-spacing-md, 1rem);
   }
 
   .surface,
