@@ -1,0 +1,5 @@
+@layer react-query-builder {
+  .skeleton {
+    width: 100%;
+  }
+}

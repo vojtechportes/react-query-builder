@@ -1,0 +1,35 @@
+@layer react-query-builder {
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--query-builder-spacing-sm, 0.5rem);
+  }
+
+  .item {
+    background-color: color-mix(
+      in srgb,
+      var(--query-builder-color-grey-500) 40%,
+      transparent
+    );
+    animation: skeleton-pulse 1.5s ease-in-out 0.5s infinite;
+    border-radius: var(--query-builder-radius-md, 6px);
+  }
+
+  .text .item {
+    height: var(--query-builder-font-size, 16px);
+  }
+
+  @keyframes skeleton-pulse {
+    0% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+}
