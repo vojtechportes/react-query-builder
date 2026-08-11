@@ -60,4 +60,4 @@ jobs:
           fi
 
       - name: Publish package
-        run: npm publish --access public
+        run: npm publish --access public --tag legacy
