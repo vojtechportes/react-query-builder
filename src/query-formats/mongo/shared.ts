@@ -21,7 +21,7 @@ export const parseMongoFieldReference = (value: unknown): string | null => {
 };
 
 export const escapeRegexPattern = (value: string): string =>
-  value.replace(/[|\{}()\[\]^$+*?.]/g, '\\$&');
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const stripAnchors = (value: string): string =>
   value.replace(/^\^/, '').replace(/\$$/, '');

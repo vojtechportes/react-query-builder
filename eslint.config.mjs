@@ -7,10 +7,17 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: ['coverage/**', 'dist/**', 'example/dist/**', 'node_modules/**'],
+    ignores: [
+      '.tmp/**',
+      'coverage/**',
+      'dist/**',
+      'example/dist/**',
+      'node_modules/**',
+      'website/**',
+    ],
   },
   {
-    files: ['**/*.cjs'],
+    files: ['**/*.cjs', 'example/scripts/validate-recipe-code-format.mjs'],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -41,6 +48,7 @@ export default defineConfig(
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'no-extra-boolean-cast': 'off',
       'react-hooks/rules-of-hooks': 'error',
