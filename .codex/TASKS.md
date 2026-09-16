@@ -2694,3 +2694,34 @@ site/v1 usage.
 - Run responsive browser checks around the 640px and 420px breakpoints.
 - Run `git diff --check`.
 - Run the repository-required code-review agent and resolve all findings.
+
+### B002 - Fix versioned MUI baseline test React runtime
+
+**Status:** `[x]` Done
+
+**Goal:** Restore the website build workflow by making the versioned Material UI test double compatible with the website's classic JSX transform.
+
+**Issue:**
+
+- The scoped Material UI baseline test double rendered JSX while importing only named React exports.
+- The website uses `jsx: "react"`, so the transformed test double referenced the `React` runtime identifier even though it was not defined.
+- The versioned website test failed with `ReferenceError: React is not defined` while rendering `ScopedCssBaseline`.
+
+**Resolution:**
+
+- Import the React namespace in the Material UI test double so classic JSX output has the required runtime binding.
+- Preserve the test double behavior, versioned runtime aliases, production code, dependencies, and public APIs.
+
+**Acceptance criteria:**
+
+- The scoped Material UI baseline test passes in both v1 and v2 website modes.
+- The v1 and v2 versioned-site typechecks pass.
+- The complete v1 and v2 website test suites remain green.
+
+**Verification:**
+
+- Run the focused `mui-builder-surface.test.tsx` suite in v1 and v2 modes.
+- Run `npm run typecheck:v1 --workspace website` and `npm run typecheck:v2 --workspace website`.
+- Run `npm run test:v1 --workspace website` and `npm run test:v2 --workspace website`.
+- Run the root package build required by the v2 website tests.
+- Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
