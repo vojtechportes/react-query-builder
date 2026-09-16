@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { forwardRef, type HTMLAttributes } from 'react';
 
 export const ScopedCssBaseline = forwardRef<
