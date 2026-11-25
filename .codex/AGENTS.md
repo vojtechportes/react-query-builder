@@ -61,11 +61,14 @@ Use `kebab-case` for:
 
 ## Sub-agents
 
-Define and use these two sub-agents from now on.
+The following sub-agents are opt-in. Do not spawn or use either agent automatically.
+Use one only when the user explicitly requests it, for example with "Spawn a Planning
+agent..." or "Spawn a Code review agent...". A request to plan, implement, review,
+or fix something does not by itself authorize spawning a sub-agent.
 
 ### Planning agent
 
-Use before implementation begins and again whenever scope changes materially.
+Use only when the user explicitly requests a Planning agent.
 
 Responsibilities:
 
@@ -86,7 +89,7 @@ Expected output:
 
 ### Code review agent
 
-Use after implementation and before considering the task complete.
+Use only when the user explicitly requests a Code review agent.
 
 Responsibilities:
 
@@ -105,5 +108,5 @@ Expected output:
 
 Operating rule:
 
-- Do not skip the planning agent for non-trivial work (trivial task could be fixing typo, small styles fix / addition, unused file / folder deletion, minor or patch dependency update that does not bring any breaking changes)
-- Do not skip the code review agent after implementation
+- Do not spawn a Planning agent or Code review agent unless the user explicitly asks for that agent.
+- When explicitly requested, use only the requested agent or agents and follow the relevant responsibilities above.
