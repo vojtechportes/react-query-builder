@@ -2745,3 +2745,13 @@ site/v1 usage.
 **Browser verification:** Reproduced on the local v2 Demo at 453 x 800 CSS pixels using the Customization radios. With Default selected, Add Rule starts 12px below the root Or control and the first editable rule places Delete below its inputs. With ANTD selected, Add Rule overlaps the root Or control by about 39px horizontally on the same row. The nested header also overlaps, and Delete stays beside the Customer city field.
 
 **Resolution:** Ant Design Row and Space wrap group and rule actions against the available width. Verified on the v2 Demo at 453px and 540px, including a root header fitting inline while the nested header wraps. Also checked clone, lock and drag controls. The package builds and all 39 focused Ant Design tests pass.
+
+### B004 - Wrap Mantine group and rule controls
+
+**Status:** `[x]` Done
+
+**Reproduction:** Open http://localhost:5173/v2/demo at 453 × 800 and select “Mantine adapter”. Add Rule overlaps about 45px of Or in the root header. The nested header also overlaps, and Delete stays beside the editable rule’s inputs.
+
+**Verification:** All 15 focused Mantine tests passed across 8 suites covering shared components and both v8 and v9 entry points. ESLint, Prettier, the package build and `git diff --check` passed.
+
+**Browser verification:** In Chrome on the rebuilt v2 Demo at 453 × 800, Add Rule sat 12px below Or in both headers. Delete sat 10px below the editable rule’s inputs at the same left edge. A rule without actions used the full input row. With the viewport fixed at 1440 × 900 and only the builder parent narrowed to 555px, the root header fit inline while the nested header wrapped. At a 400px parent width with Clone, Lock and dragging enabled, root actions occupied two rows and nested actions occupied three. Cloning added a rule, locking and unlocking worked, and keyboard drag started and canceled. The drag handle occupied a separate 14px column and wrapped rule actions still aligned with the inputs.

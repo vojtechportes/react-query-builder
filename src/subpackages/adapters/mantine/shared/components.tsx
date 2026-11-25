@@ -377,7 +377,12 @@ export const MantineRule: FC<IRuleProps> = ({
   className,
   'data-test': dataTest,
 }) => {
-  const hasControls = React.Children.toArray(controls).length > 0;
+  const actions =
+    React.isValidElement<{ children?: React.ReactNode }>(controls) &&
+    controls.type === React.Fragment
+      ? controls.props.children
+      : controls;
+  const hasControls = React.Children.toArray(actions).length > 0;
 
   return (
     <Paper
@@ -388,39 +393,20 @@ export const MantineRule: FC<IRuleProps> = ({
       style={{
         display: 'grid',
         overflow: 'hidden',
-        gridTemplateColumns: hasControls
-          ? dragHandle
-            ? 'auto minmax(0, 1fr) auto'
-            : 'minmax(0, 1fr) auto'
-          : dragHandle
-            ? 'auto minmax(0, 1fr)'
-            : 'minmax(0, 1fr)',
+        gridTemplateColumns: dragHandle
+          ? 'auto minmax(0, 1fr)'
+          : 'minmax(0, 1fr)',
       }}
     >
       {dragHandle}
-      <div
-        style={{
-          minWidth: 0,
-          padding: '0.85rem',
-          paddingRight: hasControls ? 0 : '0.85rem',
-        }}
-      >
-        {children}
-      </div>
-      {hasControls ? (
-        <div
-          style={{
-            display: 'grid',
-            gridAutoColumns: 'min-content',
-            gridAutoFlow: 'column',
-            gap: '0.5rem',
-            alignSelf: 'start',
-            padding: '0.85rem',
-          }}
-        >
-          {controls}
-        </div>
-      ) : null}
+      <Group align="flex-start" gap="xs" wrap="wrap" p="0.85rem">
+        <div style={{ flex: '1 1 16rem', minWidth: 0 }}>{children}</div>
+        {hasControls ? (
+          <Group gap="xs" wrap="wrap" maw="100%">
+            {controls}
+          </Group>
+        ) : null}
+      </Group>
     </Paper>
   );
 };
@@ -454,42 +440,26 @@ export const MantineGroup: FC<IGroupProps> = ({
       {dragHandle}
       <div style={{ position: 'relative', padding: '0.85rem' }}>
         {hasHeader ? (
-          <div
+          <Group
+            justify="space-between"
+            gap="sm"
+            wrap="wrap"
             style={{
-              display: 'grid',
-              gap: '1rem',
-              gridTemplateColumns: 'minmax(0, 1fr) auto',
               paddingBottom: '0.75rem',
               borderBottom: '1px solid var(--mantine-color-gray-3, #dee2e6)',
             }}
           >
             {hasControlsLeft ? (
-              <div
-                style={{
-                  display: 'grid',
-                  gridAutoColumns: 'min-content',
-                  gridAutoFlow: 'column',
-                  alignSelf: 'end',
-                  justifySelf: 'start',
-                }}
-              >
+              <Group gap={0} wrap="nowrap">
                 {controlsLeft}
-              </div>
+              </Group>
             ) : null}
             {hasControlsRight ? (
-              <div
-                style={{
-                  display: 'grid',
-                  gridAutoColumns: 'min-content',
-                  gridAutoFlow: 'column',
-                  gap: '0.5rem',
-                  justifySelf: 'end',
-                }}
-              >
+              <Group gap="xs" wrap="wrap" maw="100%">
                 {controlsRight}
-              </div>
+              </Group>
             ) : null}
-          </div>
+          </Group>
         ) : null}
         {contentOverlay}
         {children}
