@@ -32,21 +32,17 @@ export const BootstrapGroup: FC<IGroupProps> = ({
       {dragHandle}
       <div className="position-relative p-3">
         {hasHeader ? (
-          <div
-            className="pb-3 mb-2 border-bottom"
-            style={{
-              display: 'grid',
-              gap: '1rem',
-              gridTemplateColumns: 'minmax(0, 1fr) auto',
-            }}
-          >
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-2 border-bottom">
             {hasControlsLeft ? (
               <div className="btn-group btn-group-sm" role="group">
                 {controlsLeft}
               </div>
             ) : null}
             {hasControlsRight ? (
-              <div className="d-flex flex-wrap justify-content-end gap-2">
+              <div
+                className="d-flex flex-wrap gap-2"
+                style={{ maxWidth: '100%' }}
+              >
                 {controlsRight}
               </div>
             ) : null}

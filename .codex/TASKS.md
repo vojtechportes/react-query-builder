@@ -2755,3 +2755,17 @@ site/v1 usage.
 **Verification:** All 15 focused Mantine tests passed across 8 suites covering shared components and both v8 and v9 entry points. ESLint, Prettier, the package build and `git diff --check` passed.
 
 **Browser verification:** In Chrome on the rebuilt v2 Demo at 453 × 800, Add Rule sat 12px below Or in both headers. Delete sat 10px below the editable rule’s inputs at the same left edge. A rule without actions used the full input row. With the viewport fixed at 1440 × 900 and only the builder parent narrowed to 555px, the root header fit inline while the nested header wrapped. At a 400px parent width with Clone, Lock and dragging enabled, root actions occupied two rows and nested actions occupied three. Cloning added a rule, locking and unlocking worked, and keyboard drag started and canceled. The drag handle occupied a separate 14px column and wrapped rule actions still aligned with the inputs.
+
+### B005 - Wrap Bootstrap group and rule controls
+
+**Status:** `[x]` Done
+
+**Reported reproduction:** Open http://localhost:5173/v2/demo at 453 × 800 and select Bootstrap adapter. Inspect Add Rule beside Not/And/Or in the root and nested headers, then inspect Delete beside the first editable rule.
+
+**Cause:** BootstrapGroup puts toggles and actions in separate grid columns. BootstrapRule also reserves a column for actions. The action buttons can wrap inside their cluster, but the cluster cannot move below its neighbor.
+
+**Resolution:** Use Bootstrap flex utilities on the group header to wrap, center-align and distribute its two clusters. Keep the existing toggle button group together. Give the action cluster wrapping, a gap and a maximum width of 100%. For rules, reserve a separate grid column only for the optional drag handle. Inside the content column, put the inputs and actions in a padded, top-aligned wrapping flex row. Give the inputs flex: 1 1 16rem and min-width: 0, and omit an empty action cluster so inputs can use the full row. Keep field, operator and value layouts intact.
+
+**Acceptance and verification:** On the rebuilt Bootstrap v5 demo, verify the 453px case and narrow only the builder parent at a fixed desktop viewport until the root header fits inline while the nested header wraps. Check that wrapped actions align with the input left edge, buttons remain clickable, Clone and Lock work, the drag handle keeps its column, and rules without actions use the full input row. Run focused Bootstrap adapter tests, ESLint, Prettier, the package build and git diff --check.
+
+**Results:** All 34 Bootstrap tests passed across 30 suites. ESLint, Prettier, the package build and git diff --check passed. In Chrome at 453 × 800 the root controls fit inline, nested actions wrapped 8px below the toggles, and Delete wrapped 8px below the inputs at their left edge. Rules without actions used the full input row. At a fixed 1440 × 900 viewport with a 475px builder parent, the root header fit inline while the nested header wrapped. At 400px parent width with Clone, Lock and dragging enabled, nested actions used two rows. Cloning, locking, unlocking and starting and canceling a keyboard drag worked. The handle retained its own 14px column.

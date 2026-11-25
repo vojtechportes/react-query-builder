@@ -9,7 +9,12 @@ export const BootstrapRule: FC<IRuleProps> = ({
   className,
   'data-test': dataTest,
 }) => {
-  const hasControls = React.Children.toArray(controls).length > 0;
+  const actions =
+    React.isValidElement<{ children?: React.ReactNode }>(controls) &&
+    controls.type === React.Fragment
+      ? controls.props.children
+      : controls;
+  const hasControls = React.Children.toArray(actions).length > 0;
 
   return (
     <div
@@ -20,23 +25,19 @@ export const BootstrapRule: FC<IRuleProps> = ({
         display: 'grid',
         overflow: 'hidden',
         gridTemplateColumns: dragHandle
-          ? hasControls
-            ? 'auto minmax(0, 1fr) auto'
-            : 'auto minmax(0, 1fr)'
-          : hasControls
-            ? 'minmax(0, 1fr) auto'
-            : 'minmax(0, 1fr)',
+          ? 'auto minmax(0, 1fr)'
+          : 'minmax(0, 1fr)',
       }}
     >
       {dragHandle}
-      <div className={joinClassNames('min-w-0 p-3', !hasControls && 'pe-3')}>
-        {children}
+      <div className="d-flex flex-wrap align-items-start gap-2 p-3">
+        <div style={{ flex: '1 1 16rem', minWidth: 0 }}>{children}</div>
+        {hasControls ? (
+          <div className="d-flex flex-wrap gap-2" style={{ maxWidth: '100%' }}>
+            {controls}
+          </div>
+        ) : null}
       </div>
-      {hasControls ? (
-        <div className="d-flex flex-wrap align-items-start gap-2 p-3">
-          {controls}
-        </div>
-      ) : null}
     </div>
   );
 };
