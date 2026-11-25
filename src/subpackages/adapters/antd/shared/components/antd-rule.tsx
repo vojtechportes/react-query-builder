@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { theme } from 'antd';
+import { Row, Space, theme } from 'antd';
 import { IRuleProps } from '../../../../../builder/components/rule/rule-container';
 
 export const AntdRule: FC<IRuleProps> = ({
@@ -19,13 +19,9 @@ export const AntdRule: FC<IRuleProps> = ({
       style={{
         display: 'grid',
         overflow: 'hidden',
-        gridTemplateColumns: hasControls
-          ? dragHandle
-            ? 'auto minmax(0, 1fr) auto'
-            : 'minmax(0, 1fr) auto'
-          : dragHandle
-            ? 'auto minmax(0, 1fr)'
-            : 'minmax(0, 1fr)',
+        gridTemplateColumns: dragHandle
+          ? 'auto minmax(0, 1fr)'
+          : 'minmax(0, 1fr)',
         marginTop: '0.5rem',
         backgroundColor: token.colorBgContainer,
         border: `1px solid ${token.colorBorderSecondary}`,
@@ -33,29 +29,14 @@ export const AntdRule: FC<IRuleProps> = ({
       }}
     >
       {dragHandle}
-      <div
-        style={{
-          minWidth: 0,
-          padding: '0.85rem',
-          paddingRight: hasControls ? 0 : '0.85rem',
-        }}
-      >
-        {children}
-      </div>
-      {hasControls ? (
-        <div
-          style={{
-            display: 'grid',
-            gridAutoColumns: 'min-content',
-            gridAutoFlow: 'column',
-            gap: '0.5rem',
-            alignSelf: 'start',
-            padding: '0.85rem',
-          }}
-        >
-          {controls}
-        </div>
-      ) : null}
+      <Row align="top" style={{ gap: token.marginXS, padding: '0.85rem' }}>
+        <div style={{ flex: '1 1 16rem', minWidth: 0 }}>{children}</div>
+        {hasControls ? (
+          <Space wrap size={token.marginXS} style={{ maxWidth: '100%' }}>
+            {controls}
+          </Space>
+        ) : null}
+      </Row>
     </div>
   );
 };
