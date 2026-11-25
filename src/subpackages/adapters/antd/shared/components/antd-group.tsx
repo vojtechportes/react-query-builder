@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { theme } from 'antd';
+import { Row, Space, theme } from 'antd';
 import { IGroupProps } from '../../../../../builder/components/group/components/group-container';
 
 export const AntdGroup: FC<IGroupProps> = ({
@@ -34,43 +34,23 @@ export const AntdGroup: FC<IGroupProps> = ({
       {dragHandle}
       <div style={{ position: 'relative', padding: '0.85rem' }}>
         {hasHeader ? (
-          <div
+          <Row
+            align="middle"
+            justify="space-between"
             style={{
-              display: 'grid',
-              gap: '1rem',
-              gridTemplateColumns: 'minmax(0, 1fr) auto',
+              gap: token.marginSM,
               paddingBottom: '0.75rem',
               marginBottom: '0.25rem',
               borderBottom: `1px solid ${token.colorBorderSecondary}`,
             }}
           >
-            {hasControlsLeft ? (
-              <div
-                style={{
-                  display: 'grid',
-                  gridAutoColumns: 'min-content',
-                  gridAutoFlow: 'column',
-                  alignSelf: 'end',
-                  justifySelf: 'start',
-                }}
-              >
-                {controlsLeft}
-              </div>
-            ) : null}
+            {hasControlsLeft ? <Space size={0}>{controlsLeft}</Space> : null}
             {hasControlsRight ? (
-              <div
-                style={{
-                  display: 'grid',
-                  gridAutoColumns: 'min-content',
-                  gridAutoFlow: 'column',
-                  gap: '0.5rem',
-                  justifySelf: 'end',
-                }}
-              >
+              <Space wrap size={token.marginXS} style={{ maxWidth: '100%' }}>
                 {controlsRight}
-              </div>
+              </Space>
             ) : null}
-          </div>
+          </Row>
         ) : null}
         {contentOverlay}
         {children}

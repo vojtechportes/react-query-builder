@@ -2725,3 +2725,23 @@ site/v1 usage.
 - Run `npm run test:v1 --workspace website` and `npm run test:v2 --workspace website`.
 - Run the root package build required by the v2 website tests.
 - Run `git diff --check` and the repository-required code-review agent, then resolve all findings.
+
+### B003 - Fix Ant Design responsive layout
+
+**Status:** `[x]` Done
+
+**Reproduction:** On the v2 Demo, select Ant Design in the component controls. At a narrow viewport, compare the root group, nested group and editable rules with Default Components at the same width.
+
+**Reported behavior:** Group action buttons cover the Not/And/Or controls. Rule actions stay beside the input area even in narrow nested rules.
+
+**Scope:** Adjust the action layouts in AntdGroup and AntdRule. Select label truncation is acceptable. Preserve existing field, operator, value and range layouts.
+
+**Acceptance criteria:**
+
+- Keep the group toggles together. Move the action cluster to the next line when both clusters cannot fit in the group header. Allow action buttons to wrap within the cluster.
+- Let rule actions move below the input area when the rule has insufficient room, aligned with the inputs even with a drag handle.
+- At a fixed desktop viewport, resize only the builder parent and verify that root and nested controls wrap independently and remain visible and clickable. Cover rules with and without actions and both Ant Design entry points.
+
+**Browser verification:** Reproduced on the local v2 Demo at 453 x 800 CSS pixels using the Customization radios. With Default selected, Add Rule starts 12px below the root Or control and the first editable rule places Delete below its inputs. With ANTD selected, Add Rule overlaps the root Or control by about 39px horizontally on the same row. The nested header also overlaps, and Delete stays beside the Customer city field.
+
+**Resolution:** Ant Design Row and Space wrap group and rule actions against the available width. Verified on the v2 Demo at 453px and 540px, including a root header fitting inline while the nested header wraps. Also checked clone, lock and drag controls. The package builds and all 39 focused Ant Design tests pass.
